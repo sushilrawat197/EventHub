@@ -1,0 +1,53 @@
+import React from "react";
+import { FaEnvelope } from "react-icons/fa";
+
+const ForgotPassword: React.FC = () => {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-sky-200 p-4">
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col items-center">
+        <img
+          src="ticketlogo2.jpg"
+          alt="MyTag Logo"
+          className="w-20 h-20 object-contain mb-4 rounded"
+        />
+
+        <h2 className="text-xl sm:text-2xl font-bold text-black mb-1 text-center">
+          Forgot Password
+        </h2>
+        <p className="text-sm text-[#777777] text-center mb-6">
+          Please confirm your registered email address
+        </p>
+
+        <form className="w-full space-y-4">
+          <div className="relative">
+            <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
+            <input
+              type="email"
+              placeholder="Email"
+              aria-label="Email"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-sky-500 text-base"
+            />
+          </div>
+
+          <div className="flex justify-between gap-2">
+            <button
+              type="button"
+              className="w-1/2 bg-gray-300 hover:bg-gray-400 text-black font-semibold py-2 rounded-full transition text-base"
+              onClick={() => window.history.back()}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="w-1/2 bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-full transition text-base"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default ForgotPassword;
