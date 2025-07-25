@@ -3,26 +3,16 @@ import { FaLock, FaEnvelope } from "react-icons/fa";
 import { AiFillEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
 
-const sliderImages = ["mainimg.jpg", "mainimg.jpg"];
-
 const SignIn: React.FC = () => {
-  const [currentImage, setCurrentImage] = useState(0);
+  const [] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % sliderImages.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-sky-200 to-white p-4">
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row overflow-hidden">
-        {/* Left Slider */}
         <div className="hidden md:flex md:w-1/2 flex-col justify-center items-center p-6 bg-sky-200">
           <img
-            src={sliderImages[currentImage]}
+            src="mainimg.jpg"
             alt="Slider"
             className="max-w-[90%] h-auto  rounded-xl shadow-lg transition-all duration-500"
           />
