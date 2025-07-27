@@ -1,10 +1,24 @@
 "use client";
 import React, { useState } from "react";
 import { FaLock } from "react-icons/fa";
+import { useAppDispatch } from "../reducers/hooks";
+import { setPassword } from "../services/operations/authApi";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../reducers/hooks";
+
 
 export default function PasswordSet() {
+  const dispatch=useAppDispatch();
+  const navigate=useNavigate();
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
+
+  const passToken = useAppSelector((state) => state.auth.pwdToken);
+
+  const handleSubmit=()=>{
+    dispatch(setPassword(passToken,newPass,confirmPass,navigate));
+  }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-sky-200 p-4">
@@ -47,7 +61,7 @@ export default function PasswordSet() {
 
         <button
           type="button"
-          onClick={() => console.log("Change clicked")}
+          onClick={handleSubmit}
           className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition"
         >
           Set Password

@@ -4,11 +4,13 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 interface AuthState {
   userEmail: string;
   userResponse:string;
+  pwdToken: string
 }
 
 const initialState: AuthState = {
   userEmail: "",
-  userResponse:""
+  userResponse:"",
+  pwdToken:""
 };
 
 const authSlice = createSlice({
@@ -21,8 +23,11 @@ const authSlice = createSlice({
     userResponse(state, action: PayloadAction<string>) {
       state.userResponse = action.payload;
     },
+    setPwdToken(state, action: PayloadAction<string>) {
+    state.pwdToken = action.payload;
+  }
   },
 });
 
-export const { userEmail,userResponse } = authSlice.actions;
+export const { userEmail,userResponse,setPwdToken } = authSlice.actions;
 export default authSlice.reducer;

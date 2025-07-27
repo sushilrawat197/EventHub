@@ -5,6 +5,7 @@ import { resendOTP, sendOtp } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
 
+
 const OtpVerification: React.FC = () => {
   const OTP_LENGTH = 6;
 
@@ -15,7 +16,7 @@ const OtpVerification: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(""));
 
   const userEmail = useAppSelector((state) => state.auth.userEmail);
-  console.log(userEmail);
+  // console.log(userEmail);
 
   // Handler for OTP input change
   const handleChange = (value: string, index: number) => {
@@ -29,15 +30,14 @@ const OtpVerification: React.FC = () => {
   const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
     const otpString = otp.join("");
-    console.log(otpString);
     dispatch(sendOtp(otpString,userEmail,navigate));
   }
 
 
   const resendOtpHandler=()=>{
-    console.log("Printing User Email",userEmail);
+    // console.log("Printing User Email",userEmail);
     const email=userEmail;
-    dispatch(resendOTP(email,dispatch,navigate));
+    dispatch(resendOTP(email,dispatch));
   }
 
 
