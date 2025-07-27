@@ -1,22 +1,27 @@
 import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../reducers/hooks";
-import { resendOTP, sendOtp } from "../services/operations/authApi";
-import { useNavigate } from "react-router-dom";
+import { resendOTP} from "../services/operations/authApi";
+// import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
+import { varifySignInOTP } from "../services/operations/authApi";
 
 
-const OtpVerification: React.FC = () => {
+const LoginVarifyOtp: React.FC = () => {
   const OTP_LENGTH = 6;
 
   const dispatch=useAppDispatch();
-  const navigate=useNavigate();
+//   const navigate=useNavigate();
 
   // OTP state as array of strings
   const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(""));
 
   const userEmail = useAppSelector((state) => state.auth.userEmail);
   // console.log(userEmail);
+
+ const token = localStorage.getItem("tempToken") || "";
+
+
 
   // Handler for OTP input change
   const handleChange = (value: string, index: number) => {
@@ -30,7 +35,7 @@ const OtpVerification: React.FC = () => {
   const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
     const otpString = otp.join("");
-    dispatch(sendOtp(otpString,userEmail,navigate));
+    dispatch(varifySignInOTP(token,otpString));
   }
 
 
@@ -98,4 +103,4 @@ const OtpVerification: React.FC = () => {
   );
 };
 
-export default OtpVerification;
+export default LoginVarifyOtp;

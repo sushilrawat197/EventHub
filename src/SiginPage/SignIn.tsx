@@ -1,11 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaLock, FaEnvelope } from "react-icons/fa";
 import { AiFillEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
 import { Link } from "react-router-dom";
+import { signIn } from "../services/operations/authApi";
+import { useAppDispatch} from "../reducers/hooks";
+import { useNavigate } from "react-router-dom";
+
+
+
 
 const SignIn: React.FC = () => {
-  const [] = useState(0);
+  const dispatch=useAppDispatch();
+  const navigate=useNavigate();
+
+
+  const [inputEmail, setInputEmail] = useState("");
+  const  [password,setPassword]=useState("");
+
+
+   const submitHandler = async(e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      // console.log("Printing Email=", email);
+      dispatch(signIn(inputEmail,password, navigate));
+      // console.log(thunk)
+    };
+ 
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -33,11 +53,13 @@ const SignIn: React.FC = () => {
             <div className="w-16 h-1 bg-sky-700 mt-1 rounded-full mx-auto" />
           </h2> */}
 
-          <form className="w-full max-w-sm space-y-3">
+          <form onSubmit={submitHandler} className="w-full max-w-sm space-y-3">
             {/* Email */}
             <div className="relative">
               <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
               <input
+                value={inputEmail} 
+                onChange={(e)=>setInputEmail(e.target.value)}
                 type="email"
                 placeholder="Email"
                 aria-label="Email"
@@ -49,6 +71,8 @@ const SignIn: React.FC = () => {
             <div className="relative">
               <FaLock className="absolute top-3 left-3 text-gray-400" />
               <input
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 aria-label="Password"
@@ -70,10 +94,10 @@ const SignIn: React.FC = () => {
 
             {/* Forgot */}
             <div className="text-right">
-              <Link to={"/forgetpassword"}>
-                <a href="#" className="text-sm text-sky-600 hover:underline">
+              <Link className="text-sm text-sky-600 hover:underline"  to={"/forgetpassword" }
+              >     
                   Forgot password?
-                </a>
+
               </Link>
             </div>
 
@@ -104,10 +128,10 @@ const SignIn: React.FC = () => {
             {/* Create Account */}
             <p className="text-center text-sm mt-4">
               Are you new?{" "}
-              <Link to={"/signup"}>
-                <a href="#" className="text-sky-600 hover:underline">
+              <Link to={"/signup"} className="text-sky-600 hover:underline">
+               
                   Create an Account
-                </a>
+              
               </Link>
             </p>
           </form>

@@ -16,7 +16,7 @@ export default function PasswordSet() {
   const passToken = useAppSelector((state) => state.auth.pwdToken);
 
   const handleSubmit=()=>{
-    dispatch(setPassword(passToken,newPass,confirmPass,navigate));
+    dispatch(setPassword(passToken,newPass,confirmPass,navigate,dispatch));
   }
 
 

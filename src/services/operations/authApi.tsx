@@ -1,12 +1,11 @@
 import { endpoints } from "../apis";
 import { apiConnector } from "../apiConnector";
 import { type NavigateFunction } from "react-router-dom";
-import { setPwdToken, userEmail} from "../../slices/authSlice";
+import { setPwdToken, userEmail,setAccessToken} from "../../slices/authSlice";
 import type { Dispatch } from '@reduxjs/toolkit';
-const { SIGNUP_API, SEND_OTP_API, RESEND_OTP,SET_PASS_API } = endpoints;
+const { SIGNUP_API, SEND_OTP_API, RESEND_OTP,SET_PASS_API,LOGIN_API,VARIFY_LOGIN_OTP } = endpoints;
 import axios from "axios";
 import { toast } from "react-hot-toast"
-
 
 
 type SendOtpApiResponse = {
@@ -142,20 +141,27 @@ export function resendOTP(
 
 
 
-
-
-
-
 export function setPassword(
   pwdSetToken:string,
   password:string,
   confirmedPassword:string,
   navigate: NavigateFunction,
+  dispatch:Dispatch
 ) {
   return async (): Promise<void> => {
     try {
       
-      const response = await apiConnector<{ success: boolean; message: string }>({
+      const response = await apiConnector<{ 
+        message:string,
+        data:{
+          accessToken: string;
+          refreshToken: string;
+          accessTokenExpiry: string;
+          refreshTokenExpiry: string;
+          profileRequired: boolean;
+        }
+
+      }>({
         method: "POST",
         url: SET_PASS_API,   
         bodyData: { pwdSetToken ,password , confirmedPassword },
@@ -166,12 +172,120 @@ export function setPassword(
 
       const data = response.data;
       console.log("SIGNUP API RESPONSE............", data);
+
+      const token=response.data.data.accessToken
+      dispatch(setAccessToken(token));
       toast.success(data.message)
 
       console.log(data.message); // Optional
       navigate("/login");
     
 
+    } catch (error) {
+      // ✅ Use AxiosError to get error response
+      if (axios.isAxiosError(error)) {
+        const errorData = error
+        toast.error(error.response?.data?.message)
+        console.log("SIGNUP API ERROR RESPONSE............", errorData);
+       
+      } else {
+        console.log("SIGNUP API ERROR............", "An unknown error occurred.");
+      }
+    }
+  };
+}
+
+
+
+export function signIn(
+  email:string,
+  password:string,
+  navigate: NavigateFunction,
+  
+) {
+  return async (): Promise<void> => {
+    try {
+      
+      const response = await apiConnector<{ 
+        message:string,
+        data:{
+          tempToken:string
+        }
+
+      }>({
+        method: "POST",
+        url:LOGIN_API ,   
+        bodyData: { emailOrMsisdn:email,socialSignup:false, socialToken:"",password},
+        headers: {
+          "X-Client-Source": "OTHER"
+        },
+      });
+
+      const data = response.data;
+      console.log("SIGNUP API RESPONSE............", data);
+
+      const Token=response.data.data.tempToken;
+
+      localStorage.setItem("tempToken",Token);
+      toast.success("OTP sent successfully")
+
+      // console.log(data.message); // Optional
+      navigate("/varifylgoinotp");
+    
+
+    } catch (error) {
+      // ✅ Use AxiosError to get error response
+      if (axios.isAxiosError(error)) {
+        const errorData = error
+        toast.error(error.response?.data?.message)
+        console.log("SIGNUP API ERROR RESPONSE............", errorData);
+       
+      } else {
+        console.log("SIGNUP API ERROR............", "An unknown error occurred.");
+      }
+    }
+  };
+}
+
+
+
+
+export function varifySignInOTP(
+
+  tempToken:string,
+  otp:string
+  
+) {
+  return async (): Promise<void> => {
+    try {
+      
+      const response = await apiConnector<{ 
+        message:string,
+        data:{
+          tempToken:string
+        }
+
+      }>({
+        method: "POST",
+        url:VARIFY_LOGIN_OTP ,   
+        bodyData: { tempToken,otp},
+        headers: {
+          "X-Client-Source": "OTHER"
+        },
+      });
+
+      const data = response.data;
+      console.log("SIGNUP API RESPONSE............", data);
+
+      const Token=response.data.data.tempToken;
+
+      localStorage.setItem("tempToken",Token);
+      // console.log("sending ot")
+      toast.success("OTP varificaion Successfull")
+
+      // console.log(data.message); // Optional
+      // navigate("/varifylgoinotp");
+    
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {

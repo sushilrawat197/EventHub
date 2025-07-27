@@ -18,10 +18,7 @@ export default function SignUp() {
     e.preventDefault();
     // console.log("Printing Email=", email);
     dispatch(signUp(email, navigate,dispatch));
-  
     // console.log(thunk)
-
-
   };
 
   

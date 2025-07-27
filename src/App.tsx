@@ -1,5 +1,6 @@
 import "./App.css";
 import ForgotPassword from "./SiginPage/Forgotpassword";
+import LoginVarifyOtp from "./SiginPage/LoginVarifyOtp";
 import OtpVerification from "./SiginPage/OtpVerification";
 import PasswordSet from "./SiginPage/PasswordSet";
 import SignIn from "./SiginPage/SignIn";
@@ -25,6 +26,7 @@ function App() {
           <Route path="/signup" element={<SignUp/>}/>
           <Route path="/otpvarification" element={<OtpVerification/>}/>
           <Route path="/setpassword" element={<PasswordSet/>}/>
+          <Route path="/varifylgoinotp" element={<LoginVarifyOtp/>}/>
           
         </Routes>
 
