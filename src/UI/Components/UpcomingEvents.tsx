@@ -138,8 +138,10 @@ const UpcomingEvents: React.FC = () => {
         }}
       >
         {events.map((event, index) => (
-          <SwiperSlide key={index}>
-            <div className="relative rounded-xl overflow-hidden shadow group transition-transform duration-300 hover:scale-105 cursor-pointer">
+          
+          
+          <SwiperSlide key={index} className="p-2">
+            <div className="relative rounded-xl overflow-hidden shadow ease-in-out transition-transform duration-200 hover:scale-105 cursor-pointer">
               <img
                 src={event.image}
                 alt={event.title}

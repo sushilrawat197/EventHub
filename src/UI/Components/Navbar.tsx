@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { RiMenu3Line } from "react-icons/ri";
+import { Link } from "react-router-dom";
 
 type MobileDropdownState = {
   event: boolean;
   ticket: boolean;
 };
+
+
 
 const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -18,7 +21,8 @@ const Navbar: React.FC = () => {
     <nav className="bg-[#0ea5e9]  fixed top-0 left-0 w-full z-50 shadow">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
-        <div className="flex items-center ">
+       <Link to={"/"}>
+       <div className="flex items-center ">
           <img
             className="rounded-lg w-20 h-10"
             src="ticketlogo2.jpg"
@@ -26,10 +30,12 @@ const Navbar: React.FC = () => {
           />
         </div>
 
+       </Link>  
+
         {/* Desktop Nav */}
         <ul className="hidden lg:flex bg-white  rounded-full px-4 py-1 space-x-4">
           <li className="text-sky-600 hover:text-white cursor-pointer font-medium px-2 py-1 hover:bg-sky-500 rounded-full">
-            Home
+           <Link to={"/"}>Home</Link> 
           </li>
 
           {/* Event Categories */}
@@ -88,9 +94,11 @@ const Navbar: React.FC = () => {
 
         {/* Desktop Buttons */}
         <div className="space-x-2 hidden lg:flex">
+          <Link to={"/login"}>
           <button className="bg-white text-sky-600 font-medium px-4 py-1 rounded-full border border-sky-300 hover:bg-sky-100">
             Sign In
           </button>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}

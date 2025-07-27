@@ -1,5 +1,6 @@
 import React from "react";
 import { FaEnvelope } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const ForgotPassword: React.FC = () => {
   return (
@@ -37,12 +38,14 @@ const ForgotPassword: React.FC = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="w-1/2 bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-full transition text-base"
-            >
-              Submit
-            </button>
+
+            <div className="w-1/2 text-center bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-full transition text-base">
+              <Link to="/otpvarification">
+                <button type="submit">
+                  Submit
+                </button>
+              </Link>
+            </div>
           </div>
         </form>
       </div>

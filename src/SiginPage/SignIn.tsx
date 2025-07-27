@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaLock, FaEnvelope } from "react-icons/fa";
 import { AiFillEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
+import { Link } from "react-router-dom";
 
 const SignIn: React.FC = () => {
   const [] = useState(0);
@@ -69,9 +70,11 @@ const SignIn: React.FC = () => {
 
             {/* Forgot */}
             <div className="text-right">
-              <a href="#" className="text-sm text-sky-600 hover:underline">
-                Forgot password?
-              </a>
+              <Link to={"/forgetpassword"}>
+                <a href="#" className="text-sm text-sky-600 hover:underline">
+                  Forgot password?
+                </a>
+              </Link>
             </div>
 
             {/* Sign In Button */}
@@ -101,9 +104,11 @@ const SignIn: React.FC = () => {
             {/* Create Account */}
             <p className="text-center text-sm mt-4">
               Are you new?{" "}
-              <a href="#" className="text-sky-600 hover:underline">
-                Create an Account
-              </a>
+              <Link to={"/signup"}>
+                <a href="#" className="text-sky-600 hover:underline">
+                  Create an Account
+                </a>
+              </Link>
             </p>
           </form>
         </div>
