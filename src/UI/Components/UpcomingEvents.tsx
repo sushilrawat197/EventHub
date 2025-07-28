@@ -1,7 +1,11 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import "swiper/css"
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import 'swiper/css/navigation';
 import { Navigation } from "swiper/modules";
 import { FaTicketAlt } from "react-icons/fa";
 

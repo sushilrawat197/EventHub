@@ -106,9 +106,7 @@ const Navbar: React.FC = () => {
           </div>
         )}
 
-        {
-          token !== null &&(<ProfileDropdown />)
-        }
+        {token !== null && <ProfileDropdown />}
 
         {/* Mobile Toggle */}
         <div className="lg:hidden  ">
@@ -208,9 +206,11 @@ const Navbar: React.FC = () => {
 
           <hr className="my-2" />
 
-          <button className="w-full bg-sky-500 text-white py-1 rounded-full ">
-            Sign In
-          </button>
+          <Link to={"/login"}>
+            <button className="w-full bg-sky-500 text-white py-1 rounded-full ">
+              Sign In
+            </button>
+          </Link>
         </div>
       )}
     </nav>

@@ -34,11 +34,7 @@ function App() {
 
        
         {/* <ForgotPassword />
-        <ForgotPasswordConfirmation />
-        <OtpVerification />
-        <PasswordReset />
-        <PasswordSet />
-        <SignUp /> */}
+        <ForgotPasswordConfirmation /> */}
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import React from 'react'
+
 import HeroSection from './HeroSection'
 import UpcomingEvents from '../Components/UpcomingEvents'
 import WhyChoose from '../Components/WhyChoose'

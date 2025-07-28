@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaLock } from "react-icons/fa";
 
 export default function PasswordReset() {

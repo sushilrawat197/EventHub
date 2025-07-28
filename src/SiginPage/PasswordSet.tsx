@@ -1,5 +1,5 @@
-"use client";
-import React, { useState } from "react";
+
+import { useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { useAppDispatch } from "../reducers/hooks";
 import { setPassword } from "../services/operations/authApi";
@@ -16,7 +16,7 @@ export default function PasswordSet() {
   const passToken = useAppSelector((state) => state.auth.pwdToken);
 
   const handleSubmit=()=>{
-    dispatch(setPassword(passToken,newPass,confirmPass,navigate,dispatch));
+    dispatch(setPassword(passToken,newPass,confirmPass,navigate));
   }
 
 
