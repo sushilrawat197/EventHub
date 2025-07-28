@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../reducers/hooks";
 import { resendOTP} from "../services/operations/authApi";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
 import { varifySignInOTP } from "../services/operations/authApi";
 
@@ -11,7 +11,7 @@ const LoginVarifyOtp: React.FC = () => {
   const OTP_LENGTH = 6;
 
   const dispatch=useAppDispatch();
-//   const navigate=useNavigate();
+  const navigate=useNavigate();
 
   // OTP state as array of strings
   const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(""));
@@ -35,7 +35,7 @@ const LoginVarifyOtp: React.FC = () => {
   const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
     const otpString = otp.join("");
-    dispatch(varifySignInOTP(token,otpString));
+    dispatch(varifySignInOTP(token,otpString,dispatch,navigate));
   }
 
 

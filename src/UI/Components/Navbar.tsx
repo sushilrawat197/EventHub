@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { RiMenu3Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
+import { useAppSelector } from "../../reducers/hooks";
+import ProfileDropdown from "./ProfileDropdown";
 
 type MobileDropdownState = {
   event: boolean;
   ticket: boolean;
 };
 
-
-
 const Navbar: React.FC = () => {
+  const token = useAppSelector((state) => state.auth.accessToken);
+  console.log("Printing access token ", token);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] =
     useState<MobileDropdownState>({
@@ -21,21 +24,20 @@ const Navbar: React.FC = () => {
     <nav className="bg-[#0ea5e9]  fixed top-0 left-0 w-full z-50 shadow">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
-       <Link to={"/"}>
-       <div className="flex items-center ">
-          <img
-            className="rounded-lg w-20 h-10"
-            src="ticketlogo2.jpg"
-            alt="logo"
-          />
-        </div>
-
-       </Link>  
+        <Link to={"/"}>
+          <div className="flex items-center ">
+            <img
+              className="rounded-lg w-20 h-10"
+              src="ticketlogo2.jpg"
+              alt="logo"
+            />
+          </div>
+        </Link>
 
         {/* Desktop Nav */}
         <ul className="hidden lg:flex bg-white  rounded-full px-4 py-1 space-x-4">
           <li className="text-sky-600 hover:text-white cursor-pointer font-medium px-2 py-1 hover:bg-sky-500 rounded-full">
-           <Link to={"/"}>Home</Link> 
+            <Link to={"/"}>Home</Link>
           </li>
 
           {/* Event Categories */}
@@ -93,13 +95,20 @@ const Navbar: React.FC = () => {
         </ul>
 
         {/* Desktop Buttons */}
-        <div className="space-x-2 hidden lg:flex">
-          <Link to={"/login"}>
-          <button className="bg-white text-sky-600 font-medium px-4 py-1 rounded-full border border-sky-300 hover:bg-sky-100">
-            Sign In
-          </button>
-          </Link>
-        </div>
+
+        {token === null && (
+          <div className="space-x-2 hidden lg:flex">
+            <Link to={"/login"}>
+              <button className="bg-white text-sky-600 font-medium px-4 py-1 rounded-full border border-sky-300 hover:bg-sky-100">
+                Sign In
+              </button>
+            </Link>
+          </div>
+        )}
+
+        {
+          token !== null &&(<ProfileDropdown />)
+        }
 
         {/* Mobile Toggle */}
         <div className="lg:hidden  ">

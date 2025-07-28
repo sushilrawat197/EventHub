@@ -5,7 +5,7 @@ interface AuthState {
   userEmail: string;
   userResponse:string; //not used
   pwdToken: string
-  accessToken:string,  //not used
+  accessToken:null | string,  //not used
   tempToken:string //not used
 }
 
@@ -13,7 +13,7 @@ const initialState: AuthState = {
   userEmail: "",
   userResponse:"",
   pwdToken:"",
-  accessToken:"",
+  accessToken:null,
   tempToken:""
 };
 
@@ -30,7 +30,7 @@ const authSlice = createSlice({
     setPwdToken(state, action: PayloadAction<string>) {
     state.pwdToken = action.payload;
     },
-    setAccessToken(state, action: PayloadAction<string>) {
+    setAccessToken(state, action: PayloadAction<null | string>) {
     state.accessToken = action.payload;
     },
     setTempToken(state, action: PayloadAction<string>) {

@@ -146,7 +146,7 @@ export function setPassword(
   password:string,
   confirmedPassword:string,
   navigate: NavigateFunction,
-  dispatch:Dispatch
+  // dispatch:Dispatch
 ) {
   return async (): Promise<void> => {
     try {
@@ -173,8 +173,8 @@ export function setPassword(
       const data = response.data;
       console.log("SIGNUP API RESPONSE............", data);
 
-      const token=response.data.data.accessToken
-      dispatch(setAccessToken(token));
+      // const token=response.data.data.accessToken
+      // dispatch(setAccessToken(token));
       toast.success(data.message)
 
       console.log(data.message); // Optional
@@ -253,7 +253,9 @@ export function signIn(
 export function varifySignInOTP(
 
   tempToken:string,
-  otp:string
+  otp:string,
+  dispatch:Dispatch,
+  navigate:NavigateFunction
   
 ) {
   return async (): Promise<void> => {
@@ -262,7 +264,7 @@ export function varifySignInOTP(
       const response = await apiConnector<{ 
         message:string,
         data:{
-          tempToken:string
+          accessToken:string
         }
 
       }>({
@@ -277,12 +279,12 @@ export function varifySignInOTP(
       const data = response.data;
       console.log("SIGNUP API RESPONSE............", data);
 
-      const Token=response.data.data.tempToken;
+      const Token=response.data.data.accessToken;
+      dispatch(setAccessToken(Token));
 
-      localStorage.setItem("tempToken",Token);
-      // console.log("sending ot")
+
       toast.success("OTP varificaion Successfull")
-
+      navigate("/")
       // console.log(data.message); // Optional
       // navigate("/varifylgoinotp");
     
