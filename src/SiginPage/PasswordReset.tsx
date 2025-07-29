@@ -7,7 +7,7 @@ export default function PasswordReset() {
   const [confirmPass, setConfirmPass] = useState("");
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-sky-200 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">
       <div className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-lg text-center space-y-6">
         {/* Logo */}
         <div className="flex justify-center">
@@ -48,7 +48,7 @@ export default function PasswordReset() {
         <button
           type="button"
           onClick={() => console.log("Change clicked")}
-          className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition"
+          className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition cursor-pointer "
         >
           Change
         </button>

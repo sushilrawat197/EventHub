@@ -2,10 +2,10 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import "swiper/css"
+import "swiper/css";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import 'swiper/css/navigation';
+import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { FaTicketAlt } from "react-icons/fa";
 
@@ -25,7 +25,7 @@ const events = [
     year: "2021",
     title: "Rio Olympic Games 1st Run",
     location: "Rio Olympic Hall",
-    status: "£5.00",
+    status: "L 5.00",
     image: "Events2.jpg",
   },
   {
@@ -34,8 +34,8 @@ const events = [
     year: "2023",
     title: "Riga Saxophone Days",
     location: "Arena Riga",
-    status: "£33.00",
-    discount: "£48.00",
+    status: "L 33.00",
+    discount: "L 48.00",
     image: "Events3.jpg",
   },
   {
@@ -44,7 +44,7 @@ const events = [
     year: "2024",
     title: "Football League Start",
     location: "Bangalore Stadium",
-    status: "£10.00",
+    status: "L 10.00",
     image: "Events4.jpg",
   },
   {
@@ -62,7 +62,7 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "£7.00",
+    status: "L 7.00",
     image: "Events6.jpg",
   },
 
@@ -72,7 +72,7 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "£7.00",
+    status: "L 7.00",
     image: "Events7.jpg",
   },
 
@@ -82,7 +82,7 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "£7.00",
+    status: "L 7.00",
     image: "Events8.jpg",
   },
 
@@ -92,7 +92,7 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "£7.00",
+    status: "L7.00",
     image: "Events9.jpg",
   },
 
@@ -102,27 +102,24 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "£7.00",
+    status: "L7.00",
     image: "Events6.jpg",
   },
 ];
 
 const UpcomingEvents: React.FC = () => {
   return (
-    <div className="px-4 py-12 bg-sky-100">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-        <div className="flex items-center gap-2">
-          <h2 className=" ">
-            <FaTicketAlt className="text-sky-500 text-2xl" />
-            <span className="border-l-4 border-sky-500 pl-2 text-3xl font-medium">
-              UPCOMING EVENTS
-            </span>
-            <p className="text-[#777777] max-w-xl mt-2 font-light">
-              Explore the most exciting events happening soon! Book your spot
-              now and stay updated.
-            </p>
-          </h2>
-        </div>
+    <div className="px-2 py-20  ">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-8  ">
+        <h2 className="border-l-5 border-sky-500 pl-2 ">
+          <FaTicketAlt className="text-sky-500 text-2xl" />
+          <span className="  text-3xl font-medium">UPCOMING EVENTS</span>
+          <p className="text-[#777777] max-w-xl mt-2 font-light">
+            Explore the most exciting events happening soon! Book your spot now
+            and stay updated.
+          </p>
+        </h2>
+
         <button className="mt-4 md:mt-0 border border-sky-500 hover:bg-sky-500 hover:text-white transition px-6 py-2 rounded-full text-sm font-semibold text-sky-600">
           SEE ALL UPCOMING EVENTS
         </button>
@@ -142,10 +139,8 @@ const UpcomingEvents: React.FC = () => {
         }}
       >
         {events.map((event, index) => (
-          
-          
-          <SwiperSlide key={index} className="p-2">
-            <div className="relative rounded-xl overflow-hidden shadow ease-in-out transition-transform duration-200 hover:scale-105 cursor-pointer">
+          <SwiperSlide key={index} className="  ">
+            <div className="relative rounded-lg overflow-hidden shadow-lg ease-in-out transition-transform duration-200   ">
               <img
                 src={event.image}
                 alt={event.title}
@@ -163,10 +158,10 @@ const UpcomingEvents: React.FC = () => {
                 </h3>
                 <p className="text-xs truncate">{event.location}</p>
                 <button
-                  className={`mt-2 text-xs px-3 py-1 rounded-full font-medium ${
+                  className={`mt-2 text-xs px-3 py-1 rounded-full font-medium  ${
                     event.status === "SOLD OUT"
                       ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-sky-500 hover:bg-sky-600"
+                      : "bg-sky-500 hover:bg-sky-600  cursor-pointer "
                   }`}
                 >
                   {event.status === "SOLD OUT" ? "SOLD OUT" : "GET TICKET"}

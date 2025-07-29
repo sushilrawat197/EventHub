@@ -17,7 +17,7 @@ const ContactPage: React.FC = () => {
       <div className="w-full lg:w-1/2 rounded-xl shadow-2xl p-6 md:p-10 border border-sky-500 bg-white">
         <h2 className="text-3xl font-bold text-center mb-8 text-black">
           Contact Us
-          <div className="w-20 h-1 bg-sky-500 mx-auto mt-2 rounded-full" />
+          <div className="w-40 h-1 bg-sky-500 mx-auto mt-2 rounded-full" />
         </h2>
         <form className="space-y-5">
           {["Name*", "Email*", "Phone*"].map((placeholder, idx) => (
@@ -41,7 +41,7 @@ const ContactPage: React.FC = () => {
           ></textarea>
           <button
             type="submit"
-            className="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 rounded-lg shadow-md transition-transform transform hover:-translate-y-1"
+            className="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 rounded-lg shadow-md transition-transform transform "
           >
             SEND MESSAGE
           </button>

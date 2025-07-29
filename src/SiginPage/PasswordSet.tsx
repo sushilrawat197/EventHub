@@ -26,11 +26,11 @@ export default function PasswordSet() {
 
     if (!passwordRegex.test(newPass)) {
       setError(true);
-      console.log("Must inclued spacial char",error)
+      console.log("Must inclued spacial char", error);
       return;
     }
 
-    if(newPass.length<8){
+    if (newPass.length < 8) {
       toast.error("Passwords mustbe at least 8 characters");
       return;
     }
@@ -39,7 +39,7 @@ export default function PasswordSet() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-sky-200 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">
       <div className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-lg text-center space-y-6">
         {/* Logo */}
         <div className="flex justify-center">
@@ -52,7 +52,7 @@ export default function PasswordSet() {
 
         <div>
           <h2 className="text-2xl font-bold text-black">Set Password</h2>
-          <p className="text-sm text-[#777777]">Set your password below</p>
+          <p className="text-sm text-[#777777]">Enter your password below</p>
         </div>
 
         <div className="relative">
@@ -79,7 +79,9 @@ export default function PasswordSet() {
         {error && (
           <p className="text-sm text-red-400 mt-2">
             Password must include{" "}
-            <span className="font-medium ">(A–Z, a–z, 0–9, !@#%) and be at least 8 characters.</span>
+            <span className="font-medium ">
+              (A–Z, a–z, 0–9, !@#%) and be at least 8 characters.
+            </span>
           </p>
         )}
 
@@ -88,7 +90,7 @@ export default function PasswordSet() {
           onClick={handleSubmit}
           className="hover:cursor-pointer w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition"
         >
-          Create Password
+          Confirm
         </button>
       </div>
     </div>

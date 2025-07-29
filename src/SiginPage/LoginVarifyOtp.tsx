@@ -1,40 +1,35 @@
 import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../reducers/hooks";
-import { resendOTP} from "../services/operations/authApi";
+import { resendOTP } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
 import { varifySignInOTP } from "../services/operations/authApi";
 import OtpInput from "react-otp-input";
 
 const LoginVarifyOtp: React.FC = () => {
-  const dispatch=useAppDispatch();
-  const navigate=useNavigate();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   // OTP state as array of strings
 
-const [otp, setOtp] = useState<string>("");
+  const [otp, setOtp] = useState<string>("");
 
   const userEmail = useAppSelector((state) => state.auth.userEmail);
   // console.log(userEmail);
 
- const token = localStorage.getItem("tempToken") || "";
+  const token = localStorage.getItem("tempToken") || "";
 
-
-
-
-  const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(varifySignInOTP(token,otp,dispatch,navigate));
-  }
+    dispatch(varifySignInOTP(token, otp, dispatch, navigate));
+  };
 
-
-  const resendOtpHandler=()=>{
+  const resendOtpHandler = () => {
     // console.log("Printing User Email",userEmail);
-    const email=userEmail;
-    dispatch(resendOTP(email,dispatch));
-  }
-
+    const email = userEmail;
+    dispatch(resendOTP(email, dispatch));
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -80,7 +75,7 @@ const [otp, setOtp] = useState<string>("");
 
           <button
             type="submit"
-            className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition text-base"
+            className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition text-base cursor-pointer "
           >
             Verify
           </button>
@@ -90,7 +85,7 @@ const [otp, setOtp] = useState<string>("");
             <button
               type="button"
               onClick={resendOtpHandler}
-              className="text-sky-600 hover:underline font-medium"
+              className="text-sky-600 hover:underline font-medium cursor-pointer "
             >
               Resend OTP
             </button>

@@ -1,4 +1,4 @@
-import React, { useState,useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { RiMenu3Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { useAppSelector } from "../../reducers/hooks";
@@ -13,11 +13,12 @@ const Navbar: React.FC = () => {
   const token = useAppSelector((state) => state.auth.accessToken);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<MobileDropdownState>({
-    event: false,
-    ticket: false,
-  });
+
+  const [mobileDropdownOpen, setMobileDropdownOpen] =
+    useState<MobileDropdownState>({
+      event: false,
+      ticket: false,
+    });
 
   const menuRef = useRef<HTMLDivElement>(null); // 👈 Ref for mobile menu
 
@@ -36,11 +37,9 @@ const Navbar: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [mobileMenuOpen]);
-    
-
 
   return (
-    <nav className="bg-[#0ea5e9]  fixed top-0 left-0 w-full z-50 shadow">
+    <nav className="bg-sky-500  fixed top-0 left-0 w-full z-50 shadow py-2 ">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
         {/* Logo */}
         <Link to={"/"}>
@@ -118,33 +117,38 @@ const Navbar: React.FC = () => {
         {token === null && (
           <div className="space-x-2 hidden lg:flex">
             <Link to={"/login"}>
-              <button className="bg-white text-sky-600 font-medium px-4 py-1 rounded-full border border-sky-300 hover:bg-sky-100">
+              <button className="bg-white text-sky-600 font-medium px-4 py-1 rounded-full border border-sky-300 hover:bg-sky-100 cursor-pointer">
                 Sign In
               </button>
             </Link>
           </div>
         )}
 
-        
-
-        {token !== null && <ProfileDropdown />}
-        
-
-        {/* Mobile Toggle */}
-        <div className="lg:hidden  ">
+        <div className=" flex items-center  ">
+          {/* Mobile Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-white  "
+            className="text-white  lg:hidden  "
             title="Menu"
           >
             <RiMenu3Line size={30} />
           </button>
+          {/* Profile Icon visbile  */}
+          {token !== null && (
+            <div className=" ">
+              {" "}
+              <ProfileDropdown />
+            </div>
+          )}
         </div>
       </div>
 
       {/* Mobile Nav */}
       {mobileMenuOpen && (
-        <div ref={menuRef} className="lg:hidden mt-2 bg-white shadow rounded-lg mx-4 p-4 space-y-2">
+        <div
+          ref={menuRef}
+          className="lg:hidden  bg-white shadow rounded-lg mx-3 p-4 space-y-2"
+        >
           <a href="#" className="block text-sky-600 font-medium">
             Home
           </a>
@@ -158,12 +162,12 @@ const Navbar: React.FC = () => {
                   event: !prev.event,
                 }))
               }
-              className="w-full text-left text-gray-700 font-medium"
+              className="w-full text-left text-black font-medium"
             >
               Event Categories
             </button>
             {mobileDropdownOpen.event && (
-              <div className="ml-4 mt-1 space-y-1 text-sm text-gray-600">
+              <div className="ml-4  space-y-1 text-sm text-gray-600">
                 {[
                   "Kids Events",
                   "Comedy Shows",
@@ -177,7 +181,7 @@ const Navbar: React.FC = () => {
                   <a
                     key={item}
                     href="#"
-                    className="block px-4 py-2 text-sm hover:bg-sky-500 hover:text-white"
+                    className="block px-2 py-2 text-sm hover:bg-sky-500 hover:text-white"
                   >
                     {item}
                   </a>
@@ -195,7 +199,7 @@ const Navbar: React.FC = () => {
                   ticket: !prev.ticket,
                 }))
               }
-              className="w-full text-left text-gray-700 font-medium"
+              className="w-full text-left text-black font-medium"
             >
               Tickets Categories
             </button>
@@ -216,20 +220,20 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          <a href="#" className="block text-gray-600">
+          <a href="#" className="block text-black">
             Browse Events
           </a>
-          <a href="#" className="block text-gray-600">
+          <a href="#" className="block text-black">
             Dashboard
           </a>
-          <a href="#" className="block text-gray-600">
+          <a href="#" className="block text-black">
             Contacts
           </a>
 
-          <hr className="my-2" />
+          <div className=" border border-gray-300"></div>
 
           <Link to={"/login"}>
-            <button className="w-full bg-sky-500 text-white py-1 rounded-full ">
+            <button className="w-full bg-sky-500 text-white py-2 rounded-full  text-lg">
               Sign In
             </button>
           </Link>

@@ -9,8 +9,8 @@ import OtpInput from "react-otp-input";
 const OtpVerification: React.FC = () => {
   // const OTP_LENGTH = 6;
 
-  const dispatch=useAppDispatch();
-  const navigate=useNavigate();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   // OTP state as array of strings
   // const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(""));
@@ -21,23 +21,20 @@ const OtpVerification: React.FC = () => {
 
   // Handler for OTP input change
 
-
-  const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(sendOtp(otp,userEmail,navigate));
-  }
+    dispatch(sendOtp(otp, userEmail, navigate));
+  };
 
-
-  const resendOtpHandler=()=>{
+  const resendOtpHandler = () => {
     // console.log("Printing User Email",userEmail);
-    const email=userEmail;
-    dispatch(resendOTP(email,dispatch));
-  }
-
+    const email = userEmail;
+    dispatch(resendOTP(email, dispatch));
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="min-h-screen flex items-center justify-center bg-sky-200 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm text-center">
           {/* Logo */}
           <div className="mb-6">
@@ -79,7 +76,7 @@ const OtpVerification: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition text-base"
+            className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition text-base cursor-pointer "
           >
             Verify
           </button>
@@ -89,7 +86,7 @@ const OtpVerification: React.FC = () => {
             <button
               type="button"
               onClick={resendOtpHandler}
-              className="text-sky-600 hover:underline font-medium"
+              className="text-sky-600 hover:underline font-medium cursor-pointer "
             >
               Resend OTP
             </button>

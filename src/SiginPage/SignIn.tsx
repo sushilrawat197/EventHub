@@ -4,38 +4,33 @@ import { AiFillEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import { signIn } from "../services/operations/authApi";
-import { useAppDispatch} from "../reducers/hooks";
+import { useAppDispatch } from "../reducers/hooks";
 import { useNavigate } from "react-router-dom";
 
-
-
-
 const SignIn: React.FC = () => {
-  const dispatch=useAppDispatch();
-  const navigate=useNavigate();
-
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [inputEmail, setInputEmail] = useState("");
-  const  [password,setPassword]=useState("");
+  const [password, setPassword] = useState("");
 
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // console.log("Printing Email=", email);
+    dispatch(signIn(inputEmail, password, navigate));
+    // console.log(thunk)
+  };
 
-   const submitHandler = async(e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      // console.log("Printing Email=", email);
-      dispatch(signIn(inputEmail,password, navigate));
-      // console.log(thunk)
-    };
- 
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-sky-200 to-white p-4">
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row overflow-hidden">
+    <div className="h-screen flex items-center justify-center bg-sky-100 p-4">
+      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row ">
         <div className="hidden md:flex md:w-1/2 flex-col justify-center items-center p-6 bg-sky-200">
           <img
             src="mainimg.jpg"
             alt="Slider"
-            className="max-w-[90%] h-auto  rounded-xl shadow-lg transition-all duration-500"
+            className="max-w-[90%] h-auto  rounded-xl shadow-lg"
           />
         </div>
 
@@ -58,8 +53,8 @@ const SignIn: React.FC = () => {
             <div className="relative">
               <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
               <input
-                value={inputEmail} 
-                onChange={(e)=>setInputEmail(e.target.value)}
+                value={inputEmail}
+                onChange={(e) => setInputEmail(e.target.value)}
                 type="email"
                 placeholder="Email"
                 aria-label="Email"
@@ -71,8 +66,8 @@ const SignIn: React.FC = () => {
             <div className="relative">
               <FaLock className="absolute top-3 left-3 text-gray-400" />
               <input
-              value={password}
-              onChange={(e)=>setPassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 aria-label="Password"
@@ -81,7 +76,7 @@ const SignIn: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 cursor-pointer "
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
@@ -94,17 +89,18 @@ const SignIn: React.FC = () => {
 
             {/* Forgot */}
             <div className="text-right">
-              <Link className="text-sm text-sky-600 hover:underline"  to={"/forgetpassword" }
-              >     
-                  Forgot password?
-
+              <Link
+                className="text-sm text-sky-600 hover:underline"
+                to={"/forgetpassword"}
+              >
+                Forgot password?
               </Link>
             </div>
 
             {/* Sign In Button */}
             <button
               type="submit"
-              className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-lg transition text-base"
+              className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-lg transition text-base cursor-pointer "
             >
               Sign in
             </button>
@@ -119,7 +115,7 @@ const SignIn: React.FC = () => {
             {/* Google Sign In */}
             <button
               type="button"
-              className="w-full flex items-center justify-center gap-2 border border-gray-400 py-2 rounded-lg text-sm font-medium text-[#777777] hover:bg-gray-100 transition"
+              className="w-full  cursor-pointer flex items-center justify-center gap-2 border border-gray-400 py-2 rounded-lg text-sm font-medium text-[#777777] hover:bg-gray-100 transition"
             >
               <img title="Google" src="google-icon.svg" className="w-4 h-4" />{" "}
               Sign in with Google
@@ -129,9 +125,7 @@ const SignIn: React.FC = () => {
             <p className="text-center text-sm mt-4">
               Are you new?{" "}
               <Link to={"/signup"} className="text-sky-600 hover:underline">
-               
-                  Create an Account
-              
+                Create an Account
               </Link>
             </p>
           </form>

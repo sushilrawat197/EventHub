@@ -3,8 +3,8 @@ import { BiSupport } from "react-icons/bi";
 
 const WhyChoose = () => {
   return (
-    <section className="py-16 ">
-      <div className="text-center mb-10 ">
+    <section className="py-15 ">
+      <div className="text-center mb-6  ">
         <h2 className="text-2xl md:text-2xl font-bold text-black  mb-2">
           Why Choose <span className="text-sky-500">MyTag?</span>
         </h2>
@@ -17,7 +17,7 @@ const WhyChoose = () => {
           shows, or marathons — we’ve got you covered. Sell tickets online for
           any event effortlessly.
         </p>
-        <div className="w-20 h-1 mx-auto mt-5 bg-sky-500 rounded-full"></div>
+        {/* <div className="w-50 h-1 mx-auto mt-2 bg-sky-500 rounded-full"></div> */}
       </div>
 
       {/* Cards */}
@@ -27,7 +27,7 @@ const WhyChoose = () => {
           <div className="text-sky-500 text-4xl mb-4">
             <FaVectorSquare />
           </div>
-          <h3 className="text-xl font-semibold mb-2">Flexibility</h3>
+          <h3 className="text-xl font-semibold mb-2 ">Flexibility</h3>
           <p className="text-sm text-[#777777] leading-relaxed">
             MyTag offers a user-friendly ticketing system designed to streamline
             both online and box office ticket sales — ensuring a seamless and

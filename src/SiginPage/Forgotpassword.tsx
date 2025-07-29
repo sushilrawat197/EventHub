@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const ForgotPassword: React.FC = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-sky-200 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col items-center">
         <img
           src="ticketlogo2.jpg"
@@ -33,17 +33,15 @@ const ForgotPassword: React.FC = () => {
           <div className="flex justify-between gap-2">
             <button
               type="button"
-              className="w-1/2 bg-gray-300 hover:bg-gray-400 text-black font-semibold py-2 rounded-full transition text-base"
+              className="w-1/2 bg-gray-300 hover:bg-gray-400 text-black font-semibold py-2 rounded-full transition text-base cursor-pointer "
               onClick={() => window.history.back()}
             >
               Cancel
             </button>
 
-            <div className="w-1/2 text-center bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-full transition text-base">
+            <div className="w-1/2 text-center bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-full transition text-base cursor-pointer ">
               <Link to="/otpvarification">
-                <button type="submit">
-                  Submit
-                </button>
+                <button type="submit">Submit</button>
               </Link>
             </div>
           </div>
