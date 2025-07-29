@@ -16,7 +16,7 @@ export default function PasswordSet() {
 
   const passToken = useAppSelector((state) => state.auth.pwdToken);
 
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#%]).{6,}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
   const handleSubmit = () => {
     if (newPass !== confirmPass) {
