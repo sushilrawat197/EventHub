@@ -9,6 +9,7 @@ import ContactPage from '../Components/ContactUs'
 import WhatsApppop from '../Components/Whatsapppop'
 import Footer from '../Components/Footer'
 
+
 export default function HomePage() {
   return (
 <>

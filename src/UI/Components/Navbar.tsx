@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect,useRef } from "react";
 import { RiMenu3Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { useAppSelector } from "../../reducers/hooks";
@@ -11,14 +11,33 @@ type MobileDropdownState = {
 
 const Navbar: React.FC = () => {
   const token = useAppSelector((state) => state.auth.accessToken);
-  console.log("Printing access token ", token);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-  const [mobileDropdownOpen, setMobileDropdownOpen] =
-    useState<MobileDropdownState>({
-      event: false,
-      ticket: false,
-    });
+  
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<MobileDropdownState>({
+    event: false,
+    ticket: false,
+  });
+
+  const menuRef = useRef<HTMLDivElement>(null); // 👈 Ref for mobile menu
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMobileMenuOpen(false);
+      }
+    }
+
+    if (mobileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
+    
+
 
   return (
     <nav className="bg-[#0ea5e9]  fixed top-0 left-0 w-full z-50 shadow">
@@ -106,7 +125,10 @@ const Navbar: React.FC = () => {
           </div>
         )}
 
+        
+
         {token !== null && <ProfileDropdown />}
+        
 
         {/* Mobile Toggle */}
         <div className="lg:hidden  ">
@@ -122,7 +144,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Nav */}
       {mobileMenuOpen && (
-        <div className="lg:hidden mt-2 bg-white shadow rounded-lg mx-4 p-4 space-y-2">
+        <div ref={menuRef} className="lg:hidden mt-2 bg-white shadow rounded-lg mx-4 p-4 space-y-2">
           <a href="#" className="block text-sky-600 font-medium">
             Home
           </a>

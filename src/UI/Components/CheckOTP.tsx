@@ -1,40 +1,13 @@
-import React from "react";
 import { useState } from "react";
-import { useAppDispatch } from "../reducers/hooks";
-import { resendOTP} from "../services/operations/authApi";
-import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../reducers/hooks";
-import { varifySignInOTP } from "../services/operations/authApi";
 import OtpInput from "react-otp-input";
 
-const LoginVarifyOtp: React.FC = () => {
-  const dispatch=useAppDispatch();
-  const navigate=useNavigate();
+export default function CheckOTP() {
+  const [otp, setOtp] = useState<string>("");
 
-  // OTP state as array of strings
-
-const [otp, setOtp] = useState<string>("");
-
-  const userEmail = useAppSelector((state) => state.auth.userEmail);
-  // console.log(userEmail);
-
- const token = localStorage.getItem("tempToken") || "";
-
-
-
-
-  const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
-    e.preventDefault();
-    dispatch(varifySignInOTP(token,otp,dispatch,navigate));
-  }
-
-
-  const resendOtpHandler=()=>{
-    // console.log("Printing User Email",userEmail);
-    const email=userEmail;
-    dispatch(resendOTP(email,dispatch));
-  }
-
+    const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
+      e.preventDefault();
+      console.log(otp);
+    }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -89,7 +62,7 @@ const [otp, setOtp] = useState<string>("");
             Didn’t receive code?{" "}
             <button
               type="button"
-              onClick={resendOtpHandler}
+              // onClick={resendOtpHandler}
               className="text-sky-600 hover:underline font-medium"
             >
               Resend OTP
@@ -99,6 +72,4 @@ const [otp, setOtp] = useState<string>("");
       </div>
     </form>
   );
-};
-
-export default LoginVarifyOtp;
+}

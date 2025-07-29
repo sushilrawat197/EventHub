@@ -4,33 +4,27 @@ import { useAppDispatch } from "../reducers/hooks";
 import { resendOTP, sendOtp } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
-
+import OtpInput from "react-otp-input";
 
 const OtpVerification: React.FC = () => {
-  const OTP_LENGTH = 6;
+  // const OTP_LENGTH = 6;
 
   const dispatch=useAppDispatch();
   const navigate=useNavigate();
 
   // OTP state as array of strings
-  const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(""));
+  // const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(""));
 
+  const [otp, setOtp] = useState<string>("");
   const userEmail = useAppSelector((state) => state.auth.userEmail);
   // console.log(userEmail);
 
   // Handler for OTP input change
-  const handleChange = (value: string, index: number) => {
-    const newOtp = [...otp];
-    newOtp[index] = value.slice(-1); // take only last character if user pastes
-    setOtp(newOtp);
-  };
-  
 
 
   const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
-    const otpString = otp.join("");
-    dispatch(sendOtp(otpString,userEmail,navigate));
+    dispatch(sendOtp(otp,userEmail,navigate));
   }
 
 
@@ -62,17 +56,25 @@ const OtpVerification: React.FC = () => {
           </p>
 
           <div className="flex justify-center gap-2 mb-8">
-            {Array.from({ length: OTP_LENGTH }).map((_, index) => (
-              <input
-                key={index}
-                value={otp[index]}
-                onChange={(e) => handleChange(e.target.value, index)}
-                type="text"
-                maxLength={1}
-                aria-label={`OTP digit ${index + 1}`}
-                className="w-10 h-12 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-lg"
-              />
-            ))}
+            <OtpInput
+              value={otp}
+              onChange={(otp: string) => setOtp(otp)}
+              numInputs={6}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  placeholder="-"
+                  style={{
+                    boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                  }}
+                  className="w-10 h-12 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-lg"
+                />
+              )}
+              containerStyle={{
+                justifyContent: "space-between",
+                gap: "0 6px",
+              }}
+            />
           </div>
 
           <button
