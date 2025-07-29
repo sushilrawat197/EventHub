@@ -34,4 +34,4 @@ jobs:
       - name: Transfer new dist
         run: |
           mkdir -p /home/apps/frontendserver-ticketing
-          mv ~/actions-runner/_work/Ticketing/Ticketing/dist /home/apps/frontendserver-ticketing/
+          mv ~/githubrunners/ticktingrunner/ticketrepo/Ticketing/Ticketing/dist /home/apps/frontendserver-ticketing/
