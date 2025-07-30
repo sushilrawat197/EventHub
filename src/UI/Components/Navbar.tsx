@@ -55,7 +55,7 @@ const Navbar: React.FC = () => {
         {/* Desktop Nav */}
         <ul className="hidden lg:flex bg-white  rounded-full px-4 py-1 space-x-4">
           <li className="text-sky-600 hover:text-white cursor-pointer font-medium px-2 py-1 hover:bg-sky-500 rounded-full">
-            <Link to={"/"}>Home</Link>
+            <Link to={"/"} >Home</Link>
           </li>
 
           {/* Event Categories */}
@@ -149,9 +149,9 @@ const Navbar: React.FC = () => {
           ref={menuRef}
           className="lg:hidden  bg-white shadow rounded-lg mx-3 p-4 space-y-2"
         >
-          <a href="#" className="block text-sky-600 font-medium">
+          <Link onClick={() => setMobileMenuOpen(!mobileMenuOpen)} to={"/"} className="block text-sky-600 font-medium">
             Home
-          </a>
+          </Link>
 
           {/* Mobile Event Dropdown */}
           <div>
@@ -189,6 +189,7 @@ const Navbar: React.FC = () => {
               </div>
             )}
           </div>
+
 
           {/* Mobile Ticket Dropdown */}
           <div>
@@ -232,11 +233,20 @@ const Navbar: React.FC = () => {
 
           <div className=" border border-gray-300"></div>
 
-          <Link to={"/login"}>
+                {
+                  !token &&(
+                     <Link to={"/login"} onClick={()=>setMobileMenuOpen(false)}>
             <button className="w-full bg-sky-500 text-white py-2 rounded-full  text-lg">
               Sign In
             </button>
           </Link>
+
+
+                  )
+                }
+
+         
+          
         </div>
       )}
     </nav>

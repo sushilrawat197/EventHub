@@ -24,6 +24,11 @@ export default function PasswordSet() {
       return;
     }
 
+     if(newPass.length<8){
+      toast.error("Passwords must be at least 8 characters");
+      return;
+    }
+
     if (!passwordRegex.test(newPass)) {
       setError(true);
       console.log("Must inclued spacial char", error);
@@ -31,11 +36,7 @@ export default function PasswordSet() {
     }
 
 
-    if(newPass.length<8){
-      toast.error("Passwords must be at least 8 characters");
-      return;
-    }
-
+   
     dispatch(setPassword(passToken, newPass, confirmPass, navigate));
   };
 
