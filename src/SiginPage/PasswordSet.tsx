@@ -30,8 +30,9 @@ export default function PasswordSet() {
       return;
     }
 
-    if (newPass.length < 8) {
-      toast.error("Passwords mustbe at least 8 characters");
+
+    if(newPass.length<8){
+      toast.error("Passwords must be at least 8 characters");
       return;
     }
 

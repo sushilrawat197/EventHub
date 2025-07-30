@@ -7,6 +7,7 @@ interface AuthState {
   pwdToken: string
   accessToken:null | string,  //not used
   tempToken:string //not used
+  loading:boolean
 }
 
 const initialState: AuthState = {
@@ -14,7 +15,8 @@ const initialState: AuthState = {
   userResponse:"",
   pwdToken:"",
   accessToken:null,
-  tempToken:""
+  tempToken:"",
+  loading:false
 };
 
 const authSlice = createSlice({
@@ -35,6 +37,9 @@ const authSlice = createSlice({
     },
     setTempToken(state, action: PayloadAction<string>) {
     state.tempToken = action.payload;
+    },
+    setLoading(state, action: PayloadAction<boolean>) {
+    state.loading = action.payload;
     },
   },
 });

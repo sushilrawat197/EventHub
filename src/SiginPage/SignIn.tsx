@@ -4,12 +4,17 @@ import { AiFillEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import { signIn } from "../services/operations/authApi";
-import { useAppDispatch } from "../reducers/hooks";
+import { useAppDispatch, useAppSelector} from "../reducers/hooks";
 import { useNavigate } from "react-router-dom";
+// import { ClipLoader } from "react-spinners";
+
+
 
 const SignIn: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const dispatch=useAppDispatch();
+  const navigate=useNavigate();
+  
+//  const loading = useAppSelector((state) => state.auth.loading);
 
   const [inputEmail, setInputEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -102,7 +107,9 @@ const SignIn: React.FC = () => {
               type="submit"
               className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-lg transition text-base cursor-pointer "
             >
-              Sign in
+              
+              Login
+
             </button>
 
             {/* OR Divider */}
