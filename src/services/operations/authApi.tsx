@@ -440,7 +440,7 @@ export function resetPassword(
 }
 
 export function logout(
-  token:string,
+  token:string | null,
   navigate: NavigateFunction,
   dispatch: Dispatch
   ) {

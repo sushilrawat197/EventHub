@@ -18,7 +18,8 @@ export default function ProfileDropdown() {
 
 
   return (
-    <div className="relative">
+    <form onSubmit={submitHandler} >
+ <div className="relative">
       <div
         onClick={() => setOpenMenue(true)}
         className="text-3xl bg-amber-50 rounded-full p-1 hover:cursor-pointer"
@@ -27,9 +28,11 @@ export default function ProfileDropdown() {
       </div>
         {openMenue && (
           <div onClick={() => setOpenMenue(false)} className="  absolute left-[-9px] bg-white border rounded-md  text-base">
-            <button onClick={submitHandler} type="submit" className="p-1">Logout <span><IoLogOutOutline /></span></button>
+            <button type="submit" className="p-1">Logout <span><IoLogOutOutline /></span></button>
           </div>
         )}
     </div>
+    </form>
+   
   );
 }
