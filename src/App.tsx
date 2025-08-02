@@ -1,7 +1,9 @@
 import "./App.css";
 import ForgotPassword from "./SiginPage/Forgotpassword";
+import ForgotPasswordConfirmation from "./SiginPage/ForgotPasswordCofirmation";
 import LoginVarifyOtp from "./SiginPage/LoginVarifyOtp";
 import OtpVerification from "./SiginPage/OtpVerification";
+import PasswordReset from "./SiginPage/PasswordReset";
 import PasswordSet from "./SiginPage/PasswordSet";
 import SignIn from "./SiginPage/SignIn";
 import SignUp from "./SiginPage/SignUp";
@@ -25,6 +27,8 @@ function App() {
             <Route path="/otpvarification" element={<OtpVerification />} />
             <Route path="/setpassword" element={<PasswordSet />} />
             <Route path="/varifylgoinotp" element={<LoginVarifyOtp />} />
+            <Route path="/passwordreset" element={<PasswordReset />} />
+            <Route path="/passwordresetsuccess" element={<ForgotPasswordConfirmation />} />
           </Routes>
         </div>
 

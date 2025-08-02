@@ -1,4 +1,5 @@
-"use client";
+
+import { Link } from "react-router-dom";
 
 export default function ForgotPasswordConfirmation() {
   return (
@@ -16,16 +17,18 @@ export default function ForgotPasswordConfirmation() {
           Forgot Password
         </h2>
         <p className="text-sm text-[#777777] mb-6">
-          Please check your email. Instructions for resetting your password have
-          been sent there.
+          Your password has been reset successfully. Please log in with your new password
         </p>
 
+        <Link to={"/login"}>
         <button
           type="button"
           className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-lg transition cursor-pointer "
         >
           Go to Login
         </button>
+
+        </Link>
       </div>
     </div>
   );

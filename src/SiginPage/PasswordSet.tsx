@@ -4,7 +4,8 @@ import { useAppDispatch } from "../reducers/hooks";
 import { setPassword } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
-import toast from "react-hot-toast";
+import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 
 export default function PasswordSet() {
   const dispatch = useAppDispatch();
@@ -15,8 +16,10 @@ export default function PasswordSet() {
   const [error, setError] = useState(false);
 
   const passToken = useAppSelector((state) => state.auth.pwdToken);
+  const loading = useAppSelector((state) => state.auth.loading);
 
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
   const handleSubmit = () => {
     if (newPass !== confirmPass) {
@@ -24,7 +27,7 @@ export default function PasswordSet() {
       return;
     }
 
-     if(newPass.length<8){
+    if (newPass.length < 8) {
       toast.error("Passwords must be at least 8 characters");
       return;
     }
@@ -35,9 +38,7 @@ export default function PasswordSet() {
       return;
     }
 
-
-   
-    dispatch(setPassword(passToken, newPass, confirmPass, navigate));
+    dispatch(setPassword(passToken, newPass, confirmPass, navigate, dispatch));
   };
 
   return (
@@ -60,6 +61,7 @@ export default function PasswordSet() {
         <div className="relative">
           <FaLock className="absolute top-3 left-3 text-gray-400" />
           <input
+            required
             type="text"
             value={newPass}
             onChange={(e) => setNewPass(e.target.value)}
@@ -71,6 +73,7 @@ export default function PasswordSet() {
         <div className="relative">
           <FaLock className="absolute top-3 left-3 text-gray-400" />
           <input
+            required
             type="password"
             value={confirmPass}
             onChange={(e) => setConfirmPass(e.target.value)}
@@ -87,13 +90,22 @@ export default function PasswordSet() {
           </p>
         )}
 
-        <button
-          type="button"
-          onClick={handleSubmit}
-          className="hover:cursor-pointer w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition"
-        >
-          Confirm
-        </button>
+        {!loading ? (
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            className={`w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold h-10 rounded-lg transition text-base cursor-pointer`}
+          >
+            Sign up
+          </button>
+        ) : (
+          <button
+            disabled
+            className="flex flex-col items-center justify-center w-full bg-sky-700 text-white h-10 rounded-lg transition text-base cursor-not-allowed"
+          >
+            <ClipLoader color="#ffffff" size={20} />
+          </button>
+        )}
       </div>
     </div>
   );

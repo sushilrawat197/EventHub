@@ -1,39 +1,34 @@
 import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../reducers/hooks";
-import { resendOTP, sendOtp } from "../services/operations/authApi";
+import { resendOTP } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
+import { varifySignInOTP } from "../services/operations/authApi";
 import OtpInput from "react-otp-input";
-import { ClipLoader } from "react-spinners";
 
-const OtpVerification: React.FC = () => {
-  // const OTP_LENGTH = 6;
 
+const ForgotOTPPassword: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   // OTP state as array of strings
-  // const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(""));
 
   const [otp, setOtp] = useState<string>("");
-  const [isDisabled, setIsDisabled] = useState(false); 
+
   const userEmail = useAppSelector((state) => state.auth.userEmail);
-   const loading = useAppSelector((state) => state.auth.loading);
+  const token = useAppSelector((state) => state.auth.userEmail);
+
   // console.log(userEmail);
 
-  // Handler for OTP input change
+//   const token = localStorage.getItem("tempToken") || "";
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-     if (isDisabled) return; // 👈 prevent rapid clicks
-    setIsDisabled(true); // 👈 disable button
-    dispatch(sendOtp(otp, userEmail, navigate));
-     setTimeout(() => {
-      setIsDisabled(false);
-    }, 2000);
+    dispatch(varifySignInOTP(token, otp, dispatch, navigate));
   };
 
+  
   const resendOtpHandler = () => {
     // console.log("Printing User Email",userEmail);
     const email = userEmail;
@@ -42,7 +37,7 @@ const OtpVerification: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-sky-200 p-4">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm text-center">
           {/* Logo */}
           <div className="mb-6">
@@ -82,26 +77,12 @@ const OtpVerification: React.FC = () => {
             />
           </div>
 
-
-          {!loading ? (
-              <button
-                type="submit"
-                disabled={isDisabled}
-                className={`w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold h-10 rounded-lg transition text-base ${
-                  isDisabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"
-                }`}
-              >
-                Sign up
-              </button>
-            ) : (
-              <button
-                disabled
-                className="flex flex-col items-center justify-center w-full bg-sky-700 text-white h-10 rounded-lg transition text-base cursor-not-allowed"
-              >
-                <ClipLoader color="#ffffff" size={20} />
-              </button>
-            )}
-
+          <button
+            type="submit"
+            className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition text-base cursor-pointer "
+          >
+            Verify
+          </button>
 
           <p className="text-sm text-[#777777] mt-4">
             Didn’t receive code?{" "}
@@ -119,4 +100,4 @@ const OtpVerification: React.FC = () => {
   );
 };
 
-export default OtpVerification;
+export default ForgotOTPPassword;

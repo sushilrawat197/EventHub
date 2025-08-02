@@ -4,26 +4,33 @@ import { AiFillEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import { signIn } from "../services/operations/authApi";
-import { useAppDispatch} from "../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../reducers/hooks";
 import { useNavigate } from "react-router-dom";
-// import { ClipLoader } from "react-spinners";
-
-
+import { ClipLoader } from "react-spinners";
 
 const SignIn: React.FC = () => {
-  const dispatch=useAppDispatch();
-  const navigate=useNavigate();
-  
-//  const loading = useAppSelector((state) => state.auth.loading);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const loading = useAppSelector((state) => state.auth.loading);
 
   const [inputEmail, setInputEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (isDisabled) return; // 👈 prevent rapid clicks
+
+    setIsDisabled(true);
+
     e.preventDefault();
     // console.log("Printing Email=", email);
-    dispatch(signIn(inputEmail, password, navigate));
+    dispatch(signIn(inputEmail, password, navigate, dispatch));
     // console.log(thunk)
+     // 👇 re-enable button after 2 seconds
+    setTimeout(() => {
+      setIsDisabled(false);
+    }, 2000);
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -58,6 +65,7 @@ const SignIn: React.FC = () => {
             <div className="relative">
               <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
               <input
+                required
                 value={inputEmail}
                 onChange={(e) => setInputEmail(e.target.value)}
                 type="email"
@@ -71,6 +79,7 @@ const SignIn: React.FC = () => {
             <div className="relative">
               <FaLock className="absolute top-3 left-3 text-gray-400" />
               <input
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type={showPassword ? "text" : "password"}
@@ -103,19 +112,25 @@ const SignIn: React.FC = () => {
             </div>
 
             {/* Sign In Button */}
-            
+
+            {!loading ? (
               <button
                 type="submit"
-                
-                className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-lg transition text-base cursor-pointer "
-              > 
+                 disabled={isDisabled}
+                className={`w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold h-10 rounded-lg transition text-base ${
+                  isDisabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+                }`}
+              >
                 Login
-
               </button>
-
-            
-
-            
+            ) : (
+              <button
+                disabled
+                className="flex flex-col items-center justify-center w-full bg-sky-700 text-white h-10 rounded-lg transition text-base cursor-pointer select-none "
+              >
+                <ClipLoader color="#ffffff" size={20} />
+              </button>
+            )}
 
             {/* OR Divider */}
             <div className="flex items-center my-4">
