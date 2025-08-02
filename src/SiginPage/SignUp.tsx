@@ -43,10 +43,10 @@ export default function SignUp() {
             </div>
 
             {/* Heading */}
-            <p className="text-sm text-[#777777] text-center mb-4 flex flex-col gap-1">
+            <div className="text-sm text-[#777777] text-center mb-4 flex flex-col gap-1">
               Enter your email address
               <PopUpMessage/>
-            </p>
+            </div>
 
             {/* Input */}
             <div className="relative mb-10">

@@ -13,12 +13,19 @@ export default function PopUpMessage() {
     dispatch(setMassage(null));
   };
 
+  // Reset hidden whenever massage changes
+  useEffect(() => {
+    if (massage) {
+      setHidden(false);
+    }
+  }, [massage]);
+
+  // Clean up on unmount
   useEffect(() => {
     return () => {
-      dispatch(setMassage(null)); // 👈 Clean up when popUpMassage unmounts
+      dispatch(setMassage(null));
     };
   }, []);
-  
 
   return (
     <>
