@@ -32,7 +32,7 @@ const ForgotOTPPassword: React.FC = () => {
   const resendOtpHandler = () => {
     // console.log("Printing User Email",userEmail);
     const email = userEmail;
-    dispatch(resendOTP(email, dispatch));
+    dispatch(resendOTP(email));
   };
 
   return (
