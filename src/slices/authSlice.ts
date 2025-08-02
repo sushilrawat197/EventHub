@@ -7,16 +7,18 @@ interface AuthState {
   pwdToken: string
   accessToken:null | string,  //not used
   tempToken:string //not used
-  loading:boolean
+  loading:boolean,
+  massage:null| string 
 }
 
 const initialState: AuthState = {
   userEmail: "",
   userResponse:"",
   pwdToken:"",
-  accessToken:null,
+  accessToken:null, //localStorage.getItem("token")
   tempToken:"",
-  loading:false
+  loading:false,
+  massage:null
 };
 
 const authSlice = createSlice({
@@ -41,8 +43,11 @@ const authSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
     state.loading = action.payload;
     },
+    setMassage(state, action: PayloadAction<null | string>) {
+    state.massage = action.payload;
+    },
   },
 });
 
-export const { userEmail,userResponse,setPwdToken,setAccessToken,setTempToken, setLoading } = authSlice.actions;
+export const { userEmail,userResponse,setPwdToken,setAccessToken,setTempToken, setLoading,setMassage} = authSlice.actions;
 export default authSlice.reducer;

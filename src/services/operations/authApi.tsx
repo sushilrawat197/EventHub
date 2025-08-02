@@ -6,11 +6,12 @@ import {
   userEmail,
   setAccessToken,
   setLoading,
+  setMassage,
 } from "../../slices/authSlice";
 import type { Dispatch } from "@reduxjs/toolkit";
 const {
   SIGNUP_API,
-  SEND_OTP_API,
+ VARIFY_SIGNUP_OTP_API,
   RESEND_OTP,
   SET_PASS_API,
   LOGIN_API,
@@ -33,6 +34,9 @@ type SendOtpApiResponse = {
   };
 };
 
+
+
+// VARIFY_SIGNUP_OTP_API
 export function sendOtp(
   otpString: string,
   email: string,
@@ -45,7 +49,7 @@ export function sendOtp(
       dispatch(setLoading(true));
       const response = await apiConnector<SendOtpApiResponse>({
         method: "POST",
-        url: SEND_OTP_API,
+        url: VARIFY_SIGNUP_OTP_API,
         bodyData: { emailOrMsisdn: email, otp: otpString },
         headers: {
           "X-Client-Source": "OTHER",
@@ -57,10 +61,12 @@ export function sendOtp(
       console.log("PWToken", response?.data?.data?.setPWDToken);
 
       dispatch(setPwdToken(response?.data?.data?.setPWDToken));
+      localStorage.setItem("otpContext", "signup");
 
       navigate("/setpassword");
 
       toast.success("Verification Successfull");
+
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorData = error;
@@ -76,6 +82,7 @@ export function sendOtp(
     dispatch(setLoading(false));
   };
 }
+
 
 export function signUp(
   email: string,
@@ -107,13 +114,15 @@ export function signUp(
       toast.success(data.message, { pauseOnHover: false });
 
       console.log(data.message); // Optional
-      navigate("/otpvarification");
+      navigate("/otpverification");
       dispatch(userEmail(email));
+      
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
         const errorData = error;
-        toast.error(error.response?.data?.message);
+        dispatch(setMassage(error.response?.data?.message))
+        // toast.error(error.response?.data?.message);
         console.log("SIGNUP API ERROR RESPONSE............", errorData);
       } else {
         console.log(
@@ -127,7 +136,7 @@ export function signUp(
 }
 
 
-export function resendOTP(email: string, navigate: NavigateFunction) {
+export function resendOTP(email: string) {
   return async (): Promise<void> => {
     try {
       const response = await apiConnector<{
@@ -149,7 +158,6 @@ export function resendOTP(email: string, navigate: NavigateFunction) {
       toast.success(data.message);
 
       console.log(data.message); // Optional
-      navigate("/otpvarification");
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
@@ -212,7 +220,7 @@ export function setPassword(
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
         const errorData = error;
-        toast.error(error.response?.data?.message);
+        // toast.error(error.response?.data?.message);
         console.log("SIGNUP API ERROR RESPONSE............", errorData);
       } else {
         console.log(
@@ -224,6 +232,8 @@ export function setPassword(
     dispatch(setLoading(false));
   };
 }
+
+
 
 export function signIn(
   email: string,
@@ -238,7 +248,7 @@ export function signIn(
         message: string
         status:string;
         data: {
-          tempToken: string;
+          accessToken: string;
         };
       }>({
         method: "POST",
@@ -257,13 +267,14 @@ export function signIn(
       const data = response.data;
       console.log("SIGNUP API RESPONSE............", data);
 
-      const Token = response.data.data.tempToken;
-
-      localStorage.setItem("tempToken", Token);
-
+      const Token = response.data.data.accessToken;
+     
+      // localStorage.setItem("tempToken", Token);
        if (response.data.status==="SUCCESS") {
-        toast.success("OTP sent successfully");
-        navigate("/varifylgoinotp");
+         dispatch(setAccessToken(Token));
+        // localStorage.setItem("accessToken", Token);
+        // toast.success("OTP sent successfully");
+        navigate("/");
       }
 
       // console.log(data.message); // Optional
@@ -314,7 +325,7 @@ export function varifySignInOTP(
       const Token = response.data.data.accessToken;
       dispatch(setAccessToken(Token));
 
-      toast.success("OTP varificaion Successfull");
+      toast.success("OTP verificaion Successfull");
       navigate("/");
       // console.log(data.message); // Optional
       // navigate("/varifylgoinotp");
@@ -425,7 +436,6 @@ export function resetPassword(
 
       
       // console.log(data.message); // Optional
-
       navigate("/passwordresetsuccess");
 
     } catch (error) {

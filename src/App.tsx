@@ -24,7 +24,7 @@ function App() {
             <Route path="/login" element={<SignIn />} />
             <Route path="/forgetpassword" element={<ForgotPassword />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/otpvarification" element={<OtpVerification />} />
+            <Route path="/otpverification" element={<OtpVerification />} />
             <Route path="/setpassword" element={<PasswordSet />} />
             <Route path="/varifylgoinotp" element={<LoginVarifyOtp />} />
             <Route path="/passwordreset" element={<PasswordReset />} />

@@ -6,6 +6,9 @@ import { TbPasswordUser } from "react-icons/tb";
 import { useAppDispatch } from "../reducers/hooks";
 import { resetPassword } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
+import { setMassage } from "../slices/authSlice";
+import hasSequentialPattern from "./hasSequentialPattern";
+import PopUpMessage from "./popUpMassage";
 
 export default function PasswordReset() {
   const dispatch=useAppDispatch();
@@ -18,12 +21,33 @@ export default function PasswordReset() {
  
 
   const token = useAppSelector((state) => state.auth.pwdToken);
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
   
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+     e.preventDefault();
+       if (newPass !== confirmPass) {
+      dispatch(setMassage("Passwords do not match."));
+      // toast.error("Passwords do not match.");
+      return;
+    } else if (newPass.length < 8) {
+      dispatch(setMassage("Passwords must be at least 8 characters."));
+      // toast.error("Passwords must be at least 8 characters");
+      return;
+    } else if (!passwordRegex.test(newPass)) {
+      // setError(true);
+      dispatch(setMassage("Passwords inclued spacial char."));
+      // console.log("Must inclued spacial char", error);
+      return;
+    } else if (hasSequentialPattern(newPass)) {
+      // setHidden(true);
+      dispatch(setMassage("Password should not contains sequential letters or numbers"));
+      console.log("Password should not contains sequential letters or numbers");
+    }
+
        if (isDisabled) return; // 👈 prevent rapid clicks
 
-    setIsDisabled(true);
-      e.preventDefault();
+      setIsDisabled(true);
+      
       
       dispatch(resetPassword(token,newPass, confirmPass,otp,navigate));
        setTimeout(() => {
@@ -48,10 +72,12 @@ export default function PasswordReset() {
           </div>
 
           <div>
+            
             <h2 className="text-2xl font-bold text-black">Change Password</h2>
-            <p className="text-sm text-[#777777]">
+            <p className="text-sm text-[#777777] pb-1">
               Set your new password below
             </p>
+            <PopUpMessage/>
           </div>
 
           <div className="relative">
@@ -79,6 +105,7 @@ export default function PasswordReset() {
           <div className="relative">
             <TbPasswordUser className="absolute top-3 left-3 text-gray-400" />
             <input
+            required
               type="text"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}

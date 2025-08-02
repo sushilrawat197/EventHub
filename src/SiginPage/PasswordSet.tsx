@@ -5,7 +5,10 @@ import { setPassword } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
 import { ClipLoader } from "react-spinners";
-import { toast } from "react-toastify";
+import hasSequentialPattern from "./hasSequentialPattern";
+import { setMassage } from "../slices/authSlice";
+// import { ImCross } from "react-icons/im";
+import PopUpMessage from "./popUpMassage";
 
 export default function PasswordSet() {
   const dispatch = useAppDispatch();
@@ -13,33 +16,54 @@ export default function PasswordSet() {
 
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
-  const [error, setError] = useState(false);
+  // const [error, setError] = useState(false);
+  // const [hidden, setHidden] = useState(false);
 
   const passToken = useAppSelector((state) => state.auth.pwdToken);
   const loading = useAppSelector((state) => state.auth.loading);
+  // const massage = useAppSelector((state) => state.auth.massage);
 
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
+
+
   const handleSubmit = () => {
     if (newPass !== confirmPass) {
-      toast.error("Passwords do not match.");
+      dispatch(setMassage("Passwords do not match."));
+      // toast.error("Passwords do not match.");
       return;
-    }
-
-    if (newPass.length < 8) {
-      toast.error("Passwords must be at least 8 characters");
+    } else if (newPass.length < 8) {
+      dispatch(setMassage("Passwords must be at least 8 characters."));
+      // toast.error("Passwords must be at least 8 characters");
       return;
-    }
-
-    if (!passwordRegex.test(newPass)) {
-      setError(true);
-      console.log("Must inclued spacial char", error);
+    } else if (!passwordRegex.test(newPass)) {
+      // setError(true);
+      dispatch(setMassage("Passwords inclued spacial char."));
+      // console.log("Must inclued spacial char", error);
       return;
+    } else if (hasSequentialPattern(newPass)) {
+      // setHidden(true);
+      dispatch(setMassage("Password should not contains sequential letters or numbers"));
+      console.log("Password should not contains sequential letters or numbers");
     }
 
     dispatch(setPassword(passToken, newPass, confirmPass, navigate, dispatch));
   };
+
+
+
+  // function clickHandler(){
+  //   setHidden(false);
+  //   dispatch(setMassage(null));
+  // }
+
+// useEffect(() => {
+//   return () => {
+//     dispatch(setMassage(null)); // 👈 Clean up when SignUp unmounts
+//   };
+// }, []);
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">
@@ -56,6 +80,7 @@ export default function PasswordSet() {
         <div>
           <h2 className="text-2xl font-bold text-black">Set Password</h2>
           <p className="text-sm text-[#777777]">Enter your password below</p>
+         <PopUpMessage/>
         </div>
 
         <div className="relative">
@@ -81,14 +106,15 @@ export default function PasswordSet() {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
           />
         </div>
-        {error && (
+
+        {/* {error && (
           <p className="text-sm text-red-400 mt-2">
             Password must include{" "}
             <span className="font-medium ">
               (A–Z, a–z, 0–9, !@#%) and be at least 8 characters.
             </span>
           </p>
-        )}
+        )} */}
 
         {!loading ? (
           <button

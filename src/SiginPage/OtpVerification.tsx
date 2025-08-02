@@ -18,6 +18,7 @@ const OtpVerification: React.FC = () => {
 
   const [otp, setOtp] = useState<string>("");
   const [isDisabled, setIsDisabled] = useState(false); 
+
   const userEmail = useAppSelector((state) => state.auth.userEmail);
    const loading = useAppSelector((state) => state.auth.loading);
   // console.log(userEmail);
@@ -37,8 +38,10 @@ const OtpVerification: React.FC = () => {
   const resendOtpHandler = () => {
     // console.log("Printing User Email",userEmail);
     const email = userEmail;
-    dispatch(resendOTP(email, dispatch));
+    dispatch(resendOTP(email));
   };
+
+  
 
   return (
     <form onSubmit={handleSubmit}>

@@ -4,6 +4,7 @@ import { signUp } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../reducers/hooks";
 import { ClipLoader } from "react-spinners";
+import PopUpMessage from "./popUpMassage";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -14,20 +15,18 @@ export default function SignUp() {
 
   const loading = useAppSelector((state) => state.auth.loading);
 
+
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (isDisabled) return; // 👈 prevent rapid clicks
-
     setIsDisabled(true); // 👈 disable button
-    
     dispatch(signUp(email, navigate, dispatch));
-
     // 👇 re-enable button after 2 seconds
     setTimeout(() => {
       setIsDisabled(false);
     }, 2000);
   };
+
 
   return (
     <form onSubmit={submitHandler}>
@@ -44,8 +43,9 @@ export default function SignUp() {
             </div>
 
             {/* Heading */}
-            <p className="text-sm text-[#777777] text-center mb-6">
+            <p className="text-sm text-[#777777] text-center mb-4 flex flex-col gap-1">
               Enter your email address
+              <PopUpMessage/>
             </p>
 
             {/* Input */}
@@ -67,7 +67,9 @@ export default function SignUp() {
                 type="submit"
                 disabled={isDisabled}
                 className={`w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold h-10 rounded-lg transition text-base ${
-                  isDisabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+                  isDisabled
+                    ? "cursor-not-allowed opacity-70"
+                    : "cursor-pointer"
                 }`}
               >
                 Sign up
@@ -80,7 +82,6 @@ export default function SignUp() {
                 <ClipLoader color="#ffffff" size={20} />
               </button>
             )}
-            
           </div>
 
           {/* Right Image Section */}

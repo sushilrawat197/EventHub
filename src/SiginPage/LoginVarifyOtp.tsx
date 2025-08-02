@@ -6,30 +6,61 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
 import { varifySignInOTP } from "../services/operations/authApi";
 import OtpInput from "react-otp-input";
+import { useEffect } from "react";
 
 const LoginVarifyOtp: React.FC = () => {
+  const userEmail = useAppSelector((state) => state.auth.userEmail);
+  const token = localStorage.getItem("tempToken") || "";
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // OTP state as array of strings
-
   const [otp, setOtp] = useState<string>("");
 
-  const userEmail = useAppSelector((state) => state.auth.userEmail);
-  // console.log(userEmail);
+  // === New State for Timer ===
+  const [timer, setTimer] = useState<number>(120); // 2 minutes in seconds
 
-  const token = localStorage.getItem("tempToken") || "";
+  // === Timer useEffect ===
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prevTime) => prevTime - 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [timer]);
+
+
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
+    
     dispatch(varifySignInOTP(token, otp, dispatch, navigate));
+
   };
 
+
+
   const resendOtpHandler = () => {
-    // console.log("Printing User Email",userEmail);
     const email = userEmail;
-    dispatch(resendOTP(email, dispatch));
+    dispatch(resendOTP(email));
+    setTimer(120); // Reset timer to 2 minutes again
   };
+
+
+  // Format time mm:ss
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = (time % 60).toString().padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -82,13 +113,19 @@ const LoginVarifyOtp: React.FC = () => {
 
           <p className="text-sm text-[#777777] mt-4">
             Didn’t receive code?{" "}
-            <button
-              type="button"
-              onClick={resendOtpHandler}
-              className="text-sky-600 hover:underline font-medium cursor-pointer "
-            >
-              Resend OTP
-            </button>
+            {timer > 0 ? (
+              <span className="text-blue-600 opacity-50 font-medium ml-1 cursor-pointer underline">
+                Resend OTP in {formatTime(timer)}
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={resendOtpHandler}
+                className="text-sky-600 hover:underline font-medium cursor-pointer"
+              >
+                Resend OTP
+              </button>
+            )}
           </p>
         </div>
       </div>

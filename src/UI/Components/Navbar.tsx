@@ -10,7 +10,16 @@ type MobileDropdownState = {
 };
 
 const Navbar: React.FC = () => {
+
   const token = useAppSelector((state) => state.auth.accessToken);
+  console.log("Printing accessToken ",token);
+//  const [token, setToken] = useState<string | null>(null);
+
+
+// useEffect(() => {
+//   const localToken = localStorage.getItem("accessToken");
+//   setToken(localToken);
+// }, []);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
