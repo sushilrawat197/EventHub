@@ -11,13 +11,14 @@ import {
 import type { Dispatch } from "@reduxjs/toolkit";
 const {
   SIGNUP_API,
- VARIFY_SIGNUP_OTP_API,
+  VARIFY_SIGNUP_OTP_API,
   RESEND_OTP,
   SET_PASS_API,
   LOGIN_API,
   VARIFY_LOGIN_OTP,
   FORGOT_PASSWORD_OTP,
-  RESET_PASSWORD
+  RESET_PASSWORD,
+  LOGOUT_API,
 } = endpoints;
 
 import axios from "axios";
@@ -34,15 +35,11 @@ type SendOtpApiResponse = {
   };
 };
 
-
-
 // VARIFY_SIGNUP_OTP_API
 export function sendOtp(
   otpString: string,
   email: string,
-  navigate: NavigateFunction,
-  
-  
+  navigate: NavigateFunction
 ) {
   return async (dispatch: Dispatch): Promise<void> => {
     try {
@@ -66,7 +63,6 @@ export function sendOtp(
       navigate("/setpassword");
 
       toast.success("Verification Successfull");
-
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorData = error;
@@ -83,7 +79,6 @@ export function sendOtp(
   };
 }
 
-
 export function signUp(
   email: string,
   navigate: NavigateFunction,
@@ -95,7 +90,7 @@ export function signUp(
       const response = await apiConnector<{
         success: boolean;
         message: string;
-        status:string;
+        status: string;
       }>({
         method: "POST",
         url: SIGNUP_API,
@@ -116,12 +111,11 @@ export function signUp(
       console.log(data.message); // Optional
       navigate("/otpverification");
       dispatch(userEmail(email));
-      
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
         const errorData = error;
-        dispatch(setMassage(error.response?.data?.message))
+        dispatch(setMassage(error.response?.data?.message));
         // toast.error(error.response?.data?.message);
         console.log("SIGNUP API ERROR RESPONSE............", errorData);
       } else {
@@ -135,14 +129,13 @@ export function signUp(
   };
 }
 
-
 export function resendOTP(email: string) {
   return async (): Promise<void> => {
     try {
       const response = await apiConnector<{
         success: boolean;
         message: string;
-        status:string;
+        status: string;
       }>({
         method: "POST",
         url: RESEND_OTP,
@@ -174,7 +167,6 @@ export function resendOTP(email: string) {
   };
 }
 
-
 export function setPassword(
   pwdSetToken: string,
   password: string,
@@ -187,7 +179,7 @@ export function setPassword(
       dispatch(setLoading(true));
       const response = await apiConnector<{
         message: string;
-        status:string;
+        status: string;
         data: {
           accessToken: string;
           refreshToken: string;
@@ -209,13 +201,12 @@ export function setPassword(
 
       // const token=response.data.data.accessToken
       // dispatch(setAccessToken(token));
-      if (response.data.status==="SUCCESS") {
+      if (response.data.status === "SUCCESS") {
         toast.success("Registration successful!");
         navigate("/login");
       }
 
       console.log(data.message); // Optional
-      
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
@@ -233,8 +224,6 @@ export function setPassword(
   };
 }
 
-
-
 export function signIn(
   email: string,
   password: string,
@@ -245,8 +234,8 @@ export function signIn(
     try {
       dispatch(setLoading(true));
       const response = await apiConnector<{
-        message: string
-        status:string;
+        message: string;
+        status: string;
         data: {
           accessToken: string;
         };
@@ -268,17 +257,16 @@ export function signIn(
       console.log("SIGNUP API RESPONSE............", data);
 
       const Token = response.data.data.accessToken;
-     
+
       // localStorage.setItem("tempToken", Token);
-       if (response.data.status==="SUCCESS") {
-         dispatch(setAccessToken(Token));
-        // localStorage.setItem("accessToken", Token);
+      if (response.data.status === "SUCCESS") {
+        localStorage.setItem("accessToken", Token);
+        dispatch(setAccessToken(Token));
         // toast.success("OTP sent successfully");
         navigate("/");
       }
 
       // console.log(data.message); // Optional
-      
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
@@ -306,7 +294,7 @@ export function varifySignInOTP(
     try {
       const response = await apiConnector<{
         message: string;
-        status:string;
+        status: string;
         data: {
           accessToken: string;
         };
@@ -345,11 +333,8 @@ export function varifySignInOTP(
   };
 }
 
-
-
-
 export function forgot_passwordOtp(
-  email:string,
+  email: string,
   dispatch: Dispatch,
   navigate: NavigateFunction
 ) {
@@ -358,14 +343,14 @@ export function forgot_passwordOtp(
       dispatch(setLoading(true));
       const response = await apiConnector<{
         message: string;
-        status:string;
+        status: string;
         data: {
           setPWDToken: string;
         };
       }>({
         method: "POST",
         url: FORGOT_PASSWORD_OTP,
-        bodyData: { emailOrMsisdn:email },
+        bodyData: { emailOrMsisdn: email },
         headers: {
           "X-Client-Source": "OTHER",
         },
@@ -374,14 +359,13 @@ export function forgot_passwordOtp(
       const data = response.data;
       console.log("SIGNUP API RESPONSE............", data);
 
-      const pwdToken= response.data.data.setPWDToken;
+      const pwdToken = response.data.data.setPWDToken;
       dispatch(setPwdToken(pwdToken));
 
       toast.success("OTP sent successfully");
       // console.log(data.message); // Optional
 
       navigate("/passwordreset");
-
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
@@ -399,27 +383,30 @@ export function forgot_passwordOtp(
   };
 }
 
-
-
 export function resetPassword(
-  token:string,
-  password:string,
-  cnfPass:string,
-  otp:string,
+  token: string,
+  password: string,
+  cnfPass: string,
+  otp: string,
   navigate: NavigateFunction
 ) {
   return async (): Promise<void> => {
     try {
       const response = await apiConnector<{
         message: string;
-        status:string;
+        status: string;
         data: {
           setPWDToken: string;
         };
       }>({
         method: "POST",
-        url:RESET_PASSWORD,
-        bodyData: { pwdSetToken:token, password:password,confirmedPassword:cnfPass,otp },
+        url: RESET_PASSWORD,
+        bodyData: {
+          pwdSetToken: token,
+          password: password,
+          confirmedPassword: cnfPass,
+          otp,
+        },
         headers: {
           "X-Client-Source": "OTHER",
         },
@@ -430,14 +417,12 @@ export function resetPassword(
 
       // const pwdToken= response.data.data.setPWDToken;
       // dispatch(setPwdToken(pwdToken));
-      if(data.status==="SUCCESS"){
+      if (data.status === "SUCCESS") {
         toast.success("Password changed successfully");
       }
 
-      
       // console.log(data.message); // Optional
       navigate("/passwordresetsuccess");
-
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
@@ -449,6 +434,42 @@ export function resetPassword(
           "SIGNUP API ERROR............",
           "An unknown error occurred."
         );
+      }
+    }
+  };
+}
+
+export function logout(
+  token:string,
+  navigate: NavigateFunction,
+  dispatch: Dispatch
+  ) {
+  return async (): Promise<void> => {
+    try {
+      // Make logout API call if needed
+      const response = await apiConnector({
+        method: "POST",
+        url: LOGOUT_API, // ✅ Use the correct endpoint
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+      });
+
+      console.log(response);
+
+      // ✅ Remove token and other sensitive data from localStorage/cookies
+      localStorage.removeItem("token"); // or your actual key
+      dispatch(setAccessToken(null)); // if you're storing user data
+      // Optionally clear cookies if you're using cookies
+
+      // ✅ Navigate to login/home page
+      navigate("/");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Logout Error:", error.response?.data?.message);
+      } else {
+        console.error("Unexpected Logout Error:", error);
       }
     }
   };

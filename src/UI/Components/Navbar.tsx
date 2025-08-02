@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { RiMenu3Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { useAppSelector } from "../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../reducers/hooks";
 import ProfileDropdown from "./ProfileDropdown";
+import { setAccessToken } from "../../slices/authSlice";
 
 type MobileDropdownState = {
   event: boolean;
@@ -11,10 +12,16 @@ type MobileDropdownState = {
 
 const Navbar: React.FC = () => {
 
+  const dispatch=useAppDispatch();
   const token = useAppSelector((state) => state.auth.accessToken);
   console.log("Printing accessToken ",token);
 //  const [token, setToken] = useState<string | null>(null);
-
+useEffect(() => {
+  const savedToken = localStorage.getItem("accessToken");
+  if (savedToken) {
+    dispatch(setAccessToken(savedToken));
+  }
+}, []);
 
 // useEffect(() => {
 //   const localToken = localStorage.getItem("accessToken");

@@ -9,7 +9,8 @@ export const endpoints = {
   LOGIN_API:BASE_URL + "api/v1/auth/login",
   VARIFY_LOGIN_OTP:BASE_URL + "api/v1/auth/verify-otp",
   FORGOT_PASSWORD_OTP:BASE_URL + "api/v1/auth/forgot-passwordOtp",
-  RESET_PASSWORD:BASE_URL + "api/v1/auth/verify-forgot-passwordOtp"
+  RESET_PASSWORD:BASE_URL + "api/v1/auth/verify-forgot-passwordOtp",
+  LOGOUT_API:BASE_URL + "api/v1/auth/logout"
 }
 
 
