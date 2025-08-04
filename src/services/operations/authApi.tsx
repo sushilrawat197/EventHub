@@ -490,7 +490,7 @@ export function logout(
         url: LOGOUT_API, // ✅ Use the correct endpoint
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
