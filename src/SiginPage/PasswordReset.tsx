@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { useAppSelector } from "../reducers/hooks";
 import { TbPasswordUser } from "react-icons/tb";
@@ -11,21 +11,32 @@ import hasSequentialPattern from "./hasSequentialPattern";
 import PopUpMessage from "./popUpMassage";
 
 export default function PasswordReset() {
-  const dispatch=useAppDispatch();
-  const navigate=useNavigate()
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const [otp, setOtp] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
+  const [ready, setReady] = useState(false); // 👈 block render initially
 
- 
+  const pwdToken = useAppSelector((state) => state.auth.pwdToken);
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
-  const token = useAppSelector((state) => state.auth.pwdToken);
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-  
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-     e.preventDefault();
-       if (newPass !== confirmPass) {
+  useEffect(() => {
+    if (!pwdToken) {
+      navigate("/login");
+    } else {
+      setReady(true); // ✅ allow render once token exists
+    }
+  }, [pwdToken, navigate]);
+
+  if (!ready) return null; // ⛔️ Block rendering before token check
+
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (newPass !== confirmPass) {
       dispatch(setMassage("Passwords do not match."));
       // toast.error("Passwords do not match.");
       return;
@@ -40,21 +51,21 @@ export default function PasswordReset() {
       return;
     } else if (hasSequentialPattern(newPass)) {
       // setHidden(true);
-      dispatch(setMassage("Password should not contains sequential letters or numbers"));
+      dispatch(
+        setMassage("Password should not contains sequential letters or numbers")
+      );
       console.log("Password should not contains sequential letters or numbers");
     }
 
-       if (isDisabled) return; // 👈 prevent rapid clicks
+    if (isDisabled) return; // 👈 prevent rapid clicks
 
-      setIsDisabled(true);
-      
-      
-      dispatch(resetPassword(token,newPass, confirmPass,otp,navigate));
-       setTimeout(() => {
+    setIsDisabled(true);
+
+    dispatch(resetPassword(pwdToken, newPass, confirmPass, otp, navigate));
+    setTimeout(() => {
       setIsDisabled(false);
     }, 2000);
-     
-    };
+  };
 
   // console.log(token);
 
@@ -72,12 +83,11 @@ export default function PasswordReset() {
           </div>
 
           <div>
-            
             <h2 className="text-2xl font-bold text-black">Change Password</h2>
             <p className="text-sm text-[#777777] pb-1">
               Set your new password below
             </p>
-            <PopUpMessage/>
+            <PopUpMessage />
           </div>
 
           <div className="relative">
@@ -105,7 +115,7 @@ export default function PasswordReset() {
           <div className="relative">
             <TbPasswordUser className="absolute top-3 left-3 text-gray-400" />
             <input
-            required
+              required
               type="text"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}

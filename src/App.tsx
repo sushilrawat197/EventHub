@@ -1,4 +1,5 @@
-import "./App.css";
+
+import OpenRoute from "./route/OpenRoute";
 import ForgotPassword from "./SiginPage/Forgotpassword";
 import ForgotPasswordConfirmation from "./SiginPage/ForgotPasswordCofirmation";
 import LoginVarifyOtp from "./SiginPage/LoginVarifyOtp";
@@ -10,6 +11,8 @@ import SignUp from "./SiginPage/SignUp";
 import Navbar from "./UI/Components/Navbar";
 import HomePage from "./UI/Pages/HomePage";
 import { Route, Routes } from "react-router-dom";
+
+
 
 function App() {
   return (
@@ -24,7 +27,7 @@ function App() {
             <Route path="/login" element={<SignIn />} />
             <Route path="/forgetpassword" element={<ForgotPassword />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/otpverification" element={<OtpVerification />} />
+            <Route path="/otpverification" element={<OpenRoute><OtpVerification /></OpenRoute>} />
             <Route path="/setpassword" element={<PasswordSet />} />
             <Route path="/varifylgoinotp" element={<LoginVarifyOtp />} />
             <Route path="/passwordreset" element={<PasswordReset />} />

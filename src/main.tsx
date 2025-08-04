@@ -13,19 +13,14 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter basename="/ticketing">
-
-
         <App />
-
         <ToastContainer 
         position="bottom-right" 
         autoClose={1000} 
         closeOnClick={false}
         theme="light"
         className={"px-2"}
-        />
-        
-        
+        />        
       </BrowserRouter>
     </Provider>
   </StrictMode>

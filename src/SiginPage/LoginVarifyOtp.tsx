@@ -2,18 +2,18 @@ import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../reducers/hooks";
 import { resendOTP } from "../services/operations/authApi";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
-import { varifySignInOTP } from "../services/operations/authApi";
+// import { varifySignInOTP } from "../services/operations/authApi";
 import OtpInput from "react-otp-input";
 import { useEffect } from "react";
 
 const LoginVarifyOtp: React.FC = () => {
   const userEmail = useAppSelector((state) => state.auth.userEmail);
-  const token = localStorage.getItem("tempToken") || "";
+  // const token = localStorage.getItem("tempToken") || "";
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [otp, setOtp] = useState<string>("");
 
@@ -39,7 +39,7 @@ const LoginVarifyOtp: React.FC = () => {
 
     e.preventDefault();
     
-    dispatch(varifySignInOTP(token, otp, dispatch, navigate));
+    // dispatch(varifySignInOTP(token, otp, dispatch, navigate));
 
   };
 

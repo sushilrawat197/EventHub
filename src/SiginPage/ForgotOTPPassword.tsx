@@ -2,22 +2,22 @@ import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../reducers/hooks";
 import { resendOTP } from "../services/operations/authApi";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
-import { varifySignInOTP } from "../services/operations/authApi";
+// import { varifySignInOTP } from "../services/operations/authApi";
 import OtpInput from "react-otp-input";
 
 
 const ForgotOTPPassword: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // OTP state as array of strings
 
   const [otp, setOtp] = useState<string>("");
 
   const userEmail = useAppSelector((state) => state.auth.userEmail);
-  const token = useAppSelector((state) => state.auth.userEmail);
+  // const token = useAppSelector((state) => state.auth.userEmail);
 
   // console.log(userEmail);
 
@@ -25,7 +25,7 @@ const ForgotOTPPassword: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(varifySignInOTP(token, otp, dispatch, navigate));
+    // dispatch(varifySignInOTP(token, otp, dispatch, navigate));
   };
 
   

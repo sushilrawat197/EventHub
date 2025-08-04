@@ -3,22 +3,28 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
   userEmail: string;
-  userResponse:string; //not used
+  userResponse: string; //not used
   pwdToken: string
-  accessToken:null | string,  //not used
-  tempToken:string //not used
-  loading:boolean,
-  massage:null| string 
+  accessToken: null | string,
+  tempToken: string //not used
+  loading: boolean,
+  massage: null | string,
+  otpContext: string,
+  refreshToken:string,
+  accessTokenExpiry:string
 }
 
 const initialState: AuthState = {
   userEmail: "",
-  userResponse:"",
-  pwdToken:"",
-  accessToken:null, //localStorage.getItem("token")
-  tempToken:"",
-  loading:false,
-  massage:null
+  userResponse: "",
+  pwdToken: "",
+  accessToken: null, //localStorage.getItem("token")
+  tempToken: "",
+  loading: false,
+  massage: null,
+  otpContext: "",
+  refreshToken:"",
+  accessTokenExpiry:""
 };
 
 const authSlice = createSlice({
@@ -32,22 +38,42 @@ const authSlice = createSlice({
       state.userResponse = action.payload;
     },
     setPwdToken(state, action: PayloadAction<string>) {
-    state.pwdToken = action.payload;
+      state.pwdToken = action.payload;
     },
     setAccessToken(state, action: PayloadAction<null | string>) {
-    state.accessToken = action.payload;
+      state.accessToken = action.payload;
     },
     setTempToken(state, action: PayloadAction<string>) {
-    state.tempToken = action.payload;
+      state.tempToken = action.payload;
     },
     setLoading(state, action: PayloadAction<boolean>) {
-    state.loading = action.payload;
+      state.loading = action.payload;
     },
     setMassage(state, action: PayloadAction<null | string>) {
-    state.massage = action.payload;
+      state.massage = action.payload;
+    },
+    setOtpContext(state, action: PayloadAction<string>) {
+      state.otpContext = action.payload;
+    },
+    setRefreshToken(state, action: PayloadAction<string>) {
+      state.refreshToken = action.payload;
+    },
+    setAccessTokenExpiry(state, action: PayloadAction<string>) {
+      state.accessTokenExpiry = action.payload;
     },
   },
 });
 
-export const { userEmail,userResponse,setPwdToken,setAccessToken,setTempToken, setLoading,setMassage} = authSlice.actions;
+export const {
+  userEmail,
+  userResponse,
+  setPwdToken,
+  setAccessToken,
+  setTempToken,
+  setLoading,
+  setMassage,
+  setOtpContext,
+  setRefreshToken,
+  setAccessTokenExpiry
+} = authSlice.actions;
 export default authSlice.reducer;

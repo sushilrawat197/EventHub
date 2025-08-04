@@ -7,6 +7,7 @@ import { signIn } from "../services/operations/authApi";
 import { useAppDispatch, useAppSelector } from "../reducers/hooks";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import PopUpMessage from "./popUpMassage";
 
 const SignIn: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -48,12 +49,17 @@ const SignIn: React.FC = () => {
 
         {/* Right Form */}
         <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10 flex flex-col items-center justify-center">
+          
           {/* Logo */}
           <img
             src="ticketlogo2.jpg"
             alt="Ticket  Logo"
             className="w-24 h-12 object-contain mb-4   "
           />
+          <div className="w-full px-11 text-center pb-3">
+            
+          </div>
+          
 
           {/* <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center ">
             Sign in
@@ -62,6 +68,8 @@ const SignIn: React.FC = () => {
 
           <form onSubmit={submitHandler} className="w-full max-w-sm space-y-3">
             {/* Email */}
+            
+            <PopUpMessage />
             <div className="relative">
               <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
               <input

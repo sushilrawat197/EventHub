@@ -27,6 +27,8 @@ const ForgotPassword: React.FC = () => {
     }, 2000);
   };
 
+  
+
   return (
    
       <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">

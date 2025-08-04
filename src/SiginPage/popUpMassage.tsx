@@ -30,7 +30,7 @@ export default function PopUpMessage() {
   return (
     <>
       {!hidden && massage && (
-        <p className="bg-red-400 opacity-80 text-sm text-white py-3 px-4 rounded-sm relative hover:cursor-pointer">
+        <p className="bg-red-400 opacity-80 text-sm text-white py-3 px-4 rounded-sm relative hover:cursor-pointer text-center">
           {massage}
           <span
             onClick={clickHandler}

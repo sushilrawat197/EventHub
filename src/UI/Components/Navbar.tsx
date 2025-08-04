@@ -3,7 +3,11 @@ import { RiMenu3Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../reducers/hooks";
 import ProfileDropdown from "./ProfileDropdown";
-import { setAccessToken } from "../../slices/authSlice";
+import {
+  setAccessToken,
+  setAccessTokenExpiry,
+  setRefreshToken,
+} from "../../slices/authSlice";
 
 type MobileDropdownState = {
   event: boolean;
@@ -11,22 +15,31 @@ type MobileDropdownState = {
 };
 
 const Navbar: React.FC = () => {
-
-  const dispatch=useAppDispatch();
+  const dispatch = useAppDispatch();
   const token = useAppSelector((state) => state.auth.accessToken);
-  console.log("Printing accessToken ",token);
-//  const [token, setToken] = useState<string | null>(null);
-useEffect(() => {
-  const savedToken = localStorage.getItem("accessToken");
-  if (savedToken) {
-    dispatch(setAccessToken(savedToken));
-  }
-}, []);
+  console.log("Printing accessToken ", token);
+  //  const [token, setToken] = useState<string | null>(null);
 
-// useEffect(() => {
-//   const localToken = localStorage.getItem("accessToken");
-//   setToken(localToken);
-// }, []);
+  useEffect(() => {
+    const savedToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    const accessTokenExpiry = localStorage.getItem("accessTokenExpiry");
+    
+    if (savedToken) {
+      dispatch(setAccessToken(savedToken));
+    }
+    if (refreshToken) {
+      dispatch(setRefreshToken(refreshToken));
+    }
+    if (accessTokenExpiry) {
+      dispatch(setAccessTokenExpiry(accessTokenExpiry));
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   const localToken = localStorage.getItem("accessToken");
+  //   setToken(localToken);
+  // }, []);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
@@ -54,6 +67,8 @@ useEffect(() => {
     };
   }, [mobileMenuOpen]);
 
+  useEffect(() => {}, []);
+
   return (
     <nav className="bg-sky-500  fixed top-0 left-0 w-full z-50 shadow py-2 ">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
@@ -71,7 +86,7 @@ useEffect(() => {
         {/* Desktop Nav */}
         <ul className="hidden lg:flex bg-white  rounded-full px-4 py-1 space-x-4">
           <li className="text-sky-600 hover:text-white cursor-pointer font-medium px-2 py-1 hover:bg-sky-500 rounded-full">
-            <Link to={"/"} >Home</Link>
+            <Link to={"/"}>Home</Link>
           </li>
 
           {/* Event Categories */}
@@ -165,7 +180,11 @@ useEffect(() => {
           ref={menuRef}
           className="lg:hidden  bg-white shadow rounded-lg mx-3 p-4 space-y-2"
         >
-          <Link onClick={() => setMobileMenuOpen(!mobileMenuOpen)} to={"/"} className="block text-sky-600 font-medium">
+          <Link
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            to={"/"}
+            className="block text-sky-600 font-medium"
+          >
             Home
           </Link>
 
@@ -205,7 +224,6 @@ useEffect(() => {
               </div>
             )}
           </div>
-
 
           {/* Mobile Ticket Dropdown */}
           <div>
@@ -249,20 +267,13 @@ useEffect(() => {
 
           <div className=" border border-gray-300"></div>
 
-                {
-                  !token &&(
-                     <Link to={"/login"} onClick={()=>setMobileMenuOpen(false)}>
-            <button className="w-full bg-sky-500 text-white py-2 rounded-full  text-lg">
-              Sign In
-            </button>
-          </Link>
-
-
-                  )
-                }
-
-         
-          
+          {!token && (
+            <Link to={"/login"} onClick={() => setMobileMenuOpen(false)}>
+              <button className="w-full bg-sky-500 text-white py-2 rounded-full  text-lg">
+                Sign In
+              </button>
+            </Link>
+          )}
         </div>
       )}
     </nav>

@@ -7,6 +7,9 @@ import {
   setAccessToken,
   setLoading,
   setMassage,
+  setAccessTokenExpiry,
+  setRefreshToken,
+  // setOtpContext,
 } from "../../slices/authSlice";
 import type { Dispatch } from "@reduxjs/toolkit";
 const {
@@ -15,7 +18,7 @@ const {
   RESEND_OTP,
   SET_PASS_API,
   LOGIN_API,
-  VARIFY_LOGIN_OTP,
+  // VARIFY_LOGIN_OTP,
   FORGOT_PASSWORD_OTP,
   RESET_PASSWORD,
   LOGOUT_API,
@@ -24,6 +27,7 @@ const {
 import axios from "axios";
 // import { toast } from "react-hot-toast"
 import { toast } from "react-toastify";
+
 
 type SendOtpApiResponse = {
   status: string;
@@ -34,6 +38,9 @@ type SendOtpApiResponse = {
     setPWDTokenExpiry: string;
   };
 };
+
+
+
 
 // VARIFY_SIGNUP_OTP_API
 export function sendOtp(
@@ -54,19 +61,18 @@ export function sendOtp(
       });
 
       console.log("SENDOTP API RESPONSE............", response);
+      // console.log("PWToken", response?.data?.data?.setPWDToken);
 
-      console.log("PWToken", response?.data?.data?.setPWDToken);
-
-      dispatch(setPwdToken(response?.data?.data?.setPWDToken));
-      localStorage.setItem("otpContext", "signup");
-
-      navigate("/setpassword");
-
-      toast.success("Verification Successfull");
+      if (response.data.status == "SUCCESS") {
+        dispatch(setPwdToken(response?.data?.data?.setPWDToken));
+        navigate("/setpassword");
+        toast.success("Verification Successfull");
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorData = error;
-        toast.error(error.response?.data?.message);
+        dispatch(setMassage(error.response?.data?.message))
+        // toast.error(error.response?.data?.message);
         console.log("SIGNUP API ERROR RESPONSE............", errorData);
       } else {
         console.log(
@@ -79,6 +85,8 @@ export function sendOtp(
   };
 }
 
+
+//USER SIGNUP API
 export function signUp(
   email: string,
   navigate: NavigateFunction,
@@ -108,9 +116,15 @@ export function signUp(
       console.log("SIGNUP API RESPONSE............", data);
       toast.success(data.message, { pauseOnHover: false });
 
-      console.log(data.message); // Optional
-      navigate("/otpverification");
-      dispatch(userEmail(email));
+      if (response.data.status == "SUCCESS") {
+        // localStorage.setItem("otpContext", "signupOTP");
+        // dispatch(setOtpContext("signupOTP"));
+        dispatch(userEmail(email));
+        navigate("/otpverification");
+        console.log(data.message); // Optional
+      }
+
+
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
@@ -128,6 +142,8 @@ export function signUp(
     dispatch(setLoading(false));
   };
 }
+
+
 
 export function resendOTP(email: string) {
   return async (): Promise<void> => {
@@ -166,6 +182,8 @@ export function resendOTP(email: string) {
     }
   };
 }
+
+
 
 export function setPassword(
   pwdSetToken: string,
@@ -224,6 +242,8 @@ export function setPassword(
   };
 }
 
+
+
 export function signIn(
   email: string,
   password: string,
@@ -233,11 +253,15 @@ export function signIn(
   return async (): Promise<void> => {
     try {
       dispatch(setLoading(true));
+
       const response = await apiConnector<{
         message: string;
         status: string;
         data: {
+          accessTokenExpiry:string;
           accessToken: string;
+          refreshToken: string;
+          profileRequired: boolean;
         };
       }>({
         method: "POST",
@@ -253,85 +277,93 @@ export function signIn(
         },
       });
 
+      
+
+
       const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
+      console.log("LOGIN API RESPONSE............", data);
 
-      const Token = response.data.data.accessToken;
+      const { accessToken, refreshToken} = data.data;
 
-      // localStorage.setItem("tempToken", Token);
-      if (response.data.status === "SUCCESS") {
-        localStorage.setItem("accessToken", Token);
-        dispatch(setAccessToken(Token));
-        // toast.success("OTP sent successfully");
+      if (data.status === "SUCCESS") {
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken); // ✅ Store refresh token
+        localStorage.setItem("accessTokenExpiry",response.data.data.accessTokenExpiry ); // ✅ Store refresh token
+        
+        dispatch(setAccessToken(accessToken));
+        dispatch(setRefreshToken(response.data.data.refreshToken));
+        dispatch(setAccessTokenExpiry(response.data.data.accessTokenExpiry));
+        
         navigate("/");
       }
 
-      // console.log(data.message); // Optional
+
+
     } catch (error) {
-      // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
-        const errorData = error;
-        toast.error(error.response?.data?.message);
-        console.log("SIGNUP API ERROR RESPONSE............", errorData);
+        dispatch(setMassage(error.response?.data?.message || "Login failed"));
+        // toast.error(error.response?.data?.message || "Login failed");
+        console.log("LOGIN API ERROR RESPONSE............", error);
       } else {
-        console.log(
-          "SIGNUP API ERROR............",
-          "An unknown error occurred."
-        );
+        console.log("LOGIN ERROR............", "An unknown error occurred.");
+        toast.error("Something went wrong");
       }
-    }
-    dispatch(setLoading(false));
-  };
-}
-
-export function varifySignInOTP(
-  tempToken: string,
-  otp: string,
-  dispatch: Dispatch,
-  navigate: NavigateFunction
-) {
-  return async (): Promise<void> => {
-    try {
-      const response = await apiConnector<{
-        message: string;
-        status: string;
-        data: {
-          accessToken: string;
-        };
-      }>({
-        method: "POST",
-        url: VARIFY_LOGIN_OTP,
-        bodyData: { tempToken, otp },
-        headers: {
-          "X-Client-Source": "OTHER",
-        },
-      });
-
-      const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
-
-      const Token = response.data.data.accessToken;
-      dispatch(setAccessToken(Token));
-
-      toast.success("OTP verificaion Successfull");
-      navigate("/");
-      // console.log(data.message); // Optional
-      // navigate("/varifylgoinotp");
-    } catch (error) {
-      // ✅ Use AxiosError to get error response
-      if (axios.isAxiosError(error)) {
-        const errorData = error;
-        toast.error(error.response?.data?.message);
-        console.log("SIGNUP API ERROR RESPONSE............", errorData);
-      } else {
-        console.log(
-          "SIGNUP API ERROR............",
-          "An unknown error occurred."
-        );
-      }
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 }
+
+// export function varifySignInOTP(
+//   tempToken: string,
+//   otp: string,
+//   dispatch: Dispatch,
+//   navigate: NavigateFunction
+// ) {
+//   return async (): Promise<void> => {
+//     try {
+//       const response = await apiConnector<{
+//         message: string;
+//         status: string;
+//         data: {
+//           accessToken: string;
+//         };
+//       }>({
+//         method: "POST",
+//         url: VARIFY_LOGIN_OTP,
+//         bodyData: { tempToken, otp },
+//         headers: {
+//           "X-Client-Source": "OTHER",
+//         },
+//       });
+
+//       const data = response.data;
+//       console.log("SIGNUP API RESPONSE............", data);
+
+//       const Token = response.data.data.accessToken;
+//       dispatch(setAccessToken(Token));
+
+//       toast.success("OTP verificaion Successfull");
+//       navigate("/");
+//       // console.log(data.message); // Optional
+//       // navigate("/varifylgoinotp");
+//     } catch (error) {
+//       // ✅ Use AxiosError to get error response
+//       if (axios.isAxiosError(error)) {
+//         const errorData = error;
+//         toast.error(error.response?.data?.message);
+//         console.log("SIGNUP API ERROR RESPONSE............", errorData);
+//       } else {
+//         console.log(
+//           "SIGNUP API ERROR............",
+//           "An unknown error occurred."
+//         );
+//       }
+//     }
+//   };
+// }
+
+
 
 export function forgot_passwordOtp(
   email: string,
@@ -383,6 +415,8 @@ export function forgot_passwordOtp(
   };
 }
 
+
+
 export function resetPassword(
   token: string,
   password: string,
@@ -391,6 +425,7 @@ export function resetPassword(
   navigate: NavigateFunction
 ) {
   return async (): Promise<void> => {
+    // dispatch(setLoading(true));
     try {
       const response = await apiConnector<{
         message: string;
@@ -436,14 +471,17 @@ export function resetPassword(
         );
       }
     }
+    // dispatch(setLoading(false));
   };
 }
 
+
+
 export function logout(
-  token:string | null,
+  token: string | null,
   navigate: NavigateFunction,
   dispatch: Dispatch
-  ) {
+) {
   return async (): Promise<void> => {
     try {
       // Make logout API call if needed
@@ -452,19 +490,23 @@ export function logout(
         url: LOGOUT_API, // ✅ Use the correct endpoint
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          // Authorization: `Bearer ${token}`,
         },
       });
 
       console.log(response);
-
       // ✅ Remove token and other sensitive data from localStorage/cookies
-      localStorage.removeItem("token"); // or your actual key
+      localStorage.removeItem("accessToken"); // or your actual key
+      localStorage.removeItem("refreshToken"); // or your actual key
+      localStorage.removeItem("accessTokenExpiry"); // or your actual key
       dispatch(setAccessToken(null)); // if you're storing user data
+      dispatch(setAccessTokenExpiry(""));
+      dispatch(setRefreshToken(""));
+      
       // Optionally clear cookies if you're using cookies
 
       // ✅ Navigate to login/home page
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Logout Error:", error.response?.data?.message);
