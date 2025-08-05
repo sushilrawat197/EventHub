@@ -50,7 +50,11 @@ import axios, {
   AxiosHeaders,
 } from "axios";
 import { store } from "../reducers/store";
-import { setAccessToken, setAccessTokenExpiry, setRefreshToken } from "../slices/authSlice";
+import {
+  setAccessToken,
+  setAccessTokenExpiry,
+  setRefreshToken,
+} from "../slices/authSlice";
 import { refreshAccessToken } from "../token/refreshTokenAccess";
 // import { logout } from "./operations/authApi";
 import { type NavigateFunction } from "react-router-dom";
@@ -79,11 +83,15 @@ axiosInstance.interceptors.request.use(
 
     //ACCESS TOKEN AND EXPIRY
     const token = state.auth.accessToken || localStorage.getItem("accessToken");
-    const expiryString =state.auth.accessTokenExpiry || localStorage.getItem("accessTokenExpiry");
+    const expiryString =
+      state.auth.accessTokenExpiry || localStorage.getItem("accessTokenExpiry");
 
     //REFRESH TOKEN AND EXPIRY
-    const refreshToken =state.auth.refreshToken || localStorage.getItem("refreshToken");
-    const refreshTokenExpiry =state.auth.refreshTokenExpiry ||localStorage.getItem("refreshTokenExpiry");
+    const refreshToken =
+      state.auth.refreshToken || localStorage.getItem("refreshToken");
+    const refreshTokenExpiry =
+      state.auth.refreshTokenExpiry ||
+      localStorage.getItem("refreshTokenExpiry");
 
     console.log("expiryString", expiryString);
     console.log("refreshToken", refreshToken);
@@ -117,20 +125,29 @@ axiosInstance.interceptors.request.use(
         localStorage.setItem("accessToken", newTokenData.accessToken);
 
         store.dispatch(setRefreshToken(newTokenData.refreshToken));
-        localStorage.setItem("refreshToken",newTokenData.refreshToken);
+        localStorage.setItem("refreshToken", newTokenData.refreshToken);
 
         config.headers = AxiosHeaders.from({
           ...(config.headers || {}),
           Authorization: `Bearer ${newTokenData.accessToken}`,
         });
       } catch (error) {
-              localStorage.removeItem("accessToken"); // or your actual key
-              localStorage.removeItem("refreshToken"); // or your actual key
-              localStorage.removeItem("accessTokenExpiry"); // or your actual key
-              store.dispatch(setAccessToken(null)); // if you're storing user data
-              store.dispatch(setAccessTokenExpiry(""));
-              store.dispatch(setRefreshToken(""));
-              navigateRef("/");
+        // const status = error?.response?.status;
+
+        // if (status === 401) {
+
+          localStorage.removeItem("accessToken"); 
+          localStorage.removeItem("refreshToken"); 
+          localStorage.removeItem("accessTokenExpiry"); 
+          store.dispatch(setAccessToken(null));
+          store.dispatch(setAccessTokenExpiry(""));
+          store.dispatch(setRefreshToken(""));
+
+          if (navigateRef) {
+            navigateRef("/login"); // or wherever we want to redirect
+          }
+        // }
+
         throw error;
       }
     } else if (token) {

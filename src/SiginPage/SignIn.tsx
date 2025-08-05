@@ -149,9 +149,11 @@ const SignIn: React.FC = () => {
 
             {/* Google Sign In */}
             <button
+            onClick={()=>window.open("https://thedemonstrate.com/GenericAuthService/oauth2/authorization/google")}
               type="button"
               className="w-full  cursor-pointer flex items-center justify-center gap-2 border border-gray-400 py-2 rounded-lg text-sm font-medium text-[#777777] hover:bg-gray-100 transition"
             >
+
               <img title="Google" src="google-icon.svg" className="w-4 h-4" />{" "}
               Sign in with Google
             </button>

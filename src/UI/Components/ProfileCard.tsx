@@ -39,7 +39,7 @@ export default function ProfileCard() {
             </button>
           </div>
 
-          <p className="text-sm text-gray-500">Mobile Number:</p>
+          <p className="text-sm text-blackfont-semibold">Mobile Number:</p>
         </div>
 
         {/* Personal Details */}
