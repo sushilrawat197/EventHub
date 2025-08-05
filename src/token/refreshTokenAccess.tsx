@@ -3,10 +3,11 @@ import axios, { type AxiosResponse } from "axios";
 interface RefreshTokenResponse {
   accessToken: string;
   expiresIn: number; // Or the correct type if you have a different field
+  refreshToken:string;
 }
-
 export const refreshAccessToken = async (
-  refreshToken: string
+  refreshToken: string,
+  
 ): Promise<RefreshTokenResponse> => {
   try {
     const response: AxiosResponse<RefreshTokenResponse> = await axios.post(

@@ -50,9 +50,9 @@ import axios, {
   AxiosHeaders,
 } from "axios";
 import { store } from "../reducers/store";
-import { setAccessToken } from "../slices/authSlice";
+import { setAccessToken, setAccessTokenExpiry, setRefreshToken } from "../slices/authSlice";
 import { refreshAccessToken } from "../token/refreshTokenAccess";
-import { logout } from "./operations/authApi";
+// import { logout } from "./operations/authApi";
 import { type NavigateFunction } from "react-router-dom";
 // import { access } from "fs";
 // 1. Create Axios instance
@@ -76,14 +76,14 @@ axiosInstance.interceptors.request.use(
     }
 
     const state = store.getState();
+
+    //ACCESS TOKEN AND EXPIRY
     const token = state.auth.accessToken || localStorage.getItem("accessToken");
-    const refreshToken =
-      state.auth.refreshToken || localStorage.getItem("refreshToken");
-    const expiryString =
-      state.auth.accessTokenExpiry || localStorage.getItem("accessTokenExpiry");
-    const refreshTokenExpiry =
-      state.auth.refreshTokenExpiry ||
-      localStorage.getItem("refreshTokenExpiry");
+    const expiryString =state.auth.accessTokenExpiry || localStorage.getItem("accessTokenExpiry");
+
+    //REFRESH TOKEN AND EXPIRY
+    const refreshToken =state.auth.refreshToken || localStorage.getItem("refreshToken");
+    const refreshTokenExpiry =state.auth.refreshTokenExpiry ||localStorage.getItem("refreshTokenExpiry");
 
     console.log("expiryString", expiryString);
     console.log("refreshToken", refreshToken);
@@ -116,12 +116,21 @@ axiosInstance.interceptors.request.use(
         store.dispatch(setAccessToken(newTokenData.accessToken));
         localStorage.setItem("accessToken", newTokenData.accessToken);
 
+        store.dispatch(setRefreshToken(newTokenData.refreshToken));
+        localStorage.setItem("refreshToken",newTokenData.refreshToken);
+
         config.headers = AxiosHeaders.from({
           ...(config.headers || {}),
           Authorization: `Bearer ${newTokenData.accessToken}`,
         });
       } catch (error) {
-        store.dispatch(logout(token, navigateRef, store.dispatch));
+              localStorage.removeItem("accessToken"); // or your actual key
+              localStorage.removeItem("refreshToken"); // or your actual key
+              localStorage.removeItem("accessTokenExpiry"); // or your actual key
+              store.dispatch(setAccessToken(null)); // if you're storing user data
+              store.dispatch(setAccessTokenExpiry(""));
+              store.dispatch(setRefreshToken(""));
+              navigateRef("/");
         throw error;
       }
     } else if (token) {

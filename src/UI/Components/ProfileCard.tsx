@@ -26,8 +26,9 @@ export default function ProfileCard() {
           <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-2 sm:gap-0">
             <div>
               <p className="text-sm text-black">Email Address:</p>
+              
               <div className="flex flex-wrap items-center text-[#777777] text-[15px] mt-1">
-                <span>sumitra.rfj9955@gmail.com</span>
+                <span>vinit.panwar2003@gmail.com</span>
                 <span className="flex items-center ml-4 text-green-700 gap-1 mt-1 sm:mt-0">
                   Verified <RiVerifiedBadgeFill size={18} />
                 </span>
