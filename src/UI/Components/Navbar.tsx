@@ -70,8 +70,8 @@ const Navbar: React.FC = () => {
   useEffect(() => {}, []);
 
   return (
-    <nav className="bg-sky-500  fixed top-0 left-0 w-full z-50 shadow py-2 ">
-      <div className="container mx-auto flex items-center justify-between px-4 py-3">
+    <nav className="bg-sky-500  fixed top-0 left-0 w-full z-50 shadow py-2">
+      <div className="container mx-auto flex items-center justify-between px-4 py-3 ">
         {/* Logo */}
         <Link to={"/"}>
           <div className="flex items-center ">
@@ -166,7 +166,7 @@ const Navbar: React.FC = () => {
           </button>
           {/* Profile Icon visbile  */}
           {token !== null && (
-            <div className=" ">
+            <div className=" w-full ">
               {" "}
               <ProfileDropdown />
             </div>

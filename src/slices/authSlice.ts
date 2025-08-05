@@ -11,7 +11,8 @@ interface AuthState {
   massage: null | string,
   otpContext: string,
   refreshToken:string,
-  accessTokenExpiry:string
+  accessTokenExpiry:string,
+  refreshTokenExpiry:string
 }
 
 const initialState: AuthState = {
@@ -24,7 +25,8 @@ const initialState: AuthState = {
   massage: null,
   otpContext: "",
   refreshToken:"",
-  accessTokenExpiry:""
+  accessTokenExpiry:"",
+  refreshTokenExpiry:""
 };
 
 const authSlice = createSlice({
@@ -61,6 +63,9 @@ const authSlice = createSlice({
     setAccessTokenExpiry(state, action: PayloadAction<string>) {
       state.accessTokenExpiry = action.payload;
     },
+    setRefreshTokenExpiry(state, action: PayloadAction<string>) {
+      state.refreshTokenExpiry = action.payload;
+    },
   },
 });
 
@@ -74,6 +79,7 @@ export const {
   setMassage,
   setOtpContext,
   setRefreshToken,
-  setAccessTokenExpiry
+  setAccessTokenExpiry,
+  setRefreshTokenExpiry
 } = authSlice.actions;
 export default authSlice.reducer;

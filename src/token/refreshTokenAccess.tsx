@@ -12,7 +12,7 @@ export const refreshAccessToken = async (
     const response: AxiosResponse<RefreshTokenResponse> = await axios.post(
       "https://thedemonstrate.com/GenericAuthService/api/v1/auth/refreshToken",
       {
-        refreshToken,
+        refreshToken:refreshToken,
       }
     );
     return response.data;

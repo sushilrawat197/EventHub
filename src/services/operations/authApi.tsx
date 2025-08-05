@@ -9,6 +9,7 @@ import {
   setMassage,
   setAccessTokenExpiry,
   setRefreshToken,
+  setRefreshTokenExpiry,
   // setOtpContext,
 } from "../../slices/authSlice";
 import type { Dispatch } from "@reduxjs/toolkit";
@@ -259,9 +260,10 @@ export function signIn(
         status: string;
         data: {
           accessTokenExpiry:string;
+          refreshTokenExpiry:string;
+          profileRequired: boolean;
           accessToken: string;
           refreshToken: string;
-          profileRequired: boolean;
         };
       }>({
         method: "POST",
@@ -289,10 +291,12 @@ export function signIn(
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken); // ✅ Store refresh token
         localStorage.setItem("accessTokenExpiry",response.data.data.accessTokenExpiry ); // ✅ Store refresh token
+        localStorage.setItem("refreshTokenExpiry",response.data.data.refreshTokenExpiry ); // ✅ Store refresh token
         
         dispatch(setAccessToken(accessToken));
         dispatch(setRefreshToken(response.data.data.refreshToken));
         dispatch(setAccessTokenExpiry(response.data.data.accessTokenExpiry));
+        dispatch(setRefreshTokenExpiry(response.data.data.refreshTokenExpiry));
         
         navigate("/");
       }

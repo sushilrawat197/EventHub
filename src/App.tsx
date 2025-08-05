@@ -9,6 +9,7 @@ import PasswordSet from "./SiginPage/PasswordSet";
 import SignIn from "./SiginPage/SignIn";
 import SignUp from "./SiginPage/SignUp";
 import Navbar from "./UI/Components/Navbar";
+import ProfileCard from "./UI/Components/ProfileCard";
 import HomePage from "./UI/Pages/HomePage";
 import { Route, Routes } from "react-router-dom";
 
@@ -32,6 +33,7 @@ function App() {
             <Route path="/varifylgoinotp" element={<LoginVarifyOtp />} />
             <Route path="/passwordreset" element={<PasswordReset />} />
             <Route path="/passwordresetsuccess" element={<ForgotPasswordConfirmation />} />
+            <Route path="/editprofile" element={<ProfileCard />} />
           </Routes>
         </div>
 

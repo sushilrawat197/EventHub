@@ -68,22 +68,26 @@ axiosInstance.interceptors.request.use(
   async (
     config: InternalAxiosRequestConfig
   ): Promise<InternalAxiosRequestConfig> => {
+    // ✅ Step 1: Skip auth if custom flag is set
+    if (config.headers?.skipAuth) {
+      // Remove the custom flag before sending the request
+      delete config.headers.skipAuth;
+      return config;
+    }
 
-          // ✅ Step 1: Skip auth if custom flag is set
-          if (config.headers?.skipAuth) {
-          // Remove the custom flag before sending the request
-          delete config.headers.skipAuth;
-          return config;
-        }
-        
     const state = store.getState();
     const token = state.auth.accessToken || localStorage.getItem("accessToken");
     const refreshToken =
       state.auth.refreshToken || localStorage.getItem("refreshToken");
     const expiryString =
       state.auth.accessTokenExpiry || localStorage.getItem("accessTokenExpiry");
+    const refreshTokenExpiry =
+      state.auth.refreshTokenExpiry ||
+      localStorage.getItem("refreshTokenExpiry");
 
     console.log("expiryString", expiryString);
+    console.log("refreshToken", refreshToken);
+    console.log("refreshTokenExpiry", refreshTokenExpiry);
 
     let expiry: Date | null = null;
     if (expiryString) {
@@ -95,12 +99,18 @@ axiosInstance.interceptors.request.use(
 
     const now = new Date();
 
-    console.log("expiry time:", expiry?.toLocaleTimeString());
+    let refreshExpiryDate: Date | null = null;
+
+    if (refreshTokenExpiry) {
+      refreshExpiryDate = new Date(refreshTokenExpiry);
+    }
+
+    console.log("accessTokenExpiry:", expiry?.toLocaleTimeString());
     console.log("now time:", now.toLocaleTimeString());
+    console.log("refreshTokenExpiry:", refreshExpiryDate?.toLocaleTimeString());
 
     if (expiry && now >= expiry && refreshToken) {
       try {
-
         const newTokenData = await refreshAccessToken(refreshToken);
 
         store.dispatch(setAccessToken(newTokenData.accessToken));
