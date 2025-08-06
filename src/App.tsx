@@ -17,7 +17,9 @@ import { Route, Routes } from "react-router-dom";
 
 
 function App() {
+
     useAuthRestore();
+    
   return (
     <>
       <div className="font-lato">
