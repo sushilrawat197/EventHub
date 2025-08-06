@@ -9,10 +9,12 @@ import {
 
 
 let refreshTimer: NodeJS.Timeout | null = null;
-export function startAutoTokenRefresh(
-  accessTokenExpiry: string,
-  refreshToken: string
-) {
+
+
+//START AUTO TOKEN REFRESH FUNCTION 🏃‍♂️
+
+export function startAutoTokenRefresh( accessTokenExpiry: string,  refreshToken: string ) {
+  
   const expiryTime = new Date(accessTokenExpiry).getTime();
   const currentTime = new Date().getTime();
   const timeUntilExpiry = expiryTime - currentTime;
@@ -29,12 +31,15 @@ export function startAutoTokenRefresh(
     refreshTimer = null;
   }
 
-  
+
   // ✅ 1. If still time left before expiry
   if (refreshTime > 0) {
+
     refreshTimer = setTimeout(async () => {
       await refreshTokenAndReschedule(refreshToken);
+      
     }, refreshTime);
+
   }
 
   // ✅ 2. If already expired or too close, refresh immediately
@@ -46,6 +51,7 @@ export function startAutoTokenRefresh(
 
 async function refreshTokenAndReschedule(refreshToken: string) {
   try {
+
     const newTokens = await refreshAccessToken(refreshToken);
 
     store.dispatch(setAccessToken(newTokens.accessToken));

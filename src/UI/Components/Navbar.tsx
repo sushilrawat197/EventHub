@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import {useAppSelector } from "../../reducers/hooks";
 import ProfileDropdown from "./profile/ProfileDropdown";
 
-import { useAuthRestore } from "../../token/callingAutoTokenRefresh";
+// import { useAuthRestore } from "../../token/callingAutoTokenRefresh";
 
 type MobileDropdownState = {
   event: boolean;
@@ -12,8 +12,6 @@ type MobileDropdownState = {
 };
 
 const Navbar: React.FC = () => {
-
-  useAuthRestore();
 
   const token = useAppSelector((state) => state.auth.accessToken);
 

@@ -8,12 +8,16 @@ import PasswordReset from "./SiginPage/PasswordReset";
 import PasswordSet from "./SiginPage/PasswordSet";
 import SignIn from "./SiginPage/SignIn";
 import SignUp from "./SiginPage/SignUp";
+import { useAuthRestore } from "./token/callingAutoTokenRefresh";
 import Navbar from "./UI/Components/Navbar";
 import ProfileCard from "./UI/Components/profile/ProfileCard";
 import HomePage from "./UI/Pages/HomePage";
 import { Route, Routes } from "react-router-dom";
 
+
+
 function App() {
+    useAuthRestore();
   return (
     <>
       <div className="font-lato">
