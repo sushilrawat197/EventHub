@@ -10,11 +10,13 @@ import {
 
 let refreshTimer: NodeJS.Timeout | null = null;
 
+
 // START AUTO TOKEN REFRESH FUNCTION 🏃‍♂️
 export async function startAutoTokenRefresh(
   accessTokenExpiry: string,
   refreshToken: string
 ) {
+
   // Input validation
   if (!accessTokenExpiry || !refreshToken) {
     console.error("❌ Invalid parameters provided to startAutoTokenRefresh");
@@ -59,6 +61,9 @@ export async function startAutoTokenRefresh(
     await refreshTokenAndReschedule(refreshToken);
   }
 }
+
+
+
 
 // REFRESH TOKEN AND RESCHEDULE
 async function refreshTokenAndReschedule(refreshToken: string) {
@@ -129,24 +134,28 @@ export function stopAutoTokenRefresh() {
 }
 
 
+
+
 // UTILITY: Check if token is close to expiry
-export function isTokenCloseToExpiry(tokenExpiry: string, bufferMinutes: number = 2): boolean {
-  const expiryTime = new Date(tokenExpiry).getTime();
-  const currentTime = new Date().getTime();
-  const bufferTime = bufferMinutes * 60 * 1000; // Convert minutes to milliseconds
+// export function isTokenCloseToExpiry(tokenExpiry: string, bufferMinutes: number = 2): boolean {
+//   const expiryTime = new Date(tokenExpiry).getTime();
+//   const currentTime = new Date().getTime();
+//   const bufferTime = bufferMinutes * 60 * 1000; // Convert minutes to milliseconds
   
-  return (expiryTime - currentTime) <= bufferTime;
-}
+//   return (expiryTime - currentTime) <= bufferTime;
+// }
 
 
 // UTILITY: Get time until token expires
-export function getTimeUntilExpiry(tokenExpiry: string): { minutes: number; seconds: number } {
-  const expiryTime = new Date(tokenExpiry).getTime();
-  const currentTime = new Date().getTime();
-  const timeLeft = Math.max(0, expiryTime - currentTime);
+// export function getTimeUntilExpiry(tokenExpiry: string): { minutes: number; seconds: number } {
   
-  const minutes = Math.floor(timeLeft / (60 * 1000));
-  const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
+//   const expiryTime = new Date(tokenExpiry).getTime();
+//   const currentTime = new Date().getTime();
+//   const timeLeft = Math.max(0, expiryTime - currentTime);
+
+//   const minutes = Math.floor(timeLeft / (60 * 1000));
+//   const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
   
-  return { minutes, seconds };
-}
+//   return { minutes, seconds };
+
+// }

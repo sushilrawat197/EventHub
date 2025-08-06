@@ -7,10 +7,12 @@ import {
 } from "../slices/authSlice";
 import { startAutoTokenRefresh } from "./getNewAccessToken";
 
+
+
+
 export const useAuthRestore = () => {
   
   const dispatch = useAppDispatch();
-  
   const refreshToken = useAppSelector((state) => state.auth.refreshToken);
   const accessTokenExpiry = useAppSelector((state) => state.auth.accessTokenExpiry);
 
@@ -37,5 +39,5 @@ useEffect(() => {
   if (refreshToken && accessTokenExpiry) {
     startAutoTokenRefresh(accessTokenExpiry, refreshToken);
   }
-}, [refreshToken, accessTokenExpiry]);
+}, [refreshToken]);
 };

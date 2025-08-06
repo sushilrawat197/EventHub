@@ -14,12 +14,8 @@ import ProfileCard from "./UI/Components/profile/ProfileCard";
 import HomePage from "./UI/Pages/HomePage";
 import { Route, Routes } from "react-router-dom";
 
-
-
 function App() {
-
     useAuthRestore();
-    
   return (
     <>
       <div className="font-lato">
