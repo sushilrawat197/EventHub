@@ -1,4 +1,3 @@
-
 import OpenRoute from "./route/OpenRoute";
 import ProtectedRoute from "./route/ProtectedRoute";
 import ForgotPassword from "./SiginPage/Forgotpassword";
@@ -14,9 +13,7 @@ import ProfileCard from "./UI/Components/profile/ProfileCard";
 import HomePage from "./UI/Pages/HomePage";
 import { Route, Routes } from "react-router-dom";
 
-
 function App() {
-
   return (
     <>
       <div className="font-lato">
@@ -25,16 +22,74 @@ function App() {
 
         <div className="my-8">
           <Routes>
+
             <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<SignIn />} />
+            
+            <Route
+              path="/login"
+              element={
+                <OpenRoute>
+                  <SignIn />
+                </OpenRoute>
+              }
+            />
             <Route path="/forgetpassword" element={<ForgotPassword />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/otpverification" element={<OpenRoute><OtpVerification /></OpenRoute>} />
-            <Route path="/setpassword" element={<PasswordSet />} />
-            <Route path="/varifylgoinotp" element={<LoginVarifyOtp />} />
-            <Route path="/passwordreset" element={<PasswordReset />} />
-            <Route path="/passwordresetsuccess" element={<ForgotPasswordConfirmation />} />
-            <Route path="/editprofile" element={<ProtectedRoute><ProfileCard /></ProtectedRoute>} />
+            <Route
+              path="/signup"
+              element={
+                <OpenRoute>
+                  <SignUp />
+                </OpenRoute>
+              }
+            />
+            <Route
+              path="/otpverification"
+              element={
+                <OpenRoute>
+                  <OtpVerification />
+                </OpenRoute>
+              }
+            />
+            <Route
+              path="/setpassword"
+              element={
+                <OpenRoute>
+                  <PasswordSet />
+                </OpenRoute>
+              }
+            />
+            <Route
+              path="/varifylgoinotp"
+              element={
+                <OpenRoute>
+                  <LoginVarifyOtp />
+                </OpenRoute>
+              }
+            />
+            <Route
+              path="/passwordreset"
+              element={
+                <OpenRoute>
+                  <PasswordReset />
+                </OpenRoute>
+              }
+            />
+            <Route
+              path="/passwordresetsuccess"
+              element={
+                <OpenRoute>
+                  <ForgotPasswordConfirmation />
+                </OpenRoute>
+              }
+            />
+            <Route
+              path="/editprofile"
+              element={
+                <ProtectedRoute>
+                  <ProfileCard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
 
