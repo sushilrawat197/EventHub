@@ -11,10 +11,10 @@ function ProtectedRoute({ children }: OpenRouteProps) {
 
 const token=useAppSelector((state)=>state.auth.accessToken);
 
-  if (token === null) {
-    return <Navigate to="/" />;
+  if (token) {
+     return children;
   } else{
-    return children;
+   return <Navigate to="/login" />;
   }
 }
 

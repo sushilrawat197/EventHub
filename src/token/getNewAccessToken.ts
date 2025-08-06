@@ -9,13 +9,10 @@ import {
 
 
 let refreshTimer: NodeJS.Timeout | null = null;
-
 export function startAutoTokenRefresh(
   accessTokenExpiry: string,
   refreshToken: string
 ) {
-
-
   const expiryTime = new Date(accessTokenExpiry).getTime();
   const currentTime = new Date().getTime();
   const timeUntilExpiry = expiryTime - currentTime;
@@ -24,48 +21,46 @@ export function startAutoTokenRefresh(
   console.log("Current Time:", currentTime);
   console.log("Token expires in ms:", timeUntilExpiry);
 
-
-  // Refresh 30 seconds before expiry
   const refreshTime = timeUntilExpiry - 30 * 1000;
 
-
-  // ✅ Clear previous timer
+  // ✅ Clear any existing timer
   if (refreshTimer) {
     clearTimeout(refreshTimer);
     refreshTimer = null;
   }
 
-
+  
+  // ✅ 1. If still time left before expiry
   if (refreshTime > 0) {
-
     refreshTimer = setTimeout(async () => {
-      try {
-        console.log("⏳ Refreshing token now...");
-
-        const newTokens = await refreshAccessToken(refreshToken);
-
-        store.dispatch(setAccessToken(newTokens.accessToken));
-        store.dispatch(setRefreshToken(newTokens.refreshToken));
-        store.dispatch(setAccessTokenExpiry(newTokens.accessTokenExpiry)); // Set new expiry
-
-        localStorage.setItem("accessToken", newTokens.accessToken);
-        localStorage.setItem("refreshToken", newTokens.refreshToken);
-        localStorage.setItem("accessTokenExpiry", newTokens.accessTokenExpiry);
-
-        // console.log("NEW accessToken: ", newTokens.accessToken)
-        // console.log("NEW refreshToken: ", newTokens.refreshToken)
-        // console.log("NEW accessTokenExpiry: ", newTokens.accessTokenExpiry)
-
-        // ✅ Call again for next cycle
-        startAutoTokenRefresh(newTokens.accessTokenExpiry, newTokens.refreshToken);
-      } catch (error) {
-        console.error("Token refresh failed:", error);
-        // store.dispatch(logout());
-        // Optional: logout or redirect
-      }
+      await refreshTokenAndReschedule(refreshToken);
     }, refreshTime);
-  } else {
-    console.warn("Token already expired or too close to expiry");
+  }
+
+  // ✅ 2. If already expired or too close, refresh immediately
+  else {
+    console.warn("Token already expired or too close to expiry, refreshing now...");
+    refreshTokenAndReschedule(refreshToken);
+  }
+}
+
+async function refreshTokenAndReschedule(refreshToken: string) {
+  try {
+    const newTokens = await refreshAccessToken(refreshToken);
+
+    store.dispatch(setAccessToken(newTokens.accessToken));
+    store.dispatch(setRefreshToken(newTokens.refreshToken));
+    store.dispatch(setAccessTokenExpiry(newTokens.accessTokenExpiry));
+
+    localStorage.setItem("accessToken", newTokens.accessToken);
+    localStorage.setItem("refreshToken", newTokens.refreshToken);
+    localStorage.setItem("accessTokenExpiry", newTokens.accessTokenExpiry);
+
+    // 🔁 Reschedule next auto-refresh with new expiry
+    startAutoTokenRefresh(newTokens.accessTokenExpiry, newTokens.refreshToken);
+  } catch (error) {
+    console.error("Token refresh failed:", error);
+    // store.dispatch(logout());
   }
 }
 
