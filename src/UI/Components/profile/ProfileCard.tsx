@@ -3,38 +3,58 @@ import { FiEdit2, FiCalendar } from "react-icons/fi";
 import { FaCamera } from "react-icons/fa";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import Inputbox from "./Inputbox";
+import UploadProfileImage from "./uploadProfileImage";
+import EditProfileEmail from "./EditProfileEmail";
 
 export default function ProfileCard() {
   // 👇 States for input fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState("");
+  const [editImage,setEditImage] = useState(false);
+  const [editEmail,setEditEmail] = useState(false);
 
   return (
     <div className="h-screen mx-auto max-w-3xl rounded-t-lg  mt-24">
-      <div className="bg-white shadow-lg">
+      
+      <div className="bg-white shadow-lg  relative">
+        {
+        editImage && (
+          <UploadProfileImage setEditImage={setEditImage}/>
+        )
+        }
+
+        {
+          editEmail && (
+            <EditProfileEmail setEditEmail={setEditEmail}/>
+          )
+        }
+       
         {/* Header Box */}
         <div className="bg-gradient-to-r from-sky-300 to-sky-500 text-white flex justify-between items-center px-5 py-5">
-          <h2 className="text-3xl">Hi, Guest</h2>
-          <div className="w-12 h-12 bg-white text-gray-600 rounded-full flex justify-center items-center">
+          <h2 className="text-3xl">Hello, Guest</h2>
+          
+          <div onClick={()=>setEditImage(!false)}  className="hover:cursor-pointer hover:opacity-70 w-12 h-12 bg-white text-gray-600 rounded-full flex justify-center items-center">
             <FaCamera size={22} />
           </div>
         </div>
 
         {/* Account Details */}
         <div className="bg-white mx-auto p-6 space-y-4">
+           
           <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-2 sm:gap-0">
             <div className="flex  items-center justify-center ">
+
               <p className="text-sm text-black">Email Address:</p>
               
               <div className="pl-3 flex flex-wrap items-center text-[#777777] text-md">
                 <span>vinit.panwar2003@gmail.com</span>
-                <span className="flex items-center ml-4 text-green-700 gap-1 mt-1 sm:mt-0">
+                <span  className="flex items-center ml-4 text-green-700 gap-1 mt-1 sm:mt-0">
                   Verified <RiVerifiedBadgeFill size={18} />
                 </span>
               </div>
             </div>
-            <button className="text-sky-600 text-sm flex items-center gap-1 hover:underline mt-2 sm:mt-0">
+            <button onClick={()=>setEditEmail(!false)} className="text-sky-600 text-sm flex items-center gap-1 hover:underline hover:cursor-pointer mt-2 sm:mt-0">
               <FiEdit2 /> Edit
             </button>
           </div>

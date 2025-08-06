@@ -28,7 +28,8 @@ const {
 import axios from "axios";
 // import { toast } from "react-hot-toast"
 import { toast } from "react-toastify";
-import { startAutoTokenRefresh } from "../../token/getNewAccessToken";
+import { stopAutoTokenRefresh } from "../../token/getNewAccessToken";
+// import { startAutoTokenRefresh } from "../../token/getNewAccessToken";
 
 
 type SendOtpApiResponse = {
@@ -245,7 +246,6 @@ export function setPassword(
 }
 
 
-
 export function signIn(
   email: string,
   password: string,
@@ -282,7 +282,6 @@ export function signIn(
 
       
 
-
       const data = response.data;
       console.log("LOGIN API RESPONSE............", data);
 
@@ -299,10 +298,6 @@ export function signIn(
         dispatch(setRefreshToken(response.data.data.refreshToken));
         dispatch(setAccessTokenExpiry(response.data.data.accessTokenExpiry));
         dispatch(setRefreshTokenExpiry(response.data.data.refreshTokenExpiry));
-
-        if(refreshToken && accessTokenExpiry){
-          startAutoTokenRefresh(accessTokenExpiry, refreshToken);
-        }
         
         navigate("/");
       }
@@ -511,6 +506,8 @@ export function logout(
       dispatch(setAccessToken(null)); // if you're storing user data
       dispatch(setAccessTokenExpiry(""));
       dispatch(setRefreshToken(""));
+
+      stopAutoTokenRefresh();
       
       // Optionally clear cookies if you're using cookies
 

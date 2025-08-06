@@ -7,26 +7,41 @@ import {
 } from "../slices/authSlice";
 // import { logout } from "../services/operations/authApi";
 
+
 let refreshTimer: NodeJS.Timeout | null = null;
 
 export function startAutoTokenRefresh(
   accessTokenExpiry: string,
   refreshToken: string
 ) {
+
+
   const expiryTime = new Date(accessTokenExpiry).getTime();
   const currentTime = new Date().getTime();
-
   const timeUntilExpiry = expiryTime - currentTime;
 
+  console.log("expiryTime:", expiryTime);
+  console.log("Current Time:", currentTime);
   console.log("Token expires in ms:", timeUntilExpiry);
+
 
   // Refresh 30 seconds before expiry
   const refreshTime = timeUntilExpiry - 30 * 1000;
 
+
+  // ✅ Clear previous timer
+  if (refreshTimer) {
+    clearTimeout(refreshTimer);
+    refreshTimer = null;
+  }
+
+
   if (refreshTime > 0) {
+
     refreshTimer = setTimeout(async () => {
       try {
         console.log("⏳ Refreshing token now...");
+
         const newTokens = await refreshAccessToken(refreshToken);
 
         store.dispatch(setAccessToken(newTokens.accessToken));
@@ -37,9 +52,9 @@ export function startAutoTokenRefresh(
         localStorage.setItem("refreshToken", newTokens.refreshToken);
         localStorage.setItem("accessTokenExpiry", newTokens.accessTokenExpiry);
 
-        console.log("NEW accessToken: ",newTokens.accessToken)
-        console.log("NEW refreshToken: ",newTokens.refreshToken)
-        console.log("NEW accessTokenExpiry: ",newTokens.accessTokenExpiry)
+        // console.log("NEW accessToken: ", newTokens.accessToken)
+        // console.log("NEW refreshToken: ", newTokens.refreshToken)
+        // console.log("NEW accessTokenExpiry: ", newTokens.accessTokenExpiry)
 
         // ✅ Call again for next cycle
         startAutoTokenRefresh(newTokens.accessTokenExpiry, newTokens.refreshToken);

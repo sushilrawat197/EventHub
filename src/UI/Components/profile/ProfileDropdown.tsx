@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { logout } from "../../services/operations/authApi";
-import { useAppDispatch, useAppSelector } from "../../reducers/hooks";
+import { logout } from "../../../services/operations/authApi";
+import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
 import { GoPersonFill } from "react-icons/go";
@@ -9,7 +9,8 @@ import { LogIn } from "lucide-react";
 import { RiNotificationBadgeLine } from "react-icons/ri";
 import { LuTickets } from "react-icons/lu";
 import { BsChatDots } from "react-icons/bs";
-import { FaGears, FaRegCircleUser } from "react-icons/fa6";
+import { FaGears} from "react-icons/fa6";
+import { FaRegUserCircle } from "react-icons/fa";
 
 const menuItems = [
   {
@@ -55,6 +56,7 @@ export default function ProfileDropdown() {
     }
   }, [openMenu]);
 
+
   // Close on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -65,6 +67,7 @@ export default function ProfileDropdown() {
         handleClose();
       }
     }
+
     if (openMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
@@ -85,10 +88,10 @@ export default function ProfileDropdown() {
     <div className="relative z-50">
       {/* Trigger Button */}
       <div
-        className="cursor-pointer bg-sky-500 text-white p-2 rounded-full w-fit"
+        className="cursor-pointer bg-sky-500 text-white p-1  w-fit"
         onClick={() => setOpenMenu(true)}
       >
-        <FaRegCircleUser size={30} />
+        <FaRegUserCircle size={30} />
       </div>
 
       {/* Dropdown Menu + Overlay */}
@@ -101,6 +104,7 @@ export default function ProfileDropdown() {
             }`}
             onClick={handleClose}
           ></div>
+
 
           {/* Slide-in menu */}
           <div
@@ -118,8 +122,7 @@ export default function ProfileDropdown() {
                 Hello!
               </h2>
 
-
-              
+            
                 <Link to={"/editprofile"}  onClick={() => setOpenMenu(false)} >
                 <span
                   className="flex items-center text-sky-400 text-[10px] cursor-pointer space-x-1"

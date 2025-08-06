@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { RiMenu3Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../reducers/hooks";
-import ProfileDropdown from "./ProfileDropdown";
-import {
-  setAccessToken,
-  setAccessTokenExpiry,
-  setRefreshToken,
-} from "../../slices/authSlice";
-import { startAutoTokenRefresh } from "../../token/getNewAccessToken";
+import {useAppSelector } from "../../reducers/hooks";
+import ProfileDropdown from "./profile/ProfileDropdown";
+
+import { useAuthRestore } from "../../token/callingAutoTokenRefresh";
 
 type MobileDropdownState = {
   event: boolean;
@@ -16,38 +12,10 @@ type MobileDropdownState = {
 };
 
 const Navbar: React.FC = () => {
-  const dispatch = useAppDispatch();
+
+  useAuthRestore();
+
   const token = useAppSelector((state) => state.auth.accessToken);
-
-  // console.log("Printing accessToken ", token);
-  //  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    const savedToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
-    const accessTokenExpiry = localStorage.getItem("accessTokenExpiry");
-
-    if (savedToken) {
-      dispatch(setAccessToken(savedToken));
-      console.log("accessToken :", savedToken);
-    }
-    if (refreshToken) {
-      dispatch(setRefreshToken(refreshToken));
-      console.log("refreshToken :", refreshToken);
-    }
-    if (accessTokenExpiry) {
-      dispatch(setAccessTokenExpiry(accessTokenExpiry));
-      console.log("accessTokenExpiry :", accessTokenExpiry);
-    }
-    if (accessTokenExpiry && refreshToken) {
-      startAutoTokenRefresh(accessTokenExpiry, refreshToken);
-    }
-  }, []);
-
-  // useEffect(() => {
-  //   const localToken = localStorage.getItem("accessToken");
-  //   setToken(localToken);
-  // }, []);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
@@ -75,7 +43,7 @@ const Navbar: React.FC = () => {
     };
   }, [mobileMenuOpen]);
 
-  useEffect(() => {}, []);
+  // useEffect(() => {}, []);
 
   return (
     <nav className="bg-sky-500  fixed top-0 left-0 w-full z-50 shadow py-2">
