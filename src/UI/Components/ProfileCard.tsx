@@ -24,10 +24,10 @@ export default function ProfileCard() {
         {/* Account Details */}
         <div className="bg-white mx-auto p-6 space-y-4">
           <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-2 sm:gap-0">
-            <div>
+            <div className="flex  items-center justify-center ">
               <p className="text-sm text-black">Email Address:</p>
               
-              <div className="flex flex-wrap items-center text-[#777777] text-[15px] mt-1">
+              <div className="pl-3 flex flex-wrap items-center text-[#777777] text-md">
                 <span>vinit.panwar2003@gmail.com</span>
                 <span className="flex items-center ml-4 text-green-700 gap-1 mt-1 sm:mt-0">
                   Verified <RiVerifiedBadgeFill size={18} />
@@ -43,7 +43,7 @@ export default function ProfileCard() {
         </div>
 
         {/* Personal Details */}
-        <div className="bg-white p-6 shadow-md shadow-gray-100">
+        <div className="bg-white p-6  shadow-gray-100">
           <h2 className="text-lg font-semibold mb-6">Personal Details</h2>
 
           <div className="space-y-10">
@@ -77,7 +77,18 @@ export default function ProfileCard() {
             />
           </div>
         </div>
+        <div className="w-full flex justify-center items-center mt-3 pb-8 ">
+           <button
+            type="submit"
+            className="mb-2 px-36 bg-sky-500 hover:bg-sky-400 text-white font-semibold py-2 rounded-md transition text-base cursor-pointer "
+          >
+            Submit
+          </button>
+
+        </div>
+       
       </div>
+      
     </div>
   );
 }

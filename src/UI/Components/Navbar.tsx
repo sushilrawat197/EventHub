@@ -8,6 +8,7 @@ import {
   setAccessTokenExpiry,
   setRefreshToken,
 } from "../../slices/authSlice";
+import { startAutoTokenRefresh } from "../../token/getNewAccessToken";
 
 type MobileDropdownState = {
   event: boolean;
@@ -17,22 +18,29 @@ type MobileDropdownState = {
 const Navbar: React.FC = () => {
   const dispatch = useAppDispatch();
   const token = useAppSelector((state) => state.auth.accessToken);
-  console.log("Printing accessToken ", token);
+
+  // console.log("Printing accessToken ", token);
   //  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
     const accessTokenExpiry = localStorage.getItem("accessTokenExpiry");
-    
+
     if (savedToken) {
       dispatch(setAccessToken(savedToken));
+      console.log("accessToken :", savedToken);
     }
     if (refreshToken) {
       dispatch(setRefreshToken(refreshToken));
+      console.log("refreshToken :", refreshToken);
     }
     if (accessTokenExpiry) {
       dispatch(setAccessTokenExpiry(accessTokenExpiry));
+      console.log("accessTokenExpiry :", accessTokenExpiry);
+    }
+    if (accessTokenExpiry && refreshToken) {
+      startAutoTokenRefresh(accessTokenExpiry, refreshToken);
     }
   }, []);
 

@@ -28,6 +28,7 @@ const {
 import axios from "axios";
 // import { toast } from "react-hot-toast"
 import { toast } from "react-toastify";
+import { startAutoTokenRefresh } from "../../token/getNewAccessToken";
 
 
 type SendOtpApiResponse = {
@@ -285,22 +286,26 @@ export function signIn(
       const data = response.data;
       console.log("LOGIN API RESPONSE............", data);
 
-      const { accessToken, refreshToken} = data.data;
+      const { accessToken, refreshToken, accessTokenExpiry} = data.data;
+
 
       if (data.status === "SUCCESS") {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken); // ✅ Store refresh token
-        localStorage.setItem("accessTokenExpiry",response.data.data.accessTokenExpiry ); // ✅ Store refresh token
-        localStorage.setItem("refreshTokenExpiry",response.data.data.refreshTokenExpiry ); // ✅ Store refresh token
+        localStorage.setItem("accessTokenExpiry",accessTokenExpiry); // ✅ Store refresh token
+        // localStorage.setItem("refreshTokenExpiry",String(Date.now() + refreshTokenExpiry * 1000)); // ✅ Store refresh token
         
         dispatch(setAccessToken(accessToken));
         dispatch(setRefreshToken(response.data.data.refreshToken));
         dispatch(setAccessTokenExpiry(response.data.data.accessTokenExpiry));
         dispatch(setRefreshTokenExpiry(response.data.data.refreshTokenExpiry));
+
+        if(refreshToken && accessTokenExpiry){
+          startAutoTokenRefresh(accessTokenExpiry, refreshToken);
+        }
         
         navigate("/");
       }
-
 
 
     } catch (error) {

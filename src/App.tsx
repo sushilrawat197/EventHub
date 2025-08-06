@@ -14,8 +14,8 @@ import HomePage from "./UI/Pages/HomePage";
 import { Route, Routes } from "react-router-dom";
 
 
-
 function App() {
+
   return (
     <>
       <div className="font-lato">

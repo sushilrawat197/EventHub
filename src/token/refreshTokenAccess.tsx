@@ -1,24 +1,43 @@
 import axios, { type AxiosResponse } from "axios";
 
-interface RefreshTokenResponse {
+interface RefreshTokenPayload {
   accessToken: string;
-  expiresIn: number; // Or the correct type if you have a different field
-  refreshToken:string;
+  accessTokenExpiry: string;
+  refreshToken: string;
+  refreshTokenExpiry: string;
 }
+
+interface RefreshTokenResponse {
+  status: string;
+  message: string;
+  statusCode: number;
+  timestamp: string;
+  traceId: string;
+  data: RefreshTokenPayload;
+}
+
 export const refreshAccessToken = async (
-  refreshToken: string,
-  
-): Promise<RefreshTokenResponse> => {
+  refreshToken: string
+): Promise<RefreshTokenPayload> => {
   try {
     const response: AxiosResponse<RefreshTokenResponse> = await axios.post(
       "https://thedemonstrate.com/GenericAuthService/api/v1/auth/refreshToken",
       {
-        refreshToken:refreshToken,
+        refreshToken: refreshToken,
+      },
+      {
+        headers: {
+          "X-Client-Source": "OTHER",
+        },
+        withCredentials: true,
       }
     );
-    return response.data;
+
+    console.log("✅ Tokens from response:", response.data.data);
+    return response.data.data;
+
   } catch (error) {
-    console.error("Refresh token failed:", error);
+    console.error("❌ Refresh token failed:", error);
     throw error;
   }
 };
