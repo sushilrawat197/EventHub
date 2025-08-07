@@ -483,7 +483,6 @@ export function resetPassword(
 
 
 export function logout(
-  token: string | null,
   navigate: NavigateFunction,
   dispatch: Dispatch
 ) {
@@ -496,6 +495,7 @@ export function logout(
         withCredentials: true,
         headers: {
           "X-Client-Source": "WEB",
+
         },
       });
 
