@@ -14,9 +14,8 @@ type Connection<TData = unknown, TParams = Record<string, unknown>> = {
   bodyData?: TData;
   headers?: Record<string, string>;
   params?: TParams;
+  withCredentials?: boolean; // ✅ add this line
 };
-
-// Generic API connector
 export const apiConnector = async <
   TResponse,
   TData = unknown,
@@ -27,18 +26,19 @@ export const apiConnector = async <
   bodyData,
   headers,
   params,
+  withCredentials, // ✅ take from args
 }: Connection<TData, TParams>): Promise<AxiosResponse<TResponse>> => {
   const config: AxiosRequestConfig<TData> = {
     method,
     url,
-    data: bodyData ?? undefined,
+    data: bodyData,
     headers,
     params,
+    withCredentials, // ✅ apply it to axios config
   };
 
   return axiosInstance(config);
 };
-
 
 
 // src/utils/apiConnector.ts

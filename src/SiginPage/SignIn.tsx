@@ -29,13 +29,17 @@ const SignIn: React.FC = () => {
     // console.log("Printing Email=", email);
     dispatch(signIn(inputEmail, password, navigate, dispatch));
     // console.log(thunk)
-     // 👇 re-enable button after 2 seconds
+    // 👇 re-enable button after 2 seconds
     setTimeout(() => {
       setIsDisabled(false);
     }, 2000);
   };
 
   const [showPassword, setShowPassword] = useState(false);
+
+  //   const handleGoogleClick = () => {
+  //   window.location.href = "https://thedemonstrate.com/GenericAuthService/oauth2/authorization/google";
+  // };
 
   return (
     <div className="h-screen flex items-center justify-center bg-sky-100 p-4">
@@ -50,17 +54,13 @@ const SignIn: React.FC = () => {
 
         {/* Right Form */}
         <div className="w-full md:w-1/2 p-6 sm:p-8 md:p-10 flex flex-col items-center justify-center">
-          
           {/* Logo */}
           <img
             src="ticketlogo2.jpg"
             alt="Ticket  Logo"
             className="w-24 h-12 object-contain mb-4   "
           />
-          <div className="w-full px-11 text-center pb-3">
-            
-          </div>
-          
+          <div className="w-full px-11 text-center pb-3"></div>
 
           {/* <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center ">
             Sign in
@@ -69,7 +69,7 @@ const SignIn: React.FC = () => {
 
           <form onSubmit={submitHandler} className="w-full max-w-sm space-y-3">
             {/* Email */}
-            
+
             <PopUpMessage />
             <div className="relative">
               <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
@@ -125,9 +125,11 @@ const SignIn: React.FC = () => {
             {!loading ? (
               <button
                 type="submit"
-                 disabled={isDisabled}
+                disabled={isDisabled}
                 className={`w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold h-10 rounded-lg transition text-base ${
-                  isDisabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+                  isDisabled
+                    ? "cursor-not-allowed opacity-70"
+                    : "cursor-pointer"
                 }`}
               >
                 Login
@@ -150,12 +152,13 @@ const SignIn: React.FC = () => {
 
             {/* Google Sign In */}
             <button
-
-              onClick={()=>window.location.href="https://thedemonstrate.com/GenericAuthService/oauth2/authorization/google"}
-              type="button"
-              className="w-full  cursor-pointer flex items-center justify-center gap-2 border border-gray-400 py-2 rounded-lg text-sm font-medium text-[#777777] hover:bg-gray-100 transition"
+              onClick={() => {
+                window.location.href =
+                  "https://thedemonstrate.com/GenericAuthService/oauth2/authorization/google";
+              }}
+              className="w-full cursor-pointer flex items-center justify-center gap-2 border border-gray-400 py-2 rounded-lg text-sm font-medium text-[#777777] hover:bg-gray-100 transition"
             >
-              <img title="Google" src="google-icon.svg" className="w-4 h-4" />{" "}
+              <img title="Google" src="google-icon.svg" className="w-4 h-4" />
               Sign in with Google
             </button>
 

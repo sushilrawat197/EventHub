@@ -8,8 +8,6 @@ import {
 import { startAutoTokenRefresh } from "./getNewAccessToken";
 
 
-
-
 export const useAuthRestore = () => {
   
   const dispatch = useAppDispatch();
@@ -17,9 +15,11 @@ export const useAuthRestore = () => {
   const accessTokenExpiry = useAppSelector((state) => state.auth.accessTokenExpiry);
 
   useEffect(() => {
+
     const savedAccessToken = localStorage.getItem("accessToken");
     const savedRefreshToken = localStorage.getItem("refreshToken");
     const savedAccessTokenExpiry = localStorage.getItem("accessTokenExpiry");
+
 
     if (savedAccessToken) {
       dispatch(setAccessToken(savedAccessToken));
@@ -32,6 +32,7 @@ export const useAuthRestore = () => {
     }
   }, [dispatch]);
 
+  
 //   const allTokenAvailable=refreshToken && accessTokenExpiry;
 
 useEffect(() => {
@@ -39,5 +40,5 @@ useEffect(() => {
   if (refreshToken && accessTokenExpiry) {
     startAutoTokenRefresh(accessTokenExpiry, refreshToken);
   }
-}, [refreshToken]);
+}, [refreshToken, accessTokenExpiry]);
 };

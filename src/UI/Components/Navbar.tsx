@@ -13,7 +13,7 @@ type MobileDropdownState = {
 
 const Navbar: React.FC = () => {
 
-  const token = useAppSelector((state) => state.auth.accessToken);
+  // const token = useAppSelector((state) => state.auth.accessToken);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
@@ -40,6 +40,10 @@ const Navbar: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [mobileMenuOpen]);
+
+   const user=useAppSelector((state)=>state.user.user);
+
+
 
   // useEffect(() => {}, []);
 
@@ -119,7 +123,7 @@ const Navbar: React.FC = () => {
 
         {/* Desktop Buttons */}
 
-        {token === null && (
+        {user === null && (
           <div className="space-x-2 hidden lg:flex">
             <Link to={"/login"}>
               <button className="bg-white text-sky-600 font-medium px-4 py-1 rounded-full border border-sky-300 hover:bg-sky-100 cursor-pointer">
@@ -139,7 +143,7 @@ const Navbar: React.FC = () => {
             <RiMenu3Line size={30} />
           </button>
           {/* Profile Icon visbile  */}
-          {token !== null && (
+          {user !== null && (
             <div className=" w-full ">
               {" "}
               <ProfileDropdown />
@@ -241,7 +245,7 @@ const Navbar: React.FC = () => {
 
           <div className=" border border-gray-300"></div>
 
-          {!token && (
+          {!user && (
             <Link to={"/login"} onClick={() => setMobileMenuOpen(false)}>
               <button className="w-full bg-sky-500 text-white py-2 rounded-full  text-lg">
                 Sign In

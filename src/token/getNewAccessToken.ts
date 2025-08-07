@@ -8,7 +8,10 @@ import {
 } from "../slices/authSlice";
 // import { logout } from "../services/operations/authApi";
 
+
+
 let refreshTimer: NodeJS.Timeout | null = null;
+
 
 
 // START AUTO TOKEN REFRESH FUNCTION 🏃‍♂️
@@ -16,6 +19,7 @@ export async function startAutoTokenRefresh(
   accessTokenExpiry: string,
   refreshToken: string
 ) {
+
 
   // Input validation
   if (!accessTokenExpiry || !refreshToken) {
@@ -25,13 +29,16 @@ export async function startAutoTokenRefresh(
 
   const expiryTime = new Date(accessTokenExpiry).getTime();
   
+
   // Invalid date check
   if (isNaN(expiryTime)) {
     console.error("❌ Invalid accessTokenExpiry date format");
     return;
   }
 
+
   const currentTime = new Date().getTime();
+
   const timeUntilExpiry = expiryTime - currentTime;
 
   console.log("🔍 Token refresh analysis:");
@@ -39,7 +46,9 @@ export async function startAutoTokenRefresh(
   console.log("- Current Time:", new Date(currentTime).toLocaleString());
   console.log("- Time until expiry:", Math.floor(timeUntilExpiry / 1000), "seconds");
 
+
   const refreshTime = timeUntilExpiry - 30 * 1000; // 30 seconds before expiry
+
 
   // ✅ Clear any existing timer
   if (refreshTimer) {
@@ -47,10 +56,12 @@ export async function startAutoTokenRefresh(
     refreshTimer = null;
   }
 
+
+
   // ✅ 1. If still time left before expiry
   if (refreshTime > 0) {
+
     console.log("⏰ Scheduling token refresh in", Math.floor(refreshTime / 1000), "seconds");
-    
     refreshTimer = setTimeout(async () => {
       await refreshTokenAndReschedule(refreshToken);
     }, refreshTime);

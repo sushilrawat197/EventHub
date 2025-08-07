@@ -29,6 +29,7 @@ import axios from "axios";
 // import { toast } from "react-hot-toast"
 import { toast } from "react-toastify";
 import { stopAutoTokenRefresh } from "../../token/getNewAccessToken";
+import { clearUser } from "../../slices/userSlice";
 // import { startAutoTokenRefresh } from "../../token/getNewAccessToken";
 
 
@@ -260,8 +261,8 @@ export function signIn(
         message: string;
         status: string;
         data: {
-          accessTokenExpiry:string;
-          refreshTokenExpiry:string;
+          accessTokenExpiry: string;
+          refreshTokenExpiry: string;
           profileRequired: boolean;
           accessToken: string;
           refreshToken: string;
@@ -276,28 +277,29 @@ export function signIn(
           password,
         },
         headers: {
-          "X-Client-Source": "OTHER",
+          "X-Client-Source": "WEB",
         },
+        withCredentials: true,
       });
 
-      
+
       const data = response.data;
       console.log("LOGIN API RESPONSE............", data);
 
-      const { accessToken, refreshToken, accessTokenExpiry} = data.data;
+      const { accessToken, refreshToken, accessTokenExpiry } = data.data;
 
 
       if (data.status === "SUCCESS") {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken); // ✅ Store refresh token
-        localStorage.setItem("accessTokenExpiry",accessTokenExpiry); // ✅ Store refresh token
+        localStorage.setItem("accessTokenExpiry", accessTokenExpiry); // ✅ Store refresh token
         // localStorage.setItem("refreshTokenExpiry",String(Date.now() + refreshTokenExpiry * 1000)); // ✅ Store refresh token
-        
+
         dispatch(setAccessToken(accessToken));
         dispatch(setRefreshToken(response.data.data.refreshToken));
         dispatch(setAccessTokenExpiry(response.data.data.accessTokenExpiry));
         dispatch(setRefreshTokenExpiry(response.data.data.refreshTokenExpiry));
-        
+
         navigate("/");
       }
 
@@ -491,9 +493,9 @@ export function logout(
       const response = await apiConnector({
         method: "POST",
         url: LOGOUT_API, // ✅ Use the correct endpoint
+        withCredentials: true,
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "X-Client-Source": "WEB",
         },
       });
 
@@ -505,9 +507,10 @@ export function logout(
       dispatch(setAccessToken(null)); // if you're storing user data
       dispatch(setAccessTokenExpiry(""));
       dispatch(setRefreshToken(""));
+      dispatch(clearUser());
 
       stopAutoTokenRefresh();
-      
+
       // Optionally clear cookies if you're using cookies
 
       // ✅ Navigate to login/home page
@@ -521,3 +524,4 @@ export function logout(
     }
   };
 }
+

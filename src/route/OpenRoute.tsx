@@ -8,9 +8,9 @@ interface OpenRouteProps {
 }
 
 function OpenRoute({ children }: OpenRouteProps) {
-const token=useAppSelector((state)=>state.auth.accessToken);
+const user=useAppSelector((state)=>state.user.user);
 
-  if (token === null) {
+  if (user === null) {
     return children;
   } else {
     return <Navigate to="/" />;

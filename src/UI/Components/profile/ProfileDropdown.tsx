@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { logout } from "../../../services/operations/authApi";
-import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
+import { useAppDispatch} from "../../../reducers/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
 import { GoPersonFill } from "react-icons/go";
@@ -39,11 +39,12 @@ export default function ProfileDropdown() {
   const navigate = useNavigate();
   const [openMenu, setOpenMenu] = useState(false);
   const [animateMenu, setAnimateMenu] = useState(false);
-  const token = useAppSelector((state) => state.auth.accessToken);
+  // const token = useAppSelector((state) => state.auth.accessToken);
+  
   const menuRef = useRef(null);
 
   const handleSubmit = () => {
-    dispatch(logout(token, navigate, dispatch));
+    dispatch(logout(navigate, dispatch));
   };
 
   // Animate in
@@ -78,11 +79,15 @@ export default function ProfileDropdown() {
     };
   }, [openMenu]);
 
+
+
   const handleClose = () => {
     setAnimateMenu(false);
     // wait for animation to finish before unmounting
     setTimeout(() => setOpenMenu(false), 300);
   };
+
+
 
   return (
     <div className="relative z-50">

@@ -13,6 +13,10 @@ export const endpoints = {
   LOGOUT_API:BASE_URL + "api/v1/auth/logout"
 }
 
+export const userEndpoint={
 
+  GET_USER_API:BASE_URL + "api/v1/users/get-userprofile"
+
+}
 
 

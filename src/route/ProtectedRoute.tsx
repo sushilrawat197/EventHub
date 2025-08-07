@@ -9,9 +9,9 @@ interface OpenRouteProps {
 
 function ProtectedRoute({ children }: OpenRouteProps) {
 
-const token=useAppSelector((state)=>state.auth.accessToken);
+const user=useAppSelector((state)=>state.user.user);
 
-  if (token) {
+  if (user) {
      return children;
   } else{
    return <Navigate to="/login" />;
