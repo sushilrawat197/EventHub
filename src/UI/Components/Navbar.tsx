@@ -14,6 +14,7 @@ type MobileDropdownState = {
 const Navbar: React.FC = () => {
 
   // const token = useAppSelector((state) => state.auth.accessToken);
+  // console.log("TOKEN IN NAVBAR: ",token);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 

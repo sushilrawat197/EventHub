@@ -8,7 +8,7 @@ import PasswordReset from "./SiginPage/PasswordReset";
 import PasswordSet from "./SiginPage/PasswordSet";
 import SignIn from "./SiginPage/SignIn";
 import SignUp from "./SiginPage/SignUp";
-import { useAuthRestore } from "./token/callingAutoTokenRefresh";
+// import { useAuthRestore } from "./token/callingAutoTokenRefresh";
 import Navbar from "./UI/Components/Navbar";
 import ProfileCard from "./UI/Components/profile/ProfileCard";
 import HomePage from "./UI/Pages/HomePage";
@@ -21,15 +21,17 @@ import { useAppSelector } from "./reducers/hooks";
 function App() {
   const dispatch = useAppDispatch();
 
-  const token=useAppSelector((state)=>state.auth.accessToken);
+  // const token=useAppSelector((state)=>state.auth.accessToken);
   const user=useAppSelector((state)=>state.user.user);
+  // useAuthRestore();
 
-  useAuthRestore();
+  
+  
 
   useEffect(() => {
     // ✅ Page load hone pe user fetch karo
     dispatch(getCurrentUser());
-  }, [token,dispatch]);
+  }, []);
 
   
 console.log("USER DATA ......",user)

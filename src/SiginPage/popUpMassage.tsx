@@ -24,7 +24,7 @@ export default function PopUpMessage() {
   useEffect(() => {
     return () => {
       dispatch(setMassage(null));
-    };
+    };                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
   }, []);
 
   return (

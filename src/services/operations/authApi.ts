@@ -12,7 +12,6 @@ import {
   setRefreshTokenExpiry,
   // setOtpContext,
 } from "../../slices/authSlice";
-import type { Dispatch } from "@reduxjs/toolkit";
 const {
   SIGNUP_API,
   VARIFY_SIGNUP_OTP_API,
@@ -28,8 +27,10 @@ const {
 import axios from "axios";
 // import { toast } from "react-hot-toast"
 import { toast } from "react-toastify";
-import { stopAutoTokenRefresh } from "../../token/getNewAccessToken";
+// import { stopAutoTokenRefresh } from "../../token/getNewAccessToken";
 import { clearUser } from "../../slices/userSlice";
+import { getCurrentUser } from "./userApi";
+import type { AppDispatch} from "../../reducers/store";
 // import { startAutoTokenRefresh } from "../../token/getNewAccessToken";
 
 
@@ -52,7 +53,7 @@ export function sendOtp(
   email: string,
   navigate: NavigateFunction
 ) {
-  return async (dispatch: Dispatch): Promise<void> => {
+  return async (dispatch: AppDispatch): Promise<void> => {
     try {
       dispatch(setLoading(true));
       const response = await apiConnector<SendOtpApiResponse>({
@@ -94,7 +95,7 @@ export function sendOtp(
 export function signUp(
   email: string,
   navigate: NavigateFunction,
-  dispatch: Dispatch
+  dispatch: AppDispatch
 ) {
   return async (): Promise<void> => {
     try {
@@ -194,7 +195,7 @@ export function setPassword(
   password: string,
   confirmedPassword: string,
   navigate: NavigateFunction,
-  dispatch: Dispatch
+  dispatch: AppDispatch
 ) {
   return async (): Promise<void> => {
     try {
@@ -251,7 +252,7 @@ export function signIn(
   email: string,
   password: string,
   navigate: NavigateFunction,
-  dispatch: Dispatch
+  dispatch: AppDispatch
 ) {
   return async (): Promise<void> => {
     try {
@@ -290,10 +291,12 @@ export function signIn(
 
 
       if (data.status === "SUCCESS") {
+        dispatch(getCurrentUser());
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken); // ✅ Store refresh token
         localStorage.setItem("accessTokenExpiry", accessTokenExpiry); // ✅ Store refresh token
         // localStorage.setItem("refreshTokenExpiry",String(Date.now() + refreshTokenExpiry * 1000)); // ✅ Store refresh token
+
 
         dispatch(setAccessToken(accessToken));
         dispatch(setRefreshToken(response.data.data.refreshToken));
@@ -322,7 +325,7 @@ export function signIn(
 // export function varifySignInOTP(
 //   tempToken: string,
 //   otp: string,
-//   dispatch: Dispatch,
+//   dispatch: AppDispatch,
 //   navigate: NavigateFunction
 // ) {
 //   return async (): Promise<void> => {
@@ -372,7 +375,7 @@ export function signIn(
 
 export function forgot_passwordOtp(
   email: string,
-  dispatch: Dispatch,
+  dispatch: AppDispatch,
   navigate: NavigateFunction
 ) {
   return async (): Promise<void> => {
@@ -484,7 +487,7 @@ export function resetPassword(
 
 export function logout(
   navigate: NavigateFunction,
-  dispatch: Dispatch
+  dispatch: AppDispatch
 ) {
   return async (): Promise<void> => {
     try {
@@ -509,7 +512,7 @@ export function logout(
       dispatch(setRefreshToken(""));
       dispatch(clearUser());
 
-      stopAutoTokenRefresh();
+      // stopAutoTokenRefresh();
 
       // Optionally clear cookies if you're using cookies
 

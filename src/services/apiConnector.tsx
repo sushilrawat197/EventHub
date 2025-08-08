@@ -4,8 +4,116 @@ import axios, {
   type Method,
 } from "axios";
 
+import { store } from "../reducers/store";
+import { setAccessToken, setAccessTokenExpiry, setRefreshToken, setRefreshTokenExpiry } from "../slices/authSlice";
+// import { logout } from "../services/operations/authApi";
+
+
+let isRefreshing = false;
+
+interface FailedRequest {
+  resolve: (token: string) => void;
+  reject: (error: any) => void;
+}
+
+let failedQueue: FailedRequest[] = [];
+
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else if (token) {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
+
 // Create axios instance
 export const axiosInstance = axios.create({});
+
+
+// 👉 Request Interceptor: Add access token
+axiosInstance .interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+
+// 👉 Response Interceptor: Handle 401 errors
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      if (isRefreshing) {
+        // Queue the request while refresh in progress
+        return new Promise(function (resolve, reject) {
+          failedQueue.push({
+            resolve: (token: string) => {
+              originalRequest.headers["Authorization"] = "Bearer " + token;
+              resolve(axiosInstance(originalRequest));
+            },
+            reject: (err) => reject(err),
+          });
+        });
+      }
+
+      isRefreshing = true;
+
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      try {
+        const res = await axios.post("https://thedemonstrate.com/GenericAuthService/api/v1/auth/refreshToken", {
+          refreshToken,
+        });
+
+        const newAccessToken = res.data.accessToken;
+        const newRefreshToken = res.data.refreshToken;
+        const accessTokenExpiry = res.data.accessTokenExpiry;
+        const refreshTokenExpiry = res.data.refreshTokenExpiry;
+
+        // 🧠 Update tokens in redux & localStorage
+        store.dispatch(setAccessToken(newAccessToken));
+        store.dispatch(setAccessTokenExpiry(accessTokenExpiry));
+        store.dispatch(setRefreshToken(newRefreshToken));
+        store.dispatch(setRefreshTokenExpiry(refreshTokenExpiry));
+
+        localStorage.setItem("accessToken", newAccessToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
+        localStorage.setItem("accessTokenExpiry", accessTokenExpiry);
+        localStorage.setItem("refreshTokenExpiry", refreshTokenExpiry);
+
+        processQueue(null, newAccessToken);
+
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        return axiosInstance (originalRequest); // retry original request
+      } catch (err) {
+        processQueue(err, null);
+        // store.dispatch(logout()); // logout user
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+
+
 
 // Type for connector params
 type Connection<TData = unknown, TParams = Record<string, unknown>> = {
@@ -39,151 +147,3 @@ export const apiConnector = async <
 
   return axiosInstance(config);
 };
-
-
-// src/utils/apiConnector.ts
-
-
-// import axios, {
-//   type AxiosInstance,
-//   type AxiosRequestConfig,
-//   type AxiosResponse,
-//   type InternalAxiosRequestConfig,
-//   type Method,
-//   type AxiosError,
-//   AxiosHeaders,
-// } from "axios";
-// import { store } from "../reducers/store";
-// import {
-//   setAccessToken,
-//   // setAccessTokenExpiry,
-//   setRefreshToken,
-// } from "../slices/authSlice";
-// import { refreshAccessToken } from "../token/refreshTokenAccess";
-// // import { logout } from "./operations/authApi";
-// import { type NavigateFunction } from "react-router-dom";
-// import { logout } from "./operations/authApi";
-// // import { access } from "fs";
-// // 1. Create Axios instance
-// const axiosInstance: AxiosInstance = axios.create();
-
-// let navigateRef: NavigateFunction;
-
-// export const setNavigateRef = (nav: NavigateFunction) => {
-//   navigateRef = nav;
-// };
-
-// axiosInstance.interceptors.request.use(
-//   async (
-//     config: InternalAxiosRequestConfig
-//   ): Promise<InternalAxiosRequestConfig> => {
-//     // ✅ Step 1: Skip auth if custom flag is set
-//     if (config.headers?.skipAuth) {
-//       // Remove the custom flag before sending the request
-//       delete config.headers.skipAuth;
-//       return config;
-//     }
-
-//     const state = store.getState();
-
-//     //ACCESS TOKEN AND EXPIRY
-//     const token = state.auth.accessToken || localStorage.getItem("accessToken");
-//     const expiryString =
-//       state.auth.accessTokenExpiry || localStorage.getItem("accessTokenExpiry");
-
-//     //REFRESH TOKEN AND EXPIRY
-//     const refreshToken =
-//       state.auth.refreshToken || localStorage.getItem("refreshToken");
-//     const refreshTokenExpiry =
-//       state.auth.refreshTokenExpiry ||
-//       localStorage.getItem("refreshTokenExpiry");
-
-//     console.log("expiryString", expiryString);
-//     console.log("refreshToken", refreshToken);
-//     console.log("refreshTokenExpiry", refreshTokenExpiry);
-
-//     let expiry: Date | null = null;
-//     if (expiryString) {
-//       const parsed = new Date(expiryString);
-//       if (!isNaN(parsed.getTime())) {
-//         expiry = parsed;
-//       }
-//     }
-
-//     const now = new Date();
-
-//     let refreshExpiryDate: Date | null = null;
-
-//     if (refreshTokenExpiry) {
-//       refreshExpiryDate = new Date(refreshTokenExpiry);
-//     }
-
-//     console.log("accessTokenExpiry:", expiry?.toLocaleTimeString());
-//     console.log("now time:", now.toLocaleTimeString());
-//     console.log("refreshTokenExpiry:", refreshExpiryDate?.toLocaleTimeString());
-
-//     if (expiry && now >= expiry && refreshToken) {
-//       try {
-//         const newTokenData = await refreshAccessToken(refreshToken);
-
-//         store.dispatch(setAccessToken(newTokenData.accessToken));
-//         localStorage.setItem("accessToken", newTokenData.accessToken);
-
-//         console.log("New Access Token",newTokenData.accessToken);
-//         store.dispatch(setRefreshToken(newTokenData.refreshToken));
-//         localStorage.setItem("refreshToken", newTokenData.refreshToken);
-
-//         console.log("New Refresh TOken",newTokenData.refreshToken);
-
-//         config.headers = AxiosHeaders.from({
-//           ...(config.headers || {}),
-//           Authorization: `Bearer ${newTokenData.accessToken}`,
-//         });
-//       } catch (error) {
-//           logout(token,navigateRef,store.dispatch);
-//         throw error;
-//       }
-//     } else if (token) {
-//       config.headers = AxiosHeaders.from({
-//         ...(config.headers || {}),
-//         Authorization: `Bearer ${token}`,
-//       });
-//     }
-
-//     return config;
-//   },
-//   (error: AxiosError) => {
-//     return Promise.reject(error);
-//   }
-// );
-
-// // 3. API Connector generic function
-// type Connection<TData = unknown, TParams = Record<string, unknown>> = {
-//   method: Method;
-//   url: string;
-//   bodyData?: TData;
-//   headers?: Record<string, string>;
-//   params?: TParams;
-// };
-
-// export const apiConnector = async <
-//   TResponse,
-//   TData = unknown,
-//   TParams = Record<string, unknown>
-// >({
-//   method,
-//   url,
-//   bodyData,
-//   headers,
-//   params,
-// }: Connection<TData, TParams>): Promise<AxiosResponse<TResponse>> => {
-//   const config: AxiosRequestConfig<TData> = {
-//     method,
-//     url,
-//     data: bodyData,
-//     headers,
-//     params,
-//   };
-
-//   return axiosInstance(config);
-// };
