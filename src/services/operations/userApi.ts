@@ -49,7 +49,6 @@ export function getCurrentUser() {
         },
       });
 
-
       // console.log("GET CURRENT USER RESPONSE:", response);
 
       if (response.data.status === "SUCCESS") {

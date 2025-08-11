@@ -100,7 +100,7 @@ export default function ProfileDropdown() {
       >
              {
                 user?.profilePicUrl?
-                (<div className="flex justify-center items-center text-white gap-2"><img src={user?.profilePicUrl} className="rounded-full w-10 h-10 object-cover overflow-hidden"></img>Hello! {user.firstName.slice(0, 6)}...</div>)
+                (<div className="flex justify-center items-center text-white gap-2"><img src={user?.profilePicUrl} className="rounded-full w-10 h-10 object-cover overflow-hidden"></img>Hello! {user?.firstName?.slice(0, 6)}...</div>)
                  :(<FaRegUserCircle size={30} />)
               }
       </div>
