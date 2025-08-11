@@ -16,8 +16,6 @@ type RefreshTokenResponse = {
 };
 
 
-
-
 export function refreshAccessToken() {
     return async (dispatch: AppDispatch): Promise<void> => {
         try {
@@ -30,11 +28,11 @@ export function refreshAccessToken() {
                 },
             });
 
-
             console.log("REFRESH_ACCESS_TOKEN.....",response)
             const accessTokenExpiryString = response.data.data.accessTokenExpiry;
             console.log("ACCESS TOKEN EXPIRY",accessTokenExpiryString);
             
+
             if (accessTokenExpiryString) {
                 // ISO date ko Date object me convert karo
                 const expiryDate = new Date(accessTokenExpiryString);
@@ -42,16 +40,18 @@ export function refreshAccessToken() {
                 const diffMs = expiryDate.getTime() - now.getTime();
                 // 1 minute pehle ka time
                 const timeToRefresh = diffMs - 60 * 1000;
+                
                 // Agar koi purana timer hai to clear karo
                 if (refreshTimer) clearTimeout(refreshTimer);
+                
                 if (timeToRefresh > 0) {
                     refreshTimer = setTimeout(() => {
-                        console.log("🔄 Refreshing token before expiry...");
+                        console.log(" Refreshing token before expiry...");
                         dispatch(refreshAccessToken());
                     }, timeToRefresh);
 
                     console.log(
-                        `⏳ Next refresh scheduled in ${(timeToRefresh / 1000).toFixed(0)} seconds`
+                        ` Next refresh scheduled in ${(timeToRefresh / 1000).toFixed(0)} seconds`
                     );
                 } else {
                     // Token already expired, turant refresh karo
