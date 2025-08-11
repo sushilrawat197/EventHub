@@ -149,17 +149,20 @@ const SignIn: React.FC = () => {
               <div className="flex-grow h-px bg-gray-300" />
             </div>
 
+
             {/* Google Sign In */}
             <button
+            type="button"
               onClick={() => {
                 window.location.href =
                   "https://thedemonstrate.com/GenericAuthService/oauth2/authorization/google";
               }}
-              className="w-full cursor-pointer flex items-center justify-center gap-2 border border-gray-400 py-2 rounded-lg text-sm font-medium text-[#777777] hover:bg-gray-100 transition"
+              className="w-full bg-blue-100 cursor-pointer flex items-center justify-center gap-2 border border-sky-500 py-2 rounded-lg text-sm font-medium text-[#777777] hover:bg-gray-100 transition"
             >
               <img title="Google" src="google-icon.svg" className="w-4 h-4" />
               Sign in with Google
             </button>
+
 
             {/* Create Account */}
             <p className="text-center text-sm mt-4">

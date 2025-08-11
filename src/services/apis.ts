@@ -20,8 +20,6 @@ export const endpoints = {
 }
 
 
-
-
 export const userEndpoint={
   GET_USER_API:BASE_URL + "api/v1/users/get-userprofile",
   UPDATE_USER_API:BASE_URL + "api/v1/users/save-updateuserprofile",

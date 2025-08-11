@@ -25,7 +25,7 @@ const events = [
     year: "2021",
     title: "Rio Olympic Games 1st Run",
     location: "Rio Olympic Hall",
-    status: "L 5.00",
+    status: "M 5.00",
     image: "Events2.jpg",
   },
   {
@@ -34,8 +34,8 @@ const events = [
     year: "2023",
     title: "Riga Saxophone Days",
     location: "Arena Riga",
-    status: "L 33.00",
-    discount: "L 48.00",
+    status: "M 33.00",
+    discount: "M 48.00",
     image: "Events3.jpg",
   },
   {
@@ -44,7 +44,7 @@ const events = [
     year: "2024",
     title: "Football League Start",
     location: "Bangalore Stadium",
-    status: "L 10.00",
+    status: "M 10.00",
     image: "Events4.jpg",
   },
   {
@@ -62,7 +62,7 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "L 7.00",
+    status: "M 7.00",
     image: "Events6.jpg",
   },
 
@@ -72,7 +72,7 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "L 7.00",
+    status: "M 7.00",
     image: "Events7.jpg",
   },
 
@@ -82,7 +82,7 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "L 7.00",
+    status: "M 7.00",
     image: "Events8.jpg",
   },
 
@@ -92,7 +92,7 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "L7.00",
+    status: "M 7.00",
     image: "Events9.jpg",
   },
 
@@ -102,7 +102,7 @@ const events = [
     year: "2025",
     title: "Startup Pitch Day",
     location: "Hyderabad Expo",
-    status: "L7.00",
+    status: "M 7.00",
     image: "Events6.jpg",
   },
 ];

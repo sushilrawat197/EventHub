@@ -8,7 +8,6 @@ import {
   setLoading,
   setMassage,
   setAccessTokenExpiry,
-  setRefreshToken,
   setRefreshTokenExpiry,
   // setOtpContext,
 } from "../../slices/authSlice";
@@ -305,8 +304,7 @@ export function signIn(
           accessTokenExpiry: string;
           refreshTokenExpiry: string;
           profileRequired: boolean;
-          accessToken: string;
-          refreshToken: string;
+       
         };
       }>({
         method: "POST",
@@ -327,7 +325,7 @@ export function signIn(
       const data = response.data;
       console.log("LOGIN API RESPONSE............", data);
 
-      const { accessToken, refreshToken, accessTokenExpiry, refreshTokenExpiry } = data.data;
+      const { accessTokenExpiry, refreshTokenExpiry } = data.data;
 
       const aceessTokenExpirTime= new Date(accessTokenExpiry);
       const refrehTokenExpirTime= new Date(refreshTokenExpiry);
@@ -339,14 +337,11 @@ export function signIn(
 
       if (data.status === "SUCCESS") {
         dispatch(getCurrentUser());
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken); // ✅ Store refresh token
+        // localStorage.setItem("accessToken", accessToken);
+        // localStorage.setItem("refreshToken", refreshToken); // ✅ Store refresh token
         localStorage.setItem("accessTokenExpiry", accessTokenExpiry); // ✅ Store refresh token
         localStorage.setItem("refreshTokenExpiry",refreshTokenExpiry); // ✅ Store refresh token
         
-        
-        dispatch(setAccessToken(accessToken));
-        dispatch(setRefreshToken(response.data.data.refreshToken));
         dispatch(setAccessTokenExpiry(response.data.data.accessTokenExpiry));
         dispatch(setRefreshTokenExpiry(response.data.data.refreshTokenExpiry));
 

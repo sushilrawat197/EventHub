@@ -1,5 +1,5 @@
 import { apiConnector } from "../apiConnector";
-import { setUser } from "../../slices/userSlice";
+import { clearUser, setUser } from "../../slices/userSlice";
 import { toast } from "react-toastify";
 import { type Dispatch } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -34,7 +34,6 @@ type GetUserApiResponse = {
 };
 
 
-
 export function getCurrentUser() {
 
   return async (dispatch: Dispatch): Promise<void> => {
@@ -58,7 +57,7 @@ export function getCurrentUser() {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         // toast.error(error.response?.data?.message || "User fetch failed");
-        // dispatch(clearUser());
+        dispatch(clearUser());
         console.error("Error fetching user:", error.response?.data);
       } else {
         console.error("Unknown error:", error);

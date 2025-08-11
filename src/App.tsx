@@ -66,19 +66,15 @@ console.log("USER DATA ......",user)
 
   
 
-  useEffect(() => {
-    // ✅ Page load hone pe user fetch karo
-    console.log("REFRESH ACCESS TOKEN API.....");
-    dispatch(refreshAccessToken());
-  }, [dispatch]);
-
-
-  useEffect(() => {
-    // ✅ Page load hone pe user fetch karo
-    // console.log("called this useEffect using user update");
+useEffect(() => {
+  const init = async () => {
+    console.log("Refreshing token...");
+    await dispatch(refreshAccessToken()); // wait for refreshToken completion 
+    console.log("Fetching user...");
     dispatch(getCurrentUser());
-  }, [dispatch]);
-
+  };
+  init();
+}, [dispatch]);
 
 
   return (

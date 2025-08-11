@@ -16,7 +16,7 @@ const HeroSection = () => {
         {/* Right side: Text */}
         <div className="     items-start text-center ">
           <h1 className=" text-5xl  font-bold text-black    ">
-            "Your Ultimate Ticket Destination"
+            "Your Ultimate<br></br> Ticket<br></br> Destination"
           </h1>
           <p className="mt-4 text-gray-900   md:ml-6">
             Step into the future of events with MyTag. We offer a hassle free
