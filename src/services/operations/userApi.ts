@@ -84,6 +84,8 @@ interface ProfileFormData {
   dob: string;
   gender: string;
 }
+
+
 export function updateUserDetails(
   data:ProfileFormData
 ) {

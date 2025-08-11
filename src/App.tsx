@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { getCurrentUser } from "./services/operations/userApi";
 import { useAppSelector } from "./reducers/hooks";
 import Layout from "./UI/Components/eventsection/Layout";
+import { refreshAccessToken } from "./services/operations/refreshToken";
 // import axios from "axios";
 // import { clearUser, setUser } from "./slices/userSlice";
 // import { userEndpoint } from "./services/apis";
@@ -67,7 +68,14 @@ console.log("USER DATA ......",user)
 
   useEffect(() => {
     // ✅ Page load hone pe user fetch karo
-    console.log("called this useEffect using user update");
+    console.log("REFRESH ACCESS TOKEN API.....");
+    dispatch(refreshAccessToken());
+  }, [dispatch]);
+
+
+  useEffect(() => {
+    // ✅ Page load hone pe user fetch karo
+    // console.log("called this useEffect using user update");
     dispatch(getCurrentUser());
   }, [dispatch]);
 
