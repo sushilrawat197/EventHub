@@ -58,7 +58,7 @@ export function getCurrentUser() {
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "User fetch failed");
+        // toast.error(error.response?.data?.message || "User fetch failed");
         dispatch(clearUser());
         console.error("Error fetching user:", error.response?.data);
       } else {
@@ -118,7 +118,6 @@ export function updateUserDetails(
     }
   };
 }
-
 
 
 export function updateUserProfilPicture(file: FormData) {

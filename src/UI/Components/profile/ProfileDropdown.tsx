@@ -144,8 +144,6 @@ export default function ProfileDropdown() {
               </Link>
               
 
-              
-
             </div>
 
             {/* Menu Items */}
