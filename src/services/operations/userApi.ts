@@ -127,6 +127,7 @@ export function updateUserDetails(
 export function updateUserProfilPicture(file: FormData) {
   return async (dispatch: AppDispatch): Promise<void> => {
     try {
+      dispatch(setLoading(true))
       const response = await apiConnector<UpdatedUserResponseApi>({
         method: "POST",
         url: UPDATE_USER_IMAGE_API,
@@ -145,6 +146,7 @@ export function updateUserProfilPicture(file: FormData) {
       // error handling...
       console.log(error);
     }
+    dispatch(setLoading(false));
   };
 }
 

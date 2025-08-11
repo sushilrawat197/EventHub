@@ -11,34 +11,29 @@ import { useAppDispatch } from "../../../reducers/hooks";
 import { updateUserDetails } from "../../../services/operations/userApi";
 import { ClipLoader } from "react-spinners";
 
-
 export default function ProfileCard() {
-  const dispatch=useAppDispatch();
+  const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user.user);
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [editImage, setEditImage] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
-
-
   interface FormData {
     firstName: string;
     lastName: string;
     dob: string;
-    gender:string
+    gender: string;
   }
 
   const [formData, setFormData] = useState<FormData>({
-    firstName: user?.firstName??"",
-    lastName: user?.lastName??"",
-    dob: user?.dob??"",
-    gender:"OTHER"
+    firstName: user?.firstName ?? "",
+    lastName: user?.lastName ?? "",
+    dob: user?.dob ?? "",
+    gender: "OTHER",
   });
 
-
   const calendarRef = useRef<HTMLDivElement>(null); // ref for calendar
-
 
   function changeHandler(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -48,20 +43,19 @@ export default function ProfileCard() {
     }));
   }
 
+  function calendarChangeHandler(value: Date) {
+    const day = String(value.getDate()).padStart(2, "0");
+    const month = String(value.getMonth() + 1).padStart(2, "0"); // Month is 0-based
+    const year = value.getFullYear();
+    // 👈 new state
 
-function calendarChangeHandler(value: Date) {
-  const day = String(value.getDate()).padStart(2, "0");
-  const month = String(value.getMonth() + 1).padStart(2, "0"); // Month is 0-based
-  const year = value.getFullYear();
-   // 👈 new state
+    setFormData((prev) => ({
+      ...prev,
+      dob: `${year}-${month}-${day}`, // ✅ YYYY-MM-DD
+    }));
 
-  setFormData((prev) => ({
-    ...prev,
-    dob: `${year}-${month}-${day}`, // ✅ YYYY-MM-DD
-  }));
-
-  setShowCalendar(false); // date select karte hi calendar close
-}
+    setShowCalendar(false); // date select karte hi calendar close
+  }
 
   // 📌 Close calendar when clicking outside
   useEffect(() => {
@@ -72,11 +66,17 @@ function calendarChangeHandler(value: Date) {
       ) {
         setShowCalendar(false);
       }
+
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target as Node)
+      ) {
+        setEditImage(false);
+      }
     }
-    
 
     if (showCalendar) {
-      document.addEventListener("mousedown", handleClickOutside); 
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
@@ -86,8 +86,6 @@ function calendarChangeHandler(value: Date) {
     };
   }, [showCalendar]);
   const loading = useAppSelector((state) => state.auth.loading);
-
-
 
   function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -102,16 +100,27 @@ function calendarChangeHandler(value: Date) {
 
   return (
     <form onSubmit={submitHandler}>
-      <div className="h-screen mx-auto max-w-3xl rounded-t-lg  mt-24">
+      <div className="h-screen mx-auto max-w-3xl rounded-t-lg  mt-32">
         <div className="bg-white shadow-lg relative">
-          {editImage && <UploadProfileImage setEditImage={setEditImage} />}
+          {editImage && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center">
+              <div
+                className="absolute inset-0 bg-black/40" // tailwind shortcut for bg-opacity-40
+                onClick={() => setEditImage(false)}
+              ></div>
+              <UploadProfileImage  />
+              {/* <UploadProfileImage setEditImage={setEditImage} /> */}
+            </div>
+          )}
 
           {showCalendar && (
             <div
               ref={calendarRef}
               className="absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             >
-              <Calendar onChange={(val) => calendarChangeHandler(val as Date)} />
+              <Calendar
+                onChange={(val) => calendarChangeHandler(val as Date)}
+              />
             </div>
           )}
 
@@ -122,14 +131,14 @@ function calendarChangeHandler(value: Date) {
               onClick={() => setEditImage(true)}
               className="hover:cursor-pointer hover:opacity-70 w-16 h-16 bg-white text-gray-600 rounded-full flex justify-center items-center"
             >
-              
-
-              {
-              user?.profilePicUrl?
-              (<img src={user?.profilePicUrl} className="rounded-full w-15 h-15 object-cover overflow-hidden"></img>)
-              :(<FaCamera size={22} />)
-              }
- 
+              {user?.profilePicUrl ? (
+                <img
+                  src={user?.profilePicUrl}
+                  className="rounded-full w-15 h-15 object-cover overflow-hidden"
+                ></img>
+              ) : (
+                <FaCamera size={22} />
+              )}
             </div>
           </div>
 
@@ -189,15 +198,10 @@ function calendarChangeHandler(value: Date) {
             </div>
           </div>
 
-          <div>
-
-            
-
-          </div>
+          <div></div>
 
           {/* Submit */}
           <div className="w-full flex justify-center items-center mt-3 pb-8">
-
             {!loading ? (
               <button
                 type="submit"
@@ -218,7 +222,6 @@ function calendarChangeHandler(value: Date) {
                 <ClipLoader color="#ffffff" size={20} />
               </button>
             )}
-
           </div>
         </div>
       </div>

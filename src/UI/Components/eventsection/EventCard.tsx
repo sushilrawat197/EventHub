@@ -43,7 +43,7 @@ export default function EventCard({ event }: EventCardProps) {
         <p className="text-xs text-gray-600">{event.venue}</p>
         <p className="text-xs text-gray-500">{event.category}</p>
         <p className="text-xs text-gray-800 font-medium">
-          L- {event.price} onwards
+          M - {event.price} onwards
         </p>
       </div>
     </div>

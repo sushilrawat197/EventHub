@@ -18,14 +18,19 @@ const Navbar: React.FC = () => {
   const cityPopupRef = useRef<HTMLDivElement>(null); // 👈 Ref for city popup
 
   const cities = [
-    "New York",
-    "Los Angeles",
-    "Chicago",
-    "Houston",
-    "Phoenix",
-    "Philadelphia",
+    "Maseru",
+    "Mafeteng",
+    "Mohale's Hoek",
+    "Quthing",
+    "Thaba Tseka",
+    "Qacha's Nek",
+    "Berea",
+    "Leribe",
+    "Botha-Bothe",
+    "Mokhotlong",
   ];
 
+  
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       // Handle mobile menu click outside
@@ -173,6 +178,7 @@ const Navbar: React.FC = () => {
 
       {/* City Popup with Black Background Overlay */}
       {cityPopupOpen && (
+
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
           {/* Black overlay with 40% opacity */}
           <div
@@ -206,6 +212,7 @@ const Navbar: React.FC = () => {
               Cancel
             </button>
           </div>
+          
         </div>
       )}
     </>
