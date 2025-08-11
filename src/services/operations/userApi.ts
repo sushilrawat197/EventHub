@@ -5,6 +5,7 @@ import { type Dispatch } from "@reduxjs/toolkit";
 import axios from "axios";
 import { userEndpoint } from "../apis";
 import type { AppDispatch } from "../../reducers/store";
+import { setLoading } from "../../slices/authSlice";
 
 const { GET_USER_API, UPDATE_USER_API, UPDATE_USER_IMAGE_API } = userEndpoint;
 
@@ -87,7 +88,9 @@ export function updateUserDetails(
   data:ProfileFormData
 ) {
   return async (dispatch:AppDispatch): Promise<void> => {
+    
     try {
+      dispatch(setLoading(true));
       const response = await apiConnector<UpdatedUserResponseApi>({
         method: "POST",
         url: UPDATE_USER_API,
@@ -115,7 +118,9 @@ export function updateUserDetails(
         console.error("Unknown error:", error);
       }
     }
+    dispatch(setLoading(false));
   };
+  
 }
 
 

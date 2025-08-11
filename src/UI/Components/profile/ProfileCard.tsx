@@ -9,6 +9,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useAppDispatch } from "../../../reducers/hooks";
 import { updateUserDetails } from "../../../services/operations/userApi";
+import { ClipLoader } from "react-spinners";
 
 
 export default function ProfileCard() {
@@ -17,6 +18,7 @@ export default function ProfileCard() {
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [editImage, setEditImage] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
 
 
@@ -51,6 +53,7 @@ function calendarChangeHandler(value: Date) {
   const day = String(value.getDate()).padStart(2, "0");
   const month = String(value.getMonth() + 1).padStart(2, "0"); // Month is 0-based
   const year = value.getFullYear();
+   // 👈 new state
 
   setFormData((prev) => ({
     ...prev,
@@ -82,13 +85,19 @@ function calendarChangeHandler(value: Date) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showCalendar]);
+  const loading = useAppSelector((state) => state.auth.loading);
 
 
 
   function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (isDisabled) return; // 👈 prevent rapid clicks
+    setIsDisabled(true); // 👈 disable button
     console.log(formData);
     dispatch(updateUserDetails(formData));
+    setTimeout(() => {
+      setIsDisabled(false);
+    }, 2000);
   }
 
   return (
@@ -188,12 +197,28 @@ function calendarChangeHandler(value: Date) {
 
           {/* Submit */}
           <div className="w-full flex justify-center items-center mt-3 pb-8">
-            <button
-              type="submit"
-              className="mb-2 px-36 bg-sky-500 hover:bg-sky-400 text-white font-semibold py-2 rounded-md transition text-base cursor-pointer"
-            >
-              Submit
-            </button>
+
+            {!loading ? (
+              <button
+                type="submit"
+                disabled={isDisabled}
+                className={` w-48 bg-sky-500 hover:bg-sky-300 text-white font-semibold h-10 rounded-lg transition text-base ${
+                  isDisabled
+                    ? "cursor-not-allowed opacity-70"
+                    : "cursor-pointer"
+                }`}
+              >
+                Update Details
+              </button>
+            ) : (
+              <button
+                disabled
+                className="flex flex-col items-center justify-center w-48 bg-sky-200 text-white h-10 rounded-lg transition text-base cursor-not-allowed"
+              >
+                <ClipLoader color="#ffffff" size={20} />
+              </button>
+            )}
+
           </div>
         </div>
       </div>
