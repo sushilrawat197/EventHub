@@ -3,13 +3,7 @@ import { RiMenu3Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import {useAppSelector } from "../../reducers/hooks";
 import ProfileDropdown from "./profile/ProfileDropdown";
-
-// import { useAuthRestore } from "../../token/callingAutoTokenRefresh";
-
-type MobileDropdownState = {
-  event: boolean;
-  ticket: boolean;
-};
+import { CiSearch } from "react-icons/ci";
 
 const Navbar: React.FC = () => {
 
@@ -17,14 +11,8 @@ const Navbar: React.FC = () => {
   // console.log("TOKEN IN NAVBAR: ",token);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-
-  const [mobileDropdownOpen, setMobileDropdownOpen] =
-    useState<MobileDropdownState>({
-      event: false,
-      ticket: false,
-    });
-
   const menuRef = useRef<HTMLDivElement>(null); // 👈 Ref for mobile menu
+
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -63,38 +51,19 @@ const Navbar: React.FC = () => {
         </Link>
 
         {/* Desktop Nav */}
-        <ul className="hidden lg:flex bg-white  rounded-full px-4 py-1 space-x-4">
+        <ul className="hidden lg:flex bg-white  rounded-full px-4 py-1 space-x-4 w-[30%] justify-center items-center">
           <li className="text-sky-600 hover:text-white cursor-pointer font-medium px-2 py-1 hover:bg-sky-500 rounded-full">
             <Link to={"/"}>Home</Link>
           </li>
 
           {/* Event Categories */}
-          <li className="group relative cursor-pointer text-gray-900 hover:text-white px-2 py-1 hover:bg-sky-500 rounded-full hover:font-medium">
-            Event Categories
-            <div className="absolute hidden group-hover:block top-full mt-2 left-0 bg-white text-black shadow-md rounded-md min-w-[180px] z-50">
-              {[
-                "Kids Events",
-                "Comedy Shows",
-                "Festivals",
-                "Music Concerts",
-                "Cultural Events",
-                "Sports Events",
-                "Theater and Performing Arts",
-                "Corporate Conferences and Workshops",
-              ].map((item) => (
-                <a
-                  key={item}
-                  href="#"
-                  className="block px-4 py-2 text-sm hover:bg-sky-500 hover:text-white"
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
-          </li>
+         <Link to={"/events"}> <li className="group relative cursor-pointer text-gray-900 hover:text-white px-2 py-1 hover:bg-sky-500 rounded-full hover:font-medium">
+            Browse Events
+          </li></Link>
+
 
           {/* Ticket Categories */}
-          <li className="group relative cursor-pointer text-gray-900 hover:text-white px-2 py-1 hover:bg-sky-500 rounded-full hover:font-medium">
+          {/* <li className="group relative cursor-pointer text-gray-900 hover:text-white px-2 py-1 hover:bg-sky-500 rounded-full hover:font-medium">
             Tickets Categories
             <div className="absolute hidden group-hover:block top-full mt-2 left-0 bg-white text-black shadow-md rounded-md min-w-[180px] z-50">
               {["General Admission", "VIP Access", "VVIP Access"].map(
@@ -109,45 +78,55 @@ const Navbar: React.FC = () => {
                 )
               )}
             </div>
-          </li>
+          </li> */}
 
-          <li className="text-gray-900 hover:text-white cursor-pointer px-2 py-1 hover:bg-sky-500 rounded-full hover:font-medium">
+          {/* <li className="text-gray-900 hover:text-white cursor-pointer px-2 py-1 hover:bg-sky-500 rounded-full hover:font-medium">
             Browse Events
-          </li>
-          <li className="text-gray-900 hover:text-white cursor-pointer px-2 py-1 hover:bg-sky-500 rounded-full hover:font-medium">
+          </li> */}
+          {/* <li className="text-gray-900 hover:text-white cursor-pointer px-2 py-1 hover:bg-sky-500 rounded-full hover:font-medium">
             Dashboard
           </li>
           <li className="text-gray-900 hover:text-white cursor-pointer px-2 py-1 hover:bg-sky-500 rounded-full hover:font-medium">
             Contacts
-          </li>
+          </li> */}
         </ul>
+
+        <div className="bg-white justify-center items-center w-[30%] rounded-full hidden lg:flex">
+          <span className="text-xl"><CiSearch/></span>
+        <input type="text" placeholder="Seach for Events, Festivals, Comedy Shows" className="focus:outline-none border-none bg-white p-2 borde rounded-md w-[80%] px-4"></input>
+
+        </div>
+
 
         {/* Desktop Buttons */}
 
         {user === null && (
-          <div className="space-x-2 hidden lg:flex">
+          <div className=" hidden lg:flex">
             <Link to={"/login"}>
-              <button className="bg-white text-sky-600 font-medium px-4 py-1 rounded-full border border-sky-300 hover:bg-sky-100 cursor-pointer">
+              <button className="bg-white text-sky-600 font-medium px-4 py-2 rounded-full border border-sky-300 hover:bg-sky-100 cursor-pointer">
                 Sign In
               </button>
             </Link>
           </div>
         )}
 
-        <div className=" flex items-center  ">
+
+        <div className={`flex items-center gap-2`} >
           {/* Mobile Toggle */}
+
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-white  lg:hidden  "
+            className={`text-white  lg:hidden`}
             title="Menu"
           >
             <RiMenu3Line size={30} />
           </button>
+
+
           {/* Profile Icon visbile  */}
           {user !== null && (
-            <div className=" w-full ">
-              {" "}
-              <ProfileDropdown />
+            <div className=" w-full ">  
+             <ProfileDropdown />
             </div>
           )}
         </div>
@@ -169,80 +148,24 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Event Dropdown */}
           <div>
+            <Link to={"/events"}>
             <button
-              onClick={() =>
-                setMobileDropdownOpen((prev) => ({
-                  ...prev,
-                  event: !prev.event,
-                }))
+              onClick={
+               () => setMobileMenuOpen(!mobileMenuOpen)
               }
               className="w-full text-left text-black font-medium"
             >
-              Event Categories
-            </button>
-            {mobileDropdownOpen.event && (
-              <div className="ml-4  space-y-1 text-sm text-gray-600">
-                {[
-                  "Kids Events",
-                  "Comedy Shows",
-                  "Festivals",
-                  "Music Concerts",
-                  "Cultural Events",
-                  "Sports Events",
-                  "Theater and Performing Arts",
-                  "Corporate Conferences and Workshops",
-                ].map((item) => (
-                  <a
-                    key={item}
-                    href="#"
-                    className="block px-2 py-2 text-sm hover:bg-sky-500 hover:text-white"
-                  >
-                    {item}
-                  </a>
-                ))}
-              </div>
-            )}
+              Browse Events
+            </button></Link>
+
+
+           
           </div>
 
           {/* Mobile Ticket Dropdown */}
-          <div>
-            <button
-              onClick={() =>
-                setMobileDropdownOpen((prev) => ({
-                  ...prev,
-                  ticket: !prev.ticket,
-                }))
-              }
-              className="w-full text-left text-black font-medium"
-            >
-              Tickets Categories
-            </button>
-            {mobileDropdownOpen.ticket && (
-              <div className="ml-4 mt-1 space-y-1 text-sm text-gray-600">
-                {["General Admission", "VIP Access", "VVIP Access"].map(
-                  (item) => (
-                    <a
-                      key={item}
-                      href="#"
-                      className="block px-4 py-2 text-sm hover:bg-sky-500 hover:text-white"
-                    >
-                      {item}
-                    </a>
-                  )
-                )}
-              </div>
-            )}
-          </div>
+          
 
-          <a href="#" className="block text-black">
-            Browse Events
-          </a>
-          <a href="#" className="block text-black">
-            Dashboard
-          </a>
-          <a href="#" className="block text-black">
-            Contacts
-          </a>
+          
 
           <div className=" border border-gray-300"></div>
 

@@ -1,10 +1,10 @@
-import EventsFilter from "../Components/EventsFilter";
+// import EventsFilter from "../Components/EventsFilter";
 import StatsReview from "../Components/StatsReviews";
 
 const HeroSection = () => {
   return (
     <>
-      <div className=" z-10 px-[10%]   py-15 grid grid-cols-1 md:grid-cols-2 items-center ">
+      <div className=" z-10 px-[10%]  grid grid-cols-1 md:grid-cols-2 items-center ">
         <div className="md:-ml-4 mt-25 px-5">
           <img
             src="mainimg00.jpg"
@@ -18,9 +18,9 @@ const HeroSection = () => {
           <h1 className=" text-5xl  font-bold text-black    ">
             "Your Ultimate Ticket Destination"
           </h1>
-          <p className="mt-4 text-[#777777]   md:ml-6">
+          <p className="mt-4 text-gray-900   md:ml-6">
             Step into the future of events with MyTag. We offer a hassle free
-            experience. No lines, just vibes!
+            experience. No lines, just vibes!
           </p>
 
           <div className="mt-6 flex flex-wrap  justify-center md:justify-start gap-4 md:ml-[30%] font-semibold ">
@@ -34,7 +34,7 @@ const HeroSection = () => {
           <StatsReview />
         </div>
       </div>
-      <EventsFilter />
+      {/* <EventsFilter /> */}
     </>
   );
 };

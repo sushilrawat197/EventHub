@@ -190,6 +190,46 @@ export function resendOTP(email: string) {
 
 
 
+export function forgotp_password_resend_OTP(email: string) {
+  return async (): Promise<void> => {
+    try {
+      const response = await apiConnector<{
+        success: boolean;
+        message: string;
+        status: string;
+      }>({
+        method: "POST",
+        url: RESEND_OTP,
+        bodyData: { emailOrMsisdn: email, socialSignup: true, socialToken: "" },
+        headers: {
+          "X-Client-Source": "OTHER",
+        },
+      });
+
+      const data = response.data;
+      console.log("SIGNUP API RESPONSE............", data);
+
+      toast.success(data.message);
+
+      console.log(data.message); // Optional
+    } catch (error) {
+      // ✅ Use AxiosError to get error response
+      if (axios.isAxiosError(error)) {
+        const errorData = error;
+        toast.error(error.response?.data?.message);
+        console.log("SIGNUP API ERROR RESPONSE............", errorData);
+      } else {
+        console.log(
+          "SIGNUP API ERROR............",
+          "An unknown error occurred."
+        );
+      }
+    }
+  };
+}
+
+
+
 export function setPassword(
   pwdSetToken: string,
   password: string,
@@ -287,17 +327,24 @@ export function signIn(
       const data = response.data;
       console.log("LOGIN API RESPONSE............", data);
 
-      const { accessToken, refreshToken, accessTokenExpiry } = data.data;
+      const { accessToken, refreshToken, accessTokenExpiry, refreshTokenExpiry } = data.data;
 
+      const aceessTokenExpirTime= new Date(accessTokenExpiry);
+      const refrehTokenExpirTime= new Date(refreshTokenExpiry);
+      const now = new Date();
+
+      console.log("current time : ", now.toLocaleTimeString())
+      console.log("accessTokenExpiry Time :" ,aceessTokenExpirTime.toLocaleTimeString());
+      console.log( "refreshTokenExpiry Time :",refrehTokenExpirTime.toLocaleTimeString());
 
       if (data.status === "SUCCESS") {
         dispatch(getCurrentUser());
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken); // ✅ Store refresh token
         localStorage.setItem("accessTokenExpiry", accessTokenExpiry); // ✅ Store refresh token
-        // localStorage.setItem("refreshTokenExpiry",String(Date.now() + refreshTokenExpiry * 1000)); // ✅ Store refresh token
-
-
+        localStorage.setItem("refreshTokenExpiry",refreshTokenExpiry); // ✅ Store refresh token
+        
+        
         dispatch(setAccessToken(accessToken));
         dispatch(setRefreshToken(response.data.data.refreshToken));
         dispatch(setAccessTokenExpiry(response.data.data.accessTokenExpiry));
@@ -505,11 +552,11 @@ export function logout(
       console.log(response);
       // ✅ Remove token and other sensitive data from localStorage/cookies
       localStorage.removeItem("accessToken"); // or your actual key
-      localStorage.removeItem("refreshToken"); // or your actual key
+      // localStorage.removeItem("refreshToken"); // or your actual key
       localStorage.removeItem("accessTokenExpiry"); // or your actual key
       dispatch(setAccessToken(null)); // if you're storing user data
       dispatch(setAccessTokenExpiry(""));
-      dispatch(setRefreshToken(""));
+      // dispatch(setRefreshToken(""));
       dispatch(clearUser());
 
       // stopAutoTokenRefresh();

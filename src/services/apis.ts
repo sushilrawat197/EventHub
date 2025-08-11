@@ -1,6 +1,10 @@
-const BASE_URL: string = "https://thedemonstrate.com/GenericAuthService/";
+// const BASE_URL: string = "https://thedemonstrate.com/GenericAuthService/";
 
+
+const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
+// console.log('BASE URL; ', BASE_URL);
 // AUTH ENDPOINTS
+
 export const endpoints = {
   VARIFY_SIGNUP_OTP_API: BASE_URL + "api/v1/auth/verifysignupotp",
   RESEND_OTP: BASE_URL + "api/v1/auth/signup-resendotp",
@@ -10,12 +14,16 @@ export const endpoints = {
   VARIFY_LOGIN_OTP:BASE_URL + "api/v1/auth/verify-otp",
   FORGOT_PASSWORD_OTP:BASE_URL + "api/v1/auth/forgot-passwordOtp",
   RESET_PASSWORD:BASE_URL + "api/v1/auth/verify-forgot-passwordOtp",
-  LOGOUT_API:BASE_URL + "api/v1/auth/logout"
+  LOGOUT_API:BASE_URL + "api/v1/auth/logout",
+  FORGOT_RESEND_PASSWORDOTP_API:BASE_URL +"api/v1/auth/resend-forgot-passwordOtp"
 }
+
 
 export const userEndpoint={
 
-  GET_USER_API:BASE_URL + "api/v1/users/get-userprofile"
+  GET_USER_API:BASE_URL + "api/v1/users/get-userprofile",
+  UPDATE_USER_API:BASE_URL + "api/v1/users/save-updateuserprofile",
+  UPDATE_USER_IMAGE_API:BASE_URL + "api/v1/users/upload-profilepicture"
 
 }
 

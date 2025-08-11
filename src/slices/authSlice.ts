@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+
+
 interface AuthState {
   userEmail: string;
   userResponse: string; //not used
@@ -14,6 +16,7 @@ interface AuthState {
   accessTokenExpiry:string,
   refreshTokenExpiry:string
 }
+
 
 const initialState: AuthState = {
   userEmail: "",

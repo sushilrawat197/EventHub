@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { logout } from "../../../services/operations/authApi";
-import { useAppDispatch} from "../../../reducers/hooks";
+import { useAppDispatch, useAppSelector} from "../../../reducers/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
 import { GoPersonFill } from "react-icons/go";
@@ -40,6 +40,8 @@ export default function ProfileDropdown() {
   const [openMenu, setOpenMenu] = useState(false);
   const [animateMenu, setAnimateMenu] = useState(false);
   // const token = useAppSelector((state) => state.auth.accessToken);
+
+    const user=useAppSelector((state)=>state.user.user);
   
   const menuRef = useRef(null);
 
@@ -96,7 +98,11 @@ export default function ProfileDropdown() {
         className="cursor-pointer bg-sky-500 text-white p-1  w-fit"
         onClick={() => setOpenMenu(true)}
       >
-        <FaRegUserCircle size={30} />
+             {
+                user?.profilePicUrl?
+                (<div className="flex justify-center items-center text-white gap-2"><img src={user?.profilePicUrl} className="rounded-full w-10 h-10 object-cover overflow-hidden"></img>Hello! {user.firstName.slice(0, 6)}...</div>)
+                 :(<FaRegUserCircle size={30} />)
+              }
       </div>
 
       {/* Dropdown Menu + Overlay */}

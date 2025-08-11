@@ -7,12 +7,14 @@ interface OpenRouteProps {
   children: ReactNode;
 }
 
+
 function OpenRoute({ children }: OpenRouteProps) {
 const user=useAppSelector((state)=>state.user.user);
 
   if (user === null) {
     return children;
-  } else {
+  } 
+  else {
     return <Navigate to="/" />;
   }
 }

@@ -31,6 +31,17 @@ export default function PasswordReset() {
     }
   }, [pwdToken, navigate]);
 
+   const [timer, setTimer] = useState<number>(60);
+    useEffect(() => {
+      let interval: NodeJS.Timeout;
+      if (timer > 0) {
+        interval = setInterval(() => {
+          setTimer((prevTime) => prevTime - 1);
+        }, 1000);
+      }
+      return () => clearInterval(interval);
+    }, [timer]);
+
   if (!ready) return null; // ⛔️ Block rendering before token check
 
 
@@ -62,10 +73,31 @@ export default function PasswordReset() {
     setIsDisabled(true);
 
     dispatch(resetPassword(pwdToken, newPass, confirmPass, otp, navigate));
+
     setTimeout(() => {
       setIsDisabled(false);
     }, 2000);
   };
+
+
+    // Format time mm:ss
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = (time % 60).toString().padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+
+
+
+   const resendOtpHandler = () => {
+      // console.log("Printing User Email",userEmail);
+      // const email = userEmail;
+      // dispatch(resendOTP(email));
+    };
+    
+
 
   // console.log(token);
 
@@ -123,14 +155,35 @@ export default function PasswordReset() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
             />
           </div>
-
-          <button
+          <div>
+            <button
             type="submit"
             onClick={() => console.log("Change clicked")}
             className="w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold py-2 rounded-md transition cursor-pointer "
           >
             Change
           </button>
+
+
+             <p className="text-sm text-[#777777] mt-4">
+            Didn’t receive code?{" "}
+            {timer > 0 ? (
+              <span className="text-blue-600 opacity-50 font-medium ml-1 cursor-pointer underline">
+                Resend OTP in {formatTime(timer)}
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={resendOtpHandler}
+                className="text-sky-600 hover:underline font-medium cursor-pointer"
+              >
+                Resend OTP
+              </button>
+            )}
+          </p>
+          </div>
+
+          
         </div>
       </div>
     </form>

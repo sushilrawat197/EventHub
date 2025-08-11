@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+
 // User ka type
 interface User {
   userId: string;
   email: string;
   username: string;
-  firstName: string;
+  firstName: string;  
   lastName: string;
   gender: string;
   address: string;
@@ -15,6 +16,7 @@ interface User {
   country: string;
   msisdn: string | null;
   profilePicUrl: string;
+  dob:string;
   allowEmailNotifications: boolean;
   allowSmsNotifications: boolean;
   allowPushNotifications: boolean;
@@ -39,6 +41,7 @@ const userSlice = createSlice({
     setUser(state, action: PayloadAction<User>) {
       state.user = action.payload;
     },
+    
     clearUser(state) {
       state.user = null;
     },

@@ -37,6 +37,7 @@ useEffect(() => {
     const email = userEmail;
     dispatch(resendOTP(email));
   };
+  
 
   const [timer, setTimer] = useState<number>(60); // 2 minutes in seconds
   // === Timer useEffect ===

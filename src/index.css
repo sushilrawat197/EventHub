@@ -37,3 +37,13 @@
   --color-link-text: var(--color-blue-500);
   --color-link-hover-text: var(--color-black);
 }
+
+/* scroll hide  */
+.scrollbar-hide::-webkit-scrollbar {
+   display: none;
+
+}
+.scrollbar-hide{
+   -ms-overflow-style: none;
+   scrollbar-width: none;
+}

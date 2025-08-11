@@ -1,0 +1,20 @@
+import EventList from "./EventList";
+import FilterPanel from "./FilterPanel";
+
+
+export default function Layout() {
+  return (
+    <div className="flex flex-col lg:flex-row  py-5 max-w-[100%] mx-auto mt-20 px-2">
+      {/* LEFT: Filter Section */}
+      <div className="w-full lg:w-1/4">
+        <FilterPanel/>
+      </div>
+
+      {/* RIGHT: Event Cards Section */}
+      <div className="w-full lg:w-3/4">
+        <EventList/>
+      </div>
+    </div>
+  );
+}
+

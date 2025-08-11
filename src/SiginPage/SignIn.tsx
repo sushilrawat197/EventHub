@@ -36,7 +36,6 @@ const SignIn: React.FC = () => {
   };
 
   const [showPassword, setShowPassword] = useState(false);
-
   //   const handleGoogleClick = () => {
   //   window.location.href = "https://thedemonstrate.com/GenericAuthService/oauth2/authorization/google";
   // };

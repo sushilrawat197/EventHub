@@ -1,24 +1,27 @@
 import React from "react";
 
-
 interface InputboxProps {
   id: string;
   label: string;
   placeholder?: string;
+  name?: string;
   type?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   icon?: React.ElementType;
+  onClick?: () => void; // ✅ optional click handler
 }
 
 const Inputbox: React.FC<InputboxProps> = ({
   id,
   label,
   placeholder,
+  name,
   type = "text",
   value,
   onChange,
   icon: Icon,
+  onClick, // ✅ destructure onClick
 }) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
@@ -31,8 +34,10 @@ const Inputbox: React.FC<InputboxProps> = ({
           id={id}
           type={type}
           placeholder={placeholder}
+          name={name}
           value={value}
           onChange={onChange}
+          onClick={onClick} // ✅ pass onClick to input
           className="w-full p-3 pr-10 rounded-md ring focus:outline-none focus:ring-2 focus:ring-sky-500 transition"
         />
         {Icon && (
