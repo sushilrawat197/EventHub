@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, type ChangeEvent } from "react";
-import { FiEdit2, FiCalendar } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 import { FaCamera } from "react-icons/fa";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import Inputbox from "./Inputbox";
