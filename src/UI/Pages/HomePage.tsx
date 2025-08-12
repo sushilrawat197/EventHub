@@ -13,7 +13,7 @@ import Footer from "../Components/Footer";
 export default function HomePage() {
   return (
     <>
-      <div className="px-3 ">
+      <div className="px-3">
         <HeroSection />
 
         <UpcomingEvents />
