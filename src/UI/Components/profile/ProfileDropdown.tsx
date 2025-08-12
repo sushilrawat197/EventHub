@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { logout } from "../../../services/operations/authApi";
-import { useAppDispatch, useAppSelector} from "../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
 import { GoPersonFill } from "react-icons/go";
@@ -9,7 +9,7 @@ import { LogIn } from "lucide-react";
 import { RiNotificationBadgeLine } from "react-icons/ri";
 import { LuTickets } from "react-icons/lu";
 import { BsChatDots } from "react-icons/bs";
-import { FaGears} from "react-icons/fa6";
+import { FaGears } from "react-icons/fa6";
 import { FaRegUserCircle } from "react-icons/fa";
 
 const menuItems = [
@@ -39,10 +39,11 @@ export default function ProfileDropdown() {
   const navigate = useNavigate();
   const [openMenu, setOpenMenu] = useState(false);
   const [animateMenu, setAnimateMenu] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   // const token = useAppSelector((state) => state.auth.accessToken);
 
-    const user=useAppSelector((state)=>state.user.user);
-  
+  const user = useAppSelector((state) => state.user.user);
+
   const menuRef = useRef(null);
 
   const handleSubmit = () => {
@@ -58,7 +59,6 @@ export default function ProfileDropdown() {
       setAnimateMenu(false);
     }
   }, [openMenu]);
-
 
   // Close on outside click
   useEffect(() => {
@@ -81,15 +81,11 @@ export default function ProfileDropdown() {
     };
   }, [openMenu]);
 
-
-
   const handleClose = () => {
     setAnimateMenu(false);
     // wait for animation to finish before unmounting
     setTimeout(() => setOpenMenu(false), 300);
   };
-
-
 
   return (
     <div className="relative z-50">
@@ -98,11 +94,30 @@ export default function ProfileDropdown() {
         className="cursor-pointer bg-sky-500 text-white p-1  w-fit"
         onClick={() => setOpenMenu(true)}
       >
-             {
-                user?.profilePicUrl?
-                (<div className="flex justify-center items-center text-white gap-2"><img src={user?.profilePicUrl} className="rounded-full w-10 h-10 object-cover overflow-hidden"></img>Hello! {user?.firstName?.slice(0, 6)}...</div>)
-                 :(<FaRegUserCircle size={30} />)
-              }
+        {user?.profilePicUrl ? (
+          <div className="flex justify-center items-center text-white gap-2">
+            <div className="rounded-full w-11 h-11 bg-white">
+              <img
+                src={user?.profilePicUrl}
+                alt="Profile"
+                loading="lazy"
+                onLoad={() => setLoaded(true)}
+                className={`
+                                rounded-full w-11 h-11 object-cover overflow-hidden
+                                transition-all duration-500 ease-in-out
+                                ${
+                                  loaded
+                                    ? "opacity-100 blur-0"
+                                    : "opacity-0 blur-md "
+                                }
+                              `}
+              />
+            </div>
+            Hello! {user?.firstName?.slice(0, 6)}...
+          </div>
+        ) : (
+          <FaRegUserCircle size={30} />
+        )}
       </div>
 
       {/* Dropdown Menu + Overlay */}
@@ -116,7 +131,6 @@ export default function ProfileDropdown() {
             onClick={handleClose}
           ></div>
 
-
           {/* Slide-in menu */}
           <div
             ref={menuRef}
@@ -127,23 +141,44 @@ export default function ProfileDropdown() {
             {/* Header */}
             <div className="drop-shadow-sm flex items-center justify-center flex-col text-white bg-white py-4 rounded-t-lg">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-gray-300 border">
-                <GoPersonFill size={40} />
+                
+                {user?.profilePicUrl ? (
+                  <div className="flex justify-center items-center text-white gap-2">
+                    <div className="rounded-full w-11 h-11 bg-white">
+                      <img
+                        src={user?.profilePicUrl}
+                        alt="Profile"
+                        loading="lazy"
+                        onLoad={() => setLoaded(true)}
+                        className={`
+                                rounded-full w-11 h-11 object-cover overflow-hidden
+                                transition-all duration-500 ease-in-out
+                                ${
+                                  loaded
+                                    ? "opacity-100 blur-0"
+                                    : "opacity-0 blur-md "
+                                }
+                              `}
+                      />
+                    </div> 
+                  </div>
+                ) : (
+                   <GoPersonFill size={40} />
+                )}
+
+               
               </div>
               <h2 className="text-2xl text-sky-400 font-semibold mt-1">
                 Hello!
               </h2>
 
-            
-                <Link to={"/editprofile"}  onClick={() => setOpenMenu(false)} >
-                <span
-                  className="flex items-center text-sky-400 text-[10px] cursor-pointer space-x-1"
-                >
+              <Link to={"/editprofile"} onClick={() => setOpenMenu(false)}>
+                <span className="flex items-center text-sky-400 text-[10px] cursor-pointer space-x-1">
                   <p>Edit Profile</p>
+
                   <RiEdit2Fill />
                 </span>
               </Link>
-              
-
             </div>
 
             {/* Menu Items */}

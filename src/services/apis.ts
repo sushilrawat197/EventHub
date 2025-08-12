@@ -7,7 +7,7 @@ const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 export const endpoints = {
   VARIFY_SIGNUP_OTP_API: BASE_URL + "api/v1/auth/verifysignupotp",
-  RESEND_OTP: BASE_URL + "api/v1/auth/signup-resendotp",
+  SIGNUP_RESEND_OTP: BASE_URL + "api/v1/auth/signup-resendotp",
   SIGNUP_API: BASE_URL + "api/v1/auth/signup",
   SET_PASS_API:BASE_URL + "api/v1/auth/sewtpwd",
   LOGIN_API:BASE_URL + "api/v1/auth/login",
@@ -15,7 +15,7 @@ export const endpoints = {
   FORGOT_PASSWORD_OTP:BASE_URL + "api/v1/auth/forgot-passwordOtp",
   RESET_PASSWORD:BASE_URL + "api/v1/auth/verify-forgot-passwordOtp",
   LOGOUT_API:BASE_URL + "api/v1/auth/logout",
-  FORGOT_RESEND_PASSWORDOTP_API:BASE_URL +"api/v1/auth/resend-forgot-passwordOtp",
+  FORGOT_RESEND_PASSWORD_OTP_API :BASE_URL +"api/v1/auth/resend-forgot-passwordOtp",
   REFRESH_ACCESS_TOKEN:BASE_URL+"api/v1/auth/refreshToken"
 }
 

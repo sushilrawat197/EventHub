@@ -23,24 +23,23 @@ const Footer: React.FC = () => {
               />
             </div>
           </div>
-          <p>
-            MyTag is a robust, secure, and highly customizable ticketing platform
-            tailored for the needs of event organizers and attendees. It stands
-            as the future ticketing in the region.
-          </p>
+          
         </div>
+        <p className="pb-4">
+            MyTag is a robust, secure, and highly customizable ticketing platform tailored for the needs of event organizers and attendees. It stands as the future ticketing in the region.
+        </p>
 
         {/* Links Grid */}
         <div className="grid md:grid-cols-5 gap-4 text-sm">
           {[
-            {
-              title: "Explore",
-              links: ["Features", "Pricing", "Example", "Newsletter"],
-            },
-            {
-              title: "Company",
-              links: ["Careers", "Blog", "Press", "Partners"],
-            },
+            // {
+            //   title: "Explore",
+            //   links: ["Features", "Pricing", "Example", "Newsletter"],
+            // },
+            // {
+            //   title: "Company",
+            //   links: ["Careers", "Blog", "Press", "Partners"],
+            // },
             {
               title: "Support",
               links: ["Help Center", "Privacy Policy", "Terms of Use"],
@@ -101,7 +100,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Footer Bottom */}
-        <div className="mt-10 border-t pt-4 text-center text-xs text-gray-500">
+        <div className="mt-10 border-t pt-4 text-center text-xs text-gray-800">
           &copy; 2025 MyTag - Powered by Giant Technologies
         </div>
       </div>

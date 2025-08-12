@@ -79,7 +79,7 @@ useEffect(() => {
 
   return (
     <>
-      <div className="font-lato">
+      <div className="  ">
         <Navbar />
         {/* <HeroSection /> */}
 

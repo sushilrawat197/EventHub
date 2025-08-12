@@ -17,7 +17,12 @@ export default function ProfileCard() {
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [editImage, setEditImage] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [profileDetailsLoading, setProfileDetailsLoading] =
+    useState<boolean>(false);
+  const [loaded, setLoaded] = useState(false);
+
+  const loading = useAppSelector((state) => state.auth.loading);
 
   interface FormData {
     firstName: string;
@@ -30,7 +35,7 @@ export default function ProfileCard() {
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
     dob: user?.dob ?? "",
-    gender: "OTHER",
+    gender: user?.gender ?? "",
   });
 
   const calendarRef = useRef<HTMLDivElement>(null); // ref for calendar
@@ -85,14 +90,13 @@ export default function ProfileCard() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showCalendar]);
-  const loading = useAppSelector((state) => state.auth.loading);
 
   function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (isDisabled) return; // 👈 prevent rapid clicks
     setIsDisabled(true); // 👈 disable button
     console.log(formData);
-    dispatch(updateUserDetails(formData));
+    dispatch(updateUserDetails(formData, setProfileDetailsLoading));
     setTimeout(() => {
       setIsDisabled(false);
     }, 2000);
@@ -108,7 +112,7 @@ export default function ProfileCard() {
                 className="absolute inset-0 bg-black/40" // tailwind shortcut for bg-opacity-40
                 onClick={() => setEditImage(false)}
               ></div>
-              <UploadProfileImage  />
+              <UploadProfileImage setEditImage={setEditImage} />
               {/* <UploadProfileImage setEditImage={setEditImage} /> */}
             </div>
           )}
@@ -131,14 +135,33 @@ export default function ProfileCard() {
               onClick={() => setEditImage(true)}
               className="hover:cursor-pointer hover:opacity-70 w-16 h-16 bg-white text-gray-600 rounded-full flex justify-center items-center"
             >
-              {user?.profilePicUrl ? (
-                <img
-                  src={user?.profilePicUrl}
-                  className="rounded-full w-15 h-15 object-cover overflow-hidden"
-                ></img>
-              ) : (
-                <FaCamera size={22} />
-              )}
+              <div className="relative w-16 h-16">
+                {/* Image or default icon */}
+                {user?.profilePicUrl ? (
+                  <img
+                    src={user?.profilePicUrl}
+                    alt="Profile"
+                    loading="lazy"
+                    onLoad={() => setLoaded(true)}
+                    className={`
+                                rounded-full w-16 h-16 object-cover overflow-hidden
+                                transition-all duration-500 ease-in-out
+                                ${loaded ? "opacity-100 blur-0" : "opacity-0 blur-md"}
+                              `}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-200">
+                    <FaCamera size={22} />
+                  </div>
+                )}
+
+                {/* Loader overlay */}
+                {loading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-full">
+                    <ClipLoader size={20} color="#00BFFF" />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -186,7 +209,7 @@ export default function ProfileCard() {
               {/* Birthday */}
               <Inputbox
                 id="dob"
-                label="Birthday (Optional)"
+                label="Birthday"
                 placeholder="dd-mm-yyyy"
                 name="dob"
                 type="text"
@@ -195,14 +218,36 @@ export default function ProfileCard() {
                 onClick={() => setShowCalendar(true)} // 👈 open calendar
                 icon={FiCalendar}
               />
+
+              {/* Gender buttons */}
+              <div className="flex gap-4 mt-4 ">
+                <p className="flex justify-center items-center text-gray-700 font-medium pr-24">
+                  Gender
+                </p>
+                {["MALE", "FEMALE"].map((genderOption) => (
+                  <button
+                    key={genderOption}
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, gender: genderOption }))
+                    }
+                    className={`px-5 py-2 rounded-lg font-semibold transition ${
+                      formData.gender === genderOption
+                        ? "bg-sky-500 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    {genderOption.charAt(0) +
+                      genderOption.slice(1).toLowerCase()}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div></div>
-
           {/* Submit */}
           <div className="w-full flex justify-center items-center mt-3 pb-8">
-            {!loading ? (
+            {!profileDetailsLoading ? (
               <button
                 type="submit"
                 disabled={isDisabled}

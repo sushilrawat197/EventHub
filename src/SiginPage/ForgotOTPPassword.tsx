@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../reducers/hooks";
-import { resendOTP } from "../services/operations/authApi";
+import { forgotp_password_resend_OTP} from "../services/operations/authApi";
 // import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
 // import { varifySignInOTP } from "../services/operations/authApi";
@@ -18,9 +18,7 @@ const ForgotOTPPassword: React.FC = () => {
 
   const userEmail = useAppSelector((state) => state.auth.userEmail);
   // const token = useAppSelector((state) => state.auth.userEmail);
-
   // console.log(userEmail);
-
 //   const token = localStorage.getItem("tempToken") || "";
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,7 +30,7 @@ const ForgotOTPPassword: React.FC = () => {
   const resendOtpHandler = () => {
     // console.log("Printing User Email",userEmail);
     const email = userEmail;
-    dispatch(resendOTP(email));
+    dispatch(forgotp_password_resend_OTP(email));
   };
 
   return (

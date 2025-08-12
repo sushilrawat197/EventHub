@@ -14,13 +14,14 @@ import {
 const {
   SIGNUP_API,
   VARIFY_SIGNUP_OTP_API,
-  RESEND_OTP,
+  SIGNUP_RESEND_OTP,
   SET_PASS_API,
   LOGIN_API,
   // VARIFY_LOGIN_OTP,
   FORGOT_PASSWORD_OTP,
   RESET_PASSWORD,
   LOGOUT_API,
+  FORGOT_RESEND_PASSWORD_OTP_API
 } = endpoints;
 
 import axios from "axios";
@@ -42,8 +43,6 @@ type SendOtpApiResponse = {
     setPWDTokenExpiry: string;
   };
 };
-
-
 
 
 // VARIFY_SIGNUP_OTP_API
@@ -148,7 +147,7 @@ export function signUp(
 }
 
 
-
+//SIGN UP RESEND OTP
 export function resendOTP(email: string) {
   return async (): Promise<void> => {
     try {
@@ -158,7 +157,7 @@ export function resendOTP(email: string) {
         status: string;
       }>({
         method: "POST",
-        url: RESEND_OTP,
+        url: SIGNUP_RESEND_OTP,
         bodyData: { emailOrMsisdn: email, socialSignup: true, socialToken: "" },
         headers: {
           "X-Client-Source": "OTHER",
@@ -198,8 +197,8 @@ export function forgotp_password_resend_OTP(email: string) {
         status: string;
       }>({
         method: "POST",
-        url: RESEND_OTP,
-        bodyData: { emailOrMsisdn: email, socialSignup: true, socialToken: "" },
+        url: FORGOT_RESEND_PASSWORD_OTP_API, //IT WAS RESEND OTP BEFORE
+        bodyData: { emailOrMsisdn: email },
         headers: {
           "X-Client-Source": "OTHER",
         },

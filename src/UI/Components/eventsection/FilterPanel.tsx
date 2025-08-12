@@ -74,7 +74,7 @@ export default function FilterPanel() {
   ];
 
   return (
-    <div className="bg-gray-100 p-4 rounded-md w-[90%] flex-shrink-0 mt-5 hidden md:block">
+    <div className="bg-white p-4 rounded-md w-[90%] flex-shrink-0 mt-5 hidden md:block ">
       <h2 className="text-2xl font-bold mb-4">Filters</h2>
 
       <FilterItem title="Date" options={dateOptions} />

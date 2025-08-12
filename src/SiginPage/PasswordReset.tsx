@@ -1,16 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
 import { FaLock } from "react-icons/fa";
-import { useAppSelector } from "../reducers/hooks";
 import { TbPasswordUser } from "react-icons/tb";
 import { useAppDispatch } from "../reducers/hooks";
-import { resetPassword } from "../services/operations/authApi";
+import { forgotp_password_resend_OTP, resetPassword } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
 import { setMassage } from "../slices/authSlice";
 import hasSequentialPattern from "./hasSequentialPattern";
 import PopUpMessage from "./popUpMassage";
+import { useAppSelector } from "../reducers/hooks";
 
 export default function PasswordReset() {
+  const email=useAppSelector((state)=>state.auth.userEmail)
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [newPass, setNewPass] = useState("");
@@ -43,6 +44,7 @@ export default function PasswordReset() {
     }, [timer]);
 
   if (!ready) return null; // ⛔️ Block rendering before token check
+
 
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -89,12 +91,12 @@ export default function PasswordReset() {
     return `${minutes}:${seconds}`;
   };
 
+  
 
 
    const resendOtpHandler = () => {
-      // console.log("Printing User Email",userEmail);
-      // const email = userEmail;
-      // dispatch(resendOTP(email));
+      console.log("Printing User Email",email);
+      dispatch(forgotp_password_resend_OTP(email));
     };
     
 

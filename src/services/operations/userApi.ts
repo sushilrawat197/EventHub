@@ -85,12 +85,13 @@ interface ProfileFormData {
 
 
 export function updateUserDetails(
-  data:ProfileFormData
+  data: ProfileFormData,
+  setProfileLoading:React.Dispatch<React.SetStateAction<boolean>>
 ) {
-  return async (dispatch:AppDispatch): Promise<void> => {
-    
+  return async (dispatch: AppDispatch): Promise<void> => {
+
     try {
-      dispatch(setLoading(true));
+      setProfileLoading(true);
       const response = await apiConnector<UpdatedUserResponseApi>({
         method: "POST",
         url: UPDATE_USER_API,
@@ -101,7 +102,7 @@ export function updateUserDetails(
         },
       });
 
-    
+
 
       if (response.data.status === "SUCCESS") {
         dispatch(getCurrentUser());
@@ -118,17 +119,22 @@ export function updateUserDetails(
         console.error("Unknown error:", error);
       }
     }
-    dispatch(setLoading(false));
+    setProfileLoading(false);
   };
-  
+
 }
 
+
+interface UpdatedUserPhotoApi {
+  masssage: string,
+  statusCode: number
+}
 
 export function updateUserProfilPicture(file: FormData) {
   return async (dispatch: AppDispatch): Promise<void> => {
     try {
       dispatch(setLoading(true))
-      const response = await apiConnector<UpdatedUserResponseApi>({
+      const response = await apiConnector<UpdatedUserPhotoApi>({
         method: "POST",
         url: UPDATE_USER_IMAGE_API,
         bodyData: file,
@@ -138,9 +144,13 @@ export function updateUserProfilPicture(file: FormData) {
         },
       });
 
-      await dispatch(getCurrentUser());
-      console.log(response)
-      
+      if (response.data.statusCode === 200) {
+
+        await dispatch(getCurrentUser());
+        console.log(response)
+        toast.success(response?.data?.masssage)
+      }
+
       console.log("UPDATED USER RESPONSE:", response);
     } catch (error) {
       // error handling...

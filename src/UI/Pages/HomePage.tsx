@@ -5,6 +5,7 @@ import PosterRanking from "../Components/PosterRanking";
 // import SellWithEase from "../Components/SellWithEase";
 // import TicketPlans from "../Components/TicketPlans";
 import ContactPage from "../Components/ContactUs";
+import Footer from "../Components/Footer";
 
 // import WhatsApppop from "../Components/Whatsapppop";
 // import Footer from "../Components/Footer";
@@ -24,7 +25,7 @@ export default function HomePage() {
         
         {/* <WhatsApppop /> */}
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

@@ -2,7 +2,7 @@ import React from "react";
 
 const ContactPage: React.FC = () => {
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-r from-blue-50 to-white p-4 lg:p-10 gap-8">
+    <div className="flex justify-center lg:flex-row bg-gradient-to-r from-blue-50 to-white p-4 lg:p-10 gap-8 ">
       {/* <div className="w-full lg:w-1/2 h-72 sm:h-96 lg:h-auto shadow-lg rounded-xl overflow-hidden">
         <iframe
           title="Company Location"
@@ -14,7 +14,7 @@ const ContactPage: React.FC = () => {
         ></iframe>
       </div> */}
 
-      <div className="w-full lg:w-1/2 rounded-xl shadow-2xl p-6 md:p-10 border border-sky-500 bg-white">
+      <div className=" rounded-xl shadow-2xl p-6 md:p-10 border border-sky-500 bg-white">
         <h2 className="text-3xl font-bold text-center mb-8 text-black">
           Contact Us
           <div className="w-40 h-1 bg-sky-500 mx-auto mt-2 rounded-full" />
