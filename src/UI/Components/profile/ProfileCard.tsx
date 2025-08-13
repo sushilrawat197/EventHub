@@ -103,9 +103,9 @@ export default function ProfileCard() {
   }
 
   return (
-    <form onSubmit={submitHandler}>
+    <form onSubmit={submitHandler}>   
       <div className="h-screen mx-auto max-w-3xl rounded-t-lg  mt-32">
-        <div className="bg-white shadow-lg relative">
+        <div className="bg-white shadow-lg relative">  
           {editImage && (
             <div className="fixed inset-0 z-[60] flex items-center justify-center">
               <div
@@ -116,6 +116,7 @@ export default function ProfileCard() {
               {/* <UploadProfileImage setEditImage={setEditImage} /> */}
             </div>
           )}
+
 
           {showCalendar && (
             <div
@@ -136,6 +137,7 @@ export default function ProfileCard() {
               className="hover:cursor-pointer hover:opacity-70 w-16 h-16 bg-white text-gray-600 rounded-full flex justify-center items-center"
             >
               <div className="relative w-16 h-16">
+               
                 {/* Image or default icon */}
                 {user?.profilePicUrl ? (
                   <img

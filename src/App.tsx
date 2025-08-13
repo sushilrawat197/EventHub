@@ -15,7 +15,6 @@ import HomePage from "./UI/Pages/HomePage";
 import { Route, Routes } from "react-router-dom";
 import { useAppDispatch } from "./reducers/hooks";
 import { useEffect } from "react";
-import { getCurrentUser } from "./services/operations/userApi";
 import { useAppSelector } from "./reducers/hooks";
 import Layout from "./UI/Components/eventsection/Layout";
 import { refreshAccessToken } from "./services/operations/refreshToken";
@@ -28,50 +27,18 @@ function App() {
   const dispatch = useAppDispatch();
 
   // const token=useAppSelector((state)=>state.auth.accessToken);
+
 const user=useAppSelector((state)=>state.user.user);
-  // useAuthRestore();
+
 console.log("USER DATA ......",user)
   
 
-// useEffect(() => {
-//     async function fetchUser() {
-//       try {
-//         const response = await axios.get(GET_USER_API, {
-//           withCredentials: true,
-//           headers: {
-//             "X-Client-Source": "WEB",
-//           },
-//         });
-
-//         if (response.data.status === "SUCCESS") {
-//           dispatch(setUser(response.data.data));
-//         } else {
-//           dispatch(clearUser());
-//           // toast.error("Failed to fetch user data");
-//         }
-//       } catch (error) {
-//         if (axios.isAxiosError(error)) {
-//           // toast.error(error.response?.data?.message || "User fetch failed");
-//           dispatch(clearUser());
-//           console.error("Error fetching user:", error.response?.data);
-//         } else {
-//           console.error("Unknown error:", error);
-//         }
-//       }
-//     }
-
-//     fetchUser();
-//   }, [dispatch]);
-
-
-  
 
 useEffect(() => {
   const init = async () => {
     console.log("Refreshing token...");
     await dispatch(refreshAccessToken()); // wait for refreshToken completion 
-    console.log("Fetching user...");
-    dispatch(getCurrentUser());
+    
   };
   init();
 }, [dispatch]);
@@ -79,11 +46,11 @@ useEffect(() => {
 
   return (
     <>
-      <div className="  ">
+      
         <Navbar />
         {/* <HeroSection /> */}
 
-        <div className="my-8">
+        <div className="mt-24">
           <Routes>
             <Route path="/" element={<HomePage />} />
 
@@ -166,7 +133,6 @@ useEffect(() => {
 
         {/* <ForgotPassword />
         <ForgotPasswordConfirmation /> */}
-      </div>
     </>
   );
 }

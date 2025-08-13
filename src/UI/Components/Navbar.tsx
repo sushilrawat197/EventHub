@@ -93,7 +93,7 @@ const Navbar: React.FC = () => {
                   </button>
 
                   {cityDropdownOpen && (
-                    <ul className="absolute mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50 transition-all duration-200">
+                    <ul className="absolute mt-3 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50 transition-all duration-200">
                       {cities.map((city, index) => (
                         <li
                           key={index}
@@ -131,13 +131,14 @@ const Navbar: React.FC = () => {
                   <RiMenu3Line size={30} />
                 </button>
               </div>
-
+              
               {/* Profile Dropdown */}
               {user !== null && (
                 <div className="w-full">
                   <ProfileDropdown />
                 </div>
               )}
+              
             </div>
           </div>
 
