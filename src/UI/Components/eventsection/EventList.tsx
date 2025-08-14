@@ -1,6 +1,8 @@
 import EventCard from "./EventCard";
 import { FaFilter } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
+import MobileFilters from "./MobileFilter";
+import { useState } from "react";
 
 const events = [
   {
@@ -78,6 +80,8 @@ const events = [
 ];
 
 export default function EventList() {
+  const [openFilter, setOpenFilter] = useState(false);
+
   return (
     <div className=" py-4  ">
       <h2 className="text-2xl font-bold mb-4">Events In Lesotho</h2>
@@ -114,10 +118,18 @@ export default function EventList() {
           <EventCard key={idx} event={event} />
         ))}
       </div>
-      <div className="flex justify-between   items-center fixed bottom-0 left-0 right-0  p-2  md:hidden">
-        <span className=" p-4 bg-red-500 text-white rounded-full  block md:hidden">
-          <FaFilter size={22} />
-        </span>
+
+      {openFilter && <MobileFilters onClose={() => setOpenFilter(false)} />}
+
+      <div className="flex justify-between   items-center fixed bottom-0 left-0 right-0  p-2  md:hidden ">
+        {!openFilter && (
+          <button onClick={() => setOpenFilter(true)}>
+            <span className=" p-4 bg-red-500 text-white rounded-full  block md:hidden">
+              <FaFilter size={22} />
+            </span>
+          </button>
+        )}
+
         <span className="p-4 bg-sky-500 text-white rounded-full  block md:hidden">
           <FaLocationDot size={22} />
         </span>

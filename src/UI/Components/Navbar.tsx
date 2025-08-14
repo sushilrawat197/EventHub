@@ -149,12 +149,12 @@ const Navbar: React.FC = () => {
         {mobileMenuOpen && (
           <div
             ref={menuRef}
-            className="lg:hidden bg-white shadow rounded-lg mx-3 p-4 space-y-2"
+            className="lg:hidden bg-white shadow  p-4 space-y-2"
           >
             <Link
               onClick={() => setMobileMenuOpen(false)}
               to={"/"}
-              className="block text-sky-600 font-medium"
+              className="block text-sky-600 font-medium mx-3"
             >
               Home
             </Link>
@@ -162,7 +162,7 @@ const Navbar: React.FC = () => {
             <Link
               to={"/events"}
               onClick={() => setMobileMenuOpen(false)}
-              className="block text-black font-medium"
+              className="block text-black font-medium mx-3"
             >
               Browse Events
             </Link>
