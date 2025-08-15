@@ -52,13 +52,24 @@ const Navbar: React.FC = () => {
       <nav className="bg-sky-500 fixed top-0 left-0 w-full z-50">
         <div className="flex flex-col mx-auto">
           <div className="container mx-auto flex items-center justify-between px-4 py-3">
-            <div className="flex gap-10">
+            <div className="flex gap-4">
               {/* Logo */}
+              {/* Mobile Menu Toggle */}
+              <div className="flex items-center lg:hidden">
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="text-white"
+                  title="Menu"
+                >
+                  <RiMenu3Line size={30} />
+                </button>
+              </div>
+
               <Link to={"/"}>
-                <div className="flex items-center">
+                <div className="flex items-center lg:w-24 lg:h-10 w-20 h-9 rounded-lg ">
                   <img
-                  loading="lazy"
-                    className="rounded-lg w-20 h-10"
+                    loading="lazy"
+                    className="object-cover rounded-sm "
                     src="ticketlogo2.jpg"
                     alt="logo"
                   />
@@ -77,8 +88,6 @@ const Navbar: React.FC = () => {
                 />
               </div>
             </div>
-
-            
 
             <div className="flex items-center">
               {/* City Dropdown */}
@@ -108,37 +117,23 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
 
-
-
               {/* Sign In */}
               {user === null && (
                 <div className="hidden lg:flex">
                   <Link to={"/login"}>
-                    <button className="bg-white text-sky-600 font-medium px-4 py-2 rounded-full border border-sky-300 hover:bg-sky-100 cursor-pointer">
+                    <button className="bg-white text-sky-600 font-medium px-4 py-2 rounded-full border border-sky-300 hover:bg-sky-100 cursor-pointer md:text-sm">
                       Sign In
                     </button>
                   </Link>
                 </div>
               )}
 
-              {/* Mobile Menu Toggle */}
-              <div className="items-center gap-2 lg:hidden">
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="text-white"
-                  title="Menu"
-                >
-                  <RiMenu3Line size={30} />
-                </button>
-              </div>
-              
               {/* Profile Dropdown */}
               {user !== null && (
                 <div className="w-full">
                   <ProfileDropdown />
                 </div>
               )}
-              
             </div>
           </div>
 
@@ -147,36 +142,50 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Nav */}
         {mobileMenuOpen && (
-          <div
-            ref={menuRef}
-            className="lg:hidden bg-white shadow  p-4 space-y-2"
-          >
-            <Link
-              onClick={() => setMobileMenuOpen(false)}
-              to={"/"}
-              className="block text-sky-600 font-medium mx-3"
+          <>
+            <div
+              ref={menuRef}
+              className="lg:hidden bg-white shadow  p-4 space-y-2"
             >
-              Home
-            </Link>
 
-            <Link
-              to={"/events"}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-black font-medium mx-3"
-            >
-              Browse Events
-            </Link>
+              <div className="bg-white justify-center items-center w-full rounded-full flex border border-sky-400">
+                <span className="text-xl">
+                  <CiSearch />
+                </span>
+                <input
+                  type="text"
+                  placeholder="Search for Events, Festivals, Comedy Shows"
+                  className="focus:outline-none border-none bg-white p-2 rounded-md w-[80%] px-2"
+                />
+              </div>
 
-            <div className="border border-gray-300"></div>
-
-            {!user && (
-              <Link to={"/login"} onClick={() => setMobileMenuOpen(false)}>
-                <button className="w-full bg-sky-500 text-white py-2 rounded-full text-lg">
-                  Sign In
-                </button>
+              <Link
+                onClick={() => setMobileMenuOpen(false)}
+                to={"/"}
+                className="block text-sky-600 font-medium mx-3"
+              >
+                Home
               </Link>
-            )}
-          </div>
+
+              <Link
+                to={"/events"}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-black font-medium mx-3"
+              >
+                Browse Events
+              </Link>
+
+              <div className="border border-gray-300"></div>
+
+              {!user && (
+                <Link to={"/login"} onClick={() => setMobileMenuOpen(false)}>
+                  <button className="w-full bg-sky-500 text-white py-2 rounded-full text-lg">
+                    Sign In
+                  </button>
+                </Link>
+              )}
+            </div>
+          </>
         )}
       </nav>
     </>

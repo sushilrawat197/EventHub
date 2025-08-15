@@ -94,15 +94,17 @@ export default function ProfileDropdown() {
         className="cursor-pointer bg-sky-500 text-white p-1  w-fit"
         onClick={() => setOpenMenu(true)}
       >
-        {user?.profilePicUrl ? (
-          <div className="flex justify-center items-center text-white gap-2">
-            <div className="rounded-full w-11 h-11 bg-white">
-              <img
-                src={user?.profilePicUrl}
-                alt="Profile"
-                loading="lazy"
-                onLoad={() => setLoaded(true)}
-                className={`
+        <div className="flex items-center justify-center gap-2">
+          {user?.profilePicUrl ? (
+            <div className="flex justify-center items-center text-white gap-2">
+              <div className="rounded-full w-11 h-11 bg-white">
+                
+                <img
+                  src={user?.profilePicUrl}
+                  alt="Profile"
+                  loading="lazy"
+                  onLoad={() => setLoaded(true)}
+                  className={`
                                 rounded-full w-11 h-11 object-cover overflow-hidden
                                 transition-all duration-500 ease-in-out
                                 ${
@@ -111,13 +113,24 @@ export default function ProfileDropdown() {
                                     : "opacity-0 blur-md "
                                 }
                               `}
-              />
+                />
+              </div>
             </div>
-            Hello! {user?.firstName?.slice(0, 6)}...
-          </div>
-        ) : (
-          <FaRegUserCircle size={30} />
-        )}
+          ) : (
+            <FaRegUserCircle size={30} />
+          )}
+
+
+         <p className="flex items-center justify-center gap-1">Hello! 
+          {
+            user?.firstName && (
+              <p>{user?.firstName?.slice(0, 6)}...</p>
+            )
+          }
+          </p> 
+
+          
+        </div>
       </div>
 
       {/* Dropdown Menu + Overlay */}
@@ -141,7 +154,6 @@ export default function ProfileDropdown() {
             {/* Header */}
             <div className="drop-shadow-sm flex items-center justify-center flex-col text-white bg-white py-4 rounded-t-lg">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-gray-300 border">
-                
                 {user?.profilePicUrl ? (
                   <div className="flex justify-center items-center text-white gap-2">
                     <div className="rounded-full w-11 h-11 bg-white">
@@ -160,13 +172,11 @@ export default function ProfileDropdown() {
                                 }
                               `}
                       />
-                    </div> 
+                    </div>
                   </div>
                 ) : (
-                   <GoPersonFill size={40} />
+                  <GoPersonFill size={40} />
                 )}
-
-               
               </div>
               <h2 className="text-2xl text-sky-400 font-semibold mt-1">
                 Hello!

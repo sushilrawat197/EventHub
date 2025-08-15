@@ -15,12 +15,9 @@ export default function UploadProfileImage({ setEditImage }: Props) {
   const [loaded, setLoaded] = useState(false);
   const dispatch = useAppDispatch();
 
-
-  
   const handleSelectClick = () => {
     fileInputRef.current?.click();
   };
-
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -48,23 +45,18 @@ export default function UploadProfileImage({ setEditImage }: Props) {
   }, [previewUrl]);
 
   return (
-
-
-    
     <div className="bg-gradient-to-b from-white to-sky-50 shadow-lg border border-sky-100 flex flex-col items-center px-6 py-8 rounded-2xl gap-5 w-[280px] md:w-[320px] transition-transform duration-300 hover:scale-[1.02] z-50">
       {/* Profile Image with Hover Glow */}
 
       <div className="relative group">
-        
         <div className="border-4 border-white rounded-full h-24 w-24 flex justify-center items-center overflow-hidden shadow-md transition-shadow duration-300 group-hover:shadow-sky-300/50">
-         
           <button
             onClick={handleSelectClick}
             type="button"
             className="relative h-full w-full"
           >
             {/* Loader */}
-            {!loaded && (
+            {!loaded && !previewUrl && user?.profilePicUrl && (
               <div className="absolute inset-0 flex items-center justify-center rounded-full bg-gray-200 animate-pulse z-50"></div>
             )}
 
@@ -72,7 +64,7 @@ export default function UploadProfileImage({ setEditImage }: Props) {
             {previewUrl ? (
               <img
                 src={previewUrl}
-                className="rounded-full h-full w-full object-cover"
+                className="rounded-full h-full w-full object-cover animate-none"
               />
             ) : user?.profilePicUrl ? (
               <img
@@ -86,19 +78,21 @@ export default function UploadProfileImage({ setEditImage }: Props) {
           `}
               />
             ) : (
-              <GoPersonFill className="text-sky-500" size={40} />
+              <div className="animate-none flex items-center justify-center">
+                <GoPersonFill className="text-sky-500 " size={40} />
+              </div>
             )}
           </button>
-
         </div>
 
         {/* Edit Icon Overlay */}
-        
-        <div className="absolute z-50 bottom-0 right-0 bg-sky-500 text-white text-xs px-2 py-1 rounded-full shadow hover:bg-sky-600 transition-colors">
+
+        <div
+          onClick={handleSelectClick}
+          className="absolute z-50 bottom-0 right-0 bg-sky-500 text-white text-xs px-2 py-1 rounded-full shadow hover:bg-sky-600 transition-colors"
+        >
           Edit
         </div>
-
-
       </div>
 
       {/* Text */}
@@ -111,7 +105,7 @@ export default function UploadProfileImage({ setEditImage }: Props) {
           type="button"
           className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg shadow-sm transition-colors"
         >
-          Upload
+          Save picture
         </button>
 
         {/* Delete Button */}
