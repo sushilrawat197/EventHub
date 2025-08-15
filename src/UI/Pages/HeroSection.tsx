@@ -1,7 +1,9 @@
 // import EventsFilter from "../Components/EventsFilter";
+
 import StatsReview from "../Components/StatsReviews";
 
 const HeroSection = () => {
+
   return (
     <>
       <div className=" z-10 px-[10%]  grid grid-cols-1 md:grid-cols-2 items-center ">

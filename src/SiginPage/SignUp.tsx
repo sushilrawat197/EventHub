@@ -31,7 +31,7 @@ export default function SignUp() {
   return (
     <form onSubmit={submitHandler}>
       <div className="h-screen flex items-center justify-center bg-sky-100 p-4">
-        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row">
+        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row px-4">
           <div className="md:w-1/2 py-6 md:p-20 flex flex-col justify-center">
             {/* Logo */}
             <div className="flex justify-center mb-10">

@@ -50,7 +50,7 @@ useEffect(() => {
         <Navbar />
         {/* <HeroSection /> */}
 
-        <div className="lg:mt-24 mt-18">
+        <div className="lg:mt-24 mt-10">
           <Routes>
             <Route path="/" element={<HomePage />} />
 
