@@ -104,7 +104,7 @@ export default function ProfileCard() {
 
   return (
     <form onSubmit={submitHandler}>   
-      <div className="h-screen mx-auto max-w-3xl rounded-t-lg  mt-32">
+      <div className="h-screen mx-auto max-w-3xl rounded-t-lg mt-20 lg:mt-32">
         <div className="bg-white shadow-lg relative">  
           {editImage && (
             <div className="fixed inset-0 z-[60] flex items-center justify-center">

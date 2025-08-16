@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { IoClose } from "react-icons/io5";
 
 interface EventCardProps {
   title: string;
@@ -24,24 +25,20 @@ const FilterItem = ({ title, options }: EventCardProps) => {
     }
   };
 
-
-  // Handle clicking outside the calendar
+  // Close calendar when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
         setShowCalendar(false);
       }
     };
-
     if (showCalendar) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showCalendar]);
-  
 
   const handleClear = () => {
     setSelectedOption(null);
@@ -50,17 +47,18 @@ const FilterItem = ({ title, options }: EventCardProps) => {
     setEndDate(null);
   };
 
-
   return (
     <div className="bg-white p-4 rounded-md shadow-sm mb-4">
       {/* Header */}
-      <div className="flex justify-between items-center cursor-pointer" onClick={() => setOpen(!open)}>
-
+      <div
+        className="flex justify-between items-center cursor-pointer"
+        onClick={() => setOpen(!open)}
+      >
         <div className="flex items-center gap-2 font-medium text-gray-800">
           <span>{title}</span>
         </div>
 
-        <button 
+        <button
           className="text-sm text-sky-600 hover:underline"
           onClick={(e) => {
             e.stopPropagation();
@@ -69,9 +67,7 @@ const FilterItem = ({ title, options }: EventCardProps) => {
         >
           Clear
         </button>
-
       </div>
-
 
       {/* Body */}
       {open && (
@@ -81,7 +77,9 @@ const FilterItem = ({ title, options }: EventCardProps) => {
               key={idx}
               onClick={() => handleOptionClick(opt)}
               className={`px-3 py-1 border rounded text-gray-700 hover:bg-sky-50 hover:text-sky-500 ${
-                selectedOption === opt ? 'bg-sky-100 text-sky-600 border-sky-300' : ''
+                selectedOption === opt
+                  ? "bg-sky-100 text-sky-600 border-sky-300"
+                  : ""
               }`}
             >
               {opt}
@@ -113,18 +111,13 @@ const FilterItem = ({ title, options }: EventCardProps) => {
 
 // ✅ Filter panel using FilterItem
 export default function FilterPanel() {
-  const dateOptions: string[] = [
-    "Today",
-    "Tomorrow", 
-    "This Weekend",
-    "Date Range",
-  ];
+  const [openMobileFilters, setOpenMobileFilters] = useState(false);
 
+  const dateOptions: string[] = ["Today", "Tomorrow", "This Weekend", "Date Range"];
   const languageOptions: string[] = ["English"];
-
   const categoryOptions: string[] = [
     "Kids Events",
-    "Comedy Shows", 
+    "Comedy Shows",
     "Festivals",
     "Music Concerts",
     "Cultural Events",
@@ -132,24 +125,53 @@ export default function FilterPanel() {
     "Theater and Performing Arts",
     "Corporate Conferences and Workshops",
   ];
-
-  const priceOptions: string[] = [
-    "Free",
-    "0 - 500",
-    "501 - 2000", 
-    "Above 2000",
-  ];
+  const priceOptions: string[] = ["Free", "0 - 500", "501 - 2000", "Above 2000"];
 
   return (
-    <div className="bg-white p-4 rounded-md w-[90%] flex-shrink-0 mt-5 hidden md:block">
-      <h2 className="text-2xl font-bold mb-4">Filters</h2>
-      <FilterItem title="Date" options={dateOptions} />
-      <FilterItem title="Languages" options={languageOptions} />
-      <FilterItem title="Categories" options={categoryOptions} />
-      <FilterItem title="Price" options={priceOptions} />
-      <button className="w-full mt-3 py-2 border border-sky-400 text-sky-500 rounded-md font-medium hover:bg-sky-50 transition">
-        Browse by Venues
-      </button>
-    </div>
+    <>
+      {/* Desktop Sidebar */}
+      <div className="hidden md:block bg-white p-4 rounded-md w-[90%] flex-shrink-0 mt-5">
+        <h2 className="text-2xl font-bold mb-4">Filters</h2>
+        <FilterItem title="Date" options={dateOptions} />
+        <FilterItem title="Languages" options={languageOptions} />
+        <FilterItem title="Categories" options={categoryOptions} />
+        <FilterItem title="Price" options={priceOptions} />
+        <button className="w-full mt-3 py-2 border border-sky-400 text-sky-500 rounded-md font-medium hover:bg-sky-50 transition">
+          Browse by Venues
+        </button>
+      </div>
+
+      {/* Mobile Filters */}
+      <div className="md:hidden">
+       
+        {/* Overlay */}
+        {openMobileFilters && (
+          <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setOpenMobileFilters(false)} />
+        )}
+
+        {/* Sliding Drawer */}
+        <div
+          className={`fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white shadow-lg z-50 transform transition-transform duration-300 ${
+            openMobileFilters ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex justify-between items-center p-4 border-b">
+            <h2 className="text-lg font-semibold">Filters</h2>
+            <button onClick={() => setOpenMobileFilters(false)}>
+              <IoClose size={24} />
+            </button>
+          </div>
+          <div className="p-4 overflow-y-auto h-[calc(100%-60px)]">
+            <FilterItem title="Date" options={dateOptions} />
+            <FilterItem title="Languages" options={languageOptions} />
+            <FilterItem title="Categories" options={categoryOptions} />
+            <FilterItem title="Price" options={priceOptions} />
+            <button className="w-full mt-3 py-2 border border-sky-400 text-sky-500 rounded-md font-medium hover:bg-sky-50 transition">
+              Browse by Venues
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
