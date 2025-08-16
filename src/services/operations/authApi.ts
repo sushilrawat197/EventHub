@@ -440,6 +440,8 @@ export function forgot_passwordOtp(
       const data = response.data;
       console.log("SIGNUP API RESPONSE............", data);
 
+      dispatch(userEmail(email));
+
       const pwdToken = response.data.data.setPWDToken;
       dispatch(setPwdToken(pwdToken));
 

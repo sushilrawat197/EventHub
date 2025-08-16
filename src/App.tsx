@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import OpenRoute from "./route/OpenRoute";
 import ProtectedRoute from "./route/ProtectedRoute";
 import ForgotPassword from "./SiginPage/Forgotpassword";
@@ -11,12 +12,13 @@ import SignUp from "./SiginPage/SignUp";
 // import { useAuthRestore } from "./token/callingAutoTokenRefresh";
 import Navbar from "./UI/Components/Navbar";
 import ProfileCard from "./UI/Components/profile/ProfileCard";
-import HomePage from "./UI/Pages/HomePage";
+const HomePage =lazy(()=>import( "./UI/Pages/HomePage"))
 import { Route, Routes } from "react-router-dom";
 import { useAppDispatch } from "./reducers/hooks";
 import { useEffect } from "react";
 import { useAppSelector } from "./reducers/hooks";
-import Layout from "./UI/Components/eventsection/Layout";
+// import Layout from "./UI/Components/eventsection/Layout";
+const Layout = lazy(() => import("./UI/Components/eventsection/Layout"));
 import { refreshAccessToken } from "./services/operations/refreshToken";
 // import axios from "axios";
 // import { clearUser, setUser } from "./slices/userSlice";

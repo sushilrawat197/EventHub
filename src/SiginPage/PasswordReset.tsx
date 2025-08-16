@@ -33,6 +33,7 @@ export default function PasswordReset() {
   }, [pwdToken, navigate]);
 
    const [timer, setTimer] = useState<number>(60);
+   
     useEffect(() => {
       let interval: NodeJS.Timeout;
       if (timer > 0) {
@@ -97,6 +98,7 @@ export default function PasswordReset() {
    const resendOtpHandler = () => {
       console.log("Printing User Email",email);
       dispatch(forgotp_password_resend_OTP(email));
+       setTimer(60);
     };
     
 

@@ -36,6 +36,7 @@ useEffect(() => {
     // console.log("Printing User Email",userEmail);
     const email = userEmail;
     dispatch(resendOTP(email));
+     setTimer(60);
   };
   
 
@@ -61,28 +62,19 @@ useEffect(() => {
     return `${minutes}:${seconds}`;
   };
 
-  const otpContext = useAppSelector((state) => state.auth.otpContext);
-  useEffect(() => {
-    console.log("otpContext : ", otpContext);
-  }, [otpContext]);
+
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // if (otpContext === "signupOTP") {
-    //   dispatch(sendOtp(otp, userEmail, navigate));
-    // }
-    //  else if (otpContext === "signup") {
-    //   dispatch(verifySignupOtp(otp));
-    // } else if (otpContext === "forgot") {
-    //   dispatch(verifyForgotPasswordOtp(otp));
-    // }
     if (isDisabled) return; // 👈 prevent rapid clicks
     setIsDisabled(true); // 👈 disable button
     setTimeout(() => {
       setIsDisabled(false);
     }, 2000);
     dispatch(sendOtp(otp, userEmail, navigate));
+   
   };
+
 
   if (!ready) return null; // ⛔️ Block rendering before token check
 

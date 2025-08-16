@@ -44,14 +44,6 @@ const LoginVarifyOtp: React.FC = () => {
   };
 
 
-
-  const resendOtpHandler = () => {
-    const email = userEmail;
-    dispatch(resendOTP(email));
-    setTimer(120); // Reset timer to 2 minutes again
-  };
-
-
   // Format time mm:ss
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60)
@@ -60,7 +52,14 @@ const LoginVarifyOtp: React.FC = () => {
     const seconds = (time % 60).toString().padStart(2, "0");
     return `${minutes}:${seconds}`;
   };
-  
+
+    const resendOtpHandler = () => {
+    const email = userEmail;
+    dispatch(resendOTP(email));
+    setTimer(120); // Reset timer to 2 minutes again
+  };
+
+
 
   return (
     <form onSubmit={handleSubmit}>
