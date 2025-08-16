@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
 
                     {/* Close Icon */}
                     <RxCross1
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={() => setMobileMenuOpen(false )}
                       size={30}
                       className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
                         mobileMenuOpen
