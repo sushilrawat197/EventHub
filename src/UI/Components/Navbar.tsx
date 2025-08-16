@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import { RiMenu3Line } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAppSelector } from "../../reducers/hooks";
 import ProfileDropdown from "./profile/ProfileDropdown";
 import { CiSearch } from "react-icons/ci";
 import NavHeader from "./navbar/NavHeader";
+import { MdMenu } from "react-icons/md";
+import { RxCross1 } from "react-icons/rx";
 
 const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState("City");
+  const [selectedCity, setSelectedCity] = useState("Maseru");
 
   const menuRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
@@ -57,11 +58,33 @@ const Navbar: React.FC = () => {
               {/* Mobile Menu Toggle */}
               <div className="flex items-center lg:hidden">
                 <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  
                   className="text-white"
                   title="Menu"
                 >
-                  <RiMenu3Line size={30} />
+                  <div className="relative w-[30px] h-[30px]">
+                    {/* Menu Icon */}
+                    <MdMenu
+                    onClick={() => setMobileMenuOpen(true)}
+                      size={30}
+                      className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
+                        mobileMenuOpen
+                          ? "opacity-0 scale-0 rotate-90 pointer-events-none"
+                          : "opacity-100 scale-100 rotate-0"
+                      }`}
+                    />
+
+                    {/* Close Icon */}
+                    <RxCross1
+                    onClick={() => setMobileMenuOpen(false)}
+                      size={30}
+                      className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
+                        mobileMenuOpen
+                          ? "opacity-100 scale-100 rotate-0"
+                          : "opacity-0 scale-0 rotate-90 pointer-events-none"
+                      }`}
+                    />
+                  </div>
                 </button>
               </div>
 
@@ -147,7 +170,6 @@ const Navbar: React.FC = () => {
               ref={menuRef}
               className="lg:hidden bg-white shadow  p-4 space-y-2"
             >
-
               <div className="bg-white justify-center items-center w-full rounded-full flex border border-sky-400">
                 <span className="text-xl">
                   <CiSearch />
@@ -159,21 +181,21 @@ const Navbar: React.FC = () => {
                 />
               </div>
 
-              <Link
+              <NavLink
                 onClick={() => setMobileMenuOpen(false)}
                 to={"/"}
                 className="block text-sky-600 font-medium mx-3"
               >
                 Home
-              </Link>
+              </NavLink>
 
-              <Link
+              <NavLink
                 to={"/events"}
                 onClick={() => setMobileMenuOpen(false)}
                 className="block text-black font-medium mx-3"
               >
                 Browse Events
-              </Link>
+              </NavLink>
 
               <div className="border border-gray-300"></div>
 

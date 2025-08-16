@@ -121,13 +121,13 @@ export default function ProfileDropdown() {
           )}
 
 
-         <p className="flex items-center justify-center gap-1">Hello! 
+         <div className="flex items-center justify-center gap-1">Hello! 
           {
             user?.firstName && (
               <p>{user?.firstName?.slice(0, 6)}...</p>
             )
           }
-          </p> 
+          </div> 
 
           
         </div>
