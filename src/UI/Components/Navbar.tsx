@@ -89,7 +89,7 @@ const Navbar: React.FC = () => {
               </div>
 
               <Link to={"/"}>
-                <div className="flex items-center lg:w-24 lg:h-10 w-20 h-9 rounded-lg ">
+                <div className="flex items-center lg:w-24 lg:h-10 w-24 h-9 rounded-lg ">
                   <img
                     loading="lazy"
                     className="object-cover rounded-sm "
