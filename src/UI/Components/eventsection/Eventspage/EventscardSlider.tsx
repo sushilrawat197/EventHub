@@ -17,7 +17,7 @@ export default function EventscardSlider({ events = [] }: { events: Event[] }) {
   };
 
   return (
-    <div className=" w-fit py-4">
+    <div className=" w-fit py-4 pb-20">
       {/* Header */}
       <h2 className="text-xl font-bold">You May Also Like</h2>
       <p className="text-gray-600 mb-4">Events around you, book now</p>

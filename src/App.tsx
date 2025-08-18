@@ -135,9 +135,9 @@ useEffect(() => {
             <Route
               path="/events/:id"
               element={
-                <ProtectedRoute>
+                
                   <Layouteventspage />
-                </ProtectedRoute>
+             
               }
             />
           </Routes>

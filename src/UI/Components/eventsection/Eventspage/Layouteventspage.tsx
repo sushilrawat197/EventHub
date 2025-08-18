@@ -3,6 +3,7 @@ import EventDetailsCard from "./EventDetailsCard";
 import EventDescriptionAndArtists from "./EventDescriptionAndArtists";
 import TermsAndConditions from "./TermsAndConditions";
 import EventscardSlider from "./EventscardSlider";
+import MobileEventDetailsCard from "./MobileEventDetails";
 
 const event = {
   title: "ALLOW ME - A Standup Comedy Show by John doe",
@@ -55,15 +56,19 @@ export default function Layouteventspage() {
             tags={event.categories}
           />
 
+          <MobileEventDetailsCard/>
+
           <EventDescriptionAndArtists
             description={event.description}
             artists={event.artists}
           />
+          
            <EventscardSlider events={event.slider} />
+           
         </div>
 
         {/* RIGHT SIDE */}
-        <div className="lg:w-96 md:w-72 pt-10">
+        <div className="lg:w-96 md:hidden pt-10 hidden lg:block">
           <div className="sticky top-36">
             <EventDetailsCard {...event.details} />
           </div>
