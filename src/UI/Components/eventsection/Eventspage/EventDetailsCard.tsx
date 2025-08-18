@@ -8,12 +8,28 @@ import {
 import { MdOutlineTranslate } from "react-icons/md";
 import { LuTickets } from "react-icons/lu";
 
+interface EventDetailsCardProps {
+  date?: string
+  time?: string
+  duration?: string
+  ageLimit?: string
+  languages?: string[]
+  category?: string
+  venue?: string
+  bookingAlert?: string
+  price?: string
+  priceNote?: string
+  buttonLabel?: string
+  onButtonClick?: () => void
+}
+
+
 export default function EventDetailsCard({
   date = "17.08.2025",
   time = "20:30 PM",
   duration = "2 Hours",
   ageLimit = "18+",
-  languages = "English",
+  languages = ["English"],
   category = "Comedy",
   venue = "Lesotho",
   bookingAlert,
@@ -21,7 +37,7 @@ export default function EventDetailsCard({
   priceNote,
   buttonLabel = "Book Now",
   onButtonClick,
-}) {
+}:EventDetailsCardProps) {
   const details = [
     { icon: <FaCalendarAlt />, text: date },
     { icon: <FaClock />, text: time },
@@ -39,7 +55,7 @@ export default function EventDetailsCard({
         {details.map((item, idx) => (
           <div key={idx} className="flex items-center gap-4 text-gray-900">
             <span className="text-lg text-sky-500">{item.icon}</span>
-            <span className="text-sm">{item.text}</span>
+            <span className="text-lg">{item.text}</span>
           </div>
         ))}
       </div>

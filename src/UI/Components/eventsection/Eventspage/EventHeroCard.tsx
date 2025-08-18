@@ -1,13 +1,22 @@
-import { FaShareAlt, FaThumbsUp } from "react-icons/fa";
+// import { FaShareAlt, FaThumbsUp } from "react-icons/fa";
+
+interface EventHeroCardDetails {
+  title: string;
+  image: string;
+  tags: string[]; // ✅ instead of Array
+  // interestedCount: number;
+  // onShare: () => void;
+  // onInterestedClick: () => void;
+}
 
 export default function EventHeroCard({
   title = "Event Title",
   image = "Events1.jpg",
   tags = ["Stand Up Comedy", "Comedy Show"],
-  interestedCount = 0,
-  onShare = () => {},
-  onInterestedClick = () => {},
-}) {
+}: // interestedCount = 0,
+// onShare = () => {},
+// onInterestedClick = () => {},
+EventHeroCardDetails) {
   return (
     <div className=" max-w-6xl mx-auto ">
       {/* Title + Share */}
@@ -18,9 +27,11 @@ export default function EventHeroCard({
         </button> */}
       </div>
 
-      {/* Image */}
-      <div className="  md:w-[60%] mt-2">
-        <img src={image} alt={title} className="   rounded-xl object-cover" />
+      {/* Image Section */}
+      <div className="w-full  mt-2">
+        <div className="aspect-[18/9] w-full rounded-xl overflow-hidden shadow-md">
+          <img src={image} alt={title} className="h-full w-full object-cover" />
+        </div>
       </div>
 
       {/* Tags + Interested */}

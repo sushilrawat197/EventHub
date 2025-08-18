@@ -20,6 +20,7 @@ import { useAppSelector } from "./reducers/hooks";
 // import Layout from "./UI/Components/eventsection/Layout";
 const Layout = lazy(() => import("./UI/Components/eventsection/Layout"));
 import { refreshAccessToken } from "./services/operations/refreshToken";
+import Layouteventspage from "./UI/Components/eventsection/Eventspage/Layouteventspage";
 // import axios from "axios";
 // import { clearUser, setUser } from "./slices/userSlice";
 // import { userEndpoint } from "./services/apis";
@@ -127,6 +128,15 @@ useEffect(() => {
               element={
                 <ProtectedRoute>
                   <ProfileCard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/events/:id"
+              element={
+                <ProtectedRoute>
+                  <Layouteventspage />
                 </ProtectedRoute>
               }
             />

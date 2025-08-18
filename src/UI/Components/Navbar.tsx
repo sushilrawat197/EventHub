@@ -57,15 +57,11 @@ const Navbar: React.FC = () => {
               {/* Logo */}
               {/* Mobile Menu Toggle */}
               <div className="flex items-center lg:hidden">
-                <button
-                  
-                  className="text-white"
-                  title="Menu"
-                >
+                <button className="text-white" title="Menu">
                   <div className="relative w-[30px] h-[30px]">
                     {/* Menu Icon */}
                     <MdMenu
-                    onClick={() => setMobileMenuOpen(true)}
+                      onClick={() => setMobileMenuOpen(true)}
                       size={30}
                       className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
                         mobileMenuOpen
@@ -76,7 +72,7 @@ const Navbar: React.FC = () => {
 
                     {/* Close Icon */}
                     <RxCross1
-                    onClick={() => setMobileMenuOpen(false )}
+                      onClick={() => setMobileMenuOpen(false)}
                       size={30}
                       className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
                         mobileMenuOpen
@@ -181,21 +177,35 @@ const Navbar: React.FC = () => {
                 />
               </div>
 
-              <NavLink
-                onClick={() => setMobileMenuOpen(false)}
-                to={"/"}
-                className="block text-sky-600 font-medium mx-3"
-              >
-                Home
-              </NavLink>
+              <div className="flex flex-col">
+                <NavLink
+                  onClick={() => setMobileMenuOpen(false)}
+                  to={"/"}
+                  className={({ isActive }) =>
+                    `text-lg transition-colors duration-200 ${
+                      isActive
+                        ? "text-sky-400 font-semibold  py-1"
+                        : "text-black"
+                    }`
+                  }
+                >
+                  Home
+                </NavLink>
 
-              <NavLink
-                to={"/events"}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block text-black font-medium mx-3"
-              >
-                Browse Events
-              </NavLink>
+                <NavLink
+                  to={"/events"}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `text-lg transition-colors duration-200 ${
+                      isActive
+                        ? "text-sky-400 font-semibold  py-1"
+                        : "text-black"
+                    }`
+                  }
+                >
+                  Browse Events
+                </NavLink>
+              </div>
 
               <div className="border border-gray-300"></div>
 

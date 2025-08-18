@@ -3,9 +3,11 @@ import { FaFilter } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import MobileFilters from "./MobileFilter";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const events = [
   {
+    id: 1,
     image: "Events1.jpg",
     promoted: true,
     date: "Sun, 7 Aug",
@@ -15,6 +17,7 @@ const events = [
     price: 799,
   },
   {
+    id: 2,
     image: "Events2.jpg",
     promoted: true,
     date: "Wed, 6 Aug onwards",
@@ -24,6 +27,7 @@ const events = [
     price: 299,
   },
   {
+    id: 3,
     image: "Events8.jpg",
     promoted: false,
     date: "Fri, 3 Aug onwards",
@@ -33,6 +37,7 @@ const events = [
     price: 999,
   },
   {
+    id: 4,
     image: "Fastivalpng (3).jpg",
     promoted: false,
     date: "Wed, 6 Aug onwards",
@@ -42,6 +47,7 @@ const events = [
     price: 800,
   },
   {
+    id: 5,
     image: "Fastivalpng (1).jpg",
     promoted: false,
     date: "Wed, 6 Aug onwards",
@@ -51,6 +57,7 @@ const events = [
     price: 800,
   },
   {
+    id: 6,
     image: "Events4.jpg",
     promoted: false,
     date: "Wed, 6 Aug onwards",
@@ -60,6 +67,7 @@ const events = [
     price: 800,
   },
   {
+    id: 7,
     image: "Events1.jpg",
     promoted: false,
     date: "Wed, 6 Aug onwards",
@@ -69,6 +77,7 @@ const events = [
     price: 800,
   },
   {
+    id: 8,
     image: "Events3.jpg",
     promoted: false,
     date: "Fri, 1 Oct onwards",
@@ -81,6 +90,8 @@ const events = [
 
 export default function EventList() {
   const [openFilter, setOpenFilter] = useState(false);
+
+  const navigate = useNavigate();
 
   return (
     <div className=" py-4  ">
@@ -114,8 +125,13 @@ export default function EventList() {
 
       {/* Cards Grid */}
       <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4  gap-4 py-2  shadow   ">
-        {events.map((event, idx) => (
-          <EventCard key={idx} event={event} />
+        {events.map((event) => (
+          <button
+            key={event.id}
+            onClick={() => navigate(`/events/${event.id}`, { state: event })}
+          >
+            <EventCard event={event} />
+          </button>
         ))}
       </div>
 
