@@ -49,7 +49,7 @@ export default function MobileEventDetailsCard({
   ];
 
   return (
-    <div className=" shadow-sky-500 rounded-xl w-full max-w-sm  bg-white space-y-4">
+    <div className=" shadow-sky-500 rounded-xl w-full max-w-sm  bg-white space-y-4 lg:hidden">
       {/* Details List */}
       <div className="space-y-4">
         {details.map((item, idx) => (

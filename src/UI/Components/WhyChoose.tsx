@@ -24,10 +24,19 @@ const WhyChoose = () => {
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Card 1 */}
         <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition-transform duration-300 hover:-translate-y-1 border-2 border-sky-500">
+         
+
+         <div className="flex gap-4">
           <div className="text-sky-500 text-4xl mb-4">
             <FaVectorSquare />
           </div>
+
           <h3 className="text-xl font-semibold mb-2 ">Flexibility</h3>
+
+         </div>
+         
+          
+
           <p className="text-sm text-[#777777] leading-relaxed">
             MyTag offers a user-friendly ticketing system designed to streamline
             both online and box office ticket sales — ensuring a seamless and
@@ -35,12 +44,20 @@ const WhyChoose = () => {
           </p>
         </div>
 
+
+
         {/* Card 2 */}
         <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition-transform duration-300 hover:-translate-y-1 border-2 border-sky-500">
-          <div className="text-sky-500 text-4xl mb-4">
+          
+          <div className="flex gap-3">
+             <div className="text-sky-500 text-4xl mb-4">
             <BiSupport />
           </div>
           <h3 className="text-xl font-semibold mb-2">24/7 Expert Support</h3>
+
+          </div>
+          
+         
           <p className="text-sm text-[#777777] leading-relaxed">
             24/7 expert assistance to help organizers set up and manage tickets
             efficiently. Our support team ensures a seamless and stress-free
@@ -50,10 +67,18 @@ const WhyChoose = () => {
 
         {/* Card 3 */}
         <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition-transform duration-300 hover:-translate-y-1 border-2 border-sky-500">
+          
+          <div className="flex gap-3">
+            
+            
           <div className="text-sky-500 text-4xl mb-4">
+
             <FaCalendarPlus />
           </div>
           <h3 className="text-xl font-semibold mb-2">Schedule Management</h3>
+
+          </div>
+          
           <p className="text-sm text-[#777777] leading-relaxed">
             Customize and simplify event schedules easily — whether date ranges
             or time slots. Smooth management with our flexible scheduling

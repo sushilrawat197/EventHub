@@ -4,8 +4,10 @@ import { useAppSelector } from "../../reducers/hooks";
 import ProfileDropdown from "./profile/ProfileDropdown";
 import { CiSearch } from "react-icons/ci";
 import NavHeader from "./navbar/NavHeader";
-import { MdMenu } from "react-icons/md";
-import { RxCross1 } from "react-icons/rx";
+// import { MdMenu } from "react-icons/md";
+// import { RxCross1 } from "react-icons/rx";
+import { RiMenuFold4Fill } from "react-icons/ri";
+import { RiMenuFold3Fill } from "react-icons/ri";
 
 const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -60,7 +62,7 @@ const Navbar: React.FC = () => {
                 <button className="text-white" title="Menu">
                   <div className="relative w-[30px] h-[30px]">
                     {/* Menu Icon */}
-                    <MdMenu
+                    < RiMenuFold4Fill
                       onClick={() => setMobileMenuOpen(true)}
                       size={30}
                       className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
@@ -71,7 +73,7 @@ const Navbar: React.FC = () => {
                     />
 
                     {/* Close Icon */}
-                    <RxCross1
+                    <RiMenuFold3Fill 
                       onClick={() => setMobileMenuOpen(false)}
                       size={30}
                       className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${

@@ -68,7 +68,7 @@ export default function Layouteventspage() {
         </div>
 
         {/* RIGHT SIDE */}
-        <div className="lg:w-96 md:hidden pt-10 hidden lg:block">
+        <div className="lg:w-96 md:hi pt-10 hidden lg:block">
           <div className="sticky top-36">
             <EventDetailsCard {...event.details} />
           </div>
