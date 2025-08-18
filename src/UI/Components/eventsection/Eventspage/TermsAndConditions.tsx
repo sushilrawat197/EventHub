@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { FaChevronRight } from "react-icons/fa";
 
@@ -17,6 +17,7 @@ export default function TermsAndConditions() {
           <FaChevronRight />
         </span>
       </button>
+
 
       {/* Modal */}
       {open && (

@@ -1,5 +1,5 @@
 // import EventsFilter from "../Components/EventsFilter";
-
+import { Link } from "react-router-dom";
 import StatsReview from "../Components/StatsReviews";
 
 const HeroSection = () => {
@@ -26,9 +26,12 @@ const HeroSection = () => {
           </p>
 
           <div className="mt-6 flex flex-wrap  justify-center md:justify-start gap-4 md:ml-[30%] font-semibold ">
-            <button className="bg-sky-500 hover:bg-sky-300 text-white  px-6 py-2 rounded-full whitespace-nowrap transition cursor-pointer">
+            <Link to={'/events'}>
+             <button className="bg-sky-500 hover:bg-sky-300 text-white  px-6 py-2 rounded-full whitespace-nowrap transition cursor-pointer">
               Get Ticket
             </button>
+            </Link>
+           
             <button className="border-2 border-black text-black hover:bg-black hover:text-white  px-6 py-2 rounded-full whitespace-nowrap transition  cursor-pointer ">
               Learn More
             </button>
