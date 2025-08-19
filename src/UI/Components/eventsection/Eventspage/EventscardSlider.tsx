@@ -62,7 +62,7 @@ export default function EventscardSlider({
 
       <div className="relative lg:ml-6 flex justify-center lg:block">
 
-        <Slider {...settings} className="lg:w-3xl md:w-2xl w-80">
+        <Slider {...settings} className="lg:w-3xl md:w-3xl w-96">
 
           {events.map((event, index) => (
 
