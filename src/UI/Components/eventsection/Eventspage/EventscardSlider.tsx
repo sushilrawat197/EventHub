@@ -72,7 +72,7 @@ export default function EventscardSlider({
 
               <div className="flex flex-col items-center bg-white  rounded-lg p-2">
 
-                <div className="lg:h-60 lg:w-44 md:h-40 mt-2">
+                <div className="lg:h-72 lg:w-52 md:h-40 mt-2">
 
                   <img
                     src={event.image}
