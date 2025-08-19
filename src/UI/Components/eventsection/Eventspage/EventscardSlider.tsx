@@ -81,7 +81,7 @@ export default function EventscardSlider({
                   />
                 </div>
 
-                <p className="mt-2 text-center w-30 text-sm">{event.title}</p>
+                <p className="mt-2 text-center lg:w-40 md:w-30 sm:w-20 text-sm lg:font-semibold lg:text-lg">{`${event.title}`}</p>
                 
               </div>
             </div>

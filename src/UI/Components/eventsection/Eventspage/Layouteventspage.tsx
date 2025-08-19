@@ -35,9 +35,9 @@ const event = {
   ],
 
   slider: [
-    { title: "Samay Raina - Still Alive & Unfiltered", image: "Events1.jpg" },
+    { title: "Samay Raina - Still Alive", image: "Events1.jpg" },
     { title: "Comedy Overload - Sunil Grover", image: "Events2.jpg" },
-    { title: "TOXIC - Abhishek Upmanyu Live", image: "Events3.jpg" },
+    { title: "Abhishek Upmanyu Live", image: "Events3.jpg" },
     { title: "Comedy Show Noida Sector 18", image: "Events4.jpg" },
     { title: "Comedy Show Noida Sector 18", image: "Events4.jpg" },
     { title: "Comedy Show Noida Sector 18", image: "Events4.jpg" },
