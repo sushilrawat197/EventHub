@@ -6,7 +6,7 @@ export default function TermsAndConditions() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div>
+    <div className="pb-16 pt-2 lg:pb-0 lg:pt-0">
       {/* Trigger Button */}
       <button
         onClick={() => setOpen(true)}

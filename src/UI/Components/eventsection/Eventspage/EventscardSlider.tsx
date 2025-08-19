@@ -1,68 +1,103 @@
-import { useRef } from "react";
-import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 
 interface Event {
   title: string;
   image: string;
 }
 
-export default function EventscardSlider({ events = [] }: { events: Event[] }) {
-  const sliderRef = useRef<HTMLDivElement>(null);
+interface EventscardSliderProps {
+  events: Event[];
+}
 
-  const slide = (direction: "left" | "right") => {
-    if (sliderRef.current) {
-      const scrollAmount = direction === "left" ? -300 : 300;
-      sliderRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
+
+export default function EventscardSlider({
+  events = [],
+}: EventscardSliderProps) {
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 4,
+    arrows: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          infinite: true,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          initialSlide: 3,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+        },
+      },
+    ],
   };
 
   return (
-    <div className=" w-fit py-4">
+
+      <div className=" py-4  ">
+
       {/* Header */}
       <h2 className="text-xl font-bold">You May Also Like</h2>
       <p className="text-gray-600 mb-4">Events around you, book now</p>
 
-      <div className="relative">
-        {/* Left Arrow */}
-        <button
-          onClick={() => slide("left")}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow p-2 hover:bg-gray-100 transition"
-        >
-          <MdChevronLeft size={28} />
-        </button>
 
-        {/* Slider */}
-        <div
-          ref={sliderRef}
-          className="flex overflow-x-auto space-x-4 scrollbar-hide scroll-smooth snap-x snap-mandatory"
-        >
-          {events.map((event, idx) => (
-            <div
-              key={idx}
-              className=""
-            >
-              <div className="rounded-lg overflow-hidden shadow hover:shadow-lg hover:scale-[1.02] transition-transform duration-300">
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-64 object-cover"
-                />
+      <div className="relative lg:ml-6 flex justify-center lg:block">
+
+        <Slider {...settings} className="lg:w-3xl md:w-2xl w-80">
+
+          {events.map((event, index) => (
+
+            <div key={index} className="p-1">
+
+              <div className="flex flex-col items-center bg-white  rounded-lg p-2">
+
+                <div className="lg:h-60 lg:w-44 h-40 mt-2">
+
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    className="h-full w-full object-cover rounded-md"
+                  />
+                </div>
+
+                <p className="mt-2 text-center w-30 text-sm">{event.title}</p>
+                
               </div>
-              <h3 className="mt-2 text-sm font-semibold line-clamp-2">
-                {event.title}
-              </h3>
             </div>
           ))}
+
+
+        </Slider>
+
+
         </div>
 
-        {/* Right Arrow */}
-        <button
-          onClick={() => slide("right")}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow p-2 hover:bg-gray-100 transition"
-        >
-          <MdChevronRight size={28} />
-        </button>
+
+
       </div>
-    </div>
+
+
+
+    
+
   );
 }

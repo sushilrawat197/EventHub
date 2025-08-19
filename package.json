@@ -12,6 +12,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "@tailwindcss/vite": "^4.1.11",
+    "@types/react-slick": "^0.23.13",
     "axios": "^1.11.0",
     "lucide-react": "^0.536.0",
     "react": "^19.1.0",
@@ -23,8 +24,10 @@
     "react-otp-input": "^3.1.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.7.1",
+    "react-slick": "^0.31.0",
     "react-spinners": "^0.17.0",
     "react-toastify": "^11.0.5",
+    "slick-carousel": "^1.8.1",
     "swiper": "^11.2.10",
     "tailwindcss": "^4.1.11"
   },

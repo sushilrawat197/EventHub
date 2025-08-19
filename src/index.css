@@ -47,3 +47,22 @@
    -ms-overflow-style: none;
    scrollbar-width: none;
 }
+
+
+/* Force slick arrows to show */
+.slick-prev:before,
+.slick-next:before {
+  color: black !important;   /* default is white/gray */
+  font-size: 30px !important;
+}
+
+/* Position adjustment */
+.slick-prev {
+  left: -40px; /* move left */
+  z-index: 2;
+}
+
+.slick-next {
+  right: -40px; /* move right */
+  z-index: 2;
+}
