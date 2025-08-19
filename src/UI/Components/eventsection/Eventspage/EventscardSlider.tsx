@@ -20,8 +20,8 @@ export default function EventscardSlider({
     dots: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 4,
+    slidesToShow: 3,
+    slidesToScroll: 3,
     arrows: true,
     responsive: [
       {
@@ -34,7 +34,7 @@ export default function EventscardSlider({
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 600,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 3,
@@ -55,7 +55,7 @@ export default function EventscardSlider({
 
   return (
 
-      <div className=" py-4 ">
+      <div className=" py-4  ">
 
       {/* Header */}
       <h2 className="text-xl font-bold">You May Also Like</h2>
@@ -64,7 +64,7 @@ export default function EventscardSlider({
 
       <div className="relative lg:ml-6 flex justify-center lg:block">
 
-        <Slider {...settings} className="lg:w-3xl md:w-3xl w-96">
+        <Slider {...settings} className="lg:w-3xl md:w-3xl w-80">
 
           {events.map((event, index) => (
 
