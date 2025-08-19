@@ -55,7 +55,7 @@ export default function EventscardSlider({
 
   return (
 
-      <div className=" py-4  ">
+      <div className=" py-4 ">
 
       {/* Header */}
       <h2 className="text-xl font-bold">You May Also Like</h2>
