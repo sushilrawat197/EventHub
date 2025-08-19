@@ -34,11 +34,12 @@ export default function EventscardSlider({
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 768,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 3,
           initialSlide: 3,
+          arrows: false,
         },
       },
       {
@@ -46,6 +47,7 @@ export default function EventscardSlider({
         settings: {
           slidesToShow: 2,
           slidesToScroll: 2,
+          arrows: false,
         },
       },
     ],
@@ -70,7 +72,7 @@ export default function EventscardSlider({
 
               <div className="flex flex-col items-center bg-white  rounded-lg p-2">
 
-                <div className="lg:h-60 lg:w-44 h-40 mt-2">
+                <div className="lg:h-60 lg:w-44 md:h-40 mt-2">
 
                   <img
                     src={event.image}
