@@ -2,7 +2,6 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-
 interface Event {
   title: string;
   image: string;
@@ -13,6 +12,7 @@ interface EventscardSliderProps {
 }
 
 
+
 export default function EventscardSlider({
   events = [],
 }: EventscardSliderProps) {
@@ -20,8 +20,8 @@ export default function EventscardSlider({
     dots: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 3,
+    slidesToShow: 4,
+    slidesToScroll: 4,
     arrows: true,
     responsive: [
       {
@@ -30,20 +30,21 @@ export default function EventscardSlider({
           slidesToShow: 3,
           slidesToScroll: 3,
           infinite: true,
-          dots: true,
+          dots: false,
+           arrows: false,
         },
       },
       {
         breakpoint: 600,
         settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-          initialSlide: 3,
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2,
           arrows: false,
         },
       },
       {
-        breakpoint: 480,
+        breakpoint: 300,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 2,
@@ -53,6 +54,7 @@ export default function EventscardSlider({
     ],
   };
 
+  
   return (
 
       <div className=" py-4  ">
@@ -64,7 +66,9 @@ export default function EventscardSlider({
 
       <div className="relative lg:ml-6 flex justify-center lg:block">
 
-        <Slider {...settings} className="lg:w-3xl md:w-3xl w-80">
+        <div className="lg:w-3xl md:w-3xl w-xl">
+
+          <Slider {...settings} >
 
           {events.map((event, index) => (
 
@@ -72,7 +76,7 @@ export default function EventscardSlider({
 
               <div className="flex flex-col items-center bg-white  rounded-lg p-2">
 
-                <div className="lg:h-72 lg:w-52 md:h-40 mt-2">
+                <div className="lg:h-52 lg:w-40 h-40 mt-2">
 
                   <img
                     src={event.image}
@@ -89,6 +93,9 @@ export default function EventscardSlider({
 
 
         </Slider>
+
+        </div>
+        
 
 
         </div>

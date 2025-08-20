@@ -56,13 +56,3 @@
   font-size: 30px !important;
 }
 
-/* Position adjustment */
-.slick-prev {
-  left: -40px; /* move left */
-  z-index: 2;
-}
-
-.slick-next {
-  right: -40px; /* move right */
-  z-index: 2;
-}
