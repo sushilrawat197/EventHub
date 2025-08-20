@@ -20,8 +20,8 @@ export default function EventscardSlider({
     dots: true,
     infinite: false,
     speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 4,
+    slidesToShow: 3,
+    slidesToScroll: 3,
     arrows: true,
     responsive: [
       {
@@ -66,7 +66,7 @@ export default function EventscardSlider({
 
       <div className="relative lg:ml-6 flex justify-center lg:block">
 
-        <div className="lg:w-3xl md:w-3xl w-xl">
+        <div className="lg:w-3xl md:w-3xl w-80">
 
           <Slider {...settings} >
 
@@ -76,7 +76,7 @@ export default function EventscardSlider({
 
               <div className="flex flex-col items-center bg-white  rounded-lg p-2">
 
-                <div className="">
+                <div className="lg:h-52 lg:w-40 h-40 mt-2">
 
                   <img
                     src={event.image}
