@@ -76,7 +76,7 @@ export default function EventscardSlider({
 
               <div className="flex flex-col items-center bg-white  rounded-lg p-2">
 
-                <div className="lg:h-52 lg:w-40 h-40 mt-2">
+                <div className="">
 
                   <img
                     src={event.image}
