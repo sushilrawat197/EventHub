@@ -66,7 +66,7 @@ export default function EventscardSlider({
 
       <div className="relative lg:ml-6 flex justify-center lg:block">
 
-        <div className="lg:w-3xl md:w-3xl w-80">
+        <div className="lg:w-3xl md:w-3xl w-96">
 
           <Slider {...settings} >
 

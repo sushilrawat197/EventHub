@@ -19,7 +19,7 @@ export default function EventDescriptionAndArtists({
 }: EventDescriptionAndArtistsProps) {
   const [readMe, setReadme] = useState(false);
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-4">
+    <div className="w-full max-w-6xl mx-auto space-y-4 pb-7">
       {/* About Section */}
       <section>
         <h2 className="text-lg md:text-xl font-semibold mb-1">
@@ -42,15 +42,16 @@ export default function EventDescriptionAndArtists({
         </p>
       </section>
 
+
       {/* Artists Section */}
       <section>
         <h2 className="text-lg md:text-xl font-semibold mb-4">Artists</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-8 gap-4">
           {artists.map((artist, index) => (
-            <div key={index} className="">
+            <div key={index} className="w-28 h-42 ">
               <img
                 src={artist.image}
-                className="w-28 h-42 object-cover rounded-md shadow"
+                className="object-cover rounded-md shadow w-full h-full"
                 alt={artist.name}
               />
               <p className="mt-2 font-medium text-left">{artist.name}</p>
