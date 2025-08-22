@@ -257,7 +257,7 @@ export default function EventList() {
 
 
       {/* Events Grid */}
-      <div className="grid  grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-8 py-2">
+      <div className="grid  grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 py-2">
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event) => (
             <button
