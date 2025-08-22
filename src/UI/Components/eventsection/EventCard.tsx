@@ -64,7 +64,7 @@ export default function EventCard({ event }: EventCardProps) {
           {event.genre}
         </p>
 
-        <p className="text-xs sm:text-sm md:text-base text-gray-900 font-bold">
+        <p className="text-xs sm:text-sm md:text-base text-gray-900 font-bold truncate">
           M - {event.basePrice} onwards
         </p>
       </div>
