@@ -221,6 +221,8 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   );
 };
 
+
+
 // FILTER PANEL COMPONENT
 export default function FilterPanel() {
   const categories = useAppSelector((state) => state.events.categories);

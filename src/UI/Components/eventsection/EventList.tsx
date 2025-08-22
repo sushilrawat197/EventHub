@@ -10,15 +10,15 @@ import {
   setDates,
   setLanguages,
   setPrices,
-} from "../../../slices/filterSlice";
+  setStartDate,
+  setEndDate,
+} from "../../../slices/filterSlice";   // 👈 add setStartDate, setEndDate
 import { matchDateFilter } from "../../../utils/dateFilters";
 
 export default function EventList() {
-  //STATE FUNCTIONS
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  //SLICE STATES
   const categories = useAppSelector((state) => state.events.categories);
   const events = useAppSelector((state) => state.events.events);
   const selectedCategories = useAppSelector((state) => state.filter.categories);
@@ -29,9 +29,6 @@ export default function EventList() {
   const selectedStartDate = useAppSelector((state) => state.filter.startDate);
   const selectedEndDate = useAppSelector((state) => state.filter.endDate);
 
-  // console.log("start date and end date", selectedStartDate, selectedEndDate);
-
-  //USES STATES
   const [searchParams, setSearchParams] = useSearchParams();
   const [openFilter, setOpenFilter] = useState(false);
 
@@ -42,39 +39,24 @@ export default function EventList() {
     const datesFromUrl = searchParams.get("dates");
     const priceFromUrl = searchParams.get("prices");
 
-    if (categoriesFromUrl) {
-      dispatch(setCategories(categoriesFromUrl.split(",")));
-    }
-
-    if (languageFromUrl) {
-      dispatch(setLanguages(languageFromUrl.split(",")));
-    }
-
-    if (datesFromUrl) {
-      dispatch(setDates(datesFromUrl.split(",")));
-    }
-
-    if (priceFromUrl) {
-      dispatch(setPrices(priceFromUrl.split(",")));
-    }
+    if (categoriesFromUrl) dispatch(setCategories(categoriesFromUrl.split(",")));
+    if (languageFromUrl) dispatch(setLanguages(languageFromUrl.split(",")));
+    if (datesFromUrl) dispatch(setDates(datesFromUrl.split(",")));
+    if (priceFromUrl) dispatch(setPrices(priceFromUrl.split(",")));
   }, [dispatch, searchParams]);
 
   // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
 
-    if (selectedCategories.length > 0) {
+    if (selectedCategories.length > 0)
       params.set("categories", selectedCategories.join(","));
-    }
-    if (selectedLanguage.length > 0) {
+    if (selectedLanguage.length > 0)
       params.set("languages", selectedLanguage.join(","));
-    }
-    if (selectedDates.length > 0) {
+    if (selectedDates.length > 0)
       params.set("dates", selectedDates.join(","));
-    }
-    if (selectedPrice.length > 0) {
+    if (selectedPrice.length > 0)
       params.set("prices", selectedPrice.join(","));
-    }
 
     setSearchParams(params, { replace: true });
   }, [
@@ -84,8 +66,6 @@ export default function EventList() {
     selectedPrice,
     setSearchParams,
   ]);
-
-
 
   const handleFilterToggle = (
     filterKey: "categories" | "languages" | "prices" | "dates",
@@ -123,6 +103,11 @@ export default function EventList() {
         break;
 
       case "dates":
+        // 👇 special case: if date range chip is removed, also clear startDate & endDate
+        if (selectedDates.includes(value)) {
+          dispatch(setStartDate(null));
+          dispatch(setEndDate(null));
+        }
         dispatch(
           setDates(
             selectedDates.includes(value)
@@ -131,10 +116,8 @@ export default function EventList() {
           )
         );
         break;
-    
     }
   };
-
 
   const filteredEvents = events
     .map((event) => {
@@ -156,9 +139,7 @@ export default function EventList() {
       }
       return null;
     })
-
     .filter((event): event is (typeof events)[0] => event !== null)
-
     .filter((event) => {
       const genreMatch =
         selectedCategories.length === 0 ||
@@ -182,7 +163,6 @@ export default function EventList() {
       return genreMatch && langMatch && priceMatch;
     });
 
-  // Get all available filter options
   const getAllFilterOptions = () => {
     return Array.from(
       new Set([
@@ -211,12 +191,10 @@ export default function EventList() {
       {/* Filter Tags */}
       <div className="overflow-x-auto md:overflow-visible scrollbar-hide mb-6">
         <div className="flex flex-nowrap md:flex-wrap gap-2">
-
           {getAllFilterOptions().map((tag, i) => (
             <span
               key={i}
               onClick={() => {
-                // check if tag belongs to which filter type
                 if (categories.includes(tag))
                   handleFilterToggle("categories", tag);
                 else if (selectedLanguage.includes(tag))
@@ -227,11 +205,11 @@ export default function EventList() {
                   handleFilterToggle("dates", tag);
               }}
               className={`min-w-max border px-3 py-1 rounded-full text-[12px] cursor-pointer transition-colors
-      ${
-        isFilterSelected(tag)
-          ? "bg-sky-500 text-white border-sky-500"
-          : "border-gray-200 text-sky-500 hover:text-black hover:border-gray-400"
-      }`}
+                ${
+                  isFilterSelected(tag)
+                    ? "bg-sky-500 text-white border-sky-500"
+                    : "border-gray-200 text-sky-500 hover:text-black hover:border-gray-400"
+                }`}
             >
               {tag}
             </span>
@@ -254,7 +232,6 @@ export default function EventList() {
           {selectedPrice.length > 0 && ` • Price: ${selectedPrice.join(", ")}`}
         </div>
       )}
-
 
       {/* Events Grid */}
       <div className="grid  grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 py-2">
