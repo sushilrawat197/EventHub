@@ -36,9 +36,9 @@ export function refreshAccessToken() {
                 await dispatch(getCurrentUser());
             }
 
-            console.log("REFRESH_ACCESS_TOKEN.....", response)
+            // console.log("REFRESH_ACCESS_TOKEN.....", response)
             const accessTokenExpiryString = response.data.data.accessTokenExpiry;
-            console.log("ACCESS TOKEN EXPIRY", accessTokenExpiryString);
+            // console.log("ACCESS TOKEN EXPIRY", accessTokenExpiryString);
 
 
             if (accessTokenExpiryString) {
@@ -60,9 +60,9 @@ export function refreshAccessToken() {
                         dispatch(refreshAccessToken());
                     }, timeToRefresh);
 
-                    console.log(
-                        ` Next refresh scheduled in ${(timeToRefresh / 1000).toFixed(0)} seconds`
-                    );
+                    // console.log(
+                    //     ` Next refresh scheduled in ${(timeToRefresh / 1000).toFixed(0)} seconds`
+                    // );
                 } else {
                     // Token already expired, refresh now
                     dispatch(refreshAccessToken());

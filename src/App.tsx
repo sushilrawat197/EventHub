@@ -16,11 +16,12 @@ const HomePage =lazy(()=>import( "./UI/Pages/HomePage"))
 import { Route, Routes } from "react-router-dom";
 import { useAppDispatch } from "./reducers/hooks";
 import { useEffect } from "react";
-import { useAppSelector } from "./reducers/hooks";
+// import { useAppSelector } from "./reducers/hooks";
 // import Layout from "./UI/Components/eventsection/Layout";
 const Layout = lazy(() => import("./UI/Components/eventsection/Layout"));
 import { refreshAccessToken } from "./services/operations/refreshToken";
 import Layouteventspage from "./UI/Components/eventsection/Eventspage/Layouteventspage";
+import HelpAndSupport from "./UI/Components/HelpAndSupport";
 // import axios from "axios";
 // import { clearUser, setUser } from "./slices/userSlice";
 // import { userEndpoint } from "./services/apis";
@@ -31,15 +32,15 @@ function App() {
 
   // const token=useAppSelector((state)=>state.auth.accessToken);
 
-const user=useAppSelector((state)=>state.user.user);
+// const user=useAppSelector((state)=>state.user.user);
 
-console.log("USER DATA ......",user)
+// console.log("USER DATA ......",user)
   
 
 
 useEffect(() => {
   const init = async () => {
-    console.log("Refreshing token...");
+    // console.log("Refreshing token...");
     await dispatch(refreshAccessToken()); // wait for refreshToken completion 
     
   };
@@ -137,7 +138,14 @@ useEffect(() => {
               element={
                 
                   <Layouteventspage />
-             
+              }
+            />
+
+            <Route
+              path="/helpandsupport"
+              element={
+                
+                  <HelpAndSupport/>
               }
             />
           </Routes>

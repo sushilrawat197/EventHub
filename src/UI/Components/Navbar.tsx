@@ -12,7 +12,7 @@ import { RiMenuFold3Fill } from "react-icons/ri";
 const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState("Maseru");
+  const [selectedCity, setSelectedCity] = useState("Mumbai");
 
   const menuRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
@@ -29,6 +29,7 @@ const Navbar: React.FC = () => {
     "Botha-Bothe",
     "Mokhotlong",
   ];
+
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

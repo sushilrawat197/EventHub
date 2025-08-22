@@ -2,11 +2,17 @@ import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { FaChevronRight } from "react-icons/fa";
 
-export default function TermsAndConditions() {
+interface TermsProps {
+  description: string;
+}
+
+
+
+export default function TermsAndConditions({description}:TermsProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="pb-16 pt-2 lg:pb-0 lg:pt-0">
+    <div className="pb-16 pt-2 lg:pb-0 lg:pt-0 mt-8">
       {/* Trigger Button */}
       <button
         onClick={() => setOpen(true)}
@@ -36,31 +42,8 @@ export default function TermsAndConditions() {
 
             {/* Content */}
             <div className="space-y-3 text-black text-[15px] max-h-[60vh] overflow-y-auto">
-              <p>1. Tickets once booked cannot be exchanged or refunded.</p>
-              <p>
-                2. The organizer reserves the right to change or cancel the
-                event at any time.
-              </p>
-              <p>
-                3. Entry is restricted to individuals above the specified age
-                limit.
-              </p>
-              <p>
-                4. Please carry a valid government ID proof for verification.
-              </p>
-              <p>5. Outside food and beverages are strictly prohibited.</p>
-              <p>
-                6. By attending, you agree to comply with venue safety
-                guidelines.
-              </p>
-              <p>
-                7. Misbehavior or misconduct will lead to immediate removal from
-                the venue.
-              </p>
-              <p>
-                8. The organizer holds no responsibility for loss or theft of
-                personal belongings.
-              </p>
+              <p>{description}</p>
+          
             </div>
 
             {/* Footer Button */}

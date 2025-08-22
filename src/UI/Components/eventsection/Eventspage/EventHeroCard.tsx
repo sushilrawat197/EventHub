@@ -3,20 +3,14 @@
 interface EventHeroCardDetails {
   title: string;
   image: string;
-  tags: string[]; // ✅ instead of Array
+  tags: string; // ✅ instead of Array
   // interestedCount: number;
   // onShare: () => void;
   // onInterestedClick: () => void;
 }
 
-export default function EventHeroCard({
-  title = "Event Title",
-  image = "Events1.jpg",
-  tags = ["Stand Up Comedy", "Comedy Show"],
-}: // interestedCount = 0,
-// onShare = () => {},
-// onInterestedClick = () => {},
-EventHeroCardDetails) {
+export default function EventHeroCard({title,image,tags}:EventHeroCardDetails  ) {
+  
   return (
     <div className=" max-w-6xl mx-auto ">
       {/* Title + Share */}
@@ -38,14 +32,16 @@ EventHeroCardDetails) {
       <div className="mt-1 flex flex-wrap justify-between items-center gap-3  ">
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
-          {tags.map((tag, i) => (
+         
+
             <span
-              key={i}
+          
               className="bg-sky-500 text-white text-sm px-3 py-1 rounded-md"
             >
-              {tag}
+
+              {tags}
             </span>
-          ))}
+       
         </div>
 
         {/* Interested */}

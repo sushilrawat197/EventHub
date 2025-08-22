@@ -9,34 +9,31 @@ import { MdOutlineTranslate } from "react-icons/md";
 import { LuTickets } from "react-icons/lu";
 
 interface EventDetailsCardProps {
-  date?: string
-  time?: string
-  duration?: string
-  ageLimit?: string
-  languages?: string[]
-  category?: string
-  venue?: string
-  bookingAlert?: string
-  price?: string
-  priceNote?: string
-  buttonLabel?: string
-  onButtonClick?: () => void
+  date?: string;
+  time?: string;
+  duration?: string;
+  ageLimit?: number;
+  languages?: string[];
+  category?: string;
+  venue?: string;
+  bookingAlert?: string;
+  price?: number;
+  priceNote?: string;
+  buttonLabel?: string;
+  onButtonClick?: () => void;
 }
 
-
 export default function MobileEventDetailsCard({
-  date = "17.08.2025",
-  time = "20:30 PM",
-  duration = "2 Hours",
-  ageLimit = "18+",
-  languages = ["English"],
-  category = "Comedy",
-  venue = "Lesotho",
+  date,
+  time,
+  duration,
+  ageLimit,
+  languages,
+  category,
+  venue,
   bookingAlert,
-  price = "200",
+  price,
   priceNote,
-  buttonLabel = "Book Now",
-  onButtonClick,
 }:EventDetailsCardProps) {
   const details = [
     { icon: <FaCalendarAlt />, text: date },
@@ -79,10 +76,10 @@ export default function MobileEventDetailsCard({
 
 
         <button
-          onClick={onButtonClick}
+          // onClick={onButtonClick}
           className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-bold"
         >
-          {buttonLabel}
+          Book Now
         </button>
 
       </div>

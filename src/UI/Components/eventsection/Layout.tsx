@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import EventList from "./EventList";
 import FilterPanel from "./FilterPanel";
 import SpinnerLoading from "../common/SpinnerLoading";
+import { useAppDispatch } from "../../../reducers/hooks";
+import { getEvents } from "../../../services/operations/eventsApi";
 
 export default function Layout() {
   const [loading, setLoading] = useState(true);
-
+  const dispatch = useAppDispatch();
   useEffect(() => {
     // Simulate API fetch
     const timer = setTimeout(() => {
@@ -15,10 +17,14 @@ export default function Layout() {
     return () => clearTimeout(timer);
   }, []);
 
+  
+  useEffect(() => {
+    dispatch(getEvents());
+  }, []);
+  
+
   if (loading) {
-    return (
-     <SpinnerLoading/>
-    );
+    return <SpinnerLoading />;
   }
 
   return (

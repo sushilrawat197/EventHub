@@ -5,7 +5,7 @@ import { useState } from "react";
 interface Artist {
   name: string;
   role: string;
-  image: string;
+  imageUrl: string | null;
 }
 
 interface EventDescriptionAndArtistsProps {
@@ -13,6 +13,7 @@ interface EventDescriptionAndArtistsProps {
   onReadMore?: () => void;
   artists?: Artist[];
 }
+
 export default function EventDescriptionAndArtists({
   description = "",
   artists = [],
@@ -33,7 +34,7 @@ export default function EventDescriptionAndArtists({
           {/* Show button only if description is longer than 150 */}
           {description.length > 150 && (
             <button
-              onClick={() => setReadme(!readMe)} 
+              onClick={() => setReadme(!readMe)}
               className="ml-2 text-sky-500 font-medium hover:underline cursor-pointer"
             >
               {readMe ? "Show Less" : "Show More"}
@@ -42,15 +43,15 @@ export default function EventDescriptionAndArtists({
         </p>
       </section>
 
-
       {/* Artists Section */}
       <section>
         <h2 className="text-lg md:text-xl font-semibold mb-4">Artists</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-8 gap-4">
-          {artists.map((artist, index) => (
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
+          {artists?.map((artist, index) => (
             <div key={index} className="w-28 h-42 ">
               <img
-                src={artist.image}
+                src={artist.imageUrl ?? "/default.jpg"} // agar null ho toh default.jpg use hoga
                 className="object-cover rounded-md shadow w-full h-full"
                 alt={artist.name}
               />

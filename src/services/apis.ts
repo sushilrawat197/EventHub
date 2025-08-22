@@ -27,3 +27,8 @@ export const userEndpoint={
 }
 
 
+export const eventsEndpoint={
+  GET_EVENTS_API: "https://thedemonstrate.com/CMS/api/v1/contents?city=Mumbai",
+}
+
+

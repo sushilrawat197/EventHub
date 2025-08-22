@@ -9,43 +9,40 @@ import { MdOutlineTranslate } from "react-icons/md";
 import { LuTickets } from "react-icons/lu";
 
 interface EventDetailsCardProps {
-  date?: string
-  time?: string
-  duration?: string
-  ageLimit?: string
-  languages?: string[]
-  category?: string
-  venue?: string
-  bookingAlert?: string
-  price?: string
-  priceNote?: string
-  buttonLabel?: string
-  onButtonClick?: () => void
+  date?: string;
+  time?: string;
+  duration?: string;
+  ageLimit?: number;
+  languages?: string[];
+  category?: string;
+  venue?: string;
+  bookingAlert?: string;
+  price?: number;
+  priceNote?: string;
+  buttonLabel?: string;
+  onButtonClick?: () => void;
 }
 
-
 export default function EventDetailsCard({
-  date = "17.08.2025",
-  time = "20:30 PM",
-  duration = "2 Hours",
-  ageLimit = "18+",
-  languages = ["English"],
-  category = "Comedy",
-  venue = "Lesotho",
+  date,
+  time,
+  duration,
+  ageLimit,
+  languages,
+  category,
+  venue,
   bookingAlert,
-  price = "200",
+  price,
   priceNote,
-  buttonLabel = "Book Now",
-  onButtonClick,
-}:EventDetailsCardProps) {
+}: EventDetailsCardProps) {
   const details = [
     { icon: <FaCalendarAlt />, text: date },
-    { icon: <FaClock />, text: time },
-    { icon: <LuTickets />, text: duration },
-    { icon: <FaUsers />, text: `Age Limit - ${ageLimit}` },
-    { icon: <MdOutlineTranslate />, text: languages },
-    { icon: <FaUser />, text: category },
-    { icon: <FaMapMarkerAlt />, text: venue },
+    { icon: <FaClock />, text: time || "Time not available" },
+    { icon: <LuTickets />, text: duration || "Duration not available" },
+    { icon: <FaUsers />, text: ageLimit ? `Age Limit - ${ageLimit}` : "All Ages", },
+    { icon: <MdOutlineTranslate />, text: languages?.join(", ") || "N/A" },
+    { icon: <FaUser />, text: category || "N/A" },
+    { icon: <FaMapMarkerAlt />, text: venue || "Venue not decided" },
   ];
 
   return (
@@ -74,10 +71,10 @@ export default function EventDetailsCard({
           {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
         </div>
         <button
-          onClick={onButtonClick}
+          // onClick={onButtonClick}
           className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-bold"
         >
-          {buttonLabel}
+          Book
         </button>
       </div>
     </div>

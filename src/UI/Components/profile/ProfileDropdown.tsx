@@ -16,21 +16,25 @@ const menuItems = [
   {
     title: "Notifications",
     icon: <RiNotificationBadgeLine />,
+    path: "/notifications"
   },
   {
     title: "Your Orders",
     subtitle: "Track your order details",
     icon: <LuTickets />,
+    path: "/orders"
   },
   {
     title: "Help & Support",
     subtitle: "Contact us for any query",
     icon: <BsChatDots />,
+    path: "/helpandsupport"
   },
   {
     title: "Settings",
     subtitle: "Profile settings and more",
     icon: <FaGears />,
+    path: "/settings"
   },
 ];
 
@@ -98,7 +102,6 @@ export default function ProfileDropdown() {
           {user?.profilePicUrl ? (
             <div className="flex justify-center items-center text-white gap-2">
               <div className="rounded-full w-11 h-11 bg-white">
-                
                 <img
                   src={user?.profilePicUrl}
                   alt="Profile"
@@ -120,16 +123,10 @@ export default function ProfileDropdown() {
             <FaRegUserCircle size={30} />
           )}
 
-
-         <div className="flex items-center justify-center gap-1">Hello! 
-          {
-            user?.firstName && (
-              <p>{user?.firstName?.slice(0, 6)}...</p>
-            )
-          }
-          </div> 
-
-          
+          <div className="flex items-center justify-center gap-1">
+            Hello!
+            {user?.firstName && <p>{user?.firstName?.slice(0, 6)}...</p>}
+          </div>
         </div>
       </div>
 
@@ -196,6 +193,10 @@ export default function ProfileDropdown() {
               {menuItems.map((item, idx) => (
                 <div
                   key={idx}
+                  onClick={() => {
+                    if (item.path) navigate(item.path);
+                    handleClose();
+                  }}
                   className="flex items-center justify-between px-6 py-5 hover:bg-gray-100 cursor-pointer border-b border-gray-200"
                 >
                   <div className="flex items-center gap-4">
