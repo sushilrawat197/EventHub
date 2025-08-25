@@ -34,7 +34,7 @@ export default function MobileEventDetailsCard({
   bookingAlert,
   price,
   priceNote,
-}:EventDetailsCardProps) {
+}: EventDetailsCardProps) {
   const details = [
     { icon: <FaCalendarAlt />, text: date },
     { icon: <FaClock />, text: time },
@@ -64,16 +64,13 @@ export default function MobileEventDetailsCard({
         </div>
       )}
 
-
-
       {/* Price & Button */}
-      <div className="lg:hidden flex justify-between py-3 border-t border-sky-300 fixed bottom-0 bg-white w-full px-3 z-40">
-
-        <div>
-          <p className=" text-lg font-bold">M-{price} onwards</p>
+      {/* Price & Button */}
+      <div className="lg:hidden flex justify-between items-center py-3 border-t border-sky-300 fixed bottom-0 left-0 right-0 bg-white w-full px-4 z-40">
+        <div className="flex flex-col">
+          <p className="text-lg font-bold">M-{price} onwards</p>
           {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
         </div>
-
 
         <button
           // onClick={onButtonClick}
@@ -81,7 +78,6 @@ export default function MobileEventDetailsCard({
         >
           Book Now
         </button>
-
       </div>
     </div>
   );

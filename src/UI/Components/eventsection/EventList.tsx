@@ -20,8 +20,10 @@ export default function EventList() {
   const navigate = useNavigate();
 
   const categories = useAppSelector((state) => state.events.categories);
+
   const events = useAppSelector((state) => state.events.events);
   const selectedCategories = useAppSelector((state) => state.filter.categories);
+
   const selectedLanguage = useAppSelector((state) => state.filter.languages);
   const selectedDates = useAppSelector((state) => state.filter.dates);
   const selectedPrice = useAppSelector((state) => state.filter.prices);
@@ -30,7 +32,10 @@ export default function EventList() {
   const selectedEndDate = useAppSelector((state) => state.filter.endDate);
 
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [openFilter, setOpenFilter] = useState(false);
+
+
 
   // Sync URL params with Redux state on mount
   useEffect(() => {
@@ -45,9 +50,12 @@ export default function EventList() {
     if (priceFromUrl) dispatch(setPrices(priceFromUrl.split(",")));
   }, [dispatch, searchParams]);
 
+  
+
   // Update URL when filters change
   useEffect(() => {
-    const params = new URLSearchParams();
+
+    const params = new URLSearchParams(); // TO PREPARE QUERY STRING  "categories=comedy,music&languages=english,hindi"
 
     if (selectedCategories.length > 0)
       params.set("categories", selectedCategories.join(","));
@@ -66,6 +74,9 @@ export default function EventList() {
     selectedPrice,
     setSearchParams,
   ]);
+
+
+
 
   const handleFilterToggle = (
     filterKey: "categories" | "languages" | "prices" | "dates",
@@ -119,6 +130,9 @@ export default function EventList() {
     }
   };
 
+
+
+
   const filteredEvents = events
     .map((event) => {
       const matchedShows = event.shows.filter((show) => {
@@ -149,6 +163,8 @@ export default function EventList() {
         selectedLanguage.length === 0 ||
         selectedLanguage.includes(event.defaultLang);
 
+
+
       const priceMatch =
         selectedPrice.length === 0 ||
         selectedPrice.some((priceRange) => {
@@ -163,17 +179,21 @@ export default function EventList() {
       return genreMatch && langMatch && priceMatch;
     });
 
+
+
   const getAllFilterOptions = () => {
-    return Array.from(
+    return Array.from( // to make set object into array so that we can use .map funciton on getallfilter...
       new Set([
         ...selectedDates,
         ...selectedPrice,
         ...selectedLanguage,
         ...selectedCategories,
-        ...categories.filter((option) => !selectedCategories.includes(option)),
+        ...categories
       ])
     );
   };
+
+
 
   const isFilterSelected = (tag: string): boolean => {
     return (
@@ -184,6 +204,8 @@ export default function EventList() {
     );
   };
 
+
+
   return (
     <div className="py-4">
       <h2 className="text-2xl font-bold mb-4">Events</h2>
@@ -191,6 +213,7 @@ export default function EventList() {
       {/* Filter Tags */}
       <div className="overflow-x-auto md:overflow-visible scrollbar-hide mb-6">
         <div className="flex flex-nowrap md:flex-wrap gap-2">
+
           {getAllFilterOptions().map((tag, i) => (
             <span
               key={i}
@@ -217,6 +240,7 @@ export default function EventList() {
         </div>
       </div>
 
+
       {/* Show active filters summary */}
       {(selectedDates.length > 0 ||
         selectedPrice.length > 0 ||
@@ -233,8 +257,10 @@ export default function EventList() {
         </div>
       )}
 
+
       {/* Events Grid */}
       <div className="grid  grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 py-2">
+       
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event) => (
             <button

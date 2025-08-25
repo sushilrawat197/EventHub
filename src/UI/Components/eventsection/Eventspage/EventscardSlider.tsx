@@ -65,7 +65,8 @@ export default function EventscardSlider({ events = [] }: EventscardSliderProps)
                 onClick={() => navigate(`/events/${event.contentId}`, { state: event })}
               >
                 <div className="flex flex-col items-center bg-white rounded-lg p-2">
-                  <div className="lg:h-52 lg:w-40 h-40 mt-2">
+                  {/* <div className="lg:h-52 lg:w-40 h-40 mt-2"> */}
+                  <div className="h-40 w-24 lg:w-52 lg:h-52 mt-2">
                     <img
                       src={event.thumbnail || ""} // fallback in case image key changes
                       alt={event.title}

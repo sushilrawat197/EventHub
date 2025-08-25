@@ -13,13 +13,16 @@ import {
 } from "../../../slices/filterSlice";
 import { useSearchParams } from "react-router-dom";
 
+
+
 interface FilterItemProps {
   title: string;
   options: string[];
   filterKey: "categories" | "languages" | "dates" | "prices";
 }
 
-const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
+
+const FilterItem = ({ title, options, filterKey }: FilterItemProps) => { 
   const dispatch = useAppDispatch();
 
   const selectedCategories = useAppSelector((state) => state.filter.categories);
@@ -34,18 +37,24 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   //CALENDER
   const calendarRef = useRef<HTMLDivElement>(null);
   const [showCalendar, setShowCalendar] = useState(false);
-  // const [startDate, setStartDate] = useState<Date | null>(null);
-  // const [endDate, setEndDate] = useState<Date | null>(null);
+
 
   const selectedFilters = useAppSelector((state) => state.filter[filterKey]);
+  
+  console.log("Filter Key: ", filterKey)
+  console.log("Selected Filter: ",selectedFilters);
+
+
 
   // Click on option
   const handleOptionClick = (opt: string) => {
+
     if (opt === "Date Range") {
       setShowCalendar(true);
     }
 
     let newFilters;
+    
     if (selectedFilters.includes(opt)) {
       newFilters = selectedFilters.filter((f) => f !== opt);
     } else {
@@ -59,8 +68,20 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   };
 
 
+    
+  // helper function to get YYYY-MM-DD local date
+  const formatLocalDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+
+
   // Clear button
   const handleClear = () => {
+
     setShowCalendar(false);
     // 🟢 Redux state clear karna zaroori hai
     dispatch(setStartDate(null));
@@ -71,14 +92,7 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
     if (filterKey === "prices") dispatch(setPrices([]));
   };
 
-  
-  // helper function to get YYYY-MM-DD local date
-  const formatLocalDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+
 
   // Calendar close on outside click
   useEffect(() => {
@@ -135,7 +149,7 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
     selectedPrice,
   ]);
 
-  console.log("Start Date End Date",startDate,endDate)
+  // console.log("Start Date End Date",startDate,endDate)
 
 
   return (
@@ -164,6 +178,7 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
       {open && (
         <div className="mt-3 flex flex-wrap gap-2 text-sm">
           {options.map((opt, idx) => (
+
             <button
               key={idx}
               onClick={() => handleOptionClick(opt)}
@@ -175,13 +190,16 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
             >
               {opt}
             </button>
+
           ))}
         </div>
       )}
 
+
       {/* Calendar */}
       {showCalendar && (
         <div className="mt-3 " ref={calendarRef}>
+        
           <DatePicker
             selected={startDate ? new Date(startDate) : null}
             onChange={(dates) => {
