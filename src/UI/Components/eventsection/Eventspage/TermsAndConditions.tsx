@@ -27,7 +27,7 @@ export default function TermsAndConditions({description}:TermsProps) {
 
       {/* Modal */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 ">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-2">
           <div className="bg-white text-black w-full max-w-2xl rounded-lg shadow-lg p-6 relative">
             {/* Close Button */}
             <button
