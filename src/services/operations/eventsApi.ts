@@ -15,11 +15,14 @@ export function getEvents() {
       const response = await apiConnector<EventsApiResponse>({
         method: "GET",
         url: "https://thedemonstrate.com/CMS/api/v1/contents?city=Mumbai",
+        //  headers: {
+        //   "X-Client-Source": "WEB",
+        // },
+        // withCredentials: true,
       });
 
       // console.log("GET EVENTS API RESPONSE............", response.data.data);
 
-     
       dispatch(
         setEvents({
           contents: response.data.data.eventList,

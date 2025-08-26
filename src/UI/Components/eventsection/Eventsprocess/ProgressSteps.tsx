@@ -18,15 +18,17 @@ export default function ProgressSteps({
   onStepClick,
 }: ProgressStepsProps) {
   return (
-    <div className="w-full overflow-x-auto scrollbar-hide">
+    <div className="w-full  overflow-x-auto scrollbar-hide">
       <div
         className="
-          flex items-center text-sm p-4 border-b border-gray-200 shadow 
+          flex items-center justify-center  text-sm p-4 border-b border-gray-200 shadow 
           min-w-max md:min-w-0 
-          md:justify-between md:space-x-0 space-x-2
+          md:space-x-0 space-x-2
         "
       >
-        {steps.map((step, index) => {
+        <div className="flex items-center justify-center gap-6">
+
+          {steps.map((step, index) => {
           const isActive = currentStep === step.id;
           const isCompleted = currentStep > step.id;
 
@@ -68,6 +70,9 @@ export default function ProgressSteps({
             </React.Fragment>
           );
         })}
+
+        </div>
+        
       </div>
     </div>
   );

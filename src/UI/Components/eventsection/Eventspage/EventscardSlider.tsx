@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -11,6 +11,7 @@ interface EventscardSliderProps {
 
 export default function EventscardSlider({ events = [] }: EventscardSliderProps) {
   const navigate = useNavigate();
+  // const location = useLocation();
 
   const settings = {
     dots: true,
@@ -49,6 +50,9 @@ export default function EventscardSlider({ events = [] }: EventscardSliderProps)
       },
     ],
   };
+
+    
+
 
   return (
     <div className="py-4">
