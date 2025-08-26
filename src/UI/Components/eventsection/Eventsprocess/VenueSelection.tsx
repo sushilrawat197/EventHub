@@ -27,7 +27,7 @@ export default function VenueSelection({ venues = [], onNext }: VenueData) {
   };
 
   return (
-    <div className="max-w-xl mx-auto">
+    <div className="max-w-lg mx-auto">
       <h2 className="text-lg font-semibold mb-3">Select Venue</h2>
 
       {venues.map((elemets, idx) => (

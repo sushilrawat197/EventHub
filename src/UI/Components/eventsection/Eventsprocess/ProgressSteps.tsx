@@ -26,7 +26,7 @@ export default function ProgressSteps({
           md:space-x-0 space-x-2
         "
       >
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-center gap-2">
 
           {steps.map((step, index) => {
           const isActive = currentStep === step.id;
@@ -34,7 +34,7 @@ export default function ProgressSteps({
 
           return (
             <React.Fragment key={step.id}>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 ">
                 <span
                   className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold
                   ${isActive ? "bg-black text-white" : ""}
@@ -65,7 +65,7 @@ export default function ProgressSteps({
               </div>
 
               {index < steps.length - 1 && (
-                <FaChevronRight className="text-gray-400 flex-shrink-0 hidden md:block" />
+                <FaChevronRight className="text-gray-400 flex-shrink-0 " />
               )}
             </React.Fragment>
           );
