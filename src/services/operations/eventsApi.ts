@@ -18,7 +18,7 @@ export function getEvents() {
         //  headers: {
         //   "X-Client-Source": "WEB",
         // },
-        // withCredentials: true,
+        withCredentials: false,
       });
 
       // console.log("GET EVENTS API RESPONSE............", response.data.data);
