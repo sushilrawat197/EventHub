@@ -7,6 +7,7 @@ import {
 } from "react-icons/fa";
 import { MdOutlineTranslate } from "react-icons/md";
 import { LuTickets } from "react-icons/lu";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface EventDetailsCardProps {
   date?: string;
@@ -45,6 +46,9 @@ export default function MobileEventDetailsCard({
     { icon: <FaMapMarkerAlt />, text: venue },
   ];
 
+ const navigate = useNavigate();
+  const location = useLocation();
+  
   return (
     <div className=" shadow-sky-500 rounded-xl w-full max-w-sm  bg-white space-y-4 lg:hidden">
       {/* Details List */}
@@ -73,7 +77,9 @@ export default function MobileEventDetailsCard({
         </div>
 
         <button
-          // onClick={onButtonClick}
+          onClick={() =>
+            navigate(`${location.pathname}/booking`)
+          }
           className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-bold"
         >
           Book Now

@@ -118,7 +118,7 @@ export default function BookingFlow() {
       />
 
       {/* Dynamic Step Content */}
-      <div className="mt-6">{renderStepContent()}</div>
+      <div className="mt-6 px-1">{renderStepContent()}</div>
     </div>
   );
 }
