@@ -3,15 +3,19 @@
 interface EventHeroCardDetails {
   title: string;
   image: string;
-  tags: string; // ✅ instead of Array
+  tags: string; 
+
+  // ✅ instead of Array
   // interestedCount: number;
   // onShare: () => void;
   // onInterestedClick: () => void;
+
 }
 
-export default function EventHeroCard({title,image,tags}:EventHeroCardDetails  ) {
+export default function EventHeroCard({title,image,tags}:EventHeroCardDetails) {
   
   return (
+    
     <div className=" max-w-6xl mx-auto ">
       {/* Title + Share */}
       <div className="flex items-center  ">

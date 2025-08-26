@@ -1,4 +1,4 @@
-import React from "react";
+
 import PrimaryButton from "./PrimaryButton";
 
 export default function ReviewAndPayUI() {
@@ -56,9 +56,9 @@ export default function ReviewAndPayUI() {
             <strong>Mon, 18 Aug, 2025</strong> | 01:30 PM
           </p>
           <p>
-            Venue:{" "}
+            <span className="font-bold">Venue:{" "}</span>
             <span className="text-gray-700">
-              The Laugh Store: DLF Cyberhub, Gurugram
+              The Laugh Store: Maseru
             </span>
           </p>
           <p>PHASE 2 (M 1499) : 1 ticket(s)</p>
@@ -85,7 +85,7 @@ export default function ReviewAndPayUI() {
           By proceeding, I express my consent to complete this transaction.
         </p>
 
-        <PrimaryButton label=" Proceed to Pay" className="" />
+        <PrimaryButton onClick={()=>""} label=" Proceed to Pay" className="" />
       </div>
     </div>
   );

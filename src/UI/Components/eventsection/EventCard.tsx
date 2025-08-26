@@ -1,19 +1,12 @@
 import { useState } from "react";
 import type { Content } from "../../../interfaces/eventInterface/eventInterface";
 
-// interface EventType {
-//   image: string;
-//   promoted: boolean;
-//   date: string;
-//   title: string;
-//   venue: string;
-//   category: string;
-//   price: number;
-// }
+
 
 interface EventCardProps {
   event: Content;
 }
+
 
 export default function EventCard({ event }: EventCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);

@@ -1,19 +1,32 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { GrFormSubtract } from "react-icons/gr";
 import PrimaryButton from "./PrimaryButton";
 
-export default function TicketSelectionUI({ event, tickets, onNext }) {
-  const [selectedTickets, setSelectedTickets] = useState({});
+interface TicketSelectionUIProps {
+  event: { venue: string; date: string; time: string };
+  tickets: { id: number; name: string; price: number; status: string }[];
+  onNext?: () => void; // optional
+}
 
-  const handleAdd = (ticketId) => {
+export default function TicketSelectionUI({
+  event,
+  tickets,
+  onNext,
+}: TicketSelectionUIProps) {
+
+  
+  const [selectedTickets, setSelectedTickets] = useState<{ [key: number]: number }>({});
+
+
+  const handleAdd = (ticketId:number) => {
     setSelectedTickets((prev) => {
       const current = prev[ticketId] || 0;
       return { ...prev, [ticketId]: Math.min(current + 1, 10) };
     });
   };
 
-  const handleRemove = (ticketId) => {
+  const handleRemove = (ticketId:number) => {
     setSelectedTickets((prev) => {
       const current = prev[ticketId] || 0;
       return { ...prev, [ticketId]: Math.max(current - 1, 0) };
@@ -80,7 +93,11 @@ export default function TicketSelectionUI({ event, tickets, onNext }) {
 
       {/* Proceed Button */}
       <div className="mt-4 ">
-        <PrimaryButton className="cursor-pointer" />
+        <PrimaryButton 
+        label="Proceed"
+          onClick={() => onNext?.()} // safe call in case onNext is undefined
+          className="cursor-pointer"
+        />
       </div>
     </div>
   );

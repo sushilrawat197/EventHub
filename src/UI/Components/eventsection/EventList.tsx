@@ -12,7 +12,7 @@ import {
   setPrices,
   setStartDate,
   setEndDate,
-} from "../../../slices/filterSlice";   // 👈 add setStartDate, setEndDate
+} from "../../../slices/filterSlice"; // 👈 add setStartDate, setEndDate
 import { matchDateFilter } from "../../../utils/dateFilters";
 
 export default function EventList() {
@@ -35,8 +35,6 @@ export default function EventList() {
 
   const [openFilter, setOpenFilter] = useState(false);
 
-
-
   // Sync URL params with Redux state on mount
   useEffect(() => {
     const categoriesFromUrl = searchParams.get("categories");
@@ -44,27 +42,23 @@ export default function EventList() {
     const datesFromUrl = searchParams.get("dates");
     const priceFromUrl = searchParams.get("prices");
 
-    if (categoriesFromUrl) dispatch(setCategories(categoriesFromUrl.split(",")));
+    if (categoriesFromUrl)
+      dispatch(setCategories(categoriesFromUrl.split(",")));
     if (languageFromUrl) dispatch(setLanguages(languageFromUrl.split(",")));
     if (datesFromUrl) dispatch(setDates(datesFromUrl.split(",")));
     if (priceFromUrl) dispatch(setPrices(priceFromUrl.split(",")));
   }, [dispatch, searchParams]);
 
-  
-
   // Update URL when filters change
   useEffect(() => {
-
     const params = new URLSearchParams(); // TO PREPARE QUERY STRING  "categories=comedy,music&languages=english,hindi"
 
     if (selectedCategories.length > 0)
       params.set("categories", selectedCategories.join(","));
     if (selectedLanguage.length > 0)
       params.set("languages", selectedLanguage.join(","));
-    if (selectedDates.length > 0)
-      params.set("dates", selectedDates.join(","));
-    if (selectedPrice.length > 0)
-      params.set("prices", selectedPrice.join(","));
+    if (selectedDates.length > 0) params.set("dates", selectedDates.join(","));
+    if (selectedPrice.length > 0) params.set("prices", selectedPrice.join(","));
 
     setSearchParams(params, { replace: true });
   }, [
@@ -74,9 +68,6 @@ export default function EventList() {
     selectedPrice,
     setSearchParams,
   ]);
-
-
-
 
   const handleFilterToggle = (
     filterKey: "categories" | "languages" | "prices" | "dates",
@@ -130,9 +121,6 @@ export default function EventList() {
     }
   };
 
-
-
-
   const filteredEvents = events
     .map((event) => {
       const matchedShows = event.shows.filter((show) => {
@@ -163,8 +151,6 @@ export default function EventList() {
         selectedLanguage.length === 0 ||
         selectedLanguage.includes(event.defaultLang);
 
-
-
       const priceMatch =
         selectedPrice.length === 0 ||
         selectedPrice.some((priceRange) => {
@@ -179,21 +165,18 @@ export default function EventList() {
       return genreMatch && langMatch && priceMatch;
     });
 
-
-
   const getAllFilterOptions = () => {
-    return Array.from( // to make set object into array so that we can use .map funciton on getallfilter...
+    return Array.from(
+      // to make set object into array so that we can use .map funciton on getallfilter...
       new Set([
         ...selectedDates,
         ...selectedPrice,
         ...selectedLanguage,
         ...selectedCategories,
-        ...categories
+        ...categories,
       ])
     );
   };
-
-
 
   const isFilterSelected = (tag: string): boolean => {
     return (
@@ -205,7 +188,6 @@ export default function EventList() {
   };
 
 
-
   return (
     <div className="py-4">
       <h2 className="text-2xl font-bold mb-4">Events</h2>
@@ -213,7 +195,6 @@ export default function EventList() {
       {/* Filter Tags */}
       <div className="overflow-x-auto md:overflow-visible scrollbar-hide mb-6">
         <div className="flex flex-nowrap md:flex-wrap gap-2">
-
           {getAllFilterOptions().map((tag, i) => (
             <span
               key={i}
@@ -240,7 +221,6 @@ export default function EventList() {
         </div>
       </div>
 
-
       {/* Show active filters summary */}
       {(selectedDates.length > 0 ||
         selectedPrice.length > 0 ||
@@ -257,21 +237,30 @@ export default function EventList() {
         </div>
       )}
 
-
       {/* Events Grid */}
       <div className="grid  grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 py-2">
-       
         {filteredEvents.length > 0 ? (
-          filteredEvents.map((event) => (
-            <button
-              key={event.contentId}
-              onClick={() =>
-                navigate(`/events/${event.parentCategoryId}`, { state: event })
-              }
-            >
-              <EventCard event={event} />
-            </button>
-          ))
+          filteredEvents.map((event) => {
+            const slug = event.contentName
+              .toLowerCase()
+              .trim()
+              .replace(/&/g, "and") // & ko 'and' me convert
+              .replace(/\s+/g, "-") // spaces ko '-'
+              .replace(/[^\w-]/g, ""); // special characters remove
+
+            return (
+              <button
+                key={event.contentId}
+                onClick={() =>
+                  navigate(`/events/${slug}/${event.parentCategoryId}`, {
+                    state: event,
+                  })
+                }
+              >
+                <EventCard event={event} />
+              </button>
+            );
+          })
         ) : (
           <div className="col-span-full text-center py-8 text-gray-500">
             <p className="text-lg">No events found</p>

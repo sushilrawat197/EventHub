@@ -1,35 +1,37 @@
-import React from "react";
-import ProgressSteps from "./ProgressSteps";
+
 import PrimaryButton from "./PrimaryButton";
 
-export default function DateTimeSelectionUI({
-  venue = ["lesotho"],
-  dates = ["19 Aug"],
-  times = ["9pm"],
-  onDateSelect = ["20Aug"],
-  onTimeSelect = ["2pm"],
-  onProceed,
-}) {
-  return (
-    <div className="  ">
-      {/* Progress Steps */}
-      <ProgressSteps
-        steps={[
-          { id: 1, label: "Venue" },
-          { id: 2, label: "Date & Time" },
-          { id: 3, label: "Ticket" },
-          { id: 4, label: "Review & Pay" },
-        ]}
-        currentStep={2}
-      />
+interface DateOption {
+  label: string;
+  status: "available" | "fast" | "sold";
+}
 
+interface DateTimeSelectionUIProps {
+  venue?: string;
+  dates?: DateOption[];
+  times?: string[];
+  onDateSelect?: (date: DateOption) => void;
+  onTimeSelect?: (time: string) => void;
+  onNext?: () => void;
+}
+
+export default function DateTimeSelectionUI({
+  venue = "Lesotho",
+  dates = [{ label: "19 Aug", status: "available" }],
+  times = ["9pm"],
+  onDateSelect,
+  onTimeSelect,
+  onNext,
+}: DateTimeSelectionUIProps) {
+  return (
+    <div>
       {/* Venue Info */}
-      <div className="bg-gray-200 text-center py-1  ">
+      <div className="bg-gray-200 text-center py-1">
         <h2 className="font-semibold text-lg">{venue}</h2>
       </div>
 
       {/* Availability Legend */}
-      <div className=" border-2 border-sky-500 rounded-lg shadow p-6 max-w-md mx-auto mt-3">
+      <div className="border-2 border-sky-500 rounded-lg shadow p-6 max-w-md mx-auto mt-3">
         <div className="flex justify-center space-x-6 text-sm mb-6">
           <div className="flex items-center space-x-1">
             <span className="w-3 h-3 rounded-full bg-green-500"></span>
@@ -46,14 +48,14 @@ export default function DateTimeSelectionUI({
         </div>
 
         {/* Select Date */}
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center ">
           <p className="font-semibold mb-2">Select Date</p>
           <div className="flex flex-wrap gap-3 justify-center">
             {dates.map((date, idx) => (
               <button
                 key={idx}
-                onClick={() => onDateSelect(date)}
-                className={`px-6 py-2 rounded-md font-medium ${
+                onClick={() => onDateSelect?.(date)}
+                className={`w-24  py-2 rounded-md font-medium ${
                   date.status === "available"
                     ? "bg-green-500 text-white"
                     : date.status === "fast"
@@ -69,14 +71,14 @@ export default function DateTimeSelectionUI({
         </div>
 
         {/* Select Time */}
-        <div>
+        <div className="flex  justify-between items-center ">
           <p className="font-semibold mb-2">Select Time</p>
           <div className="flex space-x-4 justify-center">
             {times.map((time, idx) => (
               <button
                 key={idx}
-                onClick={() => onTimeSelect(time)}
-                className="border border-green-500 text-green-600 px-6 py-2 rounded-md font-medium"
+                onClick={() => onTimeSelect?.(time)}
+                className="border border-green-500 text-green-600 w-24 py-2 rounded-md font-medium"
               >
                 {time}
               </button>
@@ -87,7 +89,12 @@ export default function DateTimeSelectionUI({
 
       {/* Proceed Button */}
       <div className="mt-3 flex justify-center">
-        <PrimaryButton className="w-full max-w-md py-3 rounded-lg font-semibold cursor-pointer" />
+        <PrimaryButton
+         onClick={()=>onNext?.()}
+          className="w-full max-w-md py-3 rounded-lg font-semibold cursor-pointer"
+        >
+          Proceed
+        </PrimaryButton>
       </div>
     </div>
   );

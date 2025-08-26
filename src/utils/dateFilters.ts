@@ -15,7 +15,7 @@ export const matchDateFilter = (
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
-  
+
   const saturday = new Date(today);
   saturday.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7));
 
@@ -23,7 +23,6 @@ export const matchDateFilter = (
   sunday.setDate(saturday.getDate() + 1);
 
   let match = false;
-
 
 
   // Quick filters
@@ -47,6 +46,7 @@ export const matchDateFilter = (
   if (startDate && endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
+    
     end.setHours(23, 59, 59, 999);
     if (showDate >= start && showDate <= end) {
       match = true;

@@ -1,11 +1,20 @@
-import React from "react";
+import React, {type ReactNode } from "react";
+
+interface PrimaryButtonProps {
+  label?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  disabled?: boolean;
+  className?: string;
+  children?: ReactNode;   // <-- yeh add karo
+}
 
 export default function PrimaryButton({
-  label = "Proceed",
+  label,
   onClick,
   disabled = false,
   className = "",
-}) {
+  children,
+}: PrimaryButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -20,7 +29,7 @@ export default function PrimaryButton({
         ${className}
       `}
     >
-      {label}
+      {children ?? label}   {/* agar children diya hai to wo dikhega, warna label */}
     </button>
   );
 }
