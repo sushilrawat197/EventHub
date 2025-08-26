@@ -3,6 +3,9 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import type { Content } from "../../../../interfaces/eventInterface/eventInterface";
+// import { useEffect } from "react";
+// import { getEvents } from "../../../../services/operations/eventsApi";
+// import { useAppDispatch } from "../../../../reducers/hooks";
 
 interface EventscardSliderProps {
   events: Content[];
@@ -13,6 +16,7 @@ export default function EventscardSlider({
 }: EventscardSliderProps) {
   const navigate = useNavigate();
   // const location = useLocation();
+  // const dispatch = useAppDispatch();
 
   const settings = {
     dots: true,
@@ -51,6 +55,11 @@ export default function EventscardSlider({
       },
     ],
   };
+
+
+  // useEffect(() => {
+  //   dispatch(getEvents());
+  // }, []);
 
   return (
     <div className="py-4">

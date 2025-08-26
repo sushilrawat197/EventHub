@@ -6,12 +6,15 @@ import EventscardSlider from "./EventscardSlider";
 import MobileEventDetailsCard from "./MobileEventDetails";
 import { useLocation } from "react-router-dom";
 import type { Content } from "../../../../interfaces/eventInterface/eventInterface";
-import { useAppSelector } from "../../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+import { useEffect } from "react";
+import { getEvents } from "../../../../services/operations/eventsApi";
 
 
 export default function Layouteventspage() {
   const location = useLocation();
   const event = location.state as Content; // 👈 cast to your interface
+  const dispatch = useAppDispatch();
 
   console.log(event);
   
@@ -69,7 +72,9 @@ const details = {
 };
 
 
-
+ useEffect(() => {
+    dispatch(getEvents());
+  }, []);
   // console.log(details)
   return (
     <div className="container mx-auto px-2 py-4 mt-32 relative">
@@ -91,6 +96,7 @@ const details = {
           />
 
           <EventscardSlider events={sliderEvents} />
+
         </div>
 
         {/* RIGHT SIDE */}
