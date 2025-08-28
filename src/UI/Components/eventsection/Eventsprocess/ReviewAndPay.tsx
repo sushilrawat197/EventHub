@@ -1,7 +1,32 @@
 
+import { useAppSelector } from "../../../../reducers/hooks";
 import PrimaryButton from "./PrimaryButton";
 
-export default function ReviewAndPayUI() {
+type ReviewAndPayUIProps={
+  contentName:string
+}
+
+
+export default function ReviewAndPayUI({contentName}:ReviewAndPayUIProps) {
+
+
+  const showData = useAppSelector((state) => state.ticket.show);
+  const eventDate = showData
+  ? new Date(showData.showDateTime).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
+  : "";
+      
+const eventTime = showData
+  ? new Date(showData.showDateTime).toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true, // 👈 12-hour format
+    })
+  : "";
+  
   return (
     <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
       {/* LEFT SIDE - Delivery Options */}
@@ -46,19 +71,19 @@ export default function ReviewAndPayUI() {
       {/* RIGHT SIDE - Order Summary */}
       <div className="bg-white shadow-md rounded-md p-6">
         {/* Event Info */}
-        <h3 className="font-semibold text-gray-800 mb-2">
-          Daily Ka Kaam Hai By Aakash Gupta
+        <h3 className="font-semibold uppercase text-gray-800 mb-2">
+          {contentName}
         </h3>
         <p className="text-sm text-gray-600 mb-4">1 Ticket</p>
 
         <div className="border-2 border-sky-500 rounded-md p-4 text-sm space-y-2 mb-4">
           <p>
-            <strong>Mon, 18 Aug, 2025</strong> | 01:30 PM
+            <strong>{eventDate}</strong> | {eventTime}
           </p>
           <p>
             <span className="font-bold">Venue:{" "}</span>
             <span className="text-gray-700">
-              The Laugh Store: Maseru
+              {showData?.venue.name}: Maseru
             </span>
           </p>
           <p>PHASE 2 (M 1499) : 1 ticket(s)</p>

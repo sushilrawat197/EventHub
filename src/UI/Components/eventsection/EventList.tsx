@@ -252,7 +252,7 @@ export default function EventList() {
               <button
                 key={event.contentId}
                 onClick={() =>
-                  navigate(`/events/${slug}/${event.parentCategoryId}`, {
+                  navigate(`/events/${slug}/${event.contentId}`, {
                     state: event,
                   })
                 }

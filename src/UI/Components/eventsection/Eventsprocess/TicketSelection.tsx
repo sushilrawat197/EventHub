@@ -37,7 +37,7 @@ export default function TicketSelectionUI({
     <div className="max-w-3xl mx-auto px-4 py-6">
       {/* Event Info */}
       <div className="bg-gray-100 p-4 rounded-md mb-6">
-        <h2 className="font-semibold text-lg">{event.venue}</h2>
+        <p className="font-semibold text-lg">{event.venue}</p>
         <p className="text-gray-600">
           {event.date} | {event.time}
         </p>

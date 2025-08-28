@@ -1,4 +1,5 @@
 
+import { useAppSelector } from "../../../../reducers/hooks";
 import PrimaryButton from "./PrimaryButton";
 
 interface DateOption {
@@ -7,7 +8,6 @@ interface DateOption {
 }
 
 interface DateTimeSelectionUIProps {
-  venue?: string;
   dates?: DateOption[];
   times?: string[];
   onDateSelect?: (date: DateOption) => void;
@@ -16,18 +16,20 @@ interface DateTimeSelectionUIProps {
 }
 
 export default function DateTimeSelectionUI({
-  venue = "Lesotho",
   dates = [{ label: "19 Aug", status: "available" }],
   times = ["9pm"],
   onDateSelect,
   onTimeSelect,
   onNext,
 }: DateTimeSelectionUIProps) {
+
+  const showData = useAppSelector((state) => state.ticket.show);
+
   return (
     <div>
       {/* Venue Info */}
       <div className="bg-gray-200 text-center py-1">
-        <h2 className="font-semibold text-lg">{venue}</h2>
+        <h2 className="font-semibold text-lg">{showData?.venue.name}</h2>
       </div>
 
       {/* Availability Legend */}

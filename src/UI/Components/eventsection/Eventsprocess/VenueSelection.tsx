@@ -1,30 +1,55 @@
 import { useState } from "react";
 import { FaAngleDown } from "react-icons/fa6";
 import { FaChevronUp } from "react-icons/fa";
+import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+import { setShow } from "../../../../slices/ticketInfoSlice";
+
 
 type VenueDetails = {
+  showId: number,
   name: string;
   date: string;
   status: string;
 };
 
-type Venue = {
+export type VenueProps = {
   city: string;
   venues: VenueDetails[];
 };
 
 interface VenueData {
-  venues: Venue[];
+  venues: VenueProps[];
   onNext: () => void;
 }
 
 export default function VenueSelection({ venues = [], onNext }: VenueData) {
+
+  const dispatch=useAppDispatch();
+
   const [openCity, setOpenCity] = useState<string | null>(null);
+  const eventData=useAppSelector((state)=>state.events.events);
 
   const toggleCity = (city: string) => {
     setOpenCity(openCity === city ? null : city);
     
   };
+
+  console.log(venues);
+
+function venueHandler(id: number) {
+  const allShows = eventData.flatMap(e => e.shows);
+
+  const showData = allShows.find(show => show.showId === id);
+
+  if (!showData) {
+    console.warn("Show not found for id:", id);
+    return; // exit function if show not found
+  }
+
+  dispatch(setShow(showData)); // ✅ Now TS is happy
+  onNext();
+}
+
 
   return (
     <div className="max-w-lg mx-auto">
@@ -51,7 +76,7 @@ export default function VenueSelection({ venues = [], onNext }: VenueData) {
             <div className="bg-white divide-y">
 
               {elemets.venues.map((venue, vIdx) => (
-                <div key={vIdx} className="p-4" onClick={()=>onNext()}>
+                <div key={vIdx} className="p-4" onClick={()=>venueHandler(venue.showId)}>
                   <h3 className="font-semibold text-gray-800">{venue.name}</h3>
                   <p className="text-sm text-gray-600">
                     {venue.date}{" "}

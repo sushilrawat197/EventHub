@@ -126,7 +126,7 @@ function App() {
 
         {/* <Route path="/booking/:id" element={<BookingFlow />} /> */}
 
-               <Route path="/events/:contentName/:parentCategoryId/booking" element={<BookingFlow />} />
+               <Route path="/events/:contentName/:contentId/booking" element={<BookingFlow />} />
 
       </Routes>
 

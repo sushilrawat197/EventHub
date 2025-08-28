@@ -7,7 +7,7 @@ import {
 } from "react-icons/fa";
 import { MdOutlineTranslate } from "react-icons/md";
 import { LuTickets } from "react-icons/lu";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 
 export interface EventDetailsCardProps {
   date?: string;
@@ -21,7 +21,6 @@ export interface EventDetailsCardProps {
   price?: number;
   priceNote?: string;
   buttonLabel?: string;
-  contentId?: number;
   city?: string[];
   onButtonClick?: () => void;
 }
@@ -37,8 +36,6 @@ export default function EventDetailsCard({
   bookingAlert,
   price,
   priceNote,
-  contentId,
-  city,
 }: EventDetailsCardProps) {
   const details = [
     { icon: <FaCalendarAlt />, text: date },
@@ -56,6 +53,7 @@ export default function EventDetailsCard({
   // console.log('PRINTING CONTEND_ID : ',contentId)
   const location = useLocation();
   const navigate = useNavigate();
+  // console.log(contentId);
 
   return (
     <div className="border-2 border-sky-500 shadow-sm shadow-sky-500 rounded-xl p-4 w-full max-w-sm  bg-white space-y-4">
@@ -85,22 +83,7 @@ export default function EventDetailsCard({
 
         <button
           onClick={() =>
-            navigate(`${location.pathname}/booking`, {
-              state: {
-                date,
-                time,
-                duration,
-                ageLimit,
-                languages,
-                category,
-                venue,
-                bookingAlert,
-                price,
-                priceNote,
-                contentId,
-                city,
-              },
-            })
+            navigate(`${location.pathname}/booking`)
           }
           className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-bold"
         >

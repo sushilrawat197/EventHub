@@ -1,22 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProgressSteps from "./ProgressSteps";
-import VenueSelection from "./VenueSelection";
+import VenueSelection, { type VenueProps } from "./VenueSelection";
 import DateTimeSelectionUI from "./DateTimeSelectionUI";
 import ReviewAndPayUI from "./ReviewAndPay";
 import TicketSelectionUI from "./TicketSelection";
+import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 // import { useSearchParams } from "react-router-dom";
-// import {  useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 // import type { EventDetailsCardProps } from "../Eventspage/EventDetailsCard";
+import type { Content } from "../../../../interfaces/eventInterface/eventInterface";
+import { getEvents } from "../../../../services/operations/eventsApi";
 
 export default function BookingFlow() {
-  // const [searchParams, setSearchParams] = useSearchParams();
-  // const location = useLocation();
-  // const eventData = location.state as EventDetailsCardProps;
 
-  // const city=eventData.city
-  // const venue=eventData.venue
-  // console.log(city)
-  // console.log(venue)
+    const {contentId} = useParams()
+    console.log(contentId)
+
+  const eventData=useAppSelector((state)=>state.events.events);
+
+const filteredEvent = eventData.find(
+  (e) => e.contentId === Number(contentId)
+) as Content;
+
+  const processLebel=filteredEvent?.contentName || ""
+
+  console.log(filteredEvent);
 
   const steps = [
     { id: 1, label: "Venue" },
@@ -27,46 +35,103 @@ export default function BookingFlow() {
 
   const [currentStep, setCurrentStep] = useState(1);
 
-  //  Venue Data
-  const venuesData = [
-    {
-      city: "Lesotho",
-      venues: [
-        {
-          name: "Studio XO Bar, Sector 29: Maseru",
-          date: "Starting from 23 Aug 2025",
-          status: "fast",
-        },
-        {
-          name: "Kedarnath Sahni Auditorium: Maseru",
-          date: "29 Aug 2025",
-          status: "available",
-        },
-        {
-          name: "Panchsheel Balak Inter College: Maseru",
-          date: "31 Aug 2025",
-          status: "available",
-        },
-      ],
-    },
+ //making venueData
 
-    {
-      city: "Maseru",
-      venues: [
-        {
-          name: "Pacific Mall: Maseru",
-          date: "02 Sep 2025",
-          status: "available",
-        },
-      ],
-    },
-  ];
+const finalVenuesData: VenueProps[] =
+  filteredEvent?.shows.reduce<VenueProps[]>((acc, show) => {
+    const city = show.venue.city;
 
-  const event = {
-    venue: "The Laugh Store: Lesotho",
-    date: "Mon 18 Aug",
-    time: "02:30 PM",
-  };
+    // check if city already exists in acc
+    let cityGroup = acc.find(item => item.city === city);
+    if (!cityGroup) {
+      cityGroup = { city, venues: [] };
+      acc.push(cityGroup);
+    }
+
+    cityGroup.venues.push({
+      showId: show.showId,
+      name: show.venue.name,
+      date: new Date(show.showDateTime).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+      status: show.availableSeats === 0 ? "sold out" : "available",
+    });
+
+    return acc;
+  }, []) || [];
+
+  
+
+
+ // Object ko array me convert
+const venuesData = Object.values(finalVenuesData);
+console.log(finalVenuesData)
+
+  // //  Venue Data
+  // const venuesData = [
+  //   {
+  //     city: "Lesotho",
+  //     venues: [
+  //       {
+  //         name: "Studio XO Bar, Sector 29: Maseru",
+  //         date: "Starting from 23 Aug 2025",
+  //         status: "fast",
+  //       },
+  //       {
+  //         name: "Kedarnath Sahni Auditorium: Maseru",
+  //         date: "29 Aug 2025",
+  //         status: "available",
+  //       },
+  //       {
+  //         name: "Panchsheel Balak Inter College: Maseru",
+  //         date: "31 Aug 2025",
+  //         status: "available",
+  //       },
+  //     ],
+  //   },
+
+
+  //   {
+  //     city: "Maseru",
+  //     venues: [
+  //       {
+  //         name: "Pacific Mall: Maseru",
+  //         date: "02 Sep 2025",
+  //         status: "available",
+  //       },
+  //     ],
+  //   },
+  // ];
+
+const showData = useAppSelector((state) => state.ticket.show);
+
+const eventDate = showData
+  ? new Date(showData.showDateTime).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
+  : "";
+      
+const eventTime = showData
+  ? new Date(showData.showDateTime).toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true, // 👈 12-hour format
+    })
+  : "";
+  
+const venueName=showData?.venue.name;
+console.log(eventDate,eventTime,venueName);
+
+const event = {
+  venue: showData?.venue.name || "Unknown Venue",
+  date: eventDate,
+  time: eventTime,
+};
+
 
   const tickets = [
     { id: 1, name: "PHASE 2", price: 1499, status: "fast" },
@@ -80,13 +145,13 @@ export default function BookingFlow() {
       case 1:
         return (
           <VenueSelection
-            venues={venuesData}
+            venues={venuesData} 
             onNext={() => setCurrentStep(2)}
           />
         );
 
       case 2:
-        return <DateTimeSelectionUI onNext={() => setCurrentStep(3)} />;
+        return <DateTimeSelectionUI  onNext={() => setCurrentStep(3)} />;
 
       case 3:
         return (
@@ -98,17 +163,23 @@ export default function BookingFlow() {
         );
 
       case 4:
-        return <ReviewAndPayUI />;
+        return <ReviewAndPayUI contentName={processLebel}/>;
 
       default:
         return null;
     }
   };
 
+const dispatch=useAppDispatch();
+  useEffect(()=>{
+    dispatch(getEvents())
+  },[])
+
   return (
     <div className="">
       {/* Progress Bar */}
       <ProgressSteps
+        contentName={processLebel}
         steps={steps}
         currentStep={currentStep}
         onStepClick={(stepId: number) => {

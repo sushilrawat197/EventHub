@@ -3,6 +3,7 @@ import authReducer from "../slices/authSlice";
 import userReducer from "../slices/userSlice"
 import eventReduce from "../slices/eventSlice"
 import filterReduce from "../slices/filterSlice"
+import ticketReduce from "../slices/ticketInfoSlice"
 
 
 export const store = configureStore({
@@ -11,7 +12,8 @@ export const store = configureStore({
     auth: authReducer,
     user:userReducer,
     events:eventReduce,
-    filter:filterReduce
+    filter:filterReduce,
+    ticket:ticketReduce
   },
 });
 

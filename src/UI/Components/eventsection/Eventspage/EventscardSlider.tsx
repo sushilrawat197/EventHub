@@ -82,7 +82,7 @@ export default function EventscardSlider({
                   key={index}
                   className="p-1 cursor-pointer"
                   onClick={() =>
-                    navigate(`/events/${slug}/${event.parentCategoryId}`, {
+                    navigate(`/events/${slug}/${event.contentId}`, {
                       state: event,
                     })
                   }

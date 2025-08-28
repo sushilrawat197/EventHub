@@ -16,13 +16,13 @@ export default function Layouteventspage() {
   const event = location.state as Content; // 👈 cast to your interface
   const dispatch = useAppDispatch();
 
-  console.log(event);
+  // console.log(event);
+  
   
 const allEvents = useAppSelector((state) => state.events.events);
 
 const showDateObjs = event.shows.map(e => new Date(e.showDateTime));
 
-const contentId=event.contentId;
 
 // console.log(showDateObjs)
 
@@ -67,7 +67,6 @@ const details = {
   category: event.genre,
   venue: venueData.join(", "),
   price: event.basePrice,
-  contentId:contentId,
   city:cityname
 };
 
