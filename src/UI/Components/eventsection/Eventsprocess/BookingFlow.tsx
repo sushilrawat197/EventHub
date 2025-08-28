@@ -176,7 +176,8 @@ const dispatch=useAppDispatch();
   },[])
 
   return (
-    <div className="">
+    <div className=" flex flex-col justify-center items-center min-w-max">
+
       {/* Progress Bar */}
       <ProgressSteps
         contentName={processLebel}
@@ -189,7 +190,9 @@ const dispatch=useAppDispatch();
       />
 
       {/* Dynamic Step Content */}
-      <div className="mt-6 px-1">{renderStepContent()}</div>
+      <div className="mt-6 px-1 w-full">{renderStepContent()}</div>
+
+
     </div>
   );
 }

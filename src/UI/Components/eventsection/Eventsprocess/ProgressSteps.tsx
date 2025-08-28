@@ -22,8 +22,10 @@ export default function ProgressSteps({
 
   console.log(contentName);
   return (
-    <div className="w-full  c">
+    <div className="w-full ">
+
       <div className="py-5 text-black bg-white w-full text-center shadow-md uppercase font-semibold">{contentName || ""}</div>
+     
       <div
         className="
           flex items-center justify-center  text-sm p-4 border-b border-gray-200 shadow 

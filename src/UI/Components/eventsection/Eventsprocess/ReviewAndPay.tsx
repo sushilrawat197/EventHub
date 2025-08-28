@@ -28,7 +28,7 @@ const eventTime = showData
   : "";
   
   return (
-    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+    <div className="lg:max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 w-96">
       {/* LEFT SIDE - Delivery Options */}
       <div className="bg-white shadow-md rounded-md p-6">
         <h3 className="font-semibold text-gray-800 mb-4">

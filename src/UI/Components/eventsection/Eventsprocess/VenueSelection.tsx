@@ -52,7 +52,7 @@ function venueHandler(id: number) {
 
 
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="lg:max-w-lg mx-auto min-w-max">
       <h2 className="text-lg font-semibold mb-3">Select Venue</h2>
 
       {venues.map((elemets, idx) => (
