@@ -10,6 +10,7 @@ interface InputboxProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   icon?: React.ElementType;
   onClick?: () => void; // ✅ optional click handler
+  maxLength?: number;
 }
 
 const Inputbox: React.FC<InputboxProps> = ({
@@ -22,6 +23,7 @@ const Inputbox: React.FC<InputboxProps> = ({
   onChange,
   icon: Icon,
   onClick, // ✅ destructure onClick
+  maxLength
 }) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
@@ -38,6 +40,7 @@ const Inputbox: React.FC<InputboxProps> = ({
           value={value}
           onChange={onChange}
           onClick={onClick} // ✅ pass onClick to input
+          maxLength={maxLength}
           className="w-full p-3 pr-10 rounded-md ring focus:outline-none focus:ring-2 focus:ring-sky-500 transition"
         />
         {Icon && (

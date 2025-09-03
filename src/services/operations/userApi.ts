@@ -5,32 +5,27 @@ import { type Dispatch } from "@reduxjs/toolkit";
 import axios from "axios";
 import { userEndpoint } from "../apis";
 import type { AppDispatch } from "../../reducers/store";
-import { setLoading } from "../../slices/authSlice";
+import { setLoading } from "../../slices/userSlice";
 
 const { GET_USER_API, UPDATE_USER_API, UPDATE_USER_IMAGE_API } = userEndpoint;
 
 
-type GetUserApiResponse = {
-  status: "SUCCESS" | "FAILED";
+export type GetUserApiResponse = {
+  statusCode:number;
+  message?: string;
   data: {
     userId: string;
     email: string;
-    username: string;
+    mobile:string;
+    accountStatus:string;
     firstName: string;
     lastName: string;
+    dob: string;
     gender: string;
     address: string;
-    city: string;
-    state: string;
-    country: string;
-    msisdn: string | null;
-    profilePicUrl: string;
-    dob: string;
-    allowEmailNotifications: boolean;
-    allowSmsNotifications: boolean;
-    allowPushNotifications: boolean;
+    avatarUrl: string;
+    roles:string[];
   };
-  message?: string;
 };
 
 
@@ -38,7 +33,7 @@ export function getCurrentUser() {
 
   return async (dispatch: Dispatch): Promise<void> => {
     try {
-      //   dispatch(setLoading(true));
+        dispatch(setLoading(true));
       const response = await apiConnector<GetUserApiResponse>({
         method: "GET",
         url: GET_USER_API,
@@ -50,20 +45,21 @@ export function getCurrentUser() {
 
       // console.log("GET CURRENT USER RESPONSE:", response);
 
-      if (response.data.status === "SUCCESS") {
-        dispatch(setUser(response.data.data));
+      if (response.data.statusCode === 200) {
+        dispatch(setUser(response?.data?.data));
       }
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
         // toast.error(error.response?.data?.message || "User fetch failed");
+
         dispatch(clearUser());
         console.error("Error fetching user:", error.response?.data);
       } else {
         console.error("Unknown error:", error);
       }
     } finally {
-      //   dispatch(setLoading(false));
+        dispatch(setLoading(false));
     }
   };
 }
@@ -71,20 +67,23 @@ export function getCurrentUser() {
 
 
 type UpdatedUserResponseApi = {
-  status: string;
+  statusCode : number;
   message?: string;
 };
 
 
 interface ProfileFormData {
+  mobile:string,
   firstName: string;
   lastName: string;
   dob: string;
   gender: string;
+  address:string;
+  avatarUrl:string
 }
 
 
-export function updateUserDetails(
+export function updateUserDetails( 
   data: ProfileFormData,
   setProfileLoading:React.Dispatch<React.SetStateAction<boolean>>
 ) {
@@ -93,7 +92,7 @@ export function updateUserDetails(
     try {
       setProfileLoading(true);
       const response = await apiConnector<UpdatedUserResponseApi>({
-        method: "POST",
+        method: "PUT",
         url: UPDATE_USER_API,
         bodyData: data, // ✅ match the key in your Connection type
         withCredentials: true,
@@ -104,7 +103,7 @@ export function updateUserDetails(
 
 
 
-      if (response.data.status === "SUCCESS") {
+      if (response.data.statusCode === 200) {
         dispatch(getCurrentUser());
         toast.success(response.data.message);
       }
@@ -118,8 +117,9 @@ export function updateUserDetails(
       } else {
         console.error("Unknown error:", error);
       }
+    }finally {
+        dispatch(setLoading(false));
     }
-    setProfileLoading(false);
   };
 
 }
@@ -155,8 +155,9 @@ export function updateUserProfilPicture(file: FormData) {
     } catch (error) {
       // error handling...
       console.log(error);
+    }finally {
+        dispatch(setLoading(false));
     }
-    dispatch(setLoading(false));
   };
 }
 

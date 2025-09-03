@@ -16,6 +16,7 @@ export default function SignUp() {
   const loading = useAppSelector((state) => state.auth.loading);
 
 
+
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isDisabled) return; // 👈 prevent rapid clicks
@@ -30,7 +31,7 @@ export default function SignUp() {
 
   return (
     <form onSubmit={submitHandler}>
-      <div className="h-screen flex items-center justify-center bg-sky-100 p-4">
+      <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] flex items-center justify-center bg-sky-100 p-4">
         <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row px-4">
           <div className="md:w-1/2 py-6 md:p-20 flex flex-col justify-center">
             {/* Logo */}

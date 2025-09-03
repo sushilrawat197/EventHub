@@ -1,15 +1,15 @@
-import { lazy } from "react";
+import { lazy, useState } from "react";
 import OpenRoute from "./route/OpenRoute";
 import ProtectedRoute from "./route/ProtectedRoute";
 import ForgotPassword from "./SiginPage/Forgotpassword";
 import ForgotPasswordConfirmation from "./SiginPage/ForgotPasswordCofirmation";
-import LoginVarifyOtp from "./SiginPage/LoginVarifyOtp";
+import LoginVarifyOtp from "./SiginPage/ForgotVarifyOtp";
 import OtpVerification from "./SiginPage/OtpVerification";
 import PasswordReset from "./SiginPage/PasswordReset";
 import PasswordSet from "./SiginPage/PasswordSet";
 import SignIn from "./SiginPage/SignIn";
 import SignUp from "./SiginPage/SignUp";
-import ProfileCard from "./UI/Components/profile/ProfileCard";
+import ProfileCard from "./UI/Components/dasboard/profile/ProfileCard";
 const HomePage = lazy(() => import("./UI/Pages/HomePage"));
 import { Route, Routes } from "react-router-dom";
 import { useAppDispatch } from "./reducers/hooks";
@@ -20,27 +20,29 @@ import Layouteventspage from "./UI/Components/eventsection/Eventspage/Layouteven
 import HelpAndSupport from "./UI/Components/HelpAndSupport";
 import BookingFlow from "./UI/Components/eventsection/Eventsprocess/BookingFlow";
 import MainLayout from "./UI/Layout/AppLayout";
+import ForgotVarifyOtp from "./SiginPage/ForgotVarifyOtp";
+import SpinnerLoading from "./UI/Components/common/SpinnerLoading";
+import ChangePassword from "./SiginPage/ChangePassword";
 
 
 function App() {
   const dispatch = useAppDispatch();
 
-  // const token=useAppSelector((state)=>state.auth.accessToken);
-
-  // const user=useAppSelector((state)=>state.user.user);
-
-  // console.log("USER DATA ......",user)
+  const [bootLoading, setBootLoading] = useState(true); // ✅ app booting state
 
   useEffect(() => {
-    const init = async () => {
-      // console.log("Refreshing token...");
-      await dispatch(refreshAccessToken()); // wait for refreshToken completion
-    };
+    async function init() {
+      await dispatch(refreshAccessToken()); // refresh token call
+      setBootLoading(false);               // boot complete
+    }
     init();
   }, [dispatch]);
 
+  if (bootLoading) {
+    return <SpinnerLoading />;  // spinner while refresh token loads
+  }
   
-
+  
   return (
     <>
 
@@ -58,7 +60,11 @@ function App() {
                   </OpenRoute>
                 }
               />
+
               <Route path="/forgetpassword" element={<ForgotPassword />} />
+              <Route path="/verifyforgototp" element={<ForgotVarifyOtp />} />
+              <Route path="/change-password" element={<ChangePassword/>} />
+
               <Route
                 path="/signup"
                 element={
@@ -67,6 +73,7 @@ function App() {
                   </OpenRoute>
                 }
               />
+              
               <Route
                 path="/otpverification"
                 element={
@@ -111,7 +118,7 @@ function App() {
               <Route path="/events" element={<Layout />} />
 
               <Route
-                path="/editprofile"
+                path="/my-profile/edit-profile"
                 element={
                   <ProtectedRoute>
                     <ProfileCard />

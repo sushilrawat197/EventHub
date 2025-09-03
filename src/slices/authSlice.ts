@@ -4,8 +4,9 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 
 interface AuthState {
-  userEmail: string;
-  userResponse: string; //not used
+  userEmail: string
+  otp:string
+  signupToken:string
   pwdToken: string
   accessToken: null | string,
   tempToken: string //not used
@@ -17,10 +18,10 @@ interface AuthState {
   refreshTokenExpiry:string
 }
 
-
 const initialState: AuthState = {
   userEmail: "",
-  userResponse: "",
+  otp:"",
+  signupToken: "",
   pwdToken: "",
   accessToken: null, //localStorage.getItem("token")
   tempToken: "",
@@ -39,8 +40,11 @@ const authSlice = createSlice({
     userEmail(state, action: PayloadAction<string>) {
       state.userEmail = action.payload;
     },
-    userResponse(state, action: PayloadAction<string>) {
-      state.userResponse = action.payload;
+    setOtp(state, action: PayloadAction<string>) {
+      state.otp = action.payload;
+    },
+    setSignupToken(state, action: PayloadAction<string>) {
+      state.signupToken = action.payload;
     },
     setPwdToken(state, action: PayloadAction<string>) {
       state.pwdToken = action.payload;
@@ -74,7 +78,8 @@ const authSlice = createSlice({
 
 export const {
   userEmail,
-  userResponse,
+  setOtp,
+  setSignupToken,
   setPwdToken,
   setAccessToken,
   setTempToken,

@@ -1,4 +1,4 @@
-import  { createSlice,type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Content } from "../interfaces/eventInterface/eventInterface"; // yaha tumhare Content interface ko import karo
 
 
@@ -26,6 +26,7 @@ const eventsSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
+
     setEvents: (
       state,
       action: PayloadAction<{
@@ -37,18 +38,17 @@ const eventsSlice = createSlice({
       state.events = action.payload.contents || [];
       state.categories = action.payload.catogeryList || [];
       state.venues = action.payload.venueList || [];
-      state.loading = false;
       state.error = null;
     },
+
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
-      state.loading = false;
     },
+    
     clearEvents: (state) => {
       state.events = [];
       state.categories = [];
       state.venues = [];
-      state.loading = false;
       state.error = null;
     },
   },

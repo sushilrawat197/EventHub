@@ -1,8 +1,6 @@
 // reducers/filterSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-
-
 interface FilterState {
   categories: string[];
   languages: string[];

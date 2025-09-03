@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { AppDispatch } from "../../reducers/store";
-import { setLoading } from "../../slices/authSlice";
+import { setLoading } from "../../slices/eventSlice";
 import { apiConnector } from "../apiConnector";
 import { setEvents } from "../../slices/eventSlice";
 import type { EventsApiResponse } from "../../interfaces/eventInterface/eventInterface"; // yaha se import karo

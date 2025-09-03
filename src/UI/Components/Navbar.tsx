@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAppSelector } from "../../reducers/hooks";
-import ProfileDropdown from "./profile/ProfileDropdown";
+import ProfileDropdown from "./dasboard/profile/ProfileDropdown";
 import { CiSearch } from "react-icons/ci";
 import NavHeader from "./navbar/NavHeader";
 // import { MdMenu } from "react-icons/md";

@@ -10,7 +10,7 @@ let refreshTimer: NodeJS.Timeout | null = null;
 
 
 type RefreshTokenResponse = {
-    status: "SUCCESS" | "FAILED";
+    statusCode:number;
     data: {
         accessTokenExpiry: string
     };
@@ -31,9 +31,10 @@ export function refreshAccessToken() {
                 },
             });
 
-            if (response.data.status === 'SUCCESS') {
+            if (response.data.statusCode === 200) {
                 console.log("Fetching user...");
                 await dispatch(getCurrentUser());
+                console.log(response);
             }
 
             // console.log("REFRESH_ACCESS_TOKEN.....", response)

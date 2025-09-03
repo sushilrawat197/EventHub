@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaEnvelope } from "react-icons/fa";
 import { useAppDispatch } from "../reducers/hooks";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { forgot_passwordOtp } from "../services/operations/authApi";
 import { useState } from "react";
 import { useAppSelector } from "../reducers/hooks";
 import { ClipLoader } from "react-spinners";
+import { setMassage } from "../slices/authSlice";
 
 const ForgotPassword: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -15,6 +16,7 @@ const ForgotPassword: React.FC = () => {
   const [isDisabled, setIsDisabled] = useState(false);
 
    const loading = useAppSelector((state) => state.auth.loading);
+   const {massage}= useAppSelector((state) => state.auth);
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
       if (isDisabled) return; // 👈 prevent rapid clicks
@@ -27,11 +29,16 @@ const ForgotPassword: React.FC = () => {
     }, 2000);
   };
 
+  useEffect(()=>{
+    return()=>{
+      setMassage(null);
+    }
+  })
   
-
+  
   return (
    
-      <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">
+      <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] flex items-center justify-center bg-sky-100 p-4">
         <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col items-center">
           <img
             src="ticketlogo2.jpg"
@@ -43,7 +50,9 @@ const ForgotPassword: React.FC = () => {
             Forgot Password
           </h2>
           <p className="text-sm text-[#777777] text-center mb-6">
-            Please confirm your registered email address
+            {
+              massage? (massage):("Please confirm your registered email address")
+            }
           </p>
 
           <form className="w-full space-y-4" onSubmit={submitHandler}>

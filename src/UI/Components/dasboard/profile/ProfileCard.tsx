@@ -4,12 +4,13 @@ import { FaCamera } from "react-icons/fa";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import Inputbox from "./Inputbox";
 import UploadProfileImage from "./uploadProfileImage";
-import { useAppSelector } from "../../../reducers/hooks";
+import { useAppSelector } from "../../../../reducers/hooks";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { useAppDispatch } from "../../../reducers/hooks";
-import { updateUserDetails } from "../../../services/operations/userApi";
+import { useAppDispatch } from "../../../../reducers/hooks";
+import { updateUserDetails } from "../../../../services/operations/userApi";
 import { ClipLoader } from "react-spinners";
+import EditProfileEmail from "./EditProfileEmail";
 
 export default function ProfileCard() {
   const dispatch = useAppDispatch();
@@ -20,22 +21,29 @@ export default function ProfileCard() {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const [profileDetailsLoading, setProfileDetailsLoading] =
     useState<boolean>(false);
+  const [showNumber, setShowNumber] = useState<boolean>(false);
   const [loaded, setLoaded] = useState(false);
 
-  const loading = useAppSelector((state) => state.auth.loading);
+  const loading = useAppSelector((state) => state.user.loading);
 
   interface FormData {
+    mobile: string;
     firstName: string;
     lastName: string;
     dob: string;
     gender: string;
+    address: string;
+    avatarUrl: string;
   }
 
   const [formData, setFormData] = useState<FormData>({
+    mobile: user?.mobile ?? "",
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
     dob: user?.dob ?? "",
     gender: user?.gender ?? "",
+    address: user?.address ?? "",
+    avatarUrl: "",
   });
 
   const calendarRef = useRef<HTMLDivElement>(null); // ref for calendar
@@ -47,6 +55,23 @@ export default function ProfileCard() {
       [name]: value,
     }));
   }
+
+
+  function phoneChangeHandler(
+  e: ChangeEvent<HTMLInputElement>,
+  changeHandler: (e: ChangeEvent<HTMLInputElement>) => void
+) {
+  const onlyNums = e.target.value
+    .replace(/[^0-9]/g, "")
+    .slice(0, 10);
+
+  changeHandler({
+    ...e,
+    target: { ...e.target, name: "mobile", value: onlyNums },
+  } as ChangeEvent<HTMLInputElement>);
+}
+
+
 
   function calendarChangeHandler(value: Date) {
     const day = String(value.getDate()).padStart(2, "0");
@@ -61,6 +86,8 @@ export default function ProfileCard() {
 
     setShowCalendar(false); // date select karte hi calendar close
   }
+
+
 
   // 📌 Close calendar when clicking outside
   useEffect(() => {
@@ -80,6 +107,8 @@ export default function ProfileCard() {
       }
     }
 
+
+
     if (showCalendar) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
@@ -90,6 +119,9 @@ export default function ProfileCard() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showCalendar]);
+
+
+
 
   function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -103,9 +135,12 @@ export default function ProfileCard() {
   }
 
   return (
-    <form onSubmit={submitHandler}>   
-      <div className="h-screen mx-auto max-w-3xl rounded-t-lg mt-20 lg:mt-32">
-        <div className="bg-white shadow-lg relative">  
+    <form onSubmit={submitHandler}>
+
+      {showNumber && <EditProfileEmail setShowNumber={setShowNumber} />}
+
+      <div className=" mx-auto max-w-3xl mt-20 lg:mt-32">
+        <div className="bg-white shadow-lg relative">
           {editImage && (
             <div className="fixed inset-0 z-[60] flex items-center justify-center">
               <div
@@ -116,7 +151,6 @@ export default function ProfileCard() {
               {/* <UploadProfileImage setEditImage={setEditImage} /> */}
             </div>
           )}
-
 
           {showCalendar && (
             <div
@@ -130,25 +164,28 @@ export default function ProfileCard() {
           )}
 
           {/* Header */}
-          <div className="bg-gradient-to-r from-sky-300 to-sky-500 text-white flex justify-between items-center px-5 py-5">
+          <div className="bg-gradient-to-r rounded-t-xl from-sky-300 to-sky-500 text-white flex justify-between items-center px-5 py-5 ">
             <h2 className="text-3xl">Hello, {user?.firstName}</h2>
             <div
               onClick={() => setEditImage(true)}
               className="hover:cursor-pointer hover:opacity-70 w-16 h-16 bg-white text-gray-600 rounded-full flex justify-center items-center"
             >
               <div className="relative w-16 h-16">
-               
                 {/* Image or default icon */}
-                {user?.profilePicUrl ? (
+                {user?.avatarUrl ? (
                   <img
-                    src={user?.profilePicUrl}
+                    src={user?.avatarUrl}
                     alt="Profile"
                     loading="lazy"
                     onLoad={() => setLoaded(true)}
                     className={`
                                 rounded-full w-16 h-16 object-cover overflow-hidden
                                 transition-all duration-500 ease-in-out
-                                ${loaded ? "opacity-100 blur-0" : "opacity-0 blur-md"}
+                                ${
+                                  loaded
+                                    ? "opacity-100 blur-0"
+                                    : "opacity-0 blur-md"
+                                }
                               `}
                   />
                 ) : (
@@ -170,28 +207,55 @@ export default function ProfileCard() {
           {/* Account Details */}
           <div className="bg-white mx-auto p-6 space-y-4">
             <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-2 sm:gap-0">
-              <div className="flex items-center justify-center">
+              <div className="flex items-center lg:gap-16 md:gap-16">
                 <p className="text-sm text-black">Email Address:</p>
-                <div className="pl-3 flex flex-wrap items-center text-[#777777] text-md">
+                <div className="pl-4 flex flex-wrap items-center text-[#777777] text-md">
                   <span>{user?.email}</span>
                   <span className="flex items-center ml-4 text-green-700 gap-1 mt-1 sm:mt-0">
                     Verified <RiVerifiedBadgeFill size={18} />
                   </span>
                 </div>
               </div>
-              {/* <button
-                className="text-sky-600 text-sm flex items-center gap-1 hover:underline hover:cursor-pointer mt-2 sm:mt-0"
-              >
-                <FiEdit2 /> Edit
-              </button> */}
             </div>
-            <p className="text-sm text-blackfont-semibold">Mobile Number:</p>
+
+            {/* <div className="flex items-center lg:gap-16 gap-3 md:gap-16">
+              <p className="text-sm text-black">Phone Number:</p>
+
+              {user?.mobile ? (
+                <div className=" pl-2 flex flex-wrap items-center text-black text-md gap-2">
+                  <span className="font-semibold">{user?.mobile}</span>
+                  <span className="flex items-center ml-4 text-green-700 gap-1 mt-1 sm:mt-0">
+                    Edit <FaEdit size={18} />
+                  </span>
+                </div>
+              ) : (
+                <div
+                  onClick={() => setShowNumber(true)}
+                  className="w-lg py-2 bg-amber-200 flex flex-col px-7 hover:cursor-pointer"
+                >
+                  <p className="text-red-500 text-lg">+ Add Mobile Number</p>
+                  <p className="text-black text-md">
+                    Get a copy of ticket on your Number
+                  </p>
+                </div>
+              )}
+            </div> */}
           </div>
 
           {/* Personal Details */}
           <div className="bg-white p-6 shadow-gray-100">
-            <h2 className="text-lg font-semibold mb-6">Personal Details</h2>
+            <h2 className="text-xl font-semibold mb-6">Personal Details</h2>
             <div className="space-y-10">
+              <Inputbox
+                id="mobile"
+                label="Phone Number"
+                placeholder="Enter your Phone number"
+                type="tel"
+                name="mobile"
+                value={formData.mobile}
+                onChange={(e) => phoneChangeHandler(e, changeHandler)}
+              />
+
               <Inputbox
                 id="fname"
                 label="First Name"
@@ -200,6 +264,7 @@ export default function ProfileCard() {
                 value={formData.firstName}
                 onChange={changeHandler}
               />
+
               <Inputbox
                 id="lname"
                 label="Last Name"
@@ -209,6 +274,7 @@ export default function ProfileCard() {
                 onChange={changeHandler}
               />
               {/* Birthday */}
+
               <Inputbox
                 id="dob"
                 label="Birthday"
@@ -219,6 +285,16 @@ export default function ProfileCard() {
                 onChange={changeHandler}
                 onClick={() => setShowCalendar(true)} // 👈 open calendar
                 icon={FiCalendar}
+              />
+
+              <Inputbox
+                id="address"
+                label="Address"
+                placeholder="Enter you Address"
+                name="address"
+                type="text"
+                value={formData.address}
+                onChange={changeHandler}
               />
 
               {/* Gender buttons */}

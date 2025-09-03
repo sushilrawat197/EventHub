@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { logout } from "../../../services/operations/authApi";
-import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
+import { logout } from "../../../../services/operations/authApi";
+import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
 import { GoPersonFill } from "react-icons/go";
@@ -11,30 +11,31 @@ import { LuTickets } from "react-icons/lu";
 import { BsChatDots } from "react-icons/bs";
 import { FaGears } from "react-icons/fa6";
 import { FaRegUserCircle } from "react-icons/fa";
+import { ClipLoader } from "react-spinners";
 
 const menuItems = [
   {
     title: "Notifications",
     icon: <RiNotificationBadgeLine />,
-    path: "/notifications"
+    path: "/notifications",
   },
   {
     title: "Your Orders",
     subtitle: "Track your order details",
     icon: <LuTickets />,
-    path: "/orders"
+    path: "/orders",
   },
   {
     title: "Help & Support",
     subtitle: "Contact us for any query",
     icon: <BsChatDots />,
-    path: "/helpandsupport"
+    path: "/helpandsupport",
   },
   {
     title: "Settings",
     subtitle: "Profile settings and more",
     icon: <FaGears />,
-    path: "/settings"
+    path: "/settings",
   },
 ];
 
@@ -44,7 +45,7 @@ export default function ProfileDropdown() {
   const [openMenu, setOpenMenu] = useState(false);
   const [animateMenu, setAnimateMenu] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  // const token = useAppSelector((state) => state.auth.accessToken);
+  const loading = useAppSelector((state) => state.auth.loading);
 
   const user = useAppSelector((state) => state.user.user);
 
@@ -99,11 +100,11 @@ export default function ProfileDropdown() {
         onClick={() => setOpenMenu(true)}
       >
         <div className="flex items-center justify-center gap-2">
-          {user?.profilePicUrl ? (
+          {user?.avatarUrl ? (
             <div className="flex justify-center items-center text-white gap-2">
               <div className="rounded-full w-11 h-11 bg-white">
                 <img
-                  src={user?.profilePicUrl}
+                  src={user?.avatarUrl}
                   alt="Profile"
                   loading="lazy"
                   onLoad={() => setLoaded(true)}
@@ -151,11 +152,11 @@ export default function ProfileDropdown() {
             {/* Header */}
             <div className="drop-shadow-sm flex items-center justify-center flex-col text-white bg-white py-4 rounded-t-lg">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-gray-300 border">
-                {user?.profilePicUrl ? (
+                {user?.avatarUrl ? (
                   <div className="flex justify-center items-center text-white gap-2">
                     <div className="rounded-full w-11 h-11 bg-white">
                       <img
-                        src={user?.profilePicUrl}
+                        src={user?.avatarUrl}
                         alt="Profile"
                         loading="lazy"
                         onLoad={() => setLoaded(true)}
@@ -179,7 +180,7 @@ export default function ProfileDropdown() {
                 Hello!
               </h2>
 
-              <Link to={"/editprofile"} onClick={() => setOpenMenu(false)}>
+              <Link to={"/my-profile/edit-profile"} onClick={() => setOpenMenu(false)}>
                 <span className="flex items-center text-sky-400 text-[10px] cursor-pointer space-x-1">
                   <p>Edit Profile</p>
 
@@ -217,13 +218,19 @@ export default function ProfileDropdown() {
               ))}
 
               <div className="px-5">
-                <button
-                  onClick={handleSubmit}
-                  className="w-full bg-sky-500 hover:bg-red-500 py-2 text-white rounded-full font-semibold transition flex items-center justify-center mt-4 border-2 space-x-2"
-                >
-                  <span>Sign out</span>
-                  <LogIn className="text-xl" />
-                </button>
+                {loading ? (
+                  <div className="w-full bg-red-500 py-2 text-white rounded-full font-semibold transition flex items-center justify-center mt-4 border-2 space-x-2">
+                    <ClipLoader color="#0ea5e9" size={24} />
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    className="w-full bg-sky-500 hover:bg-red-500 py-2 text-white rounded-full font-semibold transition flex items-center justify-center mt-4 border-2 space-x-2"
+                  >
+                    <span>Sign out</span>
+                    <LogIn className="text-xl " />
+                  </button>
+                )}
               </div>
             </div>
           </div>

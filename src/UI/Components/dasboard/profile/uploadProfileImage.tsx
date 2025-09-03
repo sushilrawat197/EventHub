@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
-import { updateUserProfilPicture } from "../../../services/operations/userApi";
+import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+import { updateUserProfilPicture } from "../../../../services/operations/userApi";
 import { GoPersonFill } from "react-icons/go";
 
 type Props = {
@@ -44,6 +44,14 @@ export default function UploadProfileImage({ setEditImage }: Props) {
     };
   }, [previewUrl]);
 
+      useEffect(() => {
+    document.body.style.overflow = "hidden"; // disable scroll
+    return () => {
+      document.body.style.overflow = "auto"; // enable scroll again
+    };
+  }, []);
+
+
   return (
     <div className="bg-gradient-to-b from-white to-sky-50 shadow-lg border border-sky-100 flex flex-col items-center px-6 py-8 rounded-2xl gap-5 w-[280px] md:w-[320px] transition-transform duration-300 hover:scale-[1.02] z-50">
       {/* Profile Image with Hover Glow */}
@@ -56,7 +64,7 @@ export default function UploadProfileImage({ setEditImage }: Props) {
             className="relative h-full w-full"
           >
             {/* Loader */}
-            {!loaded && !previewUrl && user?.profilePicUrl && (
+            {!loaded && !previewUrl && user?.avatarUrl && (
               <div className="absolute inset-0 flex items-center justify-center rounded-full bg-gray-200 animate-pulse z-50"></div>
             )}
 
@@ -66,11 +74,11 @@ export default function UploadProfileImage({ setEditImage }: Props) {
                 src={previewUrl}
                 className="rounded-full h-full w-full object-cover animate-none"
               />
-            ) : user?.profilePicUrl ? (
+            ) : user?.avatarUrl ? (
               <img
                 loading="lazy"
                 onLoad={() => setLoaded(true)}
-                src={user.profilePicUrl}
+                src={user.avatarUrl}
                 className={`
             rounded-full object-cover overflow-hidden h-full w-full
             transition-all duration-500 ease-in-out  

@@ -41,7 +41,7 @@ const SignIn: React.FC = () => {
   // };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-sky-100 p-4">
+    <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] flex items-center justify-center bg-sky-100 p-4 ">
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row ">
         <div className="hidden md:flex md:w-1/2 flex-col justify-center items-center p-6 bg-sky-200">
           <img
@@ -155,7 +155,7 @@ const SignIn: React.FC = () => {
             type="button"
               onClick={() => {
                 window.location.href =
-                  "https://thedemonstrate.com/GenericAuthService/oauth2/authorization/google";
+                  "https://thedemonstrate.com/ticketcore-api/oauth2/authorization/google";
               }}
               className="w-full bg-blue-100 cursor-pointer flex items-center justify-center gap-2 border border-sky-500 py-2 rounded-lg text-sm font-medium text-[#777777] hover:bg-gray-100 transition"
             >

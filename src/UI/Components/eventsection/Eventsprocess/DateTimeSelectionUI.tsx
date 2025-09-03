@@ -24,6 +24,7 @@ export default function DateTimeSelectionUI({
 }: DateTimeSelectionUIProps) {
 
   const showData = useAppSelector((state) => state.ticket.show);
+  
 
   return (
     <div>

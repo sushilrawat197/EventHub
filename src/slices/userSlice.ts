@@ -6,30 +6,27 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 interface User {
   userId: string;
   email: string;
-  username: string;
-  firstName: string;  
+  mobile: string;
+  accountStatus: string;
+  firstName: string;
   lastName: string;
+  dob: string;
   gender: string;
   address: string;
-  city: string;
-  state: string;
-  country: string;
-  msisdn: string | null;
-  profilePicUrl: string;
-  dob:string;
-  allowEmailNotifications: boolean;
-  allowSmsNotifications: boolean;
-  allowPushNotifications: boolean;
+  avatarUrl: string;
+  roles: string[];
 }
 
 // State ka type
 interface UserState {
   user: User | null;
+  loading:boolean
 }
 
 // Initial state
 const initialState: UserState = {
   user: null,
+  loading:false
 };
 
 // Slice
@@ -41,7 +38,10 @@ const userSlice = createSlice({
     setUser(state, action: PayloadAction<User>) {
       state.user = action.payload;
     },
-    
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload;
+    },
+
     clearUser(state) {
       state.user = null;
     },
@@ -49,5 +49,5 @@ const userSlice = createSlice({
 });
 
 // Export
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser,setLoading } = userSlice.actions;
 export default userSlice.reducer;

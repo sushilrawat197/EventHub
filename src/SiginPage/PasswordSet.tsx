@@ -19,7 +19,9 @@ export default function PasswordSet() {
   // const [error, setError] = useState(false);
   // const [hidden, setHidden] = useState(false);
 
-  const passToken = useAppSelector((state) => state.auth.pwdToken);
+  const signupToken= useAppSelector((state) => state.auth.signupToken);
+  const email = useAppSelector((state) => state.auth.userEmail);
+  const otp = useAppSelector((state) => state.auth.otp);
   const loading = useAppSelector((state) => state.auth.loading);
   // const massage = useAppSelector((state) => state.auth.massage);
 
@@ -48,21 +50,9 @@ export default function PasswordSet() {
       console.log("Password should not contains sequential letters or numbers");
     }
 
-    dispatch(setPassword(passToken, newPass, confirmPass, navigate, dispatch));
+    dispatch(setPassword(newPass,email,otp,signupToken, navigate, dispatch));
   };
 
-
-
-  // function clickHandler(){
-  //   setHidden(false);
-  //   dispatch(setMassage(null));
-  // }
-
-// useEffect(() => {
-//   return () => {
-//     dispatch(setMassage(null)); // 👈 Clean up when SignUp unmounts
-//   };
-// }, []);
 
 
   return (

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../reducers/hooks";
-import { resendOTP, sendOtp } from "../services/operations/authApi";
+import { resend_2fa_otp, resendOTP, sendOtp, verify_2fa_otp } from "../services/operations/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../reducers/hooks";
 import OtpInput from "react-otp-input";
@@ -16,26 +16,39 @@ const OtpVerification: React.FC = () => {
   const [isDisabled, setIsDisabled] = useState(false);
 
   const userEmail = useAppSelector((state) => state.auth.userEmail);
+  const otpContext = useAppSelector((state) => state.auth.otpContext);
+  const tempToken = useAppSelector((state) => state.auth.tempToken);
+  const signupToken=useAppSelector((state)=>state.auth.signupToken)
   const loading = useAppSelector((state) => state.auth.loading);
   const [ready, setReady] = useState(false); // 👈 block render initially
 
+  console.log(tempToken);
 
 
 useEffect(() => {
-    // Only allow access of this route when user has filled the signup form
-    if (!userEmail) {
-      navigate("/signup");
-    } else {
-      setReady(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate, userEmail]);
- 
+  // Signup flow → email exist karna chahiye
+  // 2FA flow → tempToken exist karna chahiye
+  if (userEmail || tempToken) {
+    setReady(true); // ✅ ready ho jaaye dono cases me
+  } else {
+    navigate("/signup"); // ❌ dono missing → redirect
+  }
+}, [navigate, userEmail, tempToken]);
+
+
 
   const resendOtpHandler = () => {
-    // console.log("Printing User Email",userEmail);
-    const email = userEmail;
-    dispatch(resendOTP(email));
+
+
+    if (otpContext=="2FA") {
+      dispatch(resend_2fa_otp(tempToken));
+
+    } else if(otpContext=="signup") {
+       dispatch(resendOTP(userEmail));
+    }
+   
+   
+
      setTimer(60);
   };
   
@@ -71,8 +84,13 @@ useEffect(() => {
     setTimeout(() => {
       setIsDisabled(false);
     }, 2000);
-    dispatch(sendOtp(otp, userEmail, navigate));
-   
+
+    if (otpContext=="2FA") {
+      dispatch(verify_2fa_otp(tempToken,otp,navigate));
+    } else if(otpContext=="signup"){
+       dispatch(sendOtp(otp, userEmail, signupToken , navigate));
+    }
+
   };
 
 
@@ -80,7 +98,7 @@ useEffect(() => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">
+      <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] flex items-center justify-center bg-sky-100 p-4">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm text-center">
           {/* Logo */}
           <div className="mb-6">
@@ -130,7 +148,7 @@ useEffect(() => {
                 isDisabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"
               }`}
             >
-              Sign up
+             Verify Otp
             </button>
           ) : (
             <button

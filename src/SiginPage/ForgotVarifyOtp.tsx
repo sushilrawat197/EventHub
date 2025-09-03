@@ -1,24 +1,28 @@
 import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../reducers/hooks";
-import { resendOTP } from "../services/operations/authApi";
-// import { useNavigate } from "react-router-dom";
+import { forgotp_password_resend_OTP, varifyFogotOtp} from "../services/operations/authApi";
 import { useAppSelector } from "../reducers/hooks";
 // import { varifySignInOTP } from "../services/operations/authApi";
 import OtpInput from "react-otp-input";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const LoginVarifyOtp: React.FC = () => {
-  const userEmail = useAppSelector((state) => state.auth.userEmail);
-  // const token = localStorage.getItem("tempToken") || "";
+const ForgotVarifyOtp: React.FC = () => {
+
+  const resetToken=useAppSelector((state)=>state.auth.pwdToken);
+
 
   const dispatch = useAppDispatch();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+
 
   const [otp, setOtp] = useState<string>("");
 
   // === New State for Timer ===
-  const [timer, setTimer] = useState<number>(120); // 2 minutes in seconds
+  const [timer, setTimer] = useState<number>(10); // 2 minutes in seconds
+
+
 
   // === Timer useEffect ===
   useEffect(() => {
@@ -39,8 +43,7 @@ const LoginVarifyOtp: React.FC = () => {
 
     e.preventDefault();
     
-    // dispatch(varifySignInOTP(token, otp, dispatch, navigate));
-
+    dispatch(varifyFogotOtp(resetToken,otp,dispatch,navigate));
   };
 
 
@@ -54,16 +57,15 @@ const LoginVarifyOtp: React.FC = () => {
   };
 
     const resendOtpHandler = () => {
-    const email = userEmail;
-    dispatch(resendOTP(email));
-    setTimer(120); // Reset timer to 2 minutes again
+    dispatch(forgotp_password_resend_OTP(resetToken));
+    setTimer(10); // Reset timer to 2 minutes again
   };
 
 
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="min-h-screen flex items-center justify-center bg-sky-200 p-4">
+      <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] flex items-center justify-center bg-sky-200 p-4">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm text-center">
           {/* Logo */}
           <div className="mb-6">
@@ -124,7 +126,9 @@ const LoginVarifyOtp: React.FC = () => {
               >
                 Resend OTP
               </button>
+              
             )}
+
           </p>
         </div>
       </div>
@@ -132,4 +136,4 @@ const LoginVarifyOtp: React.FC = () => {
   );
 };
 
-export default LoginVarifyOtp;
+export default ForgotVarifyOtp;
