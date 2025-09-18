@@ -18,11 +18,18 @@ const Layout = lazy(() => import("./UI/Components/eventsection/Layout"));
 import { refreshAccessToken } from "./services/operations/refreshToken";
 import Layouteventspage from "./UI/Components/eventsection/Eventspage/Layouteventspage";
 import HelpAndSupport from "./UI/Components/HelpAndSupport";
-import BookingFlow from "./UI/Components/eventsection/Eventsprocess/BookingFlow";
+// import BookingFlow from "./UI/Components/eventsection/Eventsprocess/BookingFlow";
 import MainLayout from "./UI/Layout/AppLayout";
 import ForgotVarifyOtp from "./SiginPage/ForgotVarifyOtp";
 import SpinnerLoading from "./UI/Components/common/SpinnerLoading";
 import ChangePassword from "./SiginPage/ChangePassword";
+import BookingFlow from "./UI/Components/eventsection/Eventsprocess/BookingFlow";
+import VenueSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/VenueSelection";
+import DateTimeSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/DateTimeSelection";
+import TicketSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/TicketSelection";
+import ReviewAndPay from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/ReviewAndPay";
+// import TicketSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/TicketSelection";
+// import ReviewAndPay from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/ReviewAndPay";
 
 
 function App() {
@@ -33,111 +40,137 @@ function App() {
   useEffect(() => {
     async function init() {
       await dispatch(refreshAccessToken()); // refresh token call
-      setBootLoading(false);               // boot complete
+      setBootLoading(false); // boot complete
     }
     init();
   }, [dispatch]);
 
   if (bootLoading) {
-    return <SpinnerLoading />;  // spinner while refresh token loads
+    return <SpinnerLoading />; // spinner while refresh token loads
   }
-  
-  
+
   return (
     <>
-
       <Routes>
-
         <Route element={<MainLayout />}>
+          <Route path="/" element={<HomePage />} />
 
-              <Route path="/" element={<HomePage />} />
+          <Route
+            path="/login"
+            element={
+              <OpenRoute>
+                <SignIn />
+              </OpenRoute>
+            }
+          />
 
-              <Route
-                path="/login"
-                element={
-                  <OpenRoute>
-                    <SignIn />
-                  </OpenRoute>
-                }
-              />
+          <Route path="/forgetpassword" element={<ForgotPassword />} />
+          <Route path="/verifyforgototp" element={<ForgotVarifyOtp />} />
+          <Route path="/change-password" element={<ChangePassword />} />
 
-              <Route path="/forgetpassword" element={<ForgotPassword />} />
-              <Route path="/verifyforgototp" element={<ForgotVarifyOtp />} />
-              <Route path="/change-password" element={<ChangePassword/>} />
+          <Route
+            path="/signup"
+            element={
+              <OpenRoute>
+                <SignUp />
+              </OpenRoute>
+            }
+          />
 
-              <Route
-                path="/signup"
-                element={
-                  <OpenRoute>
-                    <SignUp />
-                  </OpenRoute>
-                }
-              />
-              
-              <Route
-                path="/otpverification"
-                element={
-                  <OpenRoute>
-                    <OtpVerification />
-                  </OpenRoute>
-                }
-              />
-              <Route
-                path="/setpassword"
-                element={
-                  <OpenRoute>
-                    <PasswordSet />
-                  </OpenRoute>
-                }
-              />
-              <Route
-                path="/varifylgoinotp"
-                element={
-                  <OpenRoute>
-                    <LoginVarifyOtp />
-                  </OpenRoute>
-                }
-              />
-              <Route
-                path="/passwordreset"
-                element={
-                  <OpenRoute>
-                    <PasswordReset />
-                  </OpenRoute>
-                }
-              />
-              <Route
-                path="/passwordresetsuccess"
-                element={
-                  <OpenRoute>
-                    <ForgotPasswordConfirmation />
-                  </OpenRoute>
-                }
-              />
+          <Route
+            path="/otpverification"
+            element={
+              <OpenRoute>
+                <OtpVerification />
+              </OpenRoute>
+            }
+          />
+          <Route
+            path="/setpassword"
+            element={
+              <OpenRoute>
+                <PasswordSet />
+              </OpenRoute>
+            }
+          />
+          <Route
+            path="/varifylgoinotp"
+            element={
+              <OpenRoute>
+                <LoginVarifyOtp />
+              </OpenRoute>
+            }
+          />
+          <Route
+            path="/passwordreset"
+            element={
+              <OpenRoute>
+                <PasswordReset />
+              </OpenRoute>
+            }
+          />
+          <Route
+            path="/passwordresetsuccess"
+            element={
+              <OpenRoute>
+                <ForgotPasswordConfirmation />
+              </OpenRoute>
+            }
+          />
 
-              <Route path="/events" element={<Layout />} />
+          <Route path="/events" element={<Layout />} />
 
-              <Route
-                path="/my-profile/edit-profile"
-                element={
-                  <ProtectedRoute>
-                    <ProfileCard />
-                  </ProtectedRoute>
-                }
-              />
+          <Route
+            path="/my-profile/edit-profile"
+            element={
+              <ProtectedRoute>
+                <ProfileCard />
+              </ProtectedRoute>
+            }
+          />
 
-              <Route path="/events/:contentName/:parentCategoryId" element={<Layouteventspage />} />
-              <Route path="/helpandsupport" element={<HelpAndSupport />} />
-              
+          <Route
+            path="/events/:contentName/:eventId"
+            element={<Layouteventspage />}
+          />
+          <Route path="/helpandsupport" element={<HelpAndSupport />} />
         </Route>
+       {/* Normal Route End */}
 
+
+
+{/* BOOKING ROUTE START */}
         {/* <Route path="/booking/:id" element={<BookingFlow />} /> */}
 
-               <Route path="/events/:contentName/:contentId/booking" element={<BookingFlow />} />
+        {/* <Route path="/events/:contentName/:eventId/booking" element={<BookingFlow />} /> */}
 
+
+
+        <Route
+          path="/events/:contentName/:eventId/booking/*"
+          element={<BookingFlow />}
+        >
+          <Route path="venue" element={<VenueSelection />} />
+          <Route path="datetime" element={<DateTimeSelection />} />
+
+          <Route
+            path="ticket"
+            element={
+      
+                <TicketSelection />
+  
+            }
+          />
+          <Route
+            path="payment"
+            element={
+              <ProtectedRoute>
+                <ReviewAndPay />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
       </Routes>
-
-     
     </>
   );
 }

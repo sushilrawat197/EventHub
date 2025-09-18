@@ -3,7 +3,7 @@ import { IoClose } from "react-icons/io5";
 import { FaChevronRight } from "react-icons/fa";
 
 interface TermsProps {
-  description: string;
+  description: string[];
 }
 
 
@@ -42,7 +42,13 @@ export default function TermsAndConditions({description}:TermsProps) {
 
             {/* Content */}
             <div className="space-y-3 text-black text-[15px] max-h-[60vh] overflow-y-auto">
-              <p>{description}</p>
+            {
+              description&&(
+                description.map((item,index)=>{
+                 return <p key={index}><span className="text-black font-bold pr-2">{index+1}</span>{item}</p>
+                })
+              )
+            }
           
             </div>
 

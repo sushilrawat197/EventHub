@@ -1,9 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../slices/authSlice";
 import userReducer from "../slices/userSlice"
-import eventReduce from "../slices/eventSlice"
 import filterReduce from "../slices/filterSlice"
 import ticketReduce from "../slices/ticketInfoSlice"
+import cityReducer from "../slices/citySlice"
+import eventReducer from "../slices/eventSlice"
+import showReducer from "../slices/showSlice"
+import searchFilterReducer from "../slices/filter_Slice"
+import ticketCategoryReducer from "../slices/ticketCategory"
+import venueReducer from "../slices/venueSlice"
+import reserveTicketReducer from "../slices/reserveTicketSlice"
 
 
 export const store = configureStore({
@@ -11,9 +17,15 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     user:userReducer,
-    events:eventReduce,
     filter:filterReduce,
-    ticket:ticketReduce
+    searchFilter:searchFilterReducer ,
+    ticket:ticketReduce,
+    cities:cityReducer,
+    events:eventReducer,
+    shows:showReducer,
+    ticketCategory:ticketCategoryReducer,
+    venue:venueReducer,
+    reserveTicket:reserveTicketReducer,
   },
 });
 

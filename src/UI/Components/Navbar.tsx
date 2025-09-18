@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { useAppSelector } from "../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../reducers/hooks";
 import ProfileDropdown from "./dasboard/profile/ProfileDropdown";
 import { CiSearch } from "react-icons/ci";
 import NavHeader from "./navbar/NavHeader";
@@ -8,28 +8,25 @@ import NavHeader from "./navbar/NavHeader";
 // import { RxCross1 } from "react-icons/rx";
 import { RiMenuFold4Fill } from "react-icons/ri";
 import { RiMenuFold3Fill } from "react-icons/ri";
+import { listCitiesByRegion } from "../../services/operations/location/cityApi";
+
+import { listEventsBySearch } from "../../services/operations/eventsApi";
+import { setSelectedCity } from "../../slices/citySlice";
+import { setFilter } from "../../slices/filter_Slice";
+// import { setFilter } from "../../slices/filter_Slice";
 
 const Navbar: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState("Mumbai");
 
   const menuRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
 
-  const cities = [
-    "Maseru",
-    "Mafeteng",
-    "Mohale's Hoek",
-    "Quthing",
-    "Thaba Tseka",
-    "Qacha's Nek",
-    "Berea",
-    "Leribe",
-    "Botha-Bothe",
-    "Mokhotlong",
-  ];
+  const cities = useAppSelector((state) => state.cities.data || []);
+  const [selectedCity, setSelectedCityNav] = useState("Select City");
 
+  // console.log(cities)
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -46,10 +43,30 @@ const Navbar: React.FC = () => {
 
   const user = useAppSelector((state) => state.user.user);
 
-  const handleCitySelect = (city: string) => {
-    setSelectedCity(city);
+  const handleCitySelect = (city: { id: number; label: string }) => {
+    setSelectedCityNav(city.label);
+    dispatch(setSelectedCity(city.id));
     setCityDropdownOpen(false);
+
+   
+    dispatch(setFilter({ key: "cityId", value: city.id }));
+    console.log(city.id);
+
+    dispatch(listEventsBySearch());
   };
+
+
+  useEffect(() => {
+    console.log("calling list all city");
+    const preCity = cities.find((item) => item.label === "Cape Town");
+    dispatch(setSelectedCity(preCity?.id ?? 0));
+    setSelectedCityNav(preCity?.label ?? "");
+  }, [dispatch, cities]);
+
+  useEffect(() => {
+  dispatch(listCitiesByRegion());
+}, [dispatch]);
+
 
   return (
     <>
@@ -63,7 +80,7 @@ const Navbar: React.FC = () => {
                 <button className="text-white" title="Menu">
                   <div className="relative w-[30px] h-[30px]">
                     {/* Menu Icon */}
-                    < RiMenuFold4Fill
+                    <RiMenuFold4Fill
                       onClick={() => setMobileMenuOpen(true)}
                       size={30}
                       className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
@@ -74,7 +91,7 @@ const Navbar: React.FC = () => {
                     />
 
                     {/* Close Icon */}
-                    <RiMenuFold3Fill 
+                    <RiMenuFold3Fill
                       onClick={() => setMobileMenuOpen(false)}
                       size={30}
                       className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
@@ -125,13 +142,13 @@ const Navbar: React.FC = () => {
 
                   {cityDropdownOpen && (
                     <ul className="absolute mt-3 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50 transition-all duration-200">
-                      {cities.map((city, index) => (
+                      {cities.map((city) => (
                         <li
-                          key={index}
-                          onClick={() => handleCitySelect(city)}
+                          key={city.id}
+                          onClick={() => handleCitySelect(city)} // 👈 pura city object bhej rahe
                           className="px-4 py-2 cursor-pointer hover:bg-sky-100"
                         >
-                          {city}
+                          {city.label}
                         </li>
                       ))}
                     </ul>

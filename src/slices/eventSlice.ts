@@ -1,60 +1,50 @@
+// src/features/Events/EventsSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Content } from "../interfaces/eventInterface/eventInterface"; // yaha tumhare Content interface ko import karo
-
+import type { EventResponse, EventResponseBySearch } from "../interfaces/eventInterface/evnetInterFace";
+import type { PageData } from "../interfaces/country";
 
 interface EventsState {
-  events: Content[];
-  categories: string[];
-  venues: string[];
-  loading: boolean;
-  error: string | null;
+  allEvents: PageData<EventResponse> | null;       // sabhi events list
+  allEventsBySearch:PageData<EventResponseBySearch> | null;
+  singleEvent: EventResponse | null; // ek event by ID
+  eventloading: boolean;
 }
 
 const initialState: EventsState = {
-  events: [],
-  categories: [],
-  venues: [],
-  loading: false,
-  error: null,
+  allEvents: null,
+  allEventsBySearch : null,
+  singleEvent: null,
+  eventloading: false,
 };
-
 
 const eventsSlice = createSlice({
   name: "events",
   initialState,
   reducers: {
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
+    setAllEvents: (state, action: PayloadAction<PageData<EventResponse>>) => {
+      state.allEvents = action.payload;
     },
-
-    setEvents: (
-      state,
-      action: PayloadAction<{
-        contents: Content[];
-        catogeryList: string[];
-        venueList: string[];
-      }>
-    ) => {
-      state.events = action.payload.contents || [];
-      state.categories = action.payload.catogeryList || [];
-      state.venues = action.payload.venueList || [];
-      state.error = null;
+    setAllEventsBySearch: (state, action: PayloadAction<PageData<EventResponseBySearch>>) => {
+      state.allEventsBySearch = action.payload;
     },
-
-    setError: (state, action: PayloadAction<string>) => {
-      state.error = action.payload;
+    setSingleEvent: (state, action: PayloadAction<EventResponse | null>) => {
+      state.singleEvent = action.payload;
     },
-    
-    clearEvents: (state) => {
-      state.events = [];
-      state.categories = [];
-      state.venues = [];
-      state.error = null;
+    setEventsLoading: (state, action: PayloadAction<boolean>) => {
+      state.eventloading= action.payload;
     },
+    clearSingleEvent: (state) => {
+      state.singleEvent = null; // navigate karte waqt reset karne ka option
+    }
   },
 });
 
-export const { setLoading, setEvents, setError, clearEvents } =
-  eventsSlice.actions;
+export const {
+  setAllEvents,
+  setSingleEvent,
+  setEventsLoading,
+  clearSingleEvent,
+  setAllEventsBySearch
+} = eventsSlice.actions;
 
 export default eventsSlice.reducer;

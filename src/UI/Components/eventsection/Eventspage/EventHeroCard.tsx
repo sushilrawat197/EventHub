@@ -2,15 +2,15 @@
 
 interface EventHeroCardDetails {
   title: string;
-  image: string;
+  image: string | null;
   tags: string; 
 
   // ✅ instead of Array
   // interestedCount: number;
   // onShare: () => void;
   // onInterestedClick: () => void;
-
 }
+
 
 export default function EventHeroCard({title,image,tags}:EventHeroCardDetails) {
   
@@ -28,7 +28,8 @@ export default function EventHeroCard({title,image,tags}:EventHeroCardDetails) {
       {/* Image Section */}
       <div className="w-full  mt-2">
         <div className="aspect-[18/9] w-full rounded-xl overflow-hidden shadow-md">
-          <img src={image} alt={title} className="h-full w-full object-cover" />
+        {image && <img src={image} alt="Poster" className="h-full w-full object-cover"  />}
+          
         </div>
       </div>
 
@@ -48,18 +49,6 @@ export default function EventHeroCard({title,image,tags}:EventHeroCardDetails) {
        
         </div>
 
-        {/* Interested */}
-        {/* <div className="flex items-center gap-3">
-          <span className="flex items-center text-green-600 font-medium">
-            <FaThumbsUp className="mr-1" /> {interestedCount} are interested
-          </span>
-          <button
-            onClick={onInterestedClick}
-            className="border border-red-400 text-red-500 px-4 py-1 rounded-md hover:bg-red-50 transition"
-          >
-            I'm Interested
-          </button>
-        </div> */}
       </div>
     </div>
   );

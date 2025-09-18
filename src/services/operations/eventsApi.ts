@@ -1,46 +1,122 @@
 import axios from "axios";
 import type { AppDispatch } from "../../reducers/store";
-import { setLoading } from "../../slices/eventSlice";
 import { apiConnector } from "../apiConnector";
-import { setEvents } from "../../slices/eventSlice";
-import type { EventsApiResponse } from "../../interfaces/eventInterface/eventInterface"; // yaha se import karo
+import { setAllEventsBySearch, setEventsLoading, setSingleEvent } from "../../slices/eventSlice"; // yaha se import karo
+import type { ApiResponse, OtherApiResponse } from "../../interfaces/country";
+import type { EventResponse, EventResponseBySearch } from "../../interfaces/eventInterface/evnetInterFace";
+import type { RootState } from "../../reducers/store"; // apna store path
+
+
+// ---------------------- List All Events ----------------------
+// export function listAllEvents() {
+//   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
+//     dispatch(setEventsLoading(true));
+//     try {
+//       const response = await apiConnector<OtherApiResponse<EventResponse[]>>({
+//         method: "GET",
+//         url: `https://thedemonstrate.com/ticketcore-api/api/v1/events`,
+//         headers: { "X-Client-Source": "WEB" },
+//         withCredentials: true,
+//       });
+
+//     //   console.log("LIST ALL EVENTS RESPONSE:", response.data);
+
+//       if (response.data.statusCode === 200) {
+//         dispatch(setAllEvents(response.data.data));
+//         return { success: true };
+//       }
+
+//       return { success: false };
+//     } catch (error) {
+//       if (axios.isAxiosError(error)) {
+//         console.error("Axios error:", error.response);
+//       } else {
+//         console.error("Unknown error:", error);
+//       }
+//       return { success: false };
+//     } finally {
+//        dispatch(setEventsLoading(false));
+//     }
+//   };
+// }
+
+
+// ---------------------- List Events By Search ----------------------
 
 
 
-export function getEvents() {
-  return async (dispatch: AppDispatch): Promise<void> => {
+export function listEventsBySearch() {
+  return async (dispatch: AppDispatch, getState: () => RootState): Promise<{ success: boolean }> => {
+    dispatch(setEventsLoading(true));
+
     try {
-      dispatch(setLoading(true));
 
-      const response = await apiConnector<EventsApiResponse>({
-        method: "GET",
-        url: "https://thedemonstrate.com/CMS/api/v1/contents?city=Mumbai",
-        //  headers: {
-        //   "X-Client-Source": "WEB",
-        // },
-        withCredentials: false,
+      const filters = getState().searchFilter; // 👈 redux filters state
+
+      console.log("Printing Filters Data",filters)
+
+      const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
+        method: "POST",
+        url: `https://thedemonstrate.com/ticketcore-api/api/v1/events/search`,
+        bodyData: filters,
+        headers: { "X-Client-Source": "WEB" },
+        withCredentials: true,
       });
 
-      // console.log("GET EVENTS API RESPONSE............", response.data.data);
+      console.log("Search Data",response.data);
 
-      dispatch(
-        setEvents({
-          contents: response.data.data.eventList,
-          catogeryList: response.data.data.catogeryList,
-          venueList: response.data.data.venueList,
-        })
-      );
+      if (response.data.statusCode === 200) {
+        dispatch(setAllEventsBySearch(response.data.data));
+        return { success: true };
+      }
 
-  
-
+      return { success: false };
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log("GET EVENTS ERROR RESPONSE............", error.response?.data);
+        console.error("Axios error:", error.response);
       } else {
-        console.log("GET EVENTS ERROR............", "An unknown error occurred.");
+        console.error("Unknown error:", error);
       }
+      return { success: false };
     } finally {
-      dispatch(setLoading(false));
+      dispatch(setEventsLoading(false));
     }
   };
 }
+
+
+
+
+export function listEventById(eventId:string) {
+  return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
+    dispatch(setEventsLoading(true));
+    try {
+      const response = await apiConnector<OtherApiResponse<EventResponse>>({
+        method: "GET",
+        url: `https://thedemonstrate.com/ticketcore-api/api/v1/events/search/${eventId}`,
+        headers: { "X-Client-Source": "WEB" },
+        withCredentials: true,
+      });
+
+    //   console.log("LIST ALL EVENTS RESPONSE:", response.data);
+
+      if (response.data.statusCode === 200) {
+        dispatch(setSingleEvent(response.data.data));
+        return { success: true };
+      }
+
+      return { success: false };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.response);
+      } else {
+        console.error("Unknown error:", error);
+      }
+      return { success: false };
+    } finally {
+       dispatch(setEventsLoading(false));
+    }
+  };
+}
+
+

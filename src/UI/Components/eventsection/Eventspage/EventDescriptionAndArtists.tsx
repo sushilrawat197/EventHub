@@ -20,7 +20,7 @@ export default function EventDescriptionAndArtists({
 }: EventDescriptionAndArtistsProps) {
   const [readMe, setReadme] = useState(false);
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-4 pb-7">
+    <div className="w-full max-w-6xl mx-auto space-y-4 pb-10">
       {/* About Section */}
       <section>
         <h2 className="text-lg md:text-xl font-semibold mb-1">

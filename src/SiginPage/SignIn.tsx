@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaLock, FaEnvelope } from "react-icons/fa";
 import { AiFillEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { signIn } from "../services/operations/authApi";
 import { useAppDispatch, useAppSelector } from "../reducers/hooks";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import PopUpMessage from "./popUpMassage";
 // import OpenRoute from "../route/OpenRoute";
 
 const SignIn: React.FC = () => {
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -20,6 +21,11 @@ const SignIn: React.FC = () => {
   const [password, setPassword] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
 
+  const from = (location.state?.from || "/").replace(/^\/ticketing/, "");
+
+  console.log(from);
+  
+
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     if (isDisabled) return; // 👈 prevent rapid clicks
 
@@ -27,7 +33,7 @@ const SignIn: React.FC = () => {
 
     e.preventDefault();
     // console.log("Printing Email=", email);
-    dispatch(signIn(inputEmail, password, navigate, dispatch));
+    dispatch(signIn(inputEmail, password, navigate, dispatch,from));
     // console.log(thunk)
     // 👇 re-enable button after 2 seconds
     setTimeout(() => {

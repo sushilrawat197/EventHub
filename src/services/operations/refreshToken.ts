@@ -6,6 +6,7 @@ import { clearUser } from "../../slices/userSlice";
 import type { AppDispatch } from "../../reducers/store";
 import { getCurrentUser } from "./userApi";
 import { setLoading } from "../../slices/authSlice";
+
 let refreshTimer: NodeJS.Timeout | null = null;
 
 

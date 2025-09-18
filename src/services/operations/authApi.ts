@@ -37,6 +37,7 @@ import { toast } from "react-toastify";
 import { clearUser } from "../../slices/userSlice";
 import { getCurrentUser } from "./userApi";
 import type { AppDispatch} from "../../reducers/store";
+import {  listCitiesByRegion } from "./location/cityApi";
 
 
 type SendOtpApiResponse = {
@@ -463,7 +464,6 @@ export function resetPassword(
   };
 }
 
-
 // PASSWORD EXPIRED NOW CHANGE IT 
 export function changePassword(
   pwdChangeToken: string,
@@ -530,7 +530,8 @@ export function signIn(
   email: string,
   password: string,
   navigate: NavigateFunction,
-  dispatch: AppDispatch
+  dispatch: AppDispatch,
+  from: string // 👈 yeh add kiya
 ) {
   return async (): Promise<void> => {
     try {
@@ -578,6 +579,7 @@ export function signIn(
 
         dispatch(setAccessTokenExpiry(accessTokenExpiry));
         dispatch(setRefreshTokenExpiry(refreshTokenExpiry));
+        dispatch(listCitiesByRegion());
 
         if (tempToken) {
           // ✅ 2FA user → navigate to OTP verify page
@@ -590,7 +592,7 @@ export function signIn(
         } else {
           // ✅ Normal user → navigate to home
           dispatch(setOtpContext("signup"))
-          navigate("/");
+          navigate(from, { replace: true });
         }
       } else if( data.statusCode === 409) {
         navigate("/forgetpassword")

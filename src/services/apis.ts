@@ -1,7 +1,7 @@
-// const BASE_URL: string = "https://thedemonstrate.com/GenericAuthService/";
+const BASE_URL: string = "https://thedemonstrate.com";
 
 
-const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
+// const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 // console.log('BASE URL; ', BASE_URL);
 // AUTH ENDPOINTS
 
@@ -21,7 +21,6 @@ export const endpoints = {
 
 
   CHANGE_PASSWORD:BASE_URL + "/ticketcore-api/api/v1/auth/change-password",
-
 
   
   //FORGOT PASSWORD

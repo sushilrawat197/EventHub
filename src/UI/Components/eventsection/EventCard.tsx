@@ -1,14 +1,16 @@
 import { useState } from "react";
-import type { Content } from "../../../interfaces/eventInterface/eventInterface";
+
+import type {  EventResponseBySearch } from "../../../interfaces/eventInterface/evnetInterFace";
 
 
 
 interface EventCardProps {
-  event: Content;
+  event: EventResponseBySearch;
 }
 
 
 export default function EventCard({ event }: EventCardProps) {
+  // const shows=useAppSelector((state)=>useState)
   const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
@@ -22,8 +24,8 @@ export default function EventCard({ event }: EventCardProps) {
 
         {/* Event Image */}
         <img
-          src={event.thumbnail} // 👈 yaha actual poster url use karo
-          alt={event.title}
+          src={event.thumbnailUrl} // 👈 yaha actual poster url use karo
+          alt={event.thumbnailUrl}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
           className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${
@@ -35,7 +37,7 @@ export default function EventCard({ event }: EventCardProps) {
       {/* Date */}
       <div className="bg-black text-white text-[8px] sm:text-[10px] md:text-xs px-2 sm:px-3 py-1 font-medium tracking-wide">
        
-        {new Date(event.shows[0].showDateTime).toLocaleDateString("en-US", {
+        {new Date(event.startDate).toLocaleDateString("en-US", {
           weekday: "short", // Mon, Tue...
           day: "numeric", // 20
           month: "short", // Aug
@@ -45,20 +47,20 @@ export default function EventCard({ event }: EventCardProps) {
       {/* Info Section */}
       <div className="p-3 sm:p-4 space-y-1">
 
-        <h3 className="font-semibold text-xs sm:text-sm md:text-base leading-tight line-clamp-2">
-          {event.title}
+        <h3 className="font-semibold text-xs sm:text-sm md:text-base leading-tight line-clamp-2 truncate">
+          {event.eventName}
         </h3>
 
         <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 truncate">
-          {event.shows.map((s) => s.venue.name).join(", ")}
-        </p>
-
-        <p className="text-[10px] sm:text-xs md:text-sm text-gray-500">
           {event.genre}
         </p>
 
+        <p className="text-[10px] sm:text-xs md:text-sm text-gray-500">
+          {event.language}
+        </p>
+
         <p className="text-xs sm:text-sm md:text-base text-gray-900 font-bold truncate">
-          M - {event.basePrice} onwards
+          M - {event.price} onwards
         </p>
       </div>
     </div>

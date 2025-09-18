@@ -13,7 +13,8 @@ import {
 } from "../../../slices/filterSlice";
 import { useSearchParams } from "react-router-dom";
 
-
+import { setFilter } from "../../../slices/filter_Slice";
+import { listEventsBySearch } from "../../../services/operations/eventsApi";
 
 interface FilterItemProps {
   title: string;
@@ -22,9 +23,8 @@ interface FilterItemProps {
 }
 
 
-const FilterItem = ({ title, options, filterKey }: FilterItemProps) => { 
+const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   const dispatch = useAppDispatch();
-
   const selectedCategories = useAppSelector((state) => state.filter.categories);
   const selectedLanguage = useAppSelector((state) => state.filter.languages);
   const startDate = useAppSelector((state) => state.filter.startDate);
@@ -38,38 +38,60 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   const calendarRef = useRef<HTMLDivElement>(null);
   const [showCalendar, setShowCalendar] = useState(false);
 
-
   const selectedFilters = useAppSelector((state) => state.filter[filterKey]);
-  
-  console.log("Filter Key: ", filterKey)
-  console.log("Selected Filter: ",selectedFilters);
 
-
-
-  // Click on option
   const handleOptionClick = (opt: string) => {
-
     if (opt === "Date Range") {
       setShowCalendar(true);
     }
 
     let newFilters;
-    
+
     if (selectedFilters.includes(opt)) {
       newFilters = selectedFilters.filter((f) => f !== opt);
     } else {
       newFilters = [...selectedFilters, opt];
     }
 
-    if (filterKey === "categories") dispatch(setCategories(newFilters));
-    if (filterKey === "languages") dispatch(setLanguages(newFilters));
-    if (filterKey === "dates") dispatch(setDates(newFilters));
-    if (filterKey === "prices") dispatch(setPrices(newFilters));
+    if (filterKey === "categories") {
+      dispatch(setCategories(newFilters));
+      dispatch(setFilter({ key: "genres", value: newFilters }));
+      dispatch(listEventsBySearch());
+    }
+
+    if (filterKey === "languages") {
+      dispatch(setLanguages(newFilters));
+      dispatch(setFilter({ key: "languages", value: newFilters }));
+      dispatch(listEventsBySearch());
+    }
+
+    if (filterKey === "dates") {
+      if (newFilters.includes("Date Range")) {
+        dispatch(setDates(newFilters));
+        return;
+      }
+      dispatch(setDates(newFilters));
+      dispatch(setFilter({ key: "datePresets", value: newFilters }));
+      dispatch(listEventsBySearch());
+    }
+
+      
+
+    if (filterKey === "prices") {
+      const mappedFilters = newFilters.map((f) => {
+        if (f === "0 - 500") return { min: 0, max: 500 };
+        if (f === "501 - 2000") return { min: 501, max: 2000 };
+        if (f === "Above 2000")
+          return { min: 2001, max: Number.MAX_SAFE_INTEGER };
+        return { min: 0, max: Number.MAX_SAFE_INTEGER }; // fallback
+      });
+
+      dispatch(setPrices(newFilters));
+      dispatch(setFilter({ key: "priceGroups", value: mappedFilters }));
+      dispatch(listEventsBySearch());
+    }
   };
 
-
-    
-  
   // helper function to get YYYY-MM-DD local date
   const formatLocalDate = (date: Date) => {
     const year = date.getFullYear();
@@ -78,21 +100,40 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
     return `${year}-${month}-${day}`;
   };
 
-
-
   // Clear button
-  const handleClear = () => {
+// Clear button
+const handleClear = () => {
+  setShowCalendar(false);
 
-    setShowCalendar(false);
-    // 🟢 Redux state clear karna zaroori hai
-    dispatch(setStartDate(null));
-    dispatch(setEndDate(null));
-    if (filterKey === "categories") dispatch(setCategories([]));
-    if (filterKey === "languages") dispatch(setLanguages([]));
-    if (filterKey === "dates") dispatch(setDates([]));
-    if (filterKey === "prices") dispatch(setPrices([]));
-  };
+  // Calendar values clear
+  dispatch(setStartDate(null));
+  dispatch(setEndDate(null));
+  dispatch(setFilter({ key: "startDate", value: null }));
+  dispatch(setFilter({ key: "endDate", value: null }));
 
+  if (filterKey === "categories") {
+    dispatch(setCategories([]));
+    dispatch(setFilter({ key: "genres", value: [] }));
+  }
+
+  if (filterKey === "languages") {
+    dispatch(setLanguages([]));
+    dispatch(setFilter({ key: "languages", value: [] }));
+  }
+
+  if (filterKey === "dates") {
+    dispatch(setDates([]));
+    dispatch(setFilter({ key: "datePresets", value: [] }));
+  }
+
+  if (filterKey === "prices") {
+    dispatch(setPrices([]));
+    dispatch(setFilter({ key: "priceGroups", value: [] }));
+  }
+
+  // ✅ Clear ke baad events dobara fetch karo
+  dispatch(listEventsBySearch());
+};
 
 
   // Calendar close on outside click
@@ -116,11 +157,7 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-
-
-
   useEffect(() => {
-    // ek object banate hain jisme saare params store karenge
     const params: Record<string, string> = {};
 
     if (selectedCategories.length > 0) {
@@ -140,7 +177,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
     }
 
     setSearchParams(params);
-
   }, [
     selectedCategories,
     selectedLanguage,
@@ -150,8 +186,14 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
     selectedPrice,
   ]);
 
-  // console.log("Start Date End Date",startDate,endDate)
 
+
+  // ✅ Yaha automatic API call jab dono date select ho jaye
+  useEffect(() => {
+    if (startDate && endDate) {
+      dispatch(listEventsBySearch());
+    }
+  }, [startDate, endDate, dispatch]);
 
   return (
     <div className="bg-white p-4 rounded-md shadow-sm mb-4">
@@ -179,7 +221,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
       {open && (
         <div className="mt-3 flex flex-wrap gap-2 text-sm">
           {options.map((opt, idx) => (
-
             <button
               key={idx}
               onClick={() => handleOptionClick(opt)}
@@ -191,34 +232,39 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
             >
               {opt}
             </button>
-
           ))}
         </div>
       )}
 
-
       {/* Calendar */}
       {showCalendar && (
         <div className="mt-3 " ref={calendarRef}>
-        
           <DatePicker
             selected={startDate ? new Date(startDate) : null}
             onChange={(dates) => {
               const [start, end] = dates as [Date | null, Date | null];
 
               if (start) {
-                dispatch(setStartDate(formatLocalDate(start))); // local YYYY-MM-DD
+                const formattedStart = formatLocalDate(start);
+                dispatch(setStartDate(formattedStart));
+                dispatch(
+                  setFilter({ key: "startDate", value: formattedStart })
+                );
               } else {
                 dispatch(setStartDate(null));
+                dispatch(setFilter({ key: "startDate", value: null }));
               }
 
               if (end) {
-                dispatch(setEndDate(formatLocalDate(end)));
+                const formattedEnd = formatLocalDate(end);
+                dispatch(setEndDate(formattedEnd));
+                dispatch(setFilter({ key: "endDate", value: formattedEnd }));
               } else {
                 dispatch(setEndDate(null));
+                dispatch(setFilter({ key: "endDate", value: null }));
               }
 
-              // Automatically add "Date Range" tag if user selects a range
+
               if (start && end && !selectedDates.includes("Date Range")) {
                 dispatch(
                   setDates([
@@ -228,7 +274,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
                 );
               }
             }}
-
             startDate={startDate ? new Date(startDate) : null}
             endDate={endDate ? new Date(endDate) : null}
             selectsRange
@@ -240,12 +285,20 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   );
 };
 
-
-
 // FILTER PANEL COMPONENT
 export default function FilterPanel() {
-  const categories = useAppSelector((state) => state.events.categories);
   const [openMobileFilters, setOpenMobileFilters] = useState(false);
+
+  const categoryOptions: string[] = [
+    "CONCERT",
+    "SPORTS",
+    "THEATRE",
+    "COMEDY",
+    "EXHIBITION",
+    "FESTIVA",
+    "WORKSHOP",
+    "OTHER",
+  ];
 
   const dateOptions: string[] = [
     "Today",
@@ -256,12 +309,7 @@ export default function FilterPanel() {
 
   const languageOptions: string[] = ["English", "Hindi"];
 
-  const priceOptions: string[] = [
-    "Free",
-    "0 - 500",
-    "501 - 2000",
-    "Above 2000",
-  ];
+  const priceOptions: string[] = ["0 - 500", "501 - 2000", "Above 2000"];
 
   return (
     <>
@@ -278,7 +326,7 @@ export default function FilterPanel() {
         />
         <FilterItem
           title="Categories"
-          options={categories}
+          options={categoryOptions}
           filterKey="categories"
         />
         <FilterItem title="Price" options={priceOptions} filterKey="prices" />
@@ -287,8 +335,6 @@ export default function FilterPanel() {
           Browse by Venues
         </button> */}
       </div>
-
-
 
       {/* Mobile Filters */}
       <div className="md:hidden">
@@ -304,15 +350,12 @@ export default function FilterPanel() {
             openMobileFilters ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          
           <div className="flex justify-between items-center p-4 border-b">
             <h2 className="text-lg font-semibold">Filters</h2>
             <button onClick={() => setOpenMobileFilters(false)}>
               <IoClose size={24} />
             </button>
           </div>
-
-
         </div>
       </div>
     </>

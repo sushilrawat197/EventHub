@@ -27,7 +27,9 @@ export default function VenueSelection({ venues = [], onNext }: VenueData) {
   const dispatch=useAppDispatch();
 
   const [openCity, setOpenCity] = useState<string | null>(null);
+  
   const eventData=useAppSelector((state)=>state.events.events);
+
 
   const toggleCity = (city: string) => {
     setOpenCity(openCity === city ? null : city);

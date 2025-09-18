@@ -13,23 +13,39 @@ import {
   setStartDate,
   setEndDate,
 } from "../../../slices/filterSlice"; // 👈 add setStartDate, setEndDate
-import { matchDateFilter } from "../../../utils/dateFilters";
+import { listEventsBySearch } from "../../../services/operations/eventsApi";
+import { setFilter } from "../../../slices/filter_Slice";
+
+
+
+  const categoryOptions: string[] = [
+    "CONCERT",
+    "SPORTS",
+    "THEATRE",
+    "COMEDY",
+    "EXHIBITION",
+    "FESTIVA",
+    "WORKSHOP",
+    "OTHER",
+  ];
+
+
+
 
 export default function EventList() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const categories = useAppSelector((state) => state.events.categories);
 
-  const events = useAppSelector((state) => state.events.events);
+
+
   const selectedCategories = useAppSelector((state) => state.filter.categories);
-
   const selectedLanguage = useAppSelector((state) => state.filter.languages);
   const selectedDates = useAppSelector((state) => state.filter.dates);
   const selectedPrice = useAppSelector((state) => state.filter.prices);
+  const events=useAppSelector((state)=>state.events.allEventsBySearch?.content|| [])
 
-  const selectedStartDate = useAppSelector((state) => state.filter.startDate);
-  const selectedEndDate = useAppSelector((state) => state.filter.endDate);
+
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -50,6 +66,7 @@ export default function EventList() {
   }, [dispatch, searchParams]);
 
   // Update URL when filters change
+
   useEffect(() => {
     const params = new URLSearchParams(); // TO PREPARE QUERY STRING  "categories=comedy,music&languages=english,hindi"
 
@@ -69,101 +86,76 @@ export default function EventList() {
     setSearchParams,
   ]);
 
-  const handleFilterToggle = (
-    filterKey: "categories" | "languages" | "prices" | "dates",
-    value: string
-  ) => {
-    switch (filterKey) {
-      case "categories":
-        dispatch(
-          setCategories(
-            selectedCategories.includes(value)
-              ? selectedCategories.filter((c) => c !== value)
-              : [...selectedCategories, value]
-          )
-        );
-        break;
 
-      case "languages":
-        dispatch(
-          setLanguages(
-            selectedLanguage.includes(value)
-              ? selectedLanguage.filter((l) => l !== value)
-              : [...selectedLanguage, value]
-          )
-        );
-        break;
+const handleFilterToggle = (
+  filterKey: "categories" | "languages" | "prices" | "dates",
+  value: string
+) => {
+  switch (filterKey) {
+    case "categories": {
+      const updated = selectedCategories.includes(value)
+        ? selectedCategories.filter((c) => c !== value)
+        : [...selectedCategories, value];
 
-      case "prices":
-        dispatch(
-          setPrices(
-            selectedPrice.includes(value)
-              ? selectedPrice.filter((p) => p !== value)
-              : [...selectedPrice, value]
-          )
-        );
-        break;
-
-      case "dates":
-        // 👇 special case: if date range chip is removed, also clear startDate & endDate
-        if (selectedDates.includes(value)) {
-          dispatch(setStartDate(null));
-          dispatch(setEndDate(null));
-        }
-        dispatch(
-          setDates(
-            selectedDates.includes(value)
-              ? selectedDates.filter((d) => d !== value)
-              : [...selectedDates, value]
-          )
-        );
-        break;
+      dispatch(setCategories(updated));
+      dispatch(setFilter({ key: "genres", value: updated }));
+      dispatch(listEventsBySearch());
+      break;
     }
-  };
 
-  const filteredEvents = events
-    .map((event) => {
-      const matchedShows = event.shows.filter((show) => {
-        const showDate = new Date(show.showDateTime);
-        return matchDateFilter(
-          showDate,
-          selectedDates,
-          selectedStartDate,
-          selectedEndDate
-        );
+    case "languages": {
+      const updated = selectedLanguage.includes(value)
+        ? selectedLanguage.filter((l) => l !== value)
+        : [...selectedLanguage, value];
+
+      dispatch(setLanguages(updated));
+      dispatch(setFilter({ key: "languages", value: updated }));
+      dispatch(listEventsBySearch());
+      break;
+    }
+
+    case "prices": {
+      const updated = selectedPrice.includes(value)
+        ? selectedPrice.filter((p) => p !== value)
+        : [...selectedPrice, value];
+
+      // map to PriceGroup[]
+      const mapped = updated.map((f) => {
+        if (f === "0 - 500") return { min: 0, max: 500 };
+        if (f === "501 - 2000") return { min: 501, max: 2000 };
+        if (f === "Above 2000") return { min: 2001, max: Number.MAX_SAFE_INTEGER };
+        return { min: 0, max: Number.MAX_SAFE_INTEGER }; // fallback
       });
 
-      if (matchedShows.length > 0) {
-        return {
-          ...event,
-          shows: matchedShows,
-        };
+      dispatch(setPrices(updated));
+      dispatch(setFilter({ key: "priceGroups", value: mapped }));
+      dispatch(listEventsBySearch());
+      break;
+    }
+
+    case "dates": {
+      const updated = selectedDates.includes(value)
+        ? selectedDates.filter((d) => d !== value)
+        : [...selectedDates, value];
+
+      // Agar "Date Range" remove hua → start & end date bhi reset karo
+      if (!updated.includes("Date Range")) {
+        dispatch(setStartDate(null));
+        dispatch(setEndDate(null));
+        dispatch(setFilter({ key: "startDate", value: null }));
+        dispatch(setFilter({ key: "endDate", value: null }));
       }
-      return null;
-    })
-    .filter((event): event is (typeof events)[0] => event !== null)
-    .filter((event) => {
-      const genreMatch =
-        selectedCategories.length === 0 ||
-        selectedCategories.includes(event.genre);
 
-      const langMatch =
-        selectedLanguage.length === 0 ||
-        selectedLanguage.includes(event.defaultLang);
+      dispatch(setDates(updated));
+      dispatch(setFilter({ key: "datePresets", value: updated }));
+      dispatch(listEventsBySearch());
+      break;
+    }
+  }
+};
 
-      const priceMatch =
-        selectedPrice.length === 0 ||
-        selectedPrice.some((priceRange) => {
-          const price = event.basePrice;
-          if (priceRange === "Free") return price === 0;
-          if (priceRange === "0 - 500") return price >= 0 && price <= 500;
-          if (priceRange === "501 - 2000") return price >= 501 && price <= 2000;
-          if (priceRange === "Above 2000") return price > 2000;
-          return false;
-        });
 
-      return genreMatch && langMatch && priceMatch;
-    });
+
 
   const getAllFilterOptions = () => {
     return Array.from(
@@ -173,10 +165,11 @@ export default function EventList() {
         ...selectedPrice,
         ...selectedLanguage,
         ...selectedCategories,
-        ...categories,
+        ...categoryOptions
       ])
     );
   };
+
 
   const isFilterSelected = (tag: string): boolean => {
     return (
@@ -187,6 +180,11 @@ export default function EventList() {
     );
   };
 
+  useEffect(()=>{
+    dispatch(listEventsBySearch());
+  },[]);
+
+
 
   return (
     <div className="py-4">
@@ -195,13 +193,14 @@ export default function EventList() {
       {/* Filter Tags */}
       <div className="overflow-x-auto md:overflow-visible scrollbar-hide mb-6">
         <div className="flex flex-nowrap md:flex-wrap gap-2">
+
           {getAllFilterOptions().map((tag, i) => (
             <span
               key={i}
               onClick={() => {
-                if (categories.includes(tag))
+                if (categoryOptions.includes(tag))
                   handleFilterToggle("categories", tag);
-                else if (selectedLanguage.includes(tag))
+                if (selectedLanguage.includes(tag))
                   handleFilterToggle("languages", tag);
                 else if (selectedPrice.includes(tag))
                   handleFilterToggle("prices", tag);
@@ -222,12 +221,13 @@ export default function EventList() {
       </div>
 
       {/* Show active filters summary */}
-      {(selectedDates.length > 0 ||
+      {( 
+        selectedDates.length > 0 ||
         selectedPrice.length > 0 ||
         selectedLanguage.length > 0 ||
         selectedCategories.length > 0) && (
         <div className="mb-4 text-sm text-gray-600">
-          {filteredEvents.length} events found
+          {events?.length} events found
           {selectedDates.length > 0 && ` • Dates: ${selectedDates.join(", ")}`}
           {selectedCategories.length > 0 &&
             ` • Categories: ${selectedCategories.join(", ")}`}
@@ -237,11 +237,12 @@ export default function EventList() {
         </div>
       )}
 
+
       {/* Events Grid */}
       <div className="grid  grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 py-2">
-        {filteredEvents.length > 0 ? (
-          filteredEvents.map((event) => {
-            const slug = event.contentName
+        {events.length > 0 ? (
+          events?.map((event) => {
+            const slug = event.eventName
               .toLowerCase()
               .trim()
               .replace(/&/g, "and") // & ko 'and' me convert
@@ -250,9 +251,9 @@ export default function EventList() {
 
             return (
               <button
-                key={event.contentId}
+                key={event.eventId}
                 onClick={() =>
-                  navigate(`/events/${slug}/${event.contentId}`, {
+                  navigate(`/events/${slug}/${event.eventId}`, {
                     state: event,
                   })
                 }

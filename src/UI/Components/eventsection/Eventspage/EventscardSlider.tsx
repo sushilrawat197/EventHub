@@ -2,13 +2,11 @@ import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import type { Content } from "../../../../interfaces/eventInterface/eventInterface";
-// import { useEffect } from "react";
-// import { getEvents } from "../../../../services/operations/eventsApi";
-// import { useAppDispatch } from "../../../../reducers/hooks";
+
+import type {  EventResponseBySearch } from "../../../../interfaces/eventInterface/evnetInterFace";
 
 interface EventscardSliderProps {
-  events: Content[];
+  events: EventResponseBySearch[];
 }
 
 export default function EventscardSlider({
@@ -70,7 +68,7 @@ export default function EventscardSlider({
         <div className="lg:w-3xl md:w-3xl w-80">
           <Slider {...settings}>
             {events.map((event, index) => {
-              const slug = event.contentName
+              const slug = event.eventName
                 .toLowerCase()
                 .trim()
                 .replace(/&/g, "and") // & ko 'and' me convert
@@ -82,7 +80,7 @@ export default function EventscardSlider({
                   key={index}
                   className="p-1 cursor-pointer"
                   onClick={() =>
-                    navigate(`/events/${slug}/${event.contentId}`, {
+                    navigate(`/events/${slug}/${event.eventId}`, {
                       state: event,
                     })
                   }
@@ -90,13 +88,13 @@ export default function EventscardSlider({
                   <div className="flex flex-col items-center bg-white rounded-lg p-2">
                     <div className="h-40 w-24 lg:w-52 lg:h-52 mt-2">
                       <img
-                        src={event.thumbnail || ""}
-                        alt={event.title}
+                        src={event.thumbnailUrl || ""}
+                        alt={event.eventName}
                         className="h-full w-full object-cover rounded-md"
                       />
                     </div>
                     <p className="mt-2 text-center lg:w-40 md:w-30 sm:w-20 text-sm lg:font-semibold lg:text-lg">
-                      {event.title}
+                      {event.genre}
                     </p>
                   </div>
                 </div>

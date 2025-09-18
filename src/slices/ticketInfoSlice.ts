@@ -1,43 +1,35 @@
-// types.ts
-
-type Show = {
-  showId: number;
-  showDateTime: string;
-  maxTicketsPerPerson: number;
-  availableSeats: number;
-  venue: {
-    venueId: number;
-    name: string;
-    city: string;
-    address: string;
-    capacity: number;
-    facilities: string[];
-  };
-};
-
 // showSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-interface ShowState {
-  show: Show | null; 
-}
 
-const initialState: ShowState = {
-  show: null,
+// types.ts
+export type TicketInfo = {
+  venueId: number | null;
+  venueName: string;
+  showId: number | null;
+  categoryId: number | null;
+  ticketCount: number | null;
 };
 
-const showSlice = createSlice({
-  name: "show",
+
+const initialState: TicketInfo = {
+  venueId: null,
+  venueName: "",
+  showId: null,
+  categoryId: null,
+  ticketCount: null,
+};
+
+const ticketInfoSlice = createSlice({
+  name: "ticketInfo",
   initialState,
   reducers: {
-    setShow: (state, action: PayloadAction<Show>) => {
-      state.show = action.payload; // 👈 ek show assign karega
+    setTicketInfo: (state, action: PayloadAction<Partial<TicketInfo>>) => {
+      return { ...state, ...action.payload };
     },
-    clearShow: (state) => {
-      state.show = null;
-    },
+    resetTicketInfo: () => initialState,
   },
 });
 
-export const { setShow, clearShow } = showSlice.actions;
-export default showSlice.reducer;
+export const { setTicketInfo, resetTicketInfo } = ticketInfoSlice.actions;
+export default ticketInfoSlice.reducer;
