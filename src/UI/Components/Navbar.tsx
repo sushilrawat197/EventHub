@@ -48,25 +48,25 @@ const Navbar: React.FC = () => {
     dispatch(setSelectedCity(city.id));
     setCityDropdownOpen(false);
 
-   
     dispatch(setFilter({ key: "cityId", value: city.id }));
     console.log(city.id);
 
     dispatch(listEventsBySearch());
   };
 
+  useEffect(() => {
+    if (cities.length > 0 && selectedCity === "Select City") {
+      const preCity = cities.find((item) => item.label === "Cape Town");
+      if (preCity) {
+        dispatch(setSelectedCity(preCity.id));
+        setSelectedCityNav(preCity.label);
+      }
+    }
+  }, [cities, dispatch, selectedCity]);
 
   useEffect(() => {
-    console.log("calling list all city");
-    const preCity = cities.find((item) => item.label === "Cape Town");
-    dispatch(setSelectedCity(preCity?.id ?? 0));
-    setSelectedCityNav(preCity?.label ?? "");
-  }, [dispatch, cities]);
-
-  useEffect(() => {
-  dispatch(listCitiesByRegion());
-}, [dispatch]);
-
+    dispatch(listCitiesByRegion());
+  }, [dispatch]);
 
   return (
     <>

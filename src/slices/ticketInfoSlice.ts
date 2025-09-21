@@ -9,6 +9,7 @@ export type TicketInfo = {
   showId: number | null;
   categoryId: number | null;
   ticketCount: number | null;
+  bookingId:number | null;
 };
 
 
@@ -18,6 +19,7 @@ const initialState: TicketInfo = {
   showId: null,
   categoryId: null,
   ticketCount: null,
+  bookingId:null,
 };
 
 const ticketInfoSlice = createSlice({

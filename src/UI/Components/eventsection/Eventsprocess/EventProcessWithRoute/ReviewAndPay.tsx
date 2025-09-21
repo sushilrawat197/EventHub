@@ -43,7 +43,6 @@ const ReviewAndPay = () => {
   }
 
 
-
   function handleCancelConfirm() {
     if (bookingId) {
       dispatch(cancelBooking(bookingId));
@@ -57,8 +56,10 @@ const ReviewAndPay = () => {
   }
 
 
-  function submitHandler(){
-     navigate(`/payment`)
+ async function submitHandler(){
+
+     navigate(`/events/${contentName}/${eventId}/booking/payment`,{ replace: true })
+
   }
 
   return (

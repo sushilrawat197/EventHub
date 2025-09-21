@@ -7,8 +7,9 @@ import {
 } from "react-icons/fa";
 import { MdOutlineTranslate } from "react-icons/md";
 import { LuTickets } from "react-icons/lu";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../../../reducers/hooks";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+import { checkEventAvailability } from "../../../../services/operations/eventsApi";
 
 export interface EventDetailsCardProps {
   date?: string;
@@ -55,8 +56,10 @@ export default function EventDetailsCard({
   // console.log('PRINTING CONTEND_ID : ',contentId)
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   // console.log(contentId);
 
+  const { eventId } = useParams();
 
   const shows = useAppSelector((state) => state.shows.data);
 
@@ -64,44 +67,30 @@ export default function EventDetailsCard({
     new Map(shows.map((s) => [s.venueId, s])).values()
   );
 
-  
+  const uniqueDates = Array.from(new Set(shows.map((s) => s.showDate)));
+
+  console.log("Unique Dates:", uniqueDates);
+
+ async function bookHandler() {
+  if (eventId) {
+    // API call result wait karo
+    const result = await dispatch(checkEventAvailability(eventId));
 
 
-const uniqueDates = Array.from(new Set(shows.map((s) => s.showDate)));
-console.log("Unique Dates:", uniqueDates);
-  
 
-function bookHandler() {
-  if (uniqueVenues.length > 1) {
-  
-    navigate(`${location.pathname}/booking/venue`);
-  } else {
-
-    const uniqueDates = Array.from(new Set(shows.map((s) => s.showDate)));
-
-    if (uniqueDates.length > 1) {
-
-      navigate(`${location.pathname}/booking/datetime`);
-    } else {
-
-      const selectedDate = uniqueDates[0];
-      const showsForDate = shows.filter((s) => s.showDate === selectedDate);
-
-      const uniqueTimes = Array.from(
-        new Set(showsForDate.map((s) => s.startTime))
-      );
-
-      if (uniqueTimes.length > 1) {
-
-        navigate(`${location.pathname}/booking/datetime`);
-      } else {
- 
-        navigate(`${location.pathname}/booking/ticket`);
-      }
+    if (result?.soldOut) {
+      alert("This event's tickets are sold out");
+      return; // flow stop
     }
   }
-}
 
+  // Agar eventSoldOut nahi tha to ye hamesha chalega
+  if (uniqueVenues.length > 1) {
+    navigate(`${location.pathname}/booking/venue`);
+  } else {
+    navigate(`${location.pathname}/booking/datetime`);
+  }
+}
 
 
   return (

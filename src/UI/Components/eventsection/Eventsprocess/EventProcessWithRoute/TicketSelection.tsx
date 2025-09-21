@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
   const dispatch = useAppDispatch();
   const navigate=useNavigate();
   const ticketCategory = useAppSelector((state) => state.ticketCategory.data || []);
+
   const showId = useAppSelector((state) => state.ticket.showId); 
   const {contentName,eventId}=useParams();
 
@@ -39,41 +40,47 @@ import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
   };
 
 
-  let categoryId: number;
-  let count: number;
-
-const entries = Object.entries(selectedTickets);
-
-if (entries.length > 0) {
-  const [id, cnt] = entries[0]; // destructure
-   categoryId = Number(id);
-   count = cnt;
-
-  console.log(categoryId, count); // e.g. 16, 1
-} else {
-  console.log("No tickets selected");
-}
+const categories = Object.entries(selectedTickets)
+  .filter(([, cnt]) => cnt > 0) // zero tickets mat bhejo
+  .map(([id, cnt]) => ({
+    categoryId: Number(id),
+    count: cnt,
+  }));
 
 
 
-
-function clickHandler() {
+async function clickHandler() {
   if (!userId) {
-    const wantToLogin = window.confirm("You need to login to proceed. Do you want to login now?");
+    const wantToLogin = window.confirm(
+      "You need to login to proceed. Do you want to login now?"
+    );
 
     if (wantToLogin) {
       navigate("/login", { state: { from: location.pathname } });
     } else {
-      // Cancel dabaya → kuch bhi mat karo
       console.log("User cancelled login");
     }
 
-  } else if(!count){
-       window.alert("Add at least one ticket! ");
-  }else {
-    navigate(`/events/${contentName}/${eventId}/booking/payment`,{ replace: true })
-     console.log("Reserve ticket details ",categoryId,Number(userId),count)
-      dispatch(reserveTicket(categoryId,Number(userId),count ))
+  } else if (!categories) {
+    window.alert("Add at least one ticket!");
+  } else {
+    try {
+      const res = await dispatch(
+         reserveTicket(Number(userId), categories)
+      );
+
+      console.log("Reserve ticket details ",categories);
+
+      if (res?.success) {
+        navigate(
+          `/events/${contentName}/${eventId}/booking/reviewandpay`,
+          { replace: true }
+        );
+        // dispatch(setTicketInfo({ bookingId:reserveTicket}));
+      }
+    } catch (err) {
+      console.error("Reservation failed", err);
+    }
   }
 }
 

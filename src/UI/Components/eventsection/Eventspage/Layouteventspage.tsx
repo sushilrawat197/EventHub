@@ -123,6 +123,7 @@ console.log(uniqueVenues)
       <div className="flex justify-between gap-20 ">
         {/* LEFT SIDE */}
         <div className="flex-1 space-y-5">
+          
           <EventHeroCard
             title={singleEvent?.name ?? ""}
             image={singleEvent?.thumbnailUrl ?? null}

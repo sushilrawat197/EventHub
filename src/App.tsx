@@ -28,9 +28,11 @@ import VenueSelection from "./UI/Components/eventsection/Eventsprocess/EventProc
 import DateTimeSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/DateTimeSelection";
 import TicketSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/TicketSelection";
 import ReviewAndPay from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/ReviewAndPay";
+import PaymentPage from "./UI/Components/eventsection/PaymentPage";
+import BookingConfirmed from "./UI/Components/common/BookingConfirmPage";
+import BookingOrder from "./UI/Components/dasboard/BookingOrder";
 // import TicketSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/TicketSelection";
 // import ReviewAndPay from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/ReviewAndPay";
-
 
 function App() {
   const dispatch = useAppDispatch();
@@ -134,17 +136,42 @@ function App() {
             element={<Layouteventspage />}
           />
           <Route path="/helpandsupport" element={<HelpAndSupport />} />
+
+            <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <BookingOrder />
+            </ProtectedRoute>
+          }
+        />
+
+         <Route
+          path="order/:bookingId"
+          element={
+            <ProtectedRoute>
+              <BookingConfirmed />
+            </ProtectedRoute>
+          }
+        />
+
+
+
         </Route>
-       {/* Normal Route End */}
 
+        <Route
+          path="/bookingconfirmed/:bookingId"
+          element={
+            <ProtectedRoute>
+              <BookingConfirmed />
+            </ProtectedRoute>
+          }
+        />
 
+      
+        {/* Normal Route End */}
 
-{/* BOOKING ROUTE START */}
-        {/* <Route path="/booking/:id" element={<BookingFlow />} /> */}
-
-        {/* <Route path="/events/:contentName/:eventId/booking" element={<BookingFlow />} /> */}
-
-
+        {/* BOOKING ROUTE START */}
 
         <Route
           path="/events/:contentName/:eventId/booking/*"
@@ -153,19 +180,21 @@ function App() {
           <Route path="venue" element={<VenueSelection />} />
           <Route path="datetime" element={<DateTimeSelection />} />
 
+          <Route path="ticket" element={<TicketSelection />} />
           <Route
-            path="ticket"
+            path="reviewandpay"
             element={
-      
-                <TicketSelection />
-  
+              <ProtectedRoute>
+                <ReviewAndPay />
+              </ProtectedRoute>
             }
           />
+
           <Route
             path="payment"
             element={
               <ProtectedRoute>
-                <ReviewAndPay />
+                <PaymentPage />
               </ProtectedRoute>
             }
           />

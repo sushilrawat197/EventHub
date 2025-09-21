@@ -7,43 +7,6 @@ import type { EventResponse, EventResponseBySearch } from "../../interfaces/even
 import type { RootState } from "../../reducers/store"; // apna store path
 
 
-// ---------------------- List All Events ----------------------
-// export function listAllEvents() {
-//   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
-//     dispatch(setEventsLoading(true));
-//     try {
-//       const response = await apiConnector<OtherApiResponse<EventResponse[]>>({
-//         method: "GET",
-//         url: `https://thedemonstrate.com/ticketcore-api/api/v1/events`,
-//         headers: { "X-Client-Source": "WEB" },
-//         withCredentials: true,
-//       });
-
-//     //   console.log("LIST ALL EVENTS RESPONSE:", response.data);
-
-//       if (response.data.statusCode === 200) {
-//         dispatch(setAllEvents(response.data.data));
-//         return { success: true };
-//       }
-
-//       return { success: false };
-//     } catch (error) {
-//       if (axios.isAxiosError(error)) {
-//         console.error("Axios error:", error.response);
-//       } else {
-//         console.error("Unknown error:", error);
-//       }
-//       return { success: false };
-//     } finally {
-//        dispatch(setEventsLoading(false));
-//     }
-//   };
-// }
-
-
-// ---------------------- List Events By Search ----------------------
-
-
 
 export function listEventsBySearch() {
   return async (dispatch: AppDispatch, getState: () => RootState): Promise<{ success: boolean }> => {
@@ -53,7 +16,7 @@ export function listEventsBySearch() {
 
       const filters = getState().searchFilter; // 👈 redux filters state
 
-      console.log("Printing Filters Data",filters)
+      console.log("Printing Filters Data", filters)
 
       const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
         method: "POST",
@@ -63,7 +26,7 @@ export function listEventsBySearch() {
         withCredentials: true,
       });
 
-      console.log("Search Data",response.data);
+      console.log("Search Data", response.data);
 
       if (response.data.statusCode === 200) {
         dispatch(setAllEventsBySearch(response.data.data));
@@ -87,7 +50,7 @@ export function listEventsBySearch() {
 
 
 
-export function listEventById(eventId:string) {
+export function listEventById(eventId: string) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     dispatch(setEventsLoading(true));
     try {
@@ -98,7 +61,7 @@ export function listEventById(eventId:string) {
         withCredentials: true,
       });
 
-    //   console.log("LIST ALL EVENTS RESPONSE:", response.data);
+      //   console.log("LIST ALL EVENTS RESPONSE:", response.data);
 
       if (response.data.statusCode === 200) {
         dispatch(setSingleEvent(response.data.data));
@@ -114,7 +77,58 @@ export function listEventById(eventId:string) {
       }
       return { success: false };
     } finally {
-       dispatch(setEventsLoading(false));
+      dispatch(setEventsLoading(false));
+    }
+  };
+}
+
+
+
+export interface Show {
+  showId: number;
+  showDate: string;   // ISO date: "YYYY-MM-DD"
+  startTime: string;  // "HH:mm:ss"
+  venueName: string;
+  soldOut: boolean;
+}
+
+export interface EventShows {
+  shows: Show[];
+  eventId: number;
+  eventSoldOut: boolean;
+}
+
+
+export function checkEventAvailability(eventId: string) {
+  return async (): Promise<{ success: boolean; soldOut: boolean }> => {
+    try {
+      const response = await apiConnector<OtherApiResponse<EventShows>>({
+        method: "GET",
+        url: `https://thedemonstrate.com/ticketcore-api/api/v1/events/${eventId}/availability`,
+        headers: { "X-Client-Source": "WEB" },
+        withCredentials: true,
+      });
+
+      console.log("CHECK EVENTS AVAILABILITY RESPONSE:", response.data);
+
+      if (response.data.statusCode === 200) {
+        const eventData = response.data.data;
+
+        if (eventData.eventSoldOut) {
+          return { success: true, soldOut: true };
+        }
+
+        return { success: true, soldOut: false };
+      }
+
+      return { success: false, soldOut: false };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.response);
+      } else {
+        console.error("Unknown error:", error);
+      }
+      return { success: false, soldOut: false };
     }
   };
 }

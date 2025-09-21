@@ -40,6 +40,7 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
 
   const selectedFilters = useAppSelector((state) => state.filter[filterKey]);
 
+  
   const handleOptionClick = (opt: string) => {
     if (opt === "Date Range") {
       setShowCalendar(true);
@@ -85,7 +86,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
           return { min: 2001, max: Number.MAX_SAFE_INTEGER };
         return { min: 0, max: Number.MAX_SAFE_INTEGER }; // fallback
       });
-
       dispatch(setPrices(newFilters));
       dispatch(setFilter({ key: "priceGroups", value: mappedFilters }));
       dispatch(listEventsBySearch());

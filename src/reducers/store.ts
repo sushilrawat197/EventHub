@@ -10,6 +10,8 @@ import searchFilterReducer from "../slices/filter_Slice"
 import ticketCategoryReducer from "../slices/ticketCategory"
 import venueReducer from "../slices/venueSlice"
 import reserveTicketReducer from "../slices/reserveTicketSlice"
+import confirmBookingReducer from "../slices/confirmBookingSlice"
+import orderReducer from "../slices/orderDetails"
 
 
 export const store = configureStore({
@@ -26,6 +28,8 @@ export const store = configureStore({
     ticketCategory:ticketCategoryReducer,
     venue:venueReducer,
     reserveTicket:reserveTicketReducer,
+    confirmBooking:confirmBookingReducer,
+    order:orderReducer,
   },
 });
 
