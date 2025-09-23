@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
 import { setEventsErrorMsg } from "../../../slices/eventSlice";
 import { createPortal } from "react-dom";
+import { useEffect } from "react";
 
 export default function EventsErrorPage() {
   const dispatch = useAppDispatch();
@@ -13,7 +14,14 @@ export default function EventsErrorPage() {
   const location = useLocation();
   console.log(eventErroMsg);
 
-  // Agar error message empty/null hai, component render na ho
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto"; 
+    };
+  }, []);
+
+
   if (!eventErroMsg) return null;
 
   return createPortal(
@@ -39,7 +47,7 @@ export default function EventsErrorPage() {
                 className="w-full sm:w-auto px-4 py-2 rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                 onClick={() => {
                   dispatch(setEventsErrorMsg("")); // clear message
-                  navigate("/login",{ state: { from: location.pathname } });
+                  navigate("/login", { state: { from: location.pathname } });
                 }}
               >
                 Login
@@ -54,25 +62,18 @@ export default function EventsErrorPage() {
                 Cancel
               </button>
             </>
-          ):(
-             <button
-            className="w-full sm:w-auto px-4 py-2 rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-            onClick={() => {
-              dispatch(setEventsErrorMsg("")); // clear message
-              navigate("/events");
-            }}
-          >
-            See more events
-          </button>
-
-          )
-        
-        
-        }
-
-         
+          ) : (
+            <button
+              className="w-full sm:w-auto px-4 py-2 rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+              onClick={() => {
+                dispatch(setEventsErrorMsg("")); // clear message
+                navigate("/events");
+              }}
+            >
+              See more events
+            </button>
+          )}
         </div>
-
       </motion.div>
     </div>,
     document.body // 👈 ye add karna zaroori hai
