@@ -53,7 +53,7 @@ export default function BookingConfirmed() {
   return (
     <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] bg-gray-100 flex flex-col items-center p-6">
       {/* Header Confirmation */}
-      <div className="w-full max-w-5xl bg-white shadow-md rounded-lg p-4 mb-6 flex items-center justify-center">
+      <div className="w-full max-w-5xl bg-white shadow-md rounded-lg p-4 mb-6 flex items-center justify-center mt-3">
         <p className=" font-semibold text-lg">
           {confirmBookingDetails?.status == "CONFIRMED" ? (
             <p className="text-green-600">✅ Booking Confirmed</p>
