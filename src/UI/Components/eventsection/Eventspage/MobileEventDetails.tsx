@@ -26,7 +26,6 @@ interface EventDetailsCardProps {
   priceNote?: string;
 }
 
-
 export default function MobileEventDetailsCard({
   date,
   time,
@@ -40,7 +39,7 @@ export default function MobileEventDetailsCard({
   priceNote,
 }: EventDetailsCardProps) {
   const details = [
-    { icon: <FaCalendarAlt />, text: date },
+    ...(date ? [{ icon: <FaCalendarAlt />, text: date }] : []),
     ...(time ? [{ icon: <FaClock />, text: time }] : []),
     { icon: <LuTickets />, text: duration || "Duration not available" },
     {
@@ -61,11 +60,11 @@ export default function MobileEventDetailsCard({
 
   const bookHandler = async () => {
     if (eventId) {
-       const result = await dispatch(checkEventAvailability(eventId));
-            if (result?.soldOut) {
-              dispatch(setEventsErrorMsg("All shows are sold out for this event"));
-              return;
-            }
+      const result = await dispatch(checkEventAvailability(eventId));
+      if (result?.soldOut) {
+        dispatch(setEventsErrorMsg("All shows are sold out for this event"));
+        return;
+      }
     }
 
     const uniqueShows = Array.from(
