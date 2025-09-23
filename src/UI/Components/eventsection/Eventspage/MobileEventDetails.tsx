@@ -11,6 +11,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../../../reducers/hooks";
 import { checkEventAvailability } from "../../../../services/operations/eventsApi";
 import { setTicketInfo } from "../../../../slices/ticketInfoSlice";
+import { setEventsErrorMsg } from "../../../../slices/eventSlice";
 
 interface EventDetailsCardProps {
   date?: string;
@@ -60,11 +61,11 @@ export default function MobileEventDetailsCard({
 
   const bookHandler = async () => {
     if (eventId) {
-      const result = await dispatch(checkEventAvailability(eventId));
-      if (result?.soldOut) {
-        alert("This event's tickets are sold out");
-        return;
-      }
+       const result = await dispatch(checkEventAvailability(eventId));
+            if (result?.soldOut) {
+              dispatch(setEventsErrorMsg("All shows are sold out for this event"));
+              return;
+            }
     }
 
     const uniqueShows = Array.from(

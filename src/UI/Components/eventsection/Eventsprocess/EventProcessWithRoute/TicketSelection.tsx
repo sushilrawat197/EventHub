@@ -54,15 +54,6 @@ const TicketSelection = () => {
   async function clickHandler() {
     if (!userId) {
       dispatch(setEventsErrorMsg("You need to login to proceed. Do you want to login now?"))
-      // const wantToLogin = window.confirm(
-      //   "You need to login to proceed. Do you want to login now?"
-      // );
-
-      // if (wantToLogin) {
-      //   navigate("/login", { state: { from: location.pathname } });
-      // } else {
-      //   console.log("User cancelled login");
-      // }
     } else if (!categories) {
       window.alert("Add at least one ticket!");
     } else {
