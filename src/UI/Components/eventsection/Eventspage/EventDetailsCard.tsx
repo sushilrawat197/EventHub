@@ -11,6 +11,9 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { checkEventAvailability } from "../../../../services/operations/eventsApi";
 import { setTicketInfo } from "../../../../slices/ticketInfoSlice";
+import { setEventsErrorMsg } from "../../../../slices/eventSlice";
+import EventsErrorPage from "../EventErrorsd";
+
 
 export interface EventDetailsCardProps {
   date?: string;
@@ -41,7 +44,8 @@ export default function EventDetailsCard({
   priceNote,
 }: EventDetailsCardProps) {
   const details = [
-    { icon: <FaCalendarAlt />, text: date },
+
+    ...(date?[{ icon: <FaCalendarAlt />, text: date }]:[]),
     ...(time ? [{ icon: <FaClock />, text: time }] : []),
     { icon: <LuTickets />, text: duration || "Duration not available" },
     {
@@ -53,12 +57,19 @@ export default function EventDetailsCard({
     ...(venue ? [{ icon: <FaMapMarkerAlt />, text: venue }] : []),
   ];
 
+
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { eventId } = useParams();
 
+
   const shows = useAppSelector((state) => state.shows.data);
+
+
+
+
+  
 
   const uniqueShows = Array.from(
     new Map(shows.map((s) => [`${s.eventId}-${s.venueId}`, s])).values()
@@ -70,7 +81,7 @@ export default function EventDetailsCard({
     if (eventId) {
       const result = await dispatch(checkEventAvailability(eventId));
       if (result?.soldOut) {
-        alert("This event's tickets are sold out");
+        dispatch(setEventsErrorMsg("All shows are sold out for this event"));
         return;
       }
     }
@@ -115,9 +126,12 @@ export default function EventDetailsCard({
     }
   }
 
+
+
   return (
     <div className="border-2 border-sky-500 shadow-sm shadow-sky-500 rounded-xl p-4 w-full max-w-sm bg-white space-y-4">
       {/* Details List */}
+      <EventsErrorPage/>
       <div className="space-y-4">
         {details.map((item, idx) => (
           <div key={idx} className="flex items-center gap-4 text-gray-900">

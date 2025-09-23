@@ -8,6 +8,7 @@ interface EventsState {
   allEventsBySearch:PageData<EventResponseBySearch> | null;
   singleEvent: EventResponse | null; // ek event by ID
   eventloading: boolean;
+  eventErrorMsg:string | null;
 }
 
 const initialState: EventsState = {
@@ -15,6 +16,8 @@ const initialState: EventsState = {
   allEventsBySearch : null,
   singleEvent: null,
   eventloading: false,
+  eventErrorMsg: ""
+
 };
 
 const eventsSlice = createSlice({
@@ -33,6 +36,9 @@ const eventsSlice = createSlice({
     setEventsLoading: (state, action: PayloadAction<boolean>) => {
       state.eventloading= action.payload;
     },
+    setEventsErrorMsg: (state, action: PayloadAction<string>) => {
+      state.eventErrorMsg= action.payload;
+    },
     clearSingleEvent: (state) => {
       state.singleEvent = null; // navigate karte waqt reset karne ka option
     }
@@ -44,7 +50,8 @@ export const {
   setSingleEvent,
   setEventsLoading,
   clearSingleEvent,
-  setAllEventsBySearch
+  setAllEventsBySearch,
+  setEventsErrorMsg
 } = eventsSlice.actions;
 
 export default eventsSlice.reducer;

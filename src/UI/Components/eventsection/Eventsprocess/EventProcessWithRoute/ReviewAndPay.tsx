@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
 import PrimaryButton from "../PrimaryButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cancelBooking } from "../../../../../services/operations/ticketCategory";
 
 // Review & Payment Component
@@ -60,6 +60,23 @@ const ReviewAndPay = () => {
  async function submitHandler(){
      navigate(`/events/${contentName}/${eventId}/booking/payment`,{ replace: true })
   }
+
+  
+ useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Only warn if there is a reserved ticket
+      if (reserveTicket) {
+        e.preventDefault();
+        e.returnValue = ""; // Required for Chrome
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [reserveTicket]);
 
   return (
     <>

@@ -8,6 +8,8 @@ import {
   reserveTicket,
 } from "../../../../../services/operations/ticketCategory";
 import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
+import { setEventsErrorMsg } from "../../../../../slices/eventSlice";
+import EventsErrorPage from "../../EventErrorsd";
 
 
 const TicketSelection = () => {
@@ -51,15 +53,16 @@ const TicketSelection = () => {
 
   async function clickHandler() {
     if (!userId) {
-      const wantToLogin = window.confirm(
-        "You need to login to proceed. Do you want to login now?"
-      );
+      dispatch(setEventsErrorMsg("You need to login to proceed. Do you want to login now?"))
+      // const wantToLogin = window.confirm(
+      //   "You need to login to proceed. Do you want to login now?"
+      // );
 
-      if (wantToLogin) {
-        navigate("/login", { state: { from: location.pathname } });
-      } else {
-        console.log("User cancelled login");
-      }
+      // if (wantToLogin) {
+      //   navigate("/login", { state: { from: location.pathname } });
+      // } else {
+      //   console.log("User cancelled login");
+      // }
     } else if (!categories) {
       window.alert("Add at least one ticket!");
     } else {
@@ -81,23 +84,20 @@ const TicketSelection = () => {
   }
 
 
-// 1. Load ticketInfo from localStorage on mount
-// useEffect(() => {
-//   const savedTicketInfo = localStorage.getItem("ticketInfo");
-//   if (savedTicketInfo) {
-//     dispatch(setTicketInfo(JSON.parse(savedTicketInfo)));
-//   }
-// }, [dispatch]);
 
-// 2. Jab showId change ho, tab categories fetch karo
 useEffect(() => {
-  if (showId) {
+   if(!showId){
+     navigate(`/events/${contentName}/${eventId}`,{ replace: true })
+    }else {
     dispatch(listAllTicketCategoriesByShowId(Number(showId)));
   }
-}, [dispatch, showId]);
+}, [dispatch, showId,contentName,eventId,navigate]);
+
+
 
   return (
     <div className="space-y-4 max-w-4xl mx-auto">
+      <EventsErrorPage/>
       <button
         onClick={() =>
           navigate(`/events/${contentName}/${eventId}/booking/datetime`, {

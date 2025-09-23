@@ -15,7 +15,7 @@ export default function BookingErrorPage() {
   if (!payMessage) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-[50] flex items-center justify-center bg-black/40 px-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -40,6 +40,7 @@ export default function BookingErrorPage() {
           >
             Back to Home
           </button>
+
           <button
             className="w-full sm:w-auto px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600"
             onClick={() => {

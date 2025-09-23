@@ -11,11 +11,12 @@ import { useEffect } from "react";
 import {
   listEventsBySearch,
   listEventById,
+  checkEventAvailability,
 } from "../../../../services/operations/eventsApi";
 
 import SpinnerLoading from "../../common/SpinnerLoading";
 import { clearSingleEvent } from "../../../../slices/eventSlice";
-import { listAllShowsByEvent } from "../../../../services/operations/showsApi";
+import { fetchFilteredShows, listAllShowsByEvent } from "../../../../services/operations/showsApi";
 
 export default function Layouteventspage() {
   const location = useLocation();
@@ -32,12 +33,23 @@ export default function Layouteventspage() {
   const singleEvent = useAppSelector((state) => state.events.singleEvent);
   const eventLoading = useAppSelector((state) => state.events.eventloading);
   const shows = useAppSelector((state) => state.shows.data);
+  // const availableShow=useAppSelector((state)=>state.availability.eventShows);
 
+
+  // console.log('AVAILABLE SHOWSS....',availableShow);
   console.log("list all shows :", shows);
+
+  // ------------------ FILTER SHOWS BASED ON AVAILABILITY ------------------
+// const filteredShows = shows.filter(show =>
+//   availableShow?.some(av => av.showId === show.showId && !av.soldOut)
+// );
+
+// console.log("FILTERED SHOW...",filteredShows);
 
   // console.log("SHOWS...",shows)
 
   const showDateObjs = shows.map((e) => new Date(e.showDate));
+
   let formattedDates = ""; // 👈 pehle declare karo
 
   if (showDateObjs.length > 0) {
@@ -90,7 +102,7 @@ console.log(uniqueVenues)
   // data.
   // ))
 
-  const sliderEvents = allEvents.filter((e) => e.genre === event.genre);
+  const sliderEvents = allEvents.filter((e) => e?.genre === event?.genre);
 
   const details = {
     date: formattedDates, // e.g., "Wed, 10 Sep 2025, Thu, 11 Sep 2025"
@@ -108,6 +120,10 @@ console.log(uniqueVenues)
       dispatch(clearSingleEvent()); // 👈 old data hatao
       dispatch(listEventById(eventId));
       dispatch(listAllShowsByEvent(eventId));
+      dispatch(checkEventAvailability(eventId));
+      dispatch(fetchFilteredShows(eventId));
+      
+      
     }
     dispatch(listEventsBySearch());
   }, [eventId, dispatch]);

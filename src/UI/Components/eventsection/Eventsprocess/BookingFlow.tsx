@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { cancelBooking } from "../../../../services/operations/ticketCategory";
@@ -38,6 +38,7 @@ export default function BookingFlow() {
     }
   }
 
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -57,7 +58,7 @@ export default function BookingFlow() {
 
             {/* Logo / Title */}
             <div className="text-sky-500 text-lg sm:text-2xl font-bold mr-4 sm:mr-8">
-              Ticketing
+             <NavLink to={"/"}> Ticketing</NavLink>
             </div>
 
             {/* Event Name */}

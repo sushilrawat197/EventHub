@@ -5,6 +5,7 @@ import { setAllEventsBySearch, setEventsLoading, setSingleEvent } from "../../sl
 import type { ApiResponse, OtherApiResponse } from "../../interfaces/country";
 import type { EventResponse, EventResponseBySearch } from "../../interfaces/eventInterface/evnetInterFace";
 import type { RootState } from "../../reducers/store"; // apna store path
+import { setAvailableEventShows } from "../../slices/availabilitySlice";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
@@ -84,7 +85,8 @@ export function listEventById(eventId: string) {
 
 
 
-export interface Show {
+
+export interface AvailableShow {
   showId: number;
   showDate: string;   // ISO date: "YYYY-MM-DD"
   startTime: string;  // "HH:mm:ss"
@@ -92,17 +94,17 @@ export interface Show {
   soldOut: boolean;
 }
 
-export interface EventShows {
-  shows: Show[];
+export interface EventAvailableShows {
+  shows: AvailableShow[];
   eventId: number;
   eventSoldOut: boolean;
 }
 
 
 export function checkEventAvailability(eventId: string) {
-  return async (): Promise<{ success: boolean; soldOut: boolean }> => {
+  return async (dispatch: AppDispatch): Promise<{ success: boolean; soldOut: boolean; data?: EventAvailableShows }> => {
     try {
-      const response = await apiConnector<OtherApiResponse<EventShows>>({
+      const response = await apiConnector<OtherApiResponse<EventAvailableShows>>({
         method: "GET",
         url: `${BASE_URL}/ticketcore-api/api/v1/events/${eventId}/availability`,
         headers: { "X-Client-Source": "WEB" },
@@ -112,13 +114,11 @@ export function checkEventAvailability(eventId: string) {
       console.log("CHECK EVENTS AVAILABILITY RESPONSE:", response.data);
 
       if (response.data.statusCode === 200) {
+        
         const eventData = response.data.data;
+        dispatch(setAvailableEventShows(eventData.shows));
 
-        if (eventData.eventSoldOut) {
-          return { success: true, soldOut: true };
-        }
-
-        return { success: true, soldOut: false };
+        return { success: true, soldOut: eventData.eventSoldOut, data: eventData };
       }
 
       return { success: false, soldOut: false };
@@ -132,5 +132,7 @@ export function checkEventAvailability(eventId: string) {
     }
   };
 }
+
+
 
 

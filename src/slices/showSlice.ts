@@ -1,6 +1,7 @@
 // src/features/Shows/ShowsSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
+
 export interface ShowResponse {
   showId: number;
   showDate: string;     // "YYYY-MM-DD"
@@ -14,6 +15,7 @@ export interface ShowResponse {
   basePrice: number;
   bookingType:string
 }
+
 
 
 interface ShowsState {

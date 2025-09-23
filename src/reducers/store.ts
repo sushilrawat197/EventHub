@@ -13,6 +13,7 @@ import reserveTicketReducer from "../slices/reserveTicketSlice"
 import confirmBookingReducer from "../slices/confirmBookingSlice"
 import orderReducer from "../slices/orderDetails"
 import payReducer from "../slices/payTicketSlice"
+import availableReducer from "../slices/availabilitySlice"
 
 export const store = configureStore({
   
@@ -31,6 +32,7 @@ export const store = configureStore({
     confirmBooking:confirmBookingReducer,
     order:orderReducer,
     pay:payReducer,
+    availability:availableReducer,
   },
 });
 

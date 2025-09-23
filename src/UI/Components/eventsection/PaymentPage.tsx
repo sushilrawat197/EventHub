@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
 import { ticketPay } from "../../../services/operations/ticketCategory";
 import { IoLocationSharp } from "react-icons/io5";
@@ -40,6 +40,22 @@ export default function PaymentPage() {
     dispatch(ticketPay(bookingId, mobile, navigate));
     // dispatch(confirmBooking(bookingId, navigate));
   }
+
+   useEffect(() => {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        // Only warn if there is a reserved ticket
+        if (reserveTicket) {
+          e.preventDefault();
+          e.returnValue = ""; // Required for Chrome
+        }
+      };
+  
+      window.addEventListener("beforeunload", handleBeforeUnload);
+  
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }, [reserveTicket]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center p-4">

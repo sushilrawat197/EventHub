@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
 import { useNavigate, useParams} from "react-router-dom";
 import { setTicketInfo } from "../../../../../slices/ticketInfoSlice";
@@ -16,11 +16,11 @@ const DateTimeSelection = (
   const venueId=useAppSelector((state)=>state.ticket.venueId);
   const shows = useAppSelector((state) => state.shows.data);
 
+
   // filter shows by event + venue
   const filteredShows = shows.filter((item) =>
       item.eventId === Number(eventId) && item.venueId === Number(venueId)
   );
-
 
 
   const [selectedDateIdx, setSelectedDateIdx] = useState<number | null>(null);
@@ -67,6 +67,8 @@ const DateTimeSelection = (
   };
 
 
+
+
   // 5️⃣ handle proceed
   const proceedHandler = () => {
     if (!selectedShowId) return alert("Please select date and time first!");
@@ -75,13 +77,13 @@ const DateTimeSelection = (
     dispatch(setTicketInfo({ showId:selectedShowId}));
   };
 
-  
-  // useEffect(() => {
-  //   const savedTicketInfo = localStorage.getItem("ticketInfo");
-  //   if (savedTicketInfo) {
-  //     dispatch(setTicketInfo(JSON.parse(savedTicketInfo)));
-  //   }
-  // }, [dispatch]);
+
+  useEffect(()=>{
+    if(!venueId){
+     navigate(`/events/${contentName}/${eventId}`,{ replace: true })
+    }
+  },[])
+
 
   return (
     <div className="max-w-4xl mx-auto rounded-2xl shadow-2xl p-6">
