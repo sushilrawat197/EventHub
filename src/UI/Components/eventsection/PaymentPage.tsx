@@ -5,6 +5,7 @@ import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { FaWallet } from "react-icons/fa";
 import BookingErrorPage from "./Eventsprocess/BookingError";
+import { ClipLoader } from "react-spinners";
 
 export default function PaymentPage() {
   const dispatch = useAppDispatch();
@@ -13,6 +14,7 @@ export default function PaymentPage() {
   const reserveTicket = useAppSelector((state) => state.reserveTicket.booking);
   const bookingId = useAppSelector((state) => state.ticket.bookingId);
   const [mobile, setMobile] = useState("");
+  const paymentLoading = useAppSelector((state) => state.pay.payTicketLoading);
   const isValid = mobile.length === 12;
 
   const eventDate = reserveTicket
@@ -35,20 +37,21 @@ export default function PaymentPage() {
     : "";
 
   function submitHandler() {
-    dispatch(ticketPay(bookingId,mobile,navigate));
+    dispatch(ticketPay(bookingId, mobile, navigate));
     // dispatch(confirmBooking(bookingId, navigate));
   }
-
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center p-4">
       <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-6">
-        <BookingErrorPage/>
+        <BookingErrorPage />
         {/* LEFT: Payment Options */}
         <div className="flex-1 flex flex-col lg:flex-row bg-white shadow-md rounded-2xl p-4 sm:p-6">
           {/* Payment Methods */}
           <div className="shadow px-4 sm:px-6 py-3 h-fit lg:h-full w-full lg:w-64 mb-4 lg:mb-0">
-            <h2 className="text-base sm:text-lg font-semibold mb-4">Payment Method</h2>
+            <h2 className="text-base sm:text-lg font-semibold mb-4">
+              Payment Method
+            </h2>
 
             <div className="space-y-4">
               {/* Mpesa/Wallet */}
@@ -107,18 +110,24 @@ export default function PaymentPage() {
                 </p>
               </div>
 
-              {/* Button */}
               <button
                 onClick={submitHandler}
-                disabled={!isValid}
+                disabled={!isValid || Boolean(paymentLoading)} // disable button while loading
                 className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base
-          ${
-            isValid
-              ? "bg-sky-500 hover:bg-sky-600 text-white cursor-pointer"
-              : "bg-gray-300 text-gray-600 cursor-not-allowed"
-          }`}
+                    ${
+                      isValid
+                        ? "bg-sky-500 hover:bg-sky-600 text-white cursor-pointer"
+                        : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    }`}
               >
-                Verify & Pay
+                {paymentLoading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <ClipLoader size={20} color="#ffffff" />
+                    Processing...
+                  </div>
+                ) : (
+                  "Verify & Pay"
+                )}
               </button>
             </div>
           </div>

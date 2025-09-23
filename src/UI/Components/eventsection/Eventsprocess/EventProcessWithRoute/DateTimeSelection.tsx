@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
 import { useNavigate, useParams} from "react-router-dom";
 import { setTicketInfo } from "../../../../../slices/ticketInfoSlice";
@@ -76,12 +76,12 @@ const DateTimeSelection = (
   };
 
   
-  useEffect(() => {
-    const savedTicketInfo = localStorage.getItem("ticketInfo");
-    if (savedTicketInfo) {
-      dispatch(setTicketInfo(JSON.parse(savedTicketInfo)));
-    }
-  }, [dispatch]);
+  // useEffect(() => {
+  //   const savedTicketInfo = localStorage.getItem("ticketInfo");
+  //   if (savedTicketInfo) {
+  //     dispatch(setTicketInfo(JSON.parse(savedTicketInfo)));
+  //   }
+  // }, [dispatch]);
 
   return (
     <div className="max-w-4xl mx-auto rounded-2xl shadow-2xl p-6">

@@ -8,7 +8,7 @@ import {
   reserveTicket,
 } from "../../../../../services/operations/ticketCategory";
 import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
-import { setTicketInfo } from "../../../../../slices/ticketInfoSlice";
+
 
 const TicketSelection = () => {
   const dispatch = useAppDispatch();
@@ -82,12 +82,12 @@ const TicketSelection = () => {
 
 
 // 1. Load ticketInfo from localStorage on mount
-useEffect(() => {
-  const savedTicketInfo = localStorage.getItem("ticketInfo");
-  if (savedTicketInfo) {
-    dispatch(setTicketInfo(JSON.parse(savedTicketInfo)));
-  }
-}, [dispatch]);
+// useEffect(() => {
+//   const savedTicketInfo = localStorage.getItem("ticketInfo");
+//   if (savedTicketInfo) {
+//     dispatch(setTicketInfo(JSON.parse(savedTicketInfo)));
+//   }
+// }, [dispatch]);
 
 // 2. Jab showId change ho, tab categories fetch karo
 useEffect(() => {

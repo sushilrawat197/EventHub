@@ -64,6 +64,8 @@ export default function EventDetailsCard({
     new Map(shows.map((s) => [`${s.eventId}-${s.venueId}`, s])).values()
   );
 
+
+  
   async function bookHandler() {
     if (eventId) {
       const result = await dispatch(checkEventAvailability(eventId));
@@ -141,9 +143,9 @@ export default function EventDetailsCard({
 
         <button
           onClick={bookHandler}
-          className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-bold"
+          className="bg-sky-500 hover:bg-sky-600  text-white px-4 py-2 rounded-md text-sm font-bold"
         >
-          Book
+          Book Now
         </button>
       </div>
     </div>

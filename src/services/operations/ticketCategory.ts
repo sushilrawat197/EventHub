@@ -11,7 +11,7 @@ import { setConfirmBooking } from "../../slices/confirmBookingSlice";
 import type { BookingResponse } from "../../interfaces/confirmBookingInterface";
 import { setLoading } from "../../slices/confirmBookingSlice";
 import type { payTickeResponse } from "../../interfaces/payTicketInterface";
-import {setPayMessage } from "../../slices/payTicketSlice";
+import {setPayMessage, setPayTicketLoading } from "../../slices/payTicketSlice";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
@@ -250,7 +250,7 @@ export function downloadTicket(bookingId: number | null) {
 export function ticketPay(bookingId: number | null,phoneNumber:string| null,navigate:NavigateFunction) {
   return async (dispatch:AppDispatch): Promise<{ success: boolean }> => {
     try {
-     dispatch(setLoading(true));
+     dispatch(setPayTicketLoading(true));
       const response = await apiConnector<OtherApiResponse<payTickeResponse>>({
         method: "POST",
         url: `${BASE_URL}/ticketcore-api/api/v1/payments/mpesa/pay`,
@@ -260,7 +260,7 @@ export function ticketPay(bookingId: number | null,phoneNumber:string| null,navi
       });
 
         if (response.data.statusCode === 200) {
-           navigate(`/bookingconfirmed/${response?.data?.data?.bookingId}`);
+           navigate(`/order/${response?.data?.data?.bookingId}`);
            return { success: true };
           }
 
@@ -276,7 +276,7 @@ export function ticketPay(bookingId: number | null,phoneNumber:string| null,navi
       }
       return { success: false };
     } finally {
-      dispatch(setLoading(false));
+      dispatch(setPayTicketLoading(false));
     }
   };
 }

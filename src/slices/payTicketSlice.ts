@@ -4,11 +4,13 @@ import type { payTickeResponse } from "../interfaces/payTicketInterface";
 interface BookingState {
   booking: payTickeResponse | null;
   payMessege: string
+  payTicketLoading:boolean | null
 }
 
 const initialState: BookingState = {
   booking: null,
-  payMessege:""
+  payMessege:"",
+  payTicketLoading:false
 };
 
 // ---- Slice ----
@@ -25,8 +27,11 @@ const bookingSlice = createSlice({
     clearPayTicket: (state) => {
       state.booking = null;
     },
+    setPayTicketLoading:(state, action: PayloadAction<boolean>) => {
+      state.payTicketLoading = action.payload;
+    },
   },
 });
 
-export const { setPayTicket, clearPayTicket, setPayMessage } = bookingSlice.actions;
+export const { setPayTicket, clearPayTicket, setPayMessage, setPayTicketLoading } = bookingSlice.actions;
 export default bookingSlice.reducer;
