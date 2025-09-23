@@ -55,11 +55,10 @@ const ReviewAndPay = () => {
     console.log("Transaction cancelled ✅");
   }
 
-
+  
+  
  async function submitHandler(){
-
      navigate(`/events/${contentName}/${eventId}/booking/payment`,{ replace: true })
-
   }
 
   return (

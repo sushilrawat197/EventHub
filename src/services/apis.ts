@@ -1,8 +1,8 @@
-const BASE_URL: string = "https://thedemonstrate.com";
+// const BASE_URL: string = "https://thedemonstrate.com";
 
+const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
-// const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
-// console.log('BASE URL; ', BASE_URL);
+console.log('BASE URL; ', BASE_URL);
 // AUTH ENDPOINTS
 
 export const endpoints = {
@@ -10,7 +10,6 @@ export const endpoints = {
   SIGNUP_RESEND_OTP: BASE_URL + "/ticketcore-api/api/v1/auth/signup/init",
   SIGNUP_API: BASE_URL + "/ticketcore-api/api/v1/auth/signup/init",
   SET_PASS_API:BASE_URL + "/ticketcore-api/api/v1/auth/signup/complete",
-
 
   //login
   LOGIN_API:BASE_URL + "/ticketcore-api/api/v1/auth/login",
@@ -43,8 +42,8 @@ export const userEndpoint={
 }
 
 
-export const eventsEndpoint={
-  GET_EVENTS_API: "https://thedemonstrate.com/CMS/api/v1/contents?city=Mumbai",
-}
+// export const eventsEndpoint={
+//   GET_EVENTS_API: "https://thedemonstrate.com/CMS/api/v1/contents?city=Mumbai",
+// }
 
 

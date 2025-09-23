@@ -10,6 +10,7 @@ import { LuTickets } from "react-icons/lu";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { checkEventAvailability } from "../../../../services/operations/eventsApi";
+import { setTicketInfo } from "../../../../slices/ticketInfoSlice";
 
 export interface EventDetailsCardProps {
   date?: string;
@@ -41,7 +42,6 @@ export default function EventDetailsCard({
 }: EventDetailsCardProps) {
   const details = [
     { icon: <FaCalendarAlt />, text: date },
-
     ...(time ? [{ icon: <FaClock />, text: time }] : []),
     { icon: <LuTickets />, text: duration || "Duration not available" },
     {
@@ -53,48 +53,68 @@ export default function EventDetailsCard({
     ...(venue ? [{ icon: <FaMapMarkerAlt />, text: venue }] : []),
   ];
 
-  // console.log('PRINTING CONTEND_ID : ',contentId)
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  // console.log(contentId);
-
   const { eventId } = useParams();
 
   const shows = useAppSelector((state) => state.shows.data);
 
-  const uniqueVenues = Array.from(
-    new Map(shows.map((s) => [s.venueId, s])).values()
+  const uniqueShows = Array.from(
+    new Map(shows.map((s) => [`${s.eventId}-${s.venueId}`, s])).values()
   );
 
-  const uniqueDates = Array.from(new Set(shows.map((s) => s.showDate)));
+  async function bookHandler() {
+    if (eventId) {
+      const result = await dispatch(checkEventAvailability(eventId));
+      if (result?.soldOut) {
+        alert("This event's tickets are sold out");
+        return;
+      }
+    }
 
-  console.log("Unique Dates:", uniqueDates);
+    if (uniqueShows.length > 1) {
+      navigate(`${location.pathname}/booking/venue`);
+    } else {
+      const currentShow = uniqueShows[0];
 
- async function bookHandler() {
-  if (eventId) {
-    // API call result wait karo
-    const result = await dispatch(checkEventAvailability(eventId));
+      const showSchedules = shows.filter(
+        (s) =>
+          s.eventId === currentShow.eventId && s.venueId === currentShow.venueId
+      );
 
+      const uniqueDateTimes = Array.from(
+        new Set(
+          showSchedules.map((s) => `${s.showDate}-${s.startTime}-${s.endTime}`)
+        )
+      );
 
+      if (uniqueDateTimes.length === 1) {
+        const selectedShow = showSchedules[0];
 
-    if (result?.soldOut) {
-      alert("This event's tickets are sold out");
-      return; // flow stop
+        const ticketData = {
+          venueId: selectedShow.venueId,
+          showId: selectedShow.showId,
+        };
+
+        dispatch(setTicketInfo(ticketData));
+        localStorage.setItem("ticketInfo", JSON.stringify(ticketData));  
+        navigate(`${location.pathname}/booking/ticket`);
+        
+      } else {
+        const ticketData = {
+          venueId: currentShow.venueId,
+        };
+
+        dispatch(setTicketInfo(ticketData));
+        localStorage.setItem("ticketInfo", JSON.stringify(ticketData)); 
+        navigate(`${location.pathname}/booking/datetime`);
+      }
     }
   }
 
-  // Agar eventSoldOut nahi tha to ye hamesha chalega
-  if (uniqueVenues.length > 1) {
-    navigate(`${location.pathname}/booking/venue`);
-  } else {
-    navigate(`${location.pathname}/booking/datetime`);
-  }
-}
-
-
   return (
-    <div className="border-2 border-sky-500 shadow-sm shadow-sky-500 rounded-xl p-4 w-full max-w-sm  bg-white space-y-4">
+    <div className="border-2 border-sky-500 shadow-sm shadow-sky-500 rounded-xl p-4 w-full max-w-sm bg-white space-y-4">
       {/* Details List */}
       <div className="space-y-4">
         {details.map((item, idx) => (
@@ -113,9 +133,9 @@ export default function EventDetailsCard({
       )}
 
       {/* Price & Button */}
-      <div className="flex items-center justify-between pt-3 border-t border-sky-300 ">
+      <div className="flex items-center justify-between pt-3 border-t border-sky-300">
         <div>
-          <p className=" text-lg font-bold">M-{price} onwards</p>
+          <p className="text-lg font-bold">M-{price} onwards</p>
           {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
         </div>
 

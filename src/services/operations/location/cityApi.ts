@@ -3,14 +3,14 @@ import type { OtherApiResponse } from "../../../interfaces/country";
 import type { AppDispatch } from "../../../reducers/store";
 import { setCities, type citiesResponse } from "../../../slices/citySlice";
 import { apiConnector } from "../../apiConnector";
-
+const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 // export function listAllCities() {
 //   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
 //     try {
 //       const response = await apiConnector<ApiResponse<citiesResponse>>({
 //         method: "GET",
-//         url: `https://thedemonstrate.com/ticketcore-api/api/v1/cities?mode=all`,
+//         url: `${BASE_URL}/ticketcore-api/api/v1/cities?mode=all`,
 //         headers: {
 //           "X-Client-Source": "WEB",
 //         },
@@ -46,7 +46,7 @@ export function listCitiesByRegion() {
     try {
       const response = await apiConnector<OtherApiResponse<citiesResponse[]>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/regions/20/cities`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/regions/20/cities`,
         headers: {
           "X-Client-Source": "WEB",
         },
@@ -80,7 +80,7 @@ export function listVenueByCityId() {
     try {
       const response = await apiConnector<OtherApiResponse<citiesResponse[]>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/regions/20/cities`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/regions/20/cities`,
         headers: {
           "X-Client-Source": "WEB",
         },

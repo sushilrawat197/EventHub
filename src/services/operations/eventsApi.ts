@@ -5,7 +5,7 @@ import { setAllEventsBySearch, setEventsLoading, setSingleEvent } from "../../sl
 import type { ApiResponse, OtherApiResponse } from "../../interfaces/country";
 import type { EventResponse, EventResponseBySearch } from "../../interfaces/eventInterface/evnetInterFace";
 import type { RootState } from "../../reducers/store"; // apna store path
-
+const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
 export function listEventsBySearch() {
@@ -20,7 +20,7 @@ export function listEventsBySearch() {
 
       const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
         method: "POST",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/events/search`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/events/search`,
         bodyData: filters,
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
@@ -56,7 +56,7 @@ export function listEventById(eventId: string) {
     try {
       const response = await apiConnector<OtherApiResponse<EventResponse>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/events/search/${eventId}`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/events/search/${eventId}`,
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
       });
@@ -104,7 +104,7 @@ export function checkEventAvailability(eventId: string) {
     try {
       const response = await apiConnector<OtherApiResponse<EventShows>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/events/${eventId}/availability`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/events/${eventId}/availability`,
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
       });

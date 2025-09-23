@@ -2,7 +2,7 @@ import type { OtherApiResponse } from "../../interfaces/country";
 import type { AppDispatch } from "../../reducers/store";
 import { setShows, type ShowResponse } from "../../slices/showSlice";
 import { apiConnector } from "../apiConnector";
-
+const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
   // ✅ List all shows
@@ -11,7 +11,7 @@ export function listAllShowsByEvent(eventId:string | undefined) {
     try {
       const response = await apiConnector<OtherApiResponse<ShowResponse[]>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/shows/event/${eventId}`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/shows/event/${eventId}`,
         headers: {
           "X-Client-Source": "WEB",
         },
@@ -40,7 +40,7 @@ export function listAllShowsByVenue(venueId:string|null) {
     try {
       const response = await apiConnector<OtherApiResponse<ShowResponse[]>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/shows/venue/${venueId}`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/shows/venue/${venueId}`,
         headers: {
           "X-Client-Source": "WEB",
         },

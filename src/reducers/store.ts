@@ -12,7 +12,7 @@ import venueReducer from "../slices/venueSlice"
 import reserveTicketReducer from "../slices/reserveTicketSlice"
 import confirmBookingReducer from "../slices/confirmBookingSlice"
 import orderReducer from "../slices/orderDetails"
-
+import payReducer from "../slices/payTicketSlice"
 
 export const store = configureStore({
   
@@ -30,6 +30,7 @@ export const store = configureStore({
     reserveTicket:reserveTicketReducer,
     confirmBooking:confirmBookingReducer,
     order:orderReducer,
+    pay:payReducer,
   },
 });
 

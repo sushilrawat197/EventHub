@@ -10,7 +10,9 @@ import type { NavigateFunction } from "react-router-dom";
 import { setConfirmBooking } from "../../slices/confirmBookingSlice";
 import type { BookingResponse } from "../../interfaces/confirmBookingInterface";
 import { setLoading } from "../../slices/confirmBookingSlice";
-
+import type { payTickeResponse } from "../../interfaces/payTicketInterface";
+import {setPayMessage } from "../../slices/payTicketSlice";
+const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
 
@@ -20,7 +22,7 @@ export function listAllTicketCategoriesByShowId(showId: number) {
     try {
       const response = await apiConnector<OtherApiResponse<TicketCategory[]>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/shows/${showId}/ticketcategories`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/shows/${showId}/ticketcategories`,
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
       });
@@ -53,13 +55,13 @@ export interface CategorySelection {
 }
 
 
-export function reserveTicket(userId: number, categories: CategorySelection[]) {
+export function reserveTicket(categories: CategorySelection[]) {
   return async (dispatch: AppDispatch,): Promise<{ success: boolean }> => {
     try {
       const response = await apiConnector<OtherApiResponse<BookingData>>({
         method: "POST",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/bookings/reserve`,
-        bodyData: { userId, categories },
+        url: `${BASE_URL}/ticketcore-api/api/v1/bookings/reserve`,
+        bodyData: { categories },
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
       });
@@ -96,7 +98,7 @@ export function cancelBooking(bookingId: number) {
     try {
       const response = await apiConnector<OtherApiResponse<BookingData>>({
         method: "POST",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/bookings/${bookingId}/cancel`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/bookings/${bookingId}/cancel`,
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
       });
@@ -104,6 +106,7 @@ export function cancelBooking(bookingId: number) {
       console.log("Cancel TICKET Booking RESPONSE  ", response);
 
       if (response.data.statusCode === 200) {
+
         return { success: true };
       }
 
@@ -129,7 +132,7 @@ export function confirmBooking(bookingId: number | null, navigate: NavigateFunct
        dispatch(setLoading(true));
       const response = await apiConnector<OtherApiResponse<BookingData>>({
         method: "POST",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/bookings/${bookingId}/confirm`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/bookings/${bookingId}/confirm`,
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
       });
@@ -166,7 +169,7 @@ export function getOrderDetails(bookingId: number | null) {
      dispatch(setLoading(true));
       const response = await apiConnector<OtherApiResponse<BookingResponse>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/orders/${bookingId}`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/orders/${bookingId}`,
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
       });
@@ -200,7 +203,7 @@ export function downloadTicket(bookingId: number | null) {
   return async (): Promise<{ success: boolean }> => {
     try {
       const response = await axios.get(
-        `https://thedemonstrate.com/ticketcore-api/api/v1/orders/${bookingId}/download`,
+        `${BASE_URL}/ticketcore-api/api/v1/orders/${bookingId}/download`,
         {
           headers: { "X-Client-Source": "WEB" },
           withCredentials: true,
@@ -243,6 +246,40 @@ export function downloadTicket(bookingId: number | null) {
 
 
 
+
+export function ticketPay(bookingId: number | null,phoneNumber:string| null,navigate:NavigateFunction) {
+  return async (dispatch:AppDispatch): Promise<{ success: boolean }> => {
+    try {
+     dispatch(setLoading(true));
+      const response = await apiConnector<OtherApiResponse<payTickeResponse>>({
+        method: "POST",
+        url: `${BASE_URL}/ticketcore-api/api/v1/payments/mpesa/pay`,
+        bodyData:{bookingId,phoneNumber},
+        headers: { "X-Client-Source": "WEB" },
+        withCredentials: true,
+      });
+
+        if (response.data.statusCode === 200) {
+           navigate(`/bookingconfirmed/${response?.data?.data?.bookingId}`);
+           return { success: true };
+          }
+
+      console.log("PAY TICKET RESPONSE  ", response);
+
+      return { success: false };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        dispatch(setPayMessage(error?.response?.data.message))
+        console.error("Axios error:", error.response);
+      } else {
+        console.error("Unknown error:", error);
+      }
+      return { success: false };
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+}
 
 
 

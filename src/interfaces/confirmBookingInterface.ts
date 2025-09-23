@@ -1,3 +1,5 @@
+import type { Payment } from "./payTicketInterface";
+
 export interface BookingResponse {
   bookingId: number;
   orderNo: string;
@@ -19,7 +21,10 @@ export interface BookingResponse {
   tickets: Ticket[];
   bookingAmount: BookingAmount;
   qrCode: string; // Base64 string
+  payment:Payment
 }
+
+
 
 export interface Ticket {
   ticketId: number;

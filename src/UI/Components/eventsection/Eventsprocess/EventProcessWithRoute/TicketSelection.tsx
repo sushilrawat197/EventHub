@@ -2,28 +2,31 @@ import { useEffect, useState } from "react";
 import { GrFormSubtract } from "react-icons/gr";
 import { IoMdAdd } from "react-icons/io";
 import PrimaryButton from "../PrimaryButton";
-import { useNavigate, useParams} from "react-router-dom";
-import { listAllTicketCategoriesByShowId, reserveTicket } from "../../../../../services/operations/ticketCategory";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  listAllTicketCategoriesByShowId,
+  reserveTicket,
+} from "../../../../../services/operations/ticketCategory";
 import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
+import { setTicketInfo } from "../../../../../slices/ticketInfoSlice";
 
-
- const TicketSelection = () => {
-
+const TicketSelection = () => {
   const dispatch = useAppDispatch();
-  const navigate=useNavigate();
-  const ticketCategory = useAppSelector((state) => state.ticketCategory.data || []);
+  const navigate = useNavigate();
+  const ticketCategory = useAppSelector(
+    (state) => state.ticketCategory.data || []
+  );
 
-  const showId = useAppSelector((state) => state.ticket.showId); 
-  const {contentName,eventId}=useParams();
+  const showId = useAppSelector((state) => state.ticket.showId);
+  console.log("SHOW ID", showId);
 
-  const userId=useAppSelector((state)=>state.user.user?.userId);
-  
+  const { contentName, eventId } = useParams();
 
+  const userId = useAppSelector((state) => state.user.user?.userId);
 
   const [selectedTickets, setSelectedTickets] = useState<{
     [key: number]: number;
   }>({});
-
 
   const handleAdd = (id: number) => {
     setSelectedTickets((prev) => ({
@@ -39,60 +42,70 @@ import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
     }));
   };
 
+  const categories = Object.entries(selectedTickets)
+    .filter(([, cnt]) => cnt > 0) // zero tickets mat bhejo
+    .map(([id, cnt]) => ({
+      categoryId: Number(id),
+      count: cnt,
+    }));
 
-const categories = Object.entries(selectedTickets)
-  .filter(([, cnt]) => cnt > 0) // zero tickets mat bhejo
-  .map(([id, cnt]) => ({
-    categoryId: Number(id),
-    count: cnt,
-  }));
-
-
-
-async function clickHandler() {
-  if (!userId) {
-    const wantToLogin = window.confirm(
-      "You need to login to proceed. Do you want to login now?"
-    );
-
-    if (wantToLogin) {
-      navigate("/login", { state: { from: location.pathname } });
-    } else {
-      console.log("User cancelled login");
-    }
-
-  } else if (!categories) {
-    window.alert("Add at least one ticket!");
-  } else {
-    try {
-      const res = await dispatch(
-         reserveTicket(Number(userId), categories)
+  async function clickHandler() {
+    if (!userId) {
+      const wantToLogin = window.confirm(
+        "You need to login to proceed. Do you want to login now?"
       );
 
-      console.log("Reserve ticket details ",categories);
-
-      if (res?.success) {
-        navigate(
-          `/events/${contentName}/${eventId}/booking/reviewandpay`,
-          { replace: true }
-        );
-        // dispatch(setTicketInfo({ bookingId:reserveTicket}));
+      if (wantToLogin) {
+        navigate("/login", { state: { from: location.pathname } });
+      } else {
+        console.log("User cancelled login");
       }
-    } catch (err) {
-      console.error("Reservation failed", err);
+    } else if (!categories) {
+      window.alert("Add at least one ticket!");
+    } else {
+      try {
+        const res = await dispatch(reserveTicket(categories));
+
+        console.log("Reserve ticket details ", categories);
+
+        if (res?.success) {
+          navigate(`/events/${contentName}/${eventId}/booking/reviewandpay`, {
+            replace: true,
+          });
+          // dispatch(setTicketInfo({ bookingId:reserveTicket}));
+        }
+      } catch (err) {
+        console.error("Reservation failed", err);
+      }
     }
   }
-}
 
 
-  useEffect(() => {
+// 1. Load ticketInfo from localStorage on mount
+useEffect(() => {
+  const savedTicketInfo = localStorage.getItem("ticketInfo");
+  if (savedTicketInfo) {
+    dispatch(setTicketInfo(JSON.parse(savedTicketInfo)));
+  }
+}, [dispatch]);
+
+// 2. Jab showId change ho, tab categories fetch karo
+useEffect(() => {
+  if (showId) {
     dispatch(listAllTicketCategoriesByShowId(Number(showId)));
-  }, [dispatch, showId]);
-
+  }
+}, [dispatch, showId]);
 
   return (
     <div className="space-y-4 max-w-4xl mx-auto">
-      <button onClick={()=>navigate(`/events/${contentName}/${eventId}/booking/datetime`,{ replace: true })} className="text-sky-500 hover:text-sky-600 mr-4">
+      <button
+        onClick={() =>
+          navigate(`/events/${contentName}/${eventId}/booking/datetime`, {
+            replace: true,
+          })
+        }
+        className="text-sky-500 hover:text-sky-600 mr-4"
+      >
         ← Back
       </button>
 
@@ -139,15 +152,13 @@ async function clickHandler() {
 
       <div className="mt-4 ">
         <PrimaryButton
-          label={`${!userId?"Login to proceed":"Proceed"}`}
+          label={`${!userId ? "Login to proceed" : "Proceed"}`}
           onClick={clickHandler} // safe call in case onNext is undefined
           className="cursor-pointer"
         />
       </div>
-
     </div>
   );
 };
 
-
-export default TicketSelection
+export default TicketSelection;

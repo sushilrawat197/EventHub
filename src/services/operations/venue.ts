@@ -4,7 +4,7 @@ import type { VenueResponse } from "../../interfaces/venueInterface";
 import type { AppDispatch } from "../../reducers/store";
 import { setVenues } from "../../slices/venueSlice";
 import { apiConnector } from "../apiConnector";
-
+const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 export function listDetailsByCityId(cityId:number | null) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
@@ -12,7 +12,7 @@ export function listDetailsByCityId(cityId:number | null) {
     try {
       const response = await apiConnector<OtherApiResponse<VenueResponse[]>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/venues/city/${cityId}`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/venues/city/${cityId}`,
         headers: {
           "X-Client-Source": "WEB",
         },

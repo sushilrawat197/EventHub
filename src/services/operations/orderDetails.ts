@@ -2,7 +2,7 @@ import type { ApiResponse } from "../../interfaces/country";
 import type { AppDispatch } from "../../reducers/store";
 import { setOrderDetails, type OrderDetails } from "../../slices/orderDetails";
 import { apiConnector } from "../apiConnector";
-
+const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
 
@@ -11,7 +11,7 @@ export function listAllOrders() {
     try {
       const response = await apiConnector<ApiResponse<OrderDetails>>({
         method: "GET",
-        url: `https://thedemonstrate.com/ticketcore-api/api/v1/orders/my`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/orders/my`,
         headers: {
           "X-Client-Source": "WEB",
         },

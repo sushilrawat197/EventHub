@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
-import { confirmBooking } from "../../../services/operations/ticketCategory";
+import { ticketPay } from "../../../services/operations/ticketCategory";
 import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { FaWallet } from "react-icons/fa";
+import BookingErrorPage from "./Eventsprocess/BookingError";
 
 export default function PaymentPage() {
   const dispatch = useAppDispatch();
@@ -12,7 +13,7 @@ export default function PaymentPage() {
   const reserveTicket = useAppSelector((state) => state.reserveTicket.booking);
   const bookingId = useAppSelector((state) => state.ticket.bookingId);
   const [mobile, setMobile] = useState("");
-  const isValid = mobile.length === 10;
+  const isValid = mobile.length === 12;
 
   const eventDate = reserveTicket
     ? new Date(reserveTicket.showDate).toLocaleDateString("en-GB", {
@@ -34,12 +35,15 @@ export default function PaymentPage() {
     : "";
 
   function submitHandler() {
-    dispatch(confirmBooking(bookingId, navigate));
+    dispatch(ticketPay(bookingId,mobile,navigate));
+    // dispatch(confirmBooking(bookingId, navigate));
   }
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center p-4">
       <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-6">
+        <BookingErrorPage/>
         {/* LEFT: Payment Options */}
         <div className="flex-1 flex flex-col lg:flex-row bg-white shadow-md rounded-2xl p-4 sm:p-6">
           {/* Payment Methods */}
@@ -56,7 +60,7 @@ export default function PaymentPage() {
               >
                 <div className="flex items-center gap-3">
                   <FaWallet className="text-sky-600 text-xl sm:text-2xl" />
-                  <span className="text-sm sm:text-base">Payment</span>
+                  <span className="text-sm sm:text-base">Mobile Wallet</span>
                 </div>
                 <input
                   type="radio"
@@ -85,7 +89,7 @@ export default function PaymentPage() {
                   setMobile(value);
                 }}
                 className="w-full border rounded-lg px-3 sm:px-4 py-2 outline-none focus:ring-2 focus:ring-sky-400 mb-3 text-sm sm:text-base"
-                maxLength={10}
+                maxLength={12}
               />
 
               {/* Checkbox */}

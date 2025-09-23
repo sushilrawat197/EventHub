@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
 import { useNavigate, useParams} from "react-router-dom";
 import { setTicketInfo } from "../../../../../slices/ticketInfoSlice";
@@ -75,6 +75,13 @@ const DateTimeSelection = (
     dispatch(setTicketInfo({ showId:selectedShowId}));
   };
 
+  
+  useEffect(() => {
+    const savedTicketInfo = localStorage.getItem("ticketInfo");
+    if (savedTicketInfo) {
+      dispatch(setTicketInfo(JSON.parse(savedTicketInfo)));
+    }
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto rounded-2xl shadow-2xl p-6">
@@ -85,13 +92,15 @@ const DateTimeSelection = (
         >
           ← Back
         </button>
-        <h2 className="text-2xl font-bold text-gray-800">Select Date & Time</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Select Date & Time</h2>
       </div>
 
       {/* Date Selection */}
       <div className="mb-6">
         <h3 className="font-semibold text-gray-700 mb-3">Select Date</h3>
-        <div className="flex gap-3">
+
+        <div className="flex gap-3 flex-wrap justify-center">
+
           {uniqueDates.map((date, idx) => (
             <button
               key={idx}
@@ -102,7 +111,7 @@ const DateTimeSelection = (
                   : "border-gray-200"
               }`}
             >
-              <div className="text-lg font-bold">
+              <div className="text-lg font-semibold">
                 {new Date(date).toLocaleDateString("en-GB", {
                   day: "2-digit",
                   month: "short",
@@ -117,18 +126,19 @@ const DateTimeSelection = (
       {/* Time Selection */}
       <div>
         <h3 className="font-semibold text-gray-700 mb-3">Select Show Time</h3>
+        
         <div className="grid grid-cols-4 gap-3">
           {filteredTimes.map((time, idx) => (
             <button
               key={idx}
               onClick={() => timeHandler(idx, time.showId)}
-              className={`border rounded-lg p-3 text-center cursor-pointer hover:border-sky-500 ${
+              className={`border rounded-lg p-1 text-center cursor-pointer hover:border-sky-500 ${
                 selectedTimeIdx === idx
                   ? "border-sky-500 bg-sky-50"
                   : "border-gray-200"
               }`}
             >
-              <div className="font-semibold">{time.startTime}</div>
+              <div className="font-semibold"> {time.startTime.slice(0, 5)}</div>
               <div className="text-xs text-gray-500">Available</div>
             </button>
           ))}

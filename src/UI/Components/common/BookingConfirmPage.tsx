@@ -134,7 +134,7 @@ export default function BookingConfirmed() {
           <div className="mt-3 text-sm text-gray-700">
             <p className="font-medium">Payment Method</p>
             <p>Mobile Money</p>
-            <p className="text-xs text-gray-500">Txn ID: 408360057823</p>
+            <p className="text-xs text-gray-500">Txn ID: {confirmBookingDetails?.payment.conversationId}</p>
           </div>
         </div>
       </div>

@@ -1,12 +1,18 @@
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
+import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+import { cancelBooking } from "../../../../services/operations/ticketCategory";
 
 export default function BookingFlow() {
   const { contentName, eventId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  // URL ke basis pe step nikaal lo
+  const bookingId = useAppSelector(
+    (state) => state.reserveTicket.booking?.bookingId
+  );
+
   const path = location.pathname;
   let step = 1;
   if (path.includes("datetime")) step = 2;
@@ -20,6 +26,18 @@ export default function BookingFlow() {
     { number: 4, title: "Review & Pay", active: step >= 4, completed: false },
   ];
 
+  
+  async function backHandler() {
+    if (bookingId) {
+      const res = dispatch(cancelBooking(bookingId));
+      if ((await res).success) {
+        navigate(`/events/${contentName}/${eventId}/booking/ticket`, {
+          replace: true,
+        });
+      }
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -27,14 +45,10 @@ export default function BookingFlow() {
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             {/* Back button */}
-            {path.includes("payment") ?? (
+
+            {path.includes("payment") && (
               <button
-                onClick={() =>
-                  navigate(
-                    `/events/${contentName}/${eventId}/booking/ticket`,
-                    { replace: true }
-                  )
-                }
+                onClick={backHandler}
                 className="pr-3 text-xl sm:text-2xl"
               >
                 <IoIosArrowBack />
