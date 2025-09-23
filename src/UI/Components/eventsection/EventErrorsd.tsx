@@ -14,15 +14,19 @@ export default function EventsErrorPage() {
   const location = useLocation();
   console.log(eventErroMsg);
 
+
+
   useEffect(() => {
+    if (!eventErroMsg) return;
+
     document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "auto"; 
+      document.body.style.overflow = "auto";
     };
-  }, []);
-
+  }, [eventErroMsg]);
 
   if (!eventErroMsg) return null;
+
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4">
