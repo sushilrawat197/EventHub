@@ -51,11 +51,14 @@ function App() {
     return <SpinnerLoading />; // spinner while refresh token loads
   }
 
+
+
   return (
     <>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/" element={<HomePage />} />
+
+            <Route path="/" element={<HomePage />} /> 
 
           <Route
             path="/login"

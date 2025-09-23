@@ -20,7 +20,7 @@ export default function HomePage() {
         {/* <SellWithEase /> */}
         {/* <TicketPlans /> */}
         <ContactPage />
-        
+
         {/* <WhatsApppop /> */}
       </div>
       <Footer />

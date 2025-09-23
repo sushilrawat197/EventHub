@@ -81,7 +81,7 @@ const DateTimeSelection = (
     if (savedTicketInfo) {
       dispatch(setTicketInfo(JSON.parse(savedTicketInfo)));
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="max-w-4xl mx-auto rounded-2xl shadow-2xl p-6">

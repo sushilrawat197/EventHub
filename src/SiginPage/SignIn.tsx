@@ -23,7 +23,7 @@ const SignIn: React.FC = () => {
 
   const from = (location.state?.from || "/").replace(/^\/ticketing/, "");
 
-  console.log(from);
+  console.log("PRINTING FROM...",from);
   
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,9 +42,6 @@ const SignIn: React.FC = () => {
   };
 
   const [showPassword, setShowPassword] = useState(false);
-  //   const handleGoogleClick = () => {
-  //   window.location.href = "https://thedemonstrate.com/GenericAuthService/oauth2/authorization/google";
-  // };
 
   return (
     <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] flex items-center justify-center bg-sky-100 p-4 ">
