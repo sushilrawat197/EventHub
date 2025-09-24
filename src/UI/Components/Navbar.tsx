@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
 
-  const cities = useAppSelector((state) => state.cities.data || []);
+  const cities = useAppSelector((state) => state?.cities.data || []);
   const [selectedCity, setSelectedCityNav] = useState("Select City");
 
   // console.log(cities)
@@ -139,7 +139,7 @@ const Navbar: React.FC = () => {
                     }
                   }}
                   type="text"
-                  placeholder="Search for Events, Festivals, Comedy Shows"
+                  placeholder="Search for Events"
                   className="focus:outline-none border-none bg-white p-2 rounded-md w-[80%] px-4"
                 />
               </div>
@@ -204,14 +204,20 @@ const Navbar: React.FC = () => {
               className="lg:hidden bg-white shadow  p-4 space-y-2"
             >
               <div className="bg-white justify-center items-center w-full rounded-full flex border border-sky-400">
-                <span className="text-xl">
-                  <CiSearch />
-                </span>
-                <input
+               
+
+                 <input
+                  value={searchData}
+                  onChange={(e) => setSearchData(e.target.value)}
+                 
                   type="text"
-                  placeholder="Search for Events, Festivals, Comedy Shows"
+                  placeholder="Search for Events"
                   className="focus:outline-none border-none bg-white p-2 rounded-md w-[80%] px-2"
                 />
+                 <span className="text-xl"  onClick={handleSearch}>
+                  <CiSearch />
+                </span>
+
               </div>
 
               <div className="flex flex-col">
