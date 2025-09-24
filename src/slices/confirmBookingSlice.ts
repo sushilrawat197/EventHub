@@ -5,6 +5,7 @@ import type { BookingResponse } from "../interfaces/confirmBookingInterface";
 interface BookingState {
   booking: BookingResponse | null;
   loading: boolean | null;
+  cancelTicketLoading: boolean | null;
   error: string | null;
 }
 
@@ -12,6 +13,7 @@ const initialState: BookingState = {
   booking: null,
   loading: null,
   error: null,
+  cancelTicketLoading:null
 };
 
 
@@ -21,6 +23,9 @@ const bookingSlice = createSlice({
   reducers: {
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
+    },
+    setCancelTicketLoading(state, action: PayloadAction<boolean>) {
+      state.cancelTicketLoading = action.payload;
     },
     setError(state, action: PayloadAction<string | null>) {                
       state.error = action.payload;
@@ -38,7 +43,7 @@ const bookingSlice = createSlice({
   },
 });
 
-export const { setLoading, setError, setConfirmBooking, clearConfirmBooking } =
+export const { setLoading, setError, setConfirmBooking, clearConfirmBooking,setCancelTicketLoading } =
   bookingSlice.actions;
 
 export default bookingSlice.reducer;

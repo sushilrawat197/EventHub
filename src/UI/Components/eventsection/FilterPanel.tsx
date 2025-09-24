@@ -301,10 +301,10 @@ export default function FilterPanel() {
   ];
 
   const dateOptions: string[] = [
-    "Today",
-    "Tomorrow",
-    "This Weekend",
-    "Date Range",
+    "TODAY",
+    "TOMORROW",
+    "WEEKEND",
+    "DATE RANGE",
   ];
 
   const languageOptions: string[] = ["English", "Hindi"];

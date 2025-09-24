@@ -42,4 +42,13 @@ export interface Payment {
     phoneNumber: string;
     requestedAt: string;  // ISO datetime
     completedAt: string;  // ISO datetime
+    refund:Refund
+}
+
+export interface Refund {
+  refundAmount: number;
+  refundStatus: string; // status fix list ho to union type
+  conversationId: string;
+  phoneNumber: string;
+  processedAt: string; // ISO date string
 }

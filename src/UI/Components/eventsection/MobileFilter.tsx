@@ -52,7 +52,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
       items: [
         { label: "Today" },
         { label: "Tomorrow" },
-        { label: "This Weekend" },
+        { label: "Weekend" },
         {
           label: "Date Range",
           right: (

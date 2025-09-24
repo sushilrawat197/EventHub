@@ -17,34 +17,28 @@ import { listEventsBySearch } from "../../../services/operations/eventsApi";
 import { setFilter } from "../../../slices/filter_Slice";
 
 
-
-  const categoryOptions: string[] = [
-    "CONCERT",
-    "SPORTS",
-    "THEATRE",
-    "COMEDY",
-    "EXHIBITION",
-    "FESTIVA",
-    "WORKSHOP",
-    "OTHER",
-  ];
-
-
-
+const categoryOptions: string[] = [
+  "CONCERT",
+  "SPORTS",
+  "THEATRE",
+  "COMEDY",
+  "EXHIBITION",
+  "FESTIVA",
+  "WORKSHOP",
+  "OTHER",
+];
 
 export default function EventList() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-
-
-
   const selectedCategories = useAppSelector((state) => state.filter.categories);
   const selectedLanguage = useAppSelector((state) => state.filter.languages);
   const selectedDates = useAppSelector((state) => state.filter.dates);
   const selectedPrice = useAppSelector((state) => state.filter.prices);
-  const events=useAppSelector((state)=>state.events.allEventsBySearch?.content|| [])
-
+  const events = useAppSelector(
+    (state) => state.events.allEventsBySearch?.content || []
+  );
 
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -86,76 +80,73 @@ export default function EventList() {
     setSearchParams,
   ]);
 
+  const handleFilterToggle = (
+    filterKey: "categories" | "languages" | "prices" | "dates",
+    value: string
+  ) => {
+    switch (filterKey) {
+      case "categories": {
+        const updated = selectedCategories.includes(value)
+          ? selectedCategories.filter((c) => c !== value)
+          : [...selectedCategories, value];
 
-const handleFilterToggle = (
-  filterKey: "categories" | "languages" | "prices" | "dates",
-  value: string
-) => {
-  switch (filterKey) {
-    case "categories": {
-      const updated = selectedCategories.includes(value)
-        ? selectedCategories.filter((c) => c !== value)
-        : [...selectedCategories, value];
-
-      dispatch(setCategories(updated));
-      dispatch(setFilter({ key: "genres", value: updated }));
-      dispatch(listEventsBySearch());
-      break;
-    }
-
-    case "languages": {
-      const updated = selectedLanguage.includes(value)
-        ? selectedLanguage.filter((l) => l !== value)
-        : [...selectedLanguage, value];
-
-      dispatch(setLanguages(updated));
-      dispatch(setFilter({ key: "languages", value: updated }));
-      dispatch(listEventsBySearch());
-      break;
-    }
-
-    case "prices": {
-      const updated = selectedPrice.includes(value)
-        ? selectedPrice.filter((p) => p !== value)
-        : [...selectedPrice, value];
-
-      // map to PriceGroup[]
-      const mapped = updated.map((f) => {
-        if (f === "0 - 500") return { min: 0, max: 500 };
-        if (f === "501 - 2000") return { min: 501, max: 2000 };
-        if (f === "Above 2000") return { min: 2001, max: Number.MAX_SAFE_INTEGER };
-        return { min: 0, max: Number.MAX_SAFE_INTEGER }; // fallback
-      });
-
-      dispatch(setPrices(updated));
-      dispatch(setFilter({ key: "priceGroups", value: mapped }));
-      dispatch(listEventsBySearch());
-      break;
-    }
-
-    case "dates": {
-      const updated = selectedDates.includes(value)
-        ? selectedDates.filter((d) => d !== value)
-        : [...selectedDates, value];
-
-      // Agar "Date Range" remove hua → start & end date bhi reset karo
-      if (!updated.includes("Date Range")) {
-        dispatch(setStartDate(null));
-        dispatch(setEndDate(null));
-        dispatch(setFilter({ key: "startDate", value: null }));
-        dispatch(setFilter({ key: "endDate", value: null }));
+        dispatch(setCategories(updated));
+        dispatch(setFilter({ key: "genres", value: updated }));
+        dispatch(listEventsBySearch());
+        break;
       }
 
-      dispatch(setDates(updated));
-      dispatch(setFilter({ key: "datePresets", value: updated }));
-      dispatch(listEventsBySearch());
-      break;
+      case "languages": {
+        const updated = selectedLanguage.includes(value)
+          ? selectedLanguage.filter((l) => l !== value)
+          : [...selectedLanguage, value];
+
+        dispatch(setLanguages(updated));
+        dispatch(setFilter({ key: "languages", value: updated }));
+        dispatch(listEventsBySearch());
+        break;
+      }
+
+      case "prices": {
+        const updated = selectedPrice.includes(value)
+          ? selectedPrice.filter((p) => p !== value)
+          : [...selectedPrice, value];
+
+        // map to PriceGroup[]
+        const mapped = updated.map((f) => {
+          if (f === "0 - 500") return { min: 0, max: 500 };
+          if (f === "501 - 2000") return { min: 501, max: 2000 };
+          if (f === "Above 2000")
+            return { min: 2001, max: Number.MAX_SAFE_INTEGER };
+          return { min: 0, max: Number.MAX_SAFE_INTEGER }; // fallback
+        });
+
+        dispatch(setPrices(updated));
+        dispatch(setFilter({ key: "priceGroups", value: mapped }));
+        dispatch(listEventsBySearch());
+        break;
+      }
+
+      case "dates": {
+        const updated = selectedDates.includes(value)
+          ? selectedDates.filter((d) => d !== value)
+          : [...selectedDates, value];
+
+        // Agar "Date Range" remove hua → start & end date bhi reset karo
+        if (!updated.includes("Date Range")) {
+          dispatch(setStartDate(null));
+          dispatch(setEndDate(null));
+          dispatch(setFilter({ key: "startDate", value: null }));
+          dispatch(setFilter({ key: "endDate", value: null }));
+        }
+
+        dispatch(setDates(updated));
+        dispatch(setFilter({ key: "datePresets", value: updated }));
+        dispatch(listEventsBySearch());
+        break;
+      }
     }
-  }
-};
-
-
-
+  };
 
   const getAllFilterOptions = () => {
     return Array.from(
@@ -165,11 +156,10 @@ const handleFilterToggle = (
         ...selectedPrice,
         ...selectedLanguage,
         ...selectedCategories,
-        ...categoryOptions
+        ...categoryOptions,
       ])
     );
   };
-
 
   const isFilterSelected = (tag: string): boolean => {
     return (
@@ -180,11 +170,9 @@ const handleFilterToggle = (
     );
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(listEventsBySearch());
-  },[]);
-
-
+  }, []);
 
   return (
     <div className="py-4">
@@ -193,7 +181,6 @@ const handleFilterToggle = (
       {/* Filter Tags */}
       <div className="overflow-x-auto md:overflow-visible scrollbar-hide mb-6">
         <div className="flex flex-nowrap md:flex-wrap gap-2">
-
           {getAllFilterOptions().map((tag, i) => (
             <span
               key={i}
@@ -221,8 +208,7 @@ const handleFilterToggle = (
       </div>
 
       {/* Show active filters summary */}
-      {( 
-        selectedDates.length > 0 ||
+      {(selectedDates.length > 0 ||
         selectedPrice.length > 0 ||
         selectedLanguage.length > 0 ||
         selectedCategories.length > 0) && (
@@ -236,7 +222,6 @@ const handleFilterToggle = (
           {selectedPrice.length > 0 && ` • Price: ${selectedPrice.join(", ")}`}
         </div>
       )}
-
 
       {/* Events Grid */}
       <div className="grid  grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 py-2">
@@ -287,6 +272,13 @@ const handleFilterToggle = (
           <FaLocationDot size={22} />
         </span>
       </div>
+
+      {/* <Pagination
+        currentPage={page}
+        totalPages={size}
+        totalElements={totalElements}
+        totalPages={totalPages}
+      /> */}
     </div>
   );
 }

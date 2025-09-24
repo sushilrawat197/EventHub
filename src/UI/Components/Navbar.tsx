@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../reducers/hooks";
 import ProfileDropdown from "./dasboard/profile/ProfileDropdown";
 import { CiSearch } from "react-icons/ci";
@@ -17,8 +17,11 @@ import { setFilter } from "../../slices/filter_Slice";
 
 const Navbar: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate=useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+  const [searchData, setSearchData] = useState("");
+  
 
   const menuRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
@@ -53,6 +56,12 @@ const Navbar: React.FC = () => {
 
     dispatch(listEventsBySearch());
   };
+
+  function handleSearch(){
+    dispatch(setFilter({key:"eventName",value:searchData}));
+    dispatch(listEventsBySearch());
+    navigate("/events");
+  }
 
   useEffect(() => {
     if (cities.length > 0 && selectedCity === "Select City") {
@@ -120,7 +129,15 @@ const Navbar: React.FC = () => {
                 <span className="text-xl">
                   <CiSearch />
                 </span>
+
                 <input
+                  value={searchData}
+                  onChange={(e) => setSearchData(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
                   type="text"
                   placeholder="Search for Events, Festivals, Comedy Shows"
                   className="focus:outline-none border-none bg-white p-2 rounded-md w-[80%] px-4"

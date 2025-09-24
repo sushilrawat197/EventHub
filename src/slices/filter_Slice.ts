@@ -14,6 +14,7 @@ export interface EventSearchFilters {
   priceGroups?: PriceGroup[];
   startDate?: string | null;
   endDate?: string | null;
+  eventName?:string | null
 }
 
 const initialState: EventSearchFilters = {
@@ -25,6 +26,7 @@ const initialState: EventSearchFilters = {
   priceGroups: [],
   startDate: null,
   endDate: null,
+  eventName:null
 };
 
 const filterSlice = createSlice({

@@ -67,12 +67,6 @@ export function listAllShowsByVenue(venueId:string|null) {
 }
 
 
-
-
-
-
-
-
 export function fetchFilteredShows(eventId: string) {
   return async (dispatch: AppDispatch) => {
     try {
@@ -100,4 +94,6 @@ export function fetchFilteredShows(eventId: string) {
     }
   };
 }
+
+
 

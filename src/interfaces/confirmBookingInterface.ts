@@ -10,6 +10,7 @@ export interface BookingResponse {
     eventId: number;
     eventPoster:string;
     eventName: string;
+    category:string
   };
   show: {
     showId: number;
@@ -23,7 +24,6 @@ export interface BookingResponse {
   qrCode: string; // Base64 string
   payment:Payment
 }
-
 
 
 export interface Ticket {
