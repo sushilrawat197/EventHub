@@ -5,16 +5,32 @@ import { listAllOrders } from '../../../services/operations/orderDetails';
 import { format } from "date-fns";
 import { useNavigate } from 'react-router-dom';
 
+
 const BookingOrder: React.FC = () => {
+
   const [searchTerm, setSearchTerm] = useState<string>('');
+
+
   const orderDetails = useAppSelector((state) => state.order.order?.content || []);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const filteredOrder = orderDetails.filter(order =>
-    order.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.orderNo.includes(searchTerm)
-  );
+
+
+const filteredOrder = searchTerm
+  ? orderDetails.filter((order) => {
+      const search = searchTerm.toLowerCase();
+      return (
+        (order.eventName?.toLowerCase() || "").includes(search) ||
+        (order.orderNo?.toString().toLowerCase() || "").includes(search)
+      );
+    })
+  : orderDetails;
+
+
+
+
+   console.log(filteredOrder);
 
   const tabs = ['Movies & Events'];
 
@@ -50,6 +66,7 @@ const BookingOrder: React.FC = () => {
               ))}
             </div>
 
+
             {/* Search */}
             <div className="relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -64,13 +81,15 @@ const BookingOrder: React.FC = () => {
           </div>
         </div>
 
+
         {/* Desktop Table Header */}
-        <div className="hidden sm:grid grid-cols-4 gap-6 px-6 py-4 bg-gray-50 border-b border-gray-200 text-center">
+        <div className="hidden sm:grid grid-cols-4 gap-6 px-6 py-4 bg-gray-50 border-b border-gray-200 ">
           <div className="text-sm font-semibold text-gray-700">Event Name</div>
-          <div className="text-sm font-semibold text-gray-700">Status</div>
-          <div className="text-sm font-semibold text-gray-700">Order No.</div>
-          <div className="text-sm font-semibold text-gray-700">Order Total</div>
+          <div className="text-sm font-semibold text-gray-700 text-center">Status</div>
+          <div className="text-sm font-semibold text-gray-700 text-center">Order No.</div>
+          <div className="text-sm font-semibold text-gray-700 text-right">Order Total</div>
         </div>
+
 
         {/* Orders */}
         <div className="divide-y divide-gray-200">
@@ -109,8 +128,9 @@ const BookingOrder: React.FC = () => {
                 </div>
               </div>
 
+
               {/* Desktop Table Row */}
-              <div className="hidden sm:grid grid-cols-4 gap-6 justify-items-center">
+              <div className="hidden sm:grid grid-cols-4 gap-6 ">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-lg"></div>
                   <div>
@@ -118,7 +138,7 @@ const BookingOrder: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center">
+                <div className="flex items-center justify-center">
                   <div className="flex items-center space-x-2">
                     <div className={`w-2 h-2 rounded-full ${
                       transaction.status === 'CONFIRMED' ? 'bg-green-500' : 'bg-red-500'
@@ -145,6 +165,7 @@ const BookingOrder: React.FC = () => {
             </div>
           ))}
         </div>
+
 
         {orderDetails.length === 0 && (
           <div className="px-6 py-12 text-center">

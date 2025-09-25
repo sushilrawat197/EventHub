@@ -17,6 +17,7 @@ import { listEventsBySearch } from "../../../services/operations/eventsApi";
 import { setFilter } from "../../../slices/filter_Slice";
 
 
+
 const categoryOptions: string[] = [
   "CONCERT",
   "SPORTS",
@@ -39,6 +40,7 @@ export default function EventList() {
   const events = useAppSelector(
     (state) => state.events.allEventsBySearch?.content || []
   );
+
 
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -272,6 +274,8 @@ export default function EventList() {
           <FaLocationDot size={22} />
         </span>
       </div>
+
+      {/* <Pagination/> */}
 
       {/* <Pagination
         currentPage={page}

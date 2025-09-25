@@ -9,6 +9,8 @@ import { setAvailableEventShows } from "../../slices/availabilitySlice";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
+
+
 export function listEventsBySearch() {
   return async (dispatch: AppDispatch, getState: () => RootState): Promise<{ success: boolean }> => {
     dispatch(setEventsLoading(true));

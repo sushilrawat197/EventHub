@@ -26,7 +26,9 @@ export default function BookingConfirmed() {
   console.log(confirmBookingDetails);
 
   const loading = useAppSelector((state) => state.confirmBooking.loading);
-  const cancelTicketLoading = useAppSelector((state) => state.confirmBooking.cancelTicketLoading);
+  const cancelTicketLoading = useAppSelector(
+    (state) => state.confirmBooking.cancelTicketLoading
+  );
 
   useEffect(() => {
     dispatch(getOrderDetails(Number(bookingId)));
@@ -64,7 +66,6 @@ export default function BookingConfirmed() {
     showDateTime &&
     showDateTime.getTime() - now.getTime() > 24 * 60 * 60 * 1000;
 
-
   if (loading) {
     return <SpinnerLoading />;
   }
@@ -95,13 +96,21 @@ export default function BookingConfirmed() {
 
           {/* Details */}
           <div className="flex-1 ml-4">
-            <div className="flex justify-between items-start">
-              <h2 className="text-xl font-bold">{confirmeTicket?.eventName}</h2>
-              <FaDownload
-                onClick={() => dispatch(downloadTicket(Number(bookingId)))}
-                className="text-gray-500 cursor-pointer"
-              />
-            </div>
+
+            {confirmBookingDetails?.status === "CANCELLED" ? (
+              null
+            ):(
+              <div className="flex justify-between items-start">
+                <h2 className="text-xl font-bold">
+                  {confirmeTicket?.eventName}
+                </h2>
+                <FaDownload
+                  onClick={() => dispatch(downloadTicket(Number(bookingId)))}
+                  className="text-gray-500 cursor-pointer"
+                />
+              </div>
+            )}
+
 
             <p className="text-sm text-gray-600 mt-1">U/A | Hindi | 2D</p>
             <p className="mt-2 font-medium">{confirmeTicket?.showVenue}</p>
@@ -130,7 +139,7 @@ export default function BookingConfirmed() {
                   <p>
                     <span className="font-semibold">Seats:</span>{" "}
                     {confirmBookingDetails.tickets
-                      ?.map((item) => item.ticketNumber)
+                      ?.map((item) => item.seatCode)
                       .join(", ")}
                   </p>
 
@@ -143,7 +152,7 @@ export default function BookingConfirmed() {
 
                   <p>
                     <span className="font-semibold">Booking Number:</span>{" "}
-                    {confirmBookingDetails?.orderNo}
+                    {confirmBookingDetails?.bookingId}
                   </p>
                 </>
               ) : null}
@@ -157,9 +166,7 @@ export default function BookingConfirmed() {
 
           <div className="flex justify-between text-sm mb-2">
             <span className="font-semibold">Order Id</span>
-            <span className="text-xs">
-              {confirmBookingDetails?.payment.conversationId}
-            </span>
+            <span className="text-xs">{confirmBookingDetails?.orderNo}</span>
           </div>
 
           <div className="flex justify-between text-sm mb-2">
@@ -263,7 +270,7 @@ export default function BookingConfirmed() {
               disabled={cancelTicketLoading ?? false} // ✅ disable while loading
             >
               {cancelTicketLoading ? (
-                <ImSpinner6 className="animate-spin"/>
+                <ImSpinner6 className="animate-spin" />
               ) : (
                 "Cancel Ticket"
               )}
