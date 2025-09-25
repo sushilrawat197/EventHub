@@ -41,6 +41,7 @@ export default function EventList() {
   );
 
   const [page, setPage] = useState(0);
+  
   const  totalPages = useAppSelector((state) => state.events.allEventsBySearch?.totalPages);
 
 

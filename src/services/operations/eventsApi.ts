@@ -59,7 +59,7 @@ export function listEventsBySearch(page: number = 0) {
 
       const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
         method: "POST",
-        url: `${BASE_URL}/ticketcore-api/api/v1/events/search?page=${page}`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/events/search?page=${page}&size=8`,
         bodyData: filters,
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
