@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
-import { ticketPay } from "../../../services/operations/ticketCategory";
+import {
+  cancelBooking,
+  ticketPay,
+} from "../../../services/operations/ticketCategory";
 import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { FaWallet } from "react-icons/fa";
@@ -10,11 +13,14 @@ import { ClipLoader } from "react-spinners";
 export default function PaymentPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
   const [selectedMethod, setSelectedMethod] = useState("Mpesa");
+  const [mobile, setMobile] = useState("");
+
   const reserveTicket = useAppSelector((state) => state.reserveTicket.booking);
   const bookingId = useAppSelector((state) => state.ticket.bookingId);
-  const [mobile, setMobile] = useState("");
   const paymentLoading = useAppSelector((state) => state.pay.payTicketLoading);
+
   const isValid = mobile.length === 12;
 
   const eventDate = reserveTicket
@@ -36,41 +42,42 @@ export default function PaymentPage() {
       )
     : "";
 
+    
   function submitHandler() {
     dispatch(ticketPay(bookingId, mobile, navigate));
-    // dispatch(confirmBooking(bookingId, navigate));
   }
 
-   useEffect(() => {
-      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-        // Only warn if there is a reserved ticket
-        if (reserveTicket) {
-          e.preventDefault();
-          e.returnValue = ""; // Required for Chrome
-        }
-      };
-  
-      window.addEventListener("beforeunload", handleBeforeUnload);
-  
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }, [reserveTicket]);
+
+  useEffect(() => {
+    if (!bookingId) {
+      navigate("/events");
+      return;
+    }
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (reserveTicket && bookingId) {
+        dispatch(cancelBooking(bookingId));
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [reserveTicket, bookingId, navigate, dispatch]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center p-4">
+    <div className="min-h-screen flex justify-center p-4">
       <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-6">
         <BookingErrorPage />
+
         {/* LEFT: Payment Options */}
-        <div className="flex-1 flex flex-col lg:flex-row bg-white shadow-md rounded-2xl p-4 sm:p-6">
+        <div className="flex-1 flex flex-col lg:flex-row bg-white shadow-md rounded-2xl p-4 sm:p-6 gap-4">
           {/* Payment Methods */}
-          <div className="shadow px-4 sm:px-6 py-3 h-fit lg:h-full w-full lg:w-64 mb-4 lg:mb-0">
+          <div className="flex-shrink-0 w-full lg:w-64 shadow-sm p-2 rounded-lg">
             <h2 className="text-base sm:text-lg font-semibold mb-4">
               Payment Method
             </h2>
-
             <div className="space-y-4">
-              {/* Mpesa/Wallet */}
               <div
                 onClick={() => setSelectedMethod("Mpesa")}
                 className={`p-3 sm:p-4 flex items-center justify-between border rounded-xl cursor-pointer ${
@@ -91,27 +98,20 @@ export default function PaymentPage() {
           </div>
 
           {/* Mobile Input */}
-          <div className="p-4 sm:p-6 w-full">
+          <div className="flex-1">
             <div className="w-full bg-white border rounded-xl p-4 sm:p-6 shadow-sm">
-              {/* Title */}
               <h2 className="text-gray-800 font-medium mb-3 text-sm sm:text-base">
                 Enter your registered Mobile Number
               </h2>
-
-              {/* Input */}
               <input
                 type="text"
                 placeholder="Enter Mobile Number"
                 value={mobile}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, "");
-                  setMobile(value);
-                }}
+                onChange={(e) => setMobile(e.target.value.replace(/\D/g, ""))}
                 className="w-full border rounded-lg px-3 sm:px-4 py-2 outline-none focus:ring-2 focus:ring-sky-400 mb-3 text-sm sm:text-base"
                 maxLength={12}
               />
 
-              {/* Checkbox */}
               <div className="flex items-start gap-2 mb-5">
                 <input
                   type="checkbox"
@@ -128,13 +128,12 @@ export default function PaymentPage() {
 
               <button
                 onClick={submitHandler}
-                disabled={!isValid || Boolean(paymentLoading)} // disable button while loading
-                className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base
-                    ${
-                      isValid
-                        ? "bg-sky-500 hover:bg-sky-600 text-white cursor-pointer"
-                        : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                    }`}
+                disabled={!isValid || Boolean(paymentLoading)}
+                className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition text-sm sm:text-base ${
+                  isValid
+                    ? "bg-sky-500 hover:bg-sky-600 text-white cursor-pointer"
+                    : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                }`}
               >
                 {paymentLoading ? (
                   <div className="flex items-center justify-center gap-2">
@@ -152,54 +151,50 @@ export default function PaymentPage() {
         {/* RIGHT: Order Summary */}
         <div className="w-full lg:w-1/3 bg-white shadow-md rounded-2xl p-4 sm:p-6 h-fit">
           <div className="w-full space-y-4">
-            {/* Event Details */}
-            <div className="bg-white shadow rounded-lg p-3 sm:p-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="font-semibold text-gray-800 text-sm sm:text-base">
-                    {reserveTicket?.eventName}
-                  </h2>
-                  <p className="text-xs sm:text-sm text-gray-600">
-                    {eventDate} | {eventTime}
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-600">English</p>
-                  <p className="text-xs sm:text-sm text-gray-600 flex items-center gap-1">
-                    <IoLocationSharp className="text-red-600" />{" "}
-                    {reserveTicket?.showVenue}
-                  </p>
-                </div>
-
-                <div className="text-right w-16 sm:w-20">
-                  <p className="font-semibold text-sm sm:text-base">
-                    {reserveTicket?.tickets.length}
-                  </p>
-                  <p className="text-sky-500 font-bold text-xs sm:text-sm">
-                    M-Ticket
-                  </p>
-                </div>
+            <div className="bg-white shadow rounded-lg p-3 sm:p-4 flex justify-between items-start">
+              <div>
+                <h2 className="font-semibold text-gray-800 text-sm sm:text-base">
+                  {reserveTicket?.eventName}
+                </h2>
+                <p className="text-xs sm:text-sm text-gray-600">
+                  {eventDate} | {eventTime}
+                </p>
+                <p className="text-xs sm:text-sm text-gray-600">English</p>
+                <p className="text-xs sm:text-sm text-gray-600 flex items-center gap-1">
+                  <IoLocationSharp className="text-red-600" />{" "}
+                  {reserveTicket?.showVenue}
+                </p>
+              </div>
+              <div className="text-right w-16 sm:w-20">
+                <p className="font-semibold text-sm sm:text-base">
+                  {reserveTicket?.tickets.length}
+                </p>
+                <p className="text-sky-500 font-bold text-xs sm:text-sm">
+                  M-Ticket
+                </p>
               </div>
             </div>
 
-            {/* Price Details */}
             <div className="bg-white shadow rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
               <div className="flex justify-between">
                 <span>Ticket(s) price</span>
                 <span>M {reserveTicket?.fees.baseAmount}</span>
               </div>
               <div className="flex justify-between">
+                <span>Platform-Fee</span>
+                <span>M {reserveTicket?.fees.platformFee}</span>
+              </div>
+              <div className="flex justify-between">
                 <span>Tax Amount</span>
                 <span>M {reserveTicket?.fees.taxAmount}</span>
               </div>
-
               <hr className="my-2" />
-
               <div className="flex justify-between font-semibold">
                 <span>Order total</span>
                 <span>M {reserveTicket?.fees.totalAmount}</span>
               </div>
             </div>
 
-            {/* Amount Payable */}
             <div className="bg-white shadow rounded-lg p-3 sm:p-4 flex justify-between font-semibold text-sm sm:text-base">
               <span>Amount Payable</span>
               <span>M {reserveTicket?.fees.totalAmount}</span>

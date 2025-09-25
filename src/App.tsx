@@ -162,14 +162,14 @@ function App() {
 
         </Route>
 
-        <Route
+        {/* <Route
           path="/bookingconfirmed/:bookingId"
           element={
             <ProtectedRoute>
               <BookingConfirmed />
             </ProtectedRoute>
           }
-        />
+        /> */}
 
       
         {/* Normal Route End */}

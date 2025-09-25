@@ -3,19 +3,20 @@ import { Search } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../../reducers/hooks';
 import { listAllOrders } from '../../../services/operations/orderDetails';
 import { format } from "date-fns";
+import { clearConfirmBooking } from '../../../slices/confirmBookingSlice';
+import { getOrderDetails } from '../../../services/operations/ticketCategory';
 import { useNavigate } from 'react-router-dom';
 
 
 const BookingOrder: React.FC = () => {
 
+  const navigate=useNavigate();
+
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-
   const orderDetails = useAppSelector((state) => state.order.order?.content || []);
-  const navigate = useNavigate();
+
   const dispatch = useAppDispatch();
-
-
 
 const filteredOrder = searchTerm
   ? orderDetails.filter((order) => {
@@ -29,16 +30,19 @@ const filteredOrder = searchTerm
 
 
 
-
    console.log(filteredOrder);
 
   const tabs = ['Movies & Events'];
 
+
   function clickHandler(bookingId: number) {
-    navigate(`/order/${bookingId}`);
+    console.log("CLICK HANDLER BOOKING ID...",bookingId);
+    dispatch(clearConfirmBooking());
+    dispatch(getOrderDetails(Number(bookingId),navigate));
   }
 
   useEffect(() => {
+
     dispatch(listAllOrders());
   }, [dispatch]);
 

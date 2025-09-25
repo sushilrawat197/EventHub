@@ -1,4 +1,10 @@
-import { NavLink, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { cancelBooking } from "../../../../services/operations/ticketCategory";
@@ -26,7 +32,6 @@ export default function BookingFlow() {
     { number: 4, title: "Review & Pay", active: step >= 4, completed: false },
   ];
 
-  
   async function backHandler() {
     if (bookingId) {
       const res = dispatch(cancelBooking(bookingId));
@@ -37,7 +42,6 @@ export default function BookingFlow() {
       }
     }
   }
-
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,7 +62,11 @@ export default function BookingFlow() {
 
             {/* Logo / Title */}
             <div className="text-sky-500 text-lg sm:text-2xl font-bold mr-4 sm:mr-8">
-             <NavLink to={"/"}> Ticketing</NavLink>
+              {path.includes("payment") ? (
+                "Ticketing"
+              ) : (
+                <NavLink to={"/"}> Ticketing</NavLink>
+              )}
             </div>
 
             {/* Event Name */}

@@ -138,15 +138,15 @@ const ReviewAndPay = () => {
 
           <div className="border-2 border-sky-500 rounded-md p-4 text-sm space-y-2 mb-4">
             <p>
-              <strong>{eventDate}</strong> | {eventTime}
+              <strong>{eventDate} | {eventTime}</strong> 
             </p>
             <p>
               <span className="font-bold">
                 Venue: {reserveTicket?.showVenue}{" "}
               </span>
-              <span className="text-gray-700">{reserveTicket?.eventName}</span>
+             
             </p>
-            <p>PHASE 2 (M 1499) : {ticketCount} ticket(s)</p>
+            {/* <p>PHASE 2 (M 1499) : {ticketCount} ticket(s)</p> */}
           </div>
 
           {/* Price Breakdown */}

@@ -6,7 +6,7 @@ import { apiConnector } from "../apiConnector";
 import { setBooking } from "../../slices/reserveTicketSlice";
 import type { BookingData } from "../../interfaces/reserveTicketInterface";
 import { setTicketInfo } from "../../slices/ticketInfoSlice";
-import type { NavigateFunction } from "react-router-dom";
+import {  type NavigateFunction } from "react-router-dom";
 import {  setCancelTicketLoading, setConfirmBooking } from "../../slices/confirmBookingSlice";
 import type { BookingResponse } from "../../interfaces/confirmBookingInterface";
 import { setLoading } from "../../slices/confirmBookingSlice";
@@ -163,7 +163,7 @@ export function confirmBooking(bookingId: number | null, navigate: NavigateFunct
 
 
 
-export function getOrderDetails(bookingId: number | null) {
+export function getOrderDetails(bookingId: number | null,navigate:NavigateFunction) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       dispatch(setLoading(true));
@@ -174,14 +174,14 @@ export function getOrderDetails(bookingId: number | null) {
         withCredentials: true,
       });
 
+         console.log("GET ORDER RESPONSE  ", response);
+
       if (response.data.statusCode === 200) {
         dispatch(setConfirmBooking(response.data.data));
+        navigate(`/order/${bookingId}`)
         return { success: true };
       }
-
-      console.log("GET ORDER RESPONSE  ", response);
-
-
+ 
       return { success: false };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -260,7 +260,8 @@ export function ticketPay(bookingId: number | null, phoneNumber: string | null, 
       });
 
       if (response.data.statusCode === 200) {
-        navigate(`/order/${response?.data?.data?.bookingId}`);
+       localStorage.setItem("navigateContext", "confirmBooking");
+        navigate(`/order/${response?.data?.data?.bookingId}`,{replace:true});
         return { success: true };
       }
 
@@ -285,7 +286,7 @@ export function ticketPay(bookingId: number | null, phoneNumber: string | null, 
 
 
 
-export function cancelBookingTicket(bookingId: number) {
+export function cancelBookingTicket(bookingId: number,navigate:NavigateFunction) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       dispatch(setCancelTicketLoading(true));
@@ -299,7 +300,7 @@ export function cancelBookingTicket(bookingId: number) {
 
       if (response.data.statusCode === 200) {
         // navigate(`/order${bookingId}`);
-        dispatch(getOrderDetails(bookingId));
+        dispatch(getOrderDetails(bookingId,navigate));
         return { success: true };
       }
 

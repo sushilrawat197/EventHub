@@ -1,6 +1,6 @@
 import { FaDownload } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
-import { useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ImSpinner6 } from "react-icons/im";
 import {
@@ -15,24 +15,23 @@ import { IoIosArrowDropup } from "react-icons/io";
 export default function BookingConfirmed() {
   const dispatch = useAppDispatch();
   const { bookingId } = useParams();
+  const navigate = useNavigate();
 
-  const confirmeTicket = useAppSelector((state) => state.reserveTicket.booking);
   const confirmBookingDetails = useAppSelector(
     (state) => state.confirmBooking.booking
   );
 
+  console.log("CONFIRM BOOKING DETAILS..", confirmBookingDetails);
+
   const [showPopup, setShowPopup] = useState(false);
   const refund = confirmBookingDetails?.payment?.refund;
-  console.log(confirmBookingDetails);
+  // console.log(confirmBookingDetails);
 
   const loading = useAppSelector((state) => state.confirmBooking.loading);
+
   const cancelTicketLoading = useAppSelector(
     (state) => state.confirmBooking.cancelTicketLoading
   );
-
-  useEffect(() => {
-    dispatch(getOrderDetails(Number(bookingId)));
-  }, [dispatch, bookingId]);
 
   // ✅ Format event date
   const eventDate = confirmBookingDetails
@@ -66,6 +65,22 @@ export default function BookingConfirmed() {
     showDateTime &&
     showDateTime.getTime() - now.getTime() > 24 * 60 * 60 * 1000;
 
+useEffect(() => {
+  const context = localStorage.getItem("navigateContext");
+
+  if (context === "confirmBooking") {
+    dispatch(getOrderDetails(Number(bookingId), navigate));
+  }
+
+  return () => {
+    // cleanup: localStorage se key hata do
+    localStorage.removeItem("navigateContext");
+  };
+}, [bookingId, dispatch, navigate]);
+
+
+
+
   if (loading) {
     return <SpinnerLoading />;
   }
@@ -74,13 +89,13 @@ export default function BookingConfirmed() {
     <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] bg-gray-100 flex flex-col items-center p-6">
       {/* Header Confirmation */}
       <div className="w-full max-w-5xl bg-white shadow-md rounded-lg p-4 mb-6 flex items-center justify-center mt-3">
-        <p className="font-semibold text-lg">
+        <div className="font-semibold text-lg">
           {confirmBookingDetails?.status === "CONFIRMED" ? (
             <p className="text-green-600">✅ Booking Confirmed</p>
           ) : (
             <p className="text-red-600">Booking Cancelled</p>
           )}
-        </p>
+        </div>
       </div>
 
       {/* Content Section */}
@@ -96,24 +111,21 @@ export default function BookingConfirmed() {
 
           {/* Details */}
           <div className="flex-1 ml-4">
+            <div className="flex justify-between items-start">
+              <h2 className="text-xl font-bold">
+                {confirmBookingDetails?.event.eventName}
+              </h2>
 
-            {confirmBookingDetails?.status === "CANCELLED" ? (
-              null
-            ):(
-              <div className="flex justify-between items-start">
-                <h2 className="text-xl font-bold">
-                  {confirmeTicket?.eventName}
-                </h2>
+              {confirmBookingDetails?.status === "CANCELLED" ? null : (
                 <FaDownload
                   onClick={() => dispatch(downloadTicket(Number(bookingId)))}
                   className="text-gray-500 cursor-pointer"
                 />
-              </div>
-            )}
-
+              )}
+            </div>
 
             <p className="text-sm text-gray-600 mt-1">U/A | Hindi | 2D</p>
-            <p className="mt-2 font-medium">{confirmeTicket?.showVenue}</p>
+            {/* <p className="mt-2 font-medium">{confirmBookingDetails?.show.venue}</p> */}
             <p className="text-sm text-gray-600">
               {confirmBookingDetails?.show.venue},{" "}
               {confirmBookingDetails?.show.venueAddress}
@@ -122,7 +134,7 @@ export default function BookingConfirmed() {
             <div className="mt-3 text-sm space-y-1">
               <p>
                 <span className="font-semibold">
-                  {eventDate} | {eventTime}
+                  {eventDate} | <span className=" uppercase">{eventTime}</span> 
                 </span>
               </p>
               <p>
@@ -152,10 +164,15 @@ export default function BookingConfirmed() {
 
                   <p>
                     <span className="font-semibold">Booking Number:</span>{" "}
-                    {confirmBookingDetails?.bookingId}
+                    {confirmBookingDetails?.bookingNo}
                   </p>
                 </>
               ) : null}
+
+              <p>
+                <span className="font-semibold">Booking Id:</span>{" "}
+                {confirmBookingDetails?.bookingId}
+              </p>
             </div>
           </div>
         </div>
@@ -203,7 +220,7 @@ export default function BookingConfirmed() {
           <p className="text-sm">
             Money has been proccessd on :{" "}
             <span className="font-semibold">
-              {confirmBookingDetails?.payment.refund.processedAt.split("T")[0]}
+              {confirmBookingDetails?.payment?.refund?.processedAt.split("T")[0]}
             </span>{" "}
           </p>
 
@@ -266,7 +283,9 @@ export default function BookingConfirmed() {
           {canCancel ? (
             <button
               className="bg-red-500 text-white w-40 h-10 rounded-md flex items-center justify-center"
-              onClick={() => dispatch(cancelBookingTicket(Number(bookingId)))}
+              onClick={() =>
+                dispatch(cancelBookingTicket(Number(bookingId), navigate))
+              }
               disabled={cancelTicketLoading ?? false} // ✅ disable while loading
             >
               {cancelTicketLoading ? (

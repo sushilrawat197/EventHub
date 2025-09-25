@@ -15,8 +15,7 @@ import {
 } from "../../../slices/filterSlice"; // 👈 add setStartDate, setEndDate
 import { listEventsBySearch } from "../../../services/operations/eventsApi";
 import { setFilter } from "../../../slices/filter_Slice";
-
-
+import Pagination from "../../Components/common/Pagination";
 
 const categoryOptions: string[] = [
   "CONCERT",
@@ -40,6 +39,9 @@ export default function EventList() {
   const events = useAppSelector(
     (state) => state.events.allEventsBySearch?.content || []
   );
+
+  const [page, setPage] = useState(0);
+  const  totalPages = useAppSelector((state) => state.events.allEventsBySearch?.totalPages);
 
 
 
@@ -172,9 +174,10 @@ export default function EventList() {
     );
   };
 
+  
   useEffect(() => {
-    dispatch(listEventsBySearch());
-  }, []);
+    dispatch(listEventsBySearch(page));
+  }, [page,dispatch]);
 
   return (
     <div className="py-4">
@@ -275,7 +278,11 @@ export default function EventList() {
         </span>
       </div>
 
-      {/* <Pagination/> */}
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages || 1}
+        onPageChange={(p) => setPage(p)}
+      />
 
       {/* <Pagination
         currentPage={page}

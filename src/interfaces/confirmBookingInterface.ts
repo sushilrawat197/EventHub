@@ -3,6 +3,7 @@ import type { Payment } from "./payTicketInterface";
 export interface BookingResponse {
   bookingId: number;
   orderNo: string;
+  bookingNo:string;
   orderDateTime: string; // ISO string
   status: string;
   amount: number;
