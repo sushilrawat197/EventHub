@@ -1,6 +1,6 @@
 import { FaDownload } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
-import {  useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ImSpinner6 } from "react-icons/im";
 import {
@@ -9,8 +9,8 @@ import {
   getOrderDetails,
 } from "../../../services/operations/ticketCategory";
 import SpinnerLoading from "./SpinnerLoading";
-import { IoIosArrowDropdown } from "react-icons/io";
-import { IoIosArrowDropup } from "react-icons/io";
+// import { IoIosArrowDropdown } from "react-icons/io";
+// import { IoIosArrowDropup } from "react-icons/io";
 
 export default function BookingConfirmed() {
   const dispatch = useAppDispatch();
@@ -24,7 +24,7 @@ export default function BookingConfirmed() {
   console.log("CONFIRM BOOKING DETAILS..", confirmBookingDetails);
 
   const [showPopup, setShowPopup] = useState(false);
-  const refund = confirmBookingDetails?.payment?.refund;
+  // const refund = confirmBookingDetails?.payment?.refund;
   // console.log(confirmBookingDetails);
 
   const loading = useAppSelector((state) => state.confirmBooking.loading);
@@ -65,21 +65,19 @@ export default function BookingConfirmed() {
     showDateTime &&
     showDateTime.getTime() - now.getTime() > 24 * 60 * 60 * 1000;
 
-useEffect(() => {
-  const context = localStorage.getItem("navigateContext");
+  useEffect(() => {
+    const context = localStorage.getItem("navigateContext");
 
-  if (context === "confirmBooking") {
-    dispatch(getOrderDetails(Number(bookingId), navigate));
-  }
+    if (context === "confirmBooking") {
+      dispatch(getOrderDetails(Number(bookingId), navigate));
+      setShowPopup(true);
+    }
 
-  return () => {
-    // cleanup: localStorage se key hata do
-    localStorage.removeItem("navigateContext");
-  };
-}, [bookingId, dispatch, navigate]);
-
-
-
+    return () => {
+      // cleanup: localStorage se key hata do
+      localStorage.removeItem("navigateContext");
+    };
+  }, [bookingId, dispatch, navigate]);
 
   if (loading) {
     return <SpinnerLoading />;
@@ -97,6 +95,38 @@ useEffect(() => {
           )}
         </div>
       </div>
+
+      {/* show Popup */}
+
+      {showPopup && (
+        <div className="fixed inset-0 backdrop-blur-2xl flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-2xl shadow-lg w-96 text-center">
+            <h2 className="text-lg font-semibold mb-4">Review & Feedback</h2>
+            <p className="text-sm text-gray-600 mb-6">
+              your feedback is important to us!
+            </p>
+
+           <div className="flex justify-center items-center gap-5">
+
+             <button
+              className="px-4 py-2 bg-sky-400 text-white rounded-md"
+              onClick={() => navigate("/rate-and-review")}
+            >
+              Give Feedback
+            </button>
+
+            <button
+              className="px-4 py-2 bg-red-500 text-white rounded-md"
+              onClick={()=>setShowPopup(false)}
+            >
+              Close
+            </button>
+
+           </div>
+
+          </div>
+        </div>
+      )}
 
       {/* Content Section */}
       <div className="w-full max-w-5xl flex flex-col md:flex-row gap-6">
@@ -134,7 +164,7 @@ useEffect(() => {
             <div className="mt-3 text-sm space-y-1">
               <p>
                 <span className="font-semibold">
-                  {eventDate} | <span className=" uppercase">{eventTime}</span> 
+                  {eventDate} | <span className=" uppercase">{eventTime}</span>
                 </span>
               </p>
               <p>
@@ -174,6 +204,16 @@ useEffect(() => {
                 {confirmBookingDetails?.bookingId}
               </p>
             </div>
+
+            {confirmBookingDetails?.status === "CANCELLED" ? (
+              <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
+                ⚠️ Ticket is cancelled money not refunded.
+              </div>
+            ) : (
+              <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
+                ⚠️ No refund will be allowed after cancellation.
+              </div>
+            )}
           </div>
         </div>
 
@@ -193,12 +233,16 @@ useEffect(() => {
 
           <div className="flex justify-between text-sm mb-2">
             <span className="font-semibold">Taxes & Fees</span>
-            <span>M {confirmBookingDetails?.bookingAmount.taxAmount}</span>
+            <span>
+              M{" "}
+              {(confirmBookingDetails?.bookingAmount.taxAmount ?? 0) +
+                (confirmBookingDetails?.bookingAmount.platformFee ?? 0)}
+            </span>
           </div>
-          <div className="flex justify-between text-sm mb-2">
+          {/* <div className="flex justify-between text-sm mb-2">
             <span className="font-semibold">Platform Fee</span>
             <span>M {confirmBookingDetails?.bookingAmount.platformFee}</span>
-          </div>
+          </div> */}
           <div className="border-t my-2"></div>
           <div className="flex justify-between font-semibold text-lg">
             <span>Total Amount Paid</span>
@@ -215,67 +259,71 @@ useEffect(() => {
         </div>
       </div>
 
-      {confirmBookingDetails?.status === "CANCELLED" && (
-        <div className="w-full max-w-5xl bg-white shadow-md rounded-lg p-4 mb-6 flex flex-col gap-2  mt-3">
-          <p className="text-sm">
-            Money has been proccessd on :{" "}
-            <span className="font-semibold">
-              {confirmBookingDetails?.payment?.refund?.processedAt.split("T")[0]}
-            </span>{" "}
-          </p>
-
-          <div className="relative ">
-            {/* Refund Text */}
-            <p className="text-sm cursor-pointer flex">
-              Refund amount :{" "}
-              <span className="font-semibold flex gap-2 ">
-                {" "}
-                M {refund?.refundAmount}{" "}
-                {showPopup ? (
-                  <IoIosArrowDropup
-                    onClick={() => setShowPopup(false)}
-                    className="text-sky-400 cursor-pointer"
-                    size={20}
-                  />
-                ) : (
-                  <IoIosArrowDropdown
-                    onClick={() => setShowPopup(true)}
-                    className="text-sky-400 cursor-pointer"
-                    size={20}
-                  />
-                )}
-              </span>
-            </p>
-
-            {/* Popup */}
-            {showPopup && (
-              <div className="absolute z-10 mt-2 w-64 rounded-xl bg-white p-4 shadow-lg border bottom-full mb-2">
-                <h3 className="font-semibold text-gray-800 mb-2">
-                  Refund Details
-                </h3>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <p>
-                    <span className="font-medium">Refund Amount: </span>
-                    {refund?.refundAmount}
-                  </p>
-                  <p>
-                    <span className="font-medium">Refund Status: </span>
-                    {refund?.refundStatus}
-                  </p>
-                  <p>
-                    <span className="font-medium">Processed At: </span>
-                    {refund?.processedAt?.split("T")[0]}
-                  </p>
-                  <p>
-                    <span className="font-medium">Phone: </span>
-                    {refund?.phoneNumber}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {
+        // confirmBookingDetails?.status === "CANCELLED" && (
+        //   <div className="w-full max-w-5xl bg-white shadow-md rounded-lg p-4 mb-6 flex flex-col gap-2  mt-3">
+        //     <p className="text-sm">
+        //       Money has been proccessd on :{" "}
+        //       <span className="font-semibold">
+        //         {
+        //           confirmBookingDetails?.payment?.refund?.processedAt.split(
+        //             "T"
+        //           )[0]
+        //         }
+        //       </span>{" "}
+        //     </p>
+        //     <div className="relative ">
+        //       {/* Refund Text */}
+        //       <p className="text-sm cursor-pointer flex">
+        //         Refund amount :{" "}
+        //         <span className="font-semibold flex gap-2 ">
+        //           {" "}
+        //           M {refund?.refundAmount}{" "}
+        //           {showPopup ? (
+        //             <IoIosArrowDropup
+        //               onClick={() => setShowPopup(false)}
+        //               className="text-sky-400 cursor-pointer"
+        //               size={20}
+        //             />
+        //           ) : (
+        //             <IoIosArrowDropdown
+        //               onClick={() => setShowPopup(true)}
+        //               className="text-sky-400 cursor-pointer"
+        //               size={20}
+        //             />
+        //           )}
+        //         </span>
+        //       </p>
+        //       {/* Popup */}
+        //       {showPopup && (
+        //         <div className="absolute z-10 mt-2 w-64 rounded-xl bg-white p-4 shadow-lg border bottom-full mb-2">
+        //           <h3 className="font-semibold text-gray-800 mb-2">
+        //             Refund Details
+        //           </h3>
+        //           <div className="text-sm text-gray-600 space-y-1">
+        //             <p>
+        //               <span className="font-medium">Refund Amount: </span>
+        //               {refund?.refundAmount}
+        //             </p>
+        //             <p>
+        //               <span className="font-medium">Refund Status: </span>
+        //               {refund?.refundStatus}
+        //             </p>
+        //             <p>
+        //               <span className="font-medium">Processed At: </span>
+        //               {refund?.processedAt?.split("T")[0]}
+        //             </p>
+        //             <p>
+        //               <span className="font-medium">Phone: </span>
+        //               {refund?.phoneNumber}
+        //             </p>
+        //           </div>
+        //         </div>
+        //       )}
+        //     </div>
+        //   </div>
+        // )
+      }
 
       {/* Footer Note / Cancel Button */}
       {confirmBookingDetails?.status === "CONFIRMED" && (

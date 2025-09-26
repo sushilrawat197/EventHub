@@ -31,6 +31,7 @@ import ReviewAndPay from "./UI/Components/eventsection/Eventsprocess/EventProces
 import PaymentPage from "./UI/Components/eventsection/PaymentPage";
 import BookingConfirmed from "./UI/Components/common/BookingConfirmPage";
 import BookingOrder from "./UI/Components/dasboard/BookingOrder";
+import RateAndReview from "./UI/Components/common/RateAndReview";
 // import TicketSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/TicketSelection";
 // import ReviewAndPay from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/ReviewAndPay";
 
@@ -154,6 +155,15 @@ function App() {
           element={
             <ProtectedRoute>
               <BookingConfirmed />
+            </ProtectedRoute>
+          }
+        />
+
+         <Route
+          path="/rate-and-review"
+          element={
+            <ProtectedRoute>
+             <RateAndReview/>
             </ProtectedRoute>
           }
         />
