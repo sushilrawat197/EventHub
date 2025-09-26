@@ -2,9 +2,7 @@ import { FaDownload } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ImSpinner6 } from "react-icons/im";
 import {
-  cancelBookingTicket,
   downloadTicket,
   getOrderDetails,
 } from "../../../services/operations/ticketCategory";
@@ -29,9 +27,9 @@ export default function BookingConfirmed() {
 
   const loading = useAppSelector((state) => state.confirmBooking.loading);
 
-  const cancelTicketLoading = useAppSelector(
-    (state) => state.confirmBooking.cancelTicketLoading
-  );
+  // const cancelTicketLoading = useAppSelector(
+  //   (state) => state.confirmBooking.cancelTicketLoading
+  // );
 
   // ✅ Format event date
   const eventDate = confirmBookingDetails
@@ -53,24 +51,26 @@ export default function BookingConfirmed() {
       })
     : "";
 
-  // ✅ Calculate show DateTime (for cancel button logic)
-  const showDateTime = confirmBookingDetails
-    ? new Date(
-        `${confirmBookingDetails.show.date}T${confirmBookingDetails.show.time}`
-      )
-    : null;
 
-  const now = new Date();
-  const canCancel =
-    showDateTime &&
-    showDateTime.getTime() - now.getTime() > 24 * 60 * 60 * 1000;
+  // ✅ Calculate show DateTime (for cancel button logic)
+  // const showDateTime = confirmBookingDetails
+  //   ? new Date(
+  //       `${confirmBookingDetails.show.date}T${confirmBookingDetails.show.time}`
+  //     )
+  //   : null;
+
+  // const now = new Date();
+
+  // const canCancel =
+  //   showDateTime &&
+  //   showDateTime.getTime() - now.getTime() > 24 * 60 * 60 * 1000;
 
   useEffect(() => {
     const context = localStorage.getItem("navigateContext");
 
     if (context === "confirmBooking") {
       dispatch(getOrderDetails(Number(bookingId), navigate));
-      // setShowPopup(true);
+      setShowPopup(true);
     }
 
     return () => {
@@ -205,15 +205,19 @@ export default function BookingConfirmed() {
               </p>
             </div>
 
-            {confirmBookingDetails?.status === "CANCELLED" ? (
-              <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
-                ⚠️ Ticket is cancelled money not refunded.
-              </div>
-            ) : (
-              <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
-                ⚠️ No refund will be allowed after cancellation.
-              </div>
-            )}
+            {
+            
+            // confirmBookingDetails?.status === "CANCELLED" ? (
+            //   <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
+            //     ⚠️ Ticket is cancelled money not refunded.
+            //   </div>
+            // ) : (
+            //   <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
+            //     ⚠️ No refund will be allowed after cancellation.
+            //   </div>
+            // )
+            
+            }
           </div>
         </div>
 
@@ -326,29 +330,33 @@ export default function BookingConfirmed() {
       }
 
       {/* Footer Note / Cancel Button */}
-      {confirmBookingDetails?.status === "CONFIRMED" && (
-        <div className="w-full max-w-5xl mt-6 flex justify-center items-center">
-          {canCancel ? (
-            <button
-              className="bg-red-500 text-white w-40 h-10 rounded-md flex items-center justify-center"
-              onClick={() =>
-                dispatch(cancelBookingTicket(Number(bookingId), navigate))
-              }
-              disabled={cancelTicketLoading ?? false} // ✅ disable while loading
-            >
-              {cancelTicketLoading ? (
-                <ImSpinner6 className="animate-spin" />
-              ) : (
-                "Cancel Ticket"
-              )}
-            </button>
-          ) : (
-            <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm">
-              ⚠️ Cancellation not available within 24 hours of the event.
-            </div>
-          )}
-        </div>
-      )}
+      {
+      
+      // confirmBookingDetails?.status === "CONFIRMED" && (
+      //   <div className="w-full max-w-5xl mt-6 flex justify-center items-center">
+      //     {canCancel ? (
+      //       <button
+      //         className="bg-red-500 text-white w-40 h-10 rounded-md flex items-center justify-center"
+      //         onClick={() =>
+      //           dispatch(cancelBookingTicket(Number(bookingId), navigate))
+      //         }
+      //         disabled={cancelTicketLoading ?? false} // ✅ disable while loading
+      //       >
+      //         {cancelTicketLoading ? (
+      //           <ImSpinner6 className="animate-spin" />
+      //         ) : (
+      //           "Cancel Ticket"
+      //         )}
+      //       </button>
+      //     ) : (
+      //       <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm">
+      //         ⚠️ Cancellation not available within 24 hours of the event.
+      //       </div>
+      //     )}
+      //   </div>
+      // )
+      
+      }
     </div>
   );
 }
