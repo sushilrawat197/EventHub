@@ -70,7 +70,7 @@ export default function BookingConfirmed() {
 
     if (context === "confirmBooking") {
       dispatch(getOrderDetails(Number(bookingId), navigate));
-      setShowPopup(true);
+      // setShowPopup(true);
     }
 
     return () => {
