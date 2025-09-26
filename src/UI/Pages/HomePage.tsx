@@ -4,6 +4,7 @@ import WhyChoose from "../Components/WhyChoose";
 import PosterRanking from "../Components/PosterRanking";
 import ContactPage from "../Components/ContactUs";
 import Footer from "../Components/Footer";
+import SellWithEase from "../Components/SellWithEase";
 
 export default function HomePage() {
 
@@ -15,7 +16,7 @@ export default function HomePage() {
         <UpcomingEvents />
         <WhyChoose />
         <PosterRanking />
-        {/* <SellWithEase /> */}
+        <SellWithEase />
         {/* <TicketPlans /> */}
         <ContactPage />
 

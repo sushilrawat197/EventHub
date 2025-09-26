@@ -180,10 +180,10 @@ export default function PaymentPage() {
                 <span>Ticket(s) price</span>
                 <span>M {reserveTicket?.fees.baseAmount}</span>
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span>Platform-Fee</span>
                 <span>M {reserveTicket?.fees.platformFee}</span>
-              </div>
+              </div> */}
               <div className="flex justify-between">
                 <span>Tax Amount</span>
                 <span>M {reserveTicket?.fees.taxAmount}</span>

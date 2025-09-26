@@ -239,8 +239,8 @@ export default function BookingConfirmed() {
             <span className="font-semibold">Taxes & Fees</span>
             <span>
               M{" "}
-              {(confirmBookingDetails?.bookingAmount.taxAmount ?? 0) +
-                (confirmBookingDetails?.bookingAmount.platformFee ?? 0)}
+              {confirmBookingDetails?.bookingAmount.taxAmount }
+               
             </span>
           </div>
           {/* <div className="flex justify-between text-sm mb-2">
