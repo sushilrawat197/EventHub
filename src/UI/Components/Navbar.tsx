@@ -146,8 +146,10 @@ const Navbar: React.FC = () => {
             </div>
 
             <div className="flex items-center">
+
+          
               {/* City Dropdown */}
-              <div className="hidden lg:flex w-fit rounded-full px-4 py-1 space-x-4 justify-center items-center relative">
+              <div className="lg:flex w-fit rounded-full px-4 py-1 space-x-4 justify-center items-center relative">
                 <div ref={cityRef} className="relative">
                   <button
                     className="text-gray-900 whitespace-nowrap bg-white cursor-pointer px-6 py-1 hover:bg-sky-200 rounded-full hover:font-medium flex items-center"
@@ -172,6 +174,7 @@ const Navbar: React.FC = () => {
                   )}
                 </div>
               </div>
+              
 
               {/* Sign In */}
               {user === null && (
@@ -195,6 +198,7 @@ const Navbar: React.FC = () => {
 
           <NavHeader />
         </div>
+
 
         {/* Mobile Nav */}
         {mobileMenuOpen && (
