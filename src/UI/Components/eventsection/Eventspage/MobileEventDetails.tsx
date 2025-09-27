@@ -128,7 +128,7 @@ export default function MobileEventDetailsCard({
       {/* Price & Book Button Fixed Bottom */}
       <div className="flex justify-between items-center py-3 border-t border-sky-300 fixed bottom-0 left-0 right-0 bg-white w-full px-4 z-40">
         <div className="flex flex-col">
-          <p className="text-lg font-bold">M-{price} onwards</p>
+          <p className="text-lg font-bold">M{price} Onwards</p>
           {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
         </div>
 

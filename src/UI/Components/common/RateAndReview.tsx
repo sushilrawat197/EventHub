@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useAppDispatch } from "../../../reducers/hooks";
 import { ratingAndReview } from "../../../services/operations/rateAndReview";
 import { useNavigate } from "react-router-dom";
+import { ImSad2 } from "react-icons/im";
+import { FaSmile } from "react-icons/fa";
+import { FaGrinStars } from "react-icons/fa";
+import { FaSadTear } from "react-icons/fa";
 
 export default function RateAndReview() {
   const dispatch = useAppDispatch();
@@ -11,13 +15,14 @@ export default function RateAndReview() {
   const [review, setReview] = useState("");
   const [showPopup, setShowPopup] = useState(false);
 
-  // Emoji set for rating
-  const emojis = [
-    { emoji: "😞", label: "Bad" },
-    { emoji: "😐", label: "Ok" },
-    { emoji: "🙂", label: "Good" },
-    { emoji: "🤩", label: "Great" },
-  ];
+  // Icon set for rating
+const emojis = [
+  { icon: <FaSadTear size={36} color="red" />, label: "Bad" },
+  { icon: <ImSad2 size={36} className="text-yellow-400" />, label: "Ok" },
+  { icon: <FaSmile size={36} className="text-green-400"/>, label: "Good" },
+  { icon: <FaGrinStars size={36} className="text-green-500" />, label: "Great" },
+];
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +36,12 @@ export default function RateAndReview() {
     console.log("Rating:", rating, "Review:", review);
   };
 
-  
   return (
     <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] flex items-center justify-center bg-gray-100 p-6">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md relative">
-        <h2 className="text-2xl font-bold text-center mb-6">Rate our service</h2>
+      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md relative flex flex-col items-center">
+        <h2 className="text-2xl font-bold text-center mb-6">
+          Rate our service
+        </h2>
 
         {/* Rating Section with Emojis */}
         <div className="flex justify-center gap-3 mb-6 text-3xl">
@@ -49,21 +55,27 @@ export default function RateAndReview() {
                 className={`cursor-pointer flex flex-col items-center mx-2 transition-transform ${
                   value === rating || value === hover
                     ? "scale-125 opacity-100"
-                    : "opacity-70"
+                    : "opacity-80"
                 }`}
                 onClick={() => setRating(value)}
                 onMouseEnter={() => setHover(value)}
                 onMouseLeave={() => setHover(0)}
               >
-                <span className="text-3xl">{item.emoji}</span>
+                <span className="">{item.icon}</span>
                 <span className="text-xs">{item.label}</span>
               </span>
             );
           })}
         </div>
+        <button
+         onClick={handleSubmit}
+          className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition"
+        >
+          SUBMIT YOUR RESPONSE
+        </button>
 
         {/* Review Section */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {/* <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <textarea
             value={review}
             onChange={(e) => setReview(e.target.value)}
@@ -73,13 +85,8 @@ export default function RateAndReview() {
             required
           />
 
-          <button
-            type="submit"
-            className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition"
-          >
-           SUBMIT YOUR RESPONSE
-          </button>
-        </form>
+         
+        </form> */}
 
         {/* ✅ Success Popup */}
         {showPopup && (

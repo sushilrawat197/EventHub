@@ -43,6 +43,7 @@ const BookingOrder: React.FC = () => {
 
   // Intersection Observer for infinite scroll
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  
 
 
   useEffect(() => {
@@ -100,13 +101,16 @@ const BookingOrder: React.FC = () => {
           <div className="text-sm font-semibold text-gray-700 text-center">
             Status
           </div>
+
           <div className="text-sm font-semibold text-gray-700 text-center">
             Order No.
           </div>
+
           <div className="text-sm font-semibold text-gray-700 text-right">
             Order Total
           </div>
         </div>
+
 
         {/* Orders */}
         <div className="divide-y divide-gray-200">
@@ -155,11 +159,13 @@ const BookingOrder: React.FC = () => {
                 </div>
 
                 <div className="flex justify-between items-center">
+                  
                   <div className="text-xs font-medium text-gray-500">
                     {transaction.orderNo}
                   </div>
+
                   <div className="text-sm font-semibold text-gray-900">
-                    Rs {transaction.amount}
+                    M{transaction.amount}
                   </div>
                 </div>
               </div>
@@ -212,14 +218,13 @@ const BookingOrder: React.FC = () => {
 
                 <div className="flex items-center justify-end">
                   <span className="text-sm font-semibold text-gray-900">
-                    Rs {transaction.amount}
+                    M{transaction.amount}
                   </span>
                 </div>
               </div>
             </div>
           ))}
         </div>
-
 
         {/* Infinite scroll loader */}
         <div

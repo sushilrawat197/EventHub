@@ -21,7 +21,7 @@ export default function BookingConfirmed() {
 
   console.log("CONFIRM BOOKING DETAILS..", confirmBookingDetails);
 
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   // const refund = confirmBookingDetails?.payment?.refund;
   // console.log(confirmBookingDetails);
 
@@ -51,7 +51,6 @@ export default function BookingConfirmed() {
       })
     : "";
 
-
   // ✅ Calculate show DateTime (for cancel button logic)
   // const showDateTime = confirmBookingDetails
   //   ? new Date(
@@ -60,7 +59,6 @@ export default function BookingConfirmed() {
   //   : null;
 
   // const now = new Date();
-
   // const canCancel =
   //   showDateTime &&
   //   showDateTime.getTime() - now.getTime() > 24 * 60 * 60 * 1000;
@@ -70,7 +68,6 @@ export default function BookingConfirmed() {
 
     if (context === "confirmBooking") {
       dispatch(getOrderDetails(Number(bookingId), navigate));
-      setShowPopup(true);
     }
 
     return () => {
@@ -78,6 +75,16 @@ export default function BookingConfirmed() {
       localStorage.removeItem("navigateContext");
     };
   }, [bookingId, dispatch, navigate]);
+
+
+const downloadHandler = async () => {
+  const resFn = downloadTicket(Number(bookingId));
+  const res = await resFn(); // execute the returned async function
+  if (res.success) {
+    setShowPopup(true);
+  }
+};
+
 
   if (loading) {
     return <SpinnerLoading />;
@@ -106,24 +113,21 @@ export default function BookingConfirmed() {
               your feedback is important to us!
             </p>
 
-           <div className="flex justify-center items-center gap-5">
+            <div className="flex justify-center items-center gap-5">
+              <button
+                className="px-4 py-2 bg-sky-400 text-white rounded-md"
+                onClick={() => navigate("/rate-and-review")}
+              >
+                Give Feedback
+              </button>
 
-             <button
-              className="px-4 py-2 bg-sky-400 text-white rounded-md"
-              onClick={() => navigate("/rate-and-review")}
-            >
-              Give Feedback
-            </button>
-
-            <button
-              className="px-4 py-2 bg-red-500 text-white rounded-md"
-              onClick={()=>setShowPopup(false)}
-            >
-              Close
-            </button>
-
-           </div>
-
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-md"
+                onClick={() => setShowPopup(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -148,7 +152,7 @@ export default function BookingConfirmed() {
 
               {confirmBookingDetails?.status === "CANCELLED" ? null : (
                 <FaDownload
-                  onClick={() => dispatch(downloadTicket(Number(bookingId)))}
+                  onClick={() => dispatch(downloadHandler)}
                   className="text-gray-500 cursor-pointer"
                 />
               )}
@@ -206,17 +210,15 @@ export default function BookingConfirmed() {
             </div>
 
             {
-            
-            // confirmBookingDetails?.status === "CANCELLED" ? (
-            //   <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
-            //     ⚠️ Ticket is cancelled money not refunded.
-            //   </div>
-            // ) : (
-            //   <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
-            //     ⚠️ No refund will be allowed after cancellation.
-            //   </div>
-            // )
-            
+              // confirmBookingDetails?.status === "CANCELLED" ? (
+              //   <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
+              //     ⚠️ Ticket is cancelled money not refunded.
+              //   </div>
+              // ) : (
+              //   <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm mt-2">
+              //     ⚠️ No refund will be allowed after cancellation.
+              //   </div>
+              // )
             }
           </div>
         </div>
@@ -232,16 +234,12 @@ export default function BookingConfirmed() {
 
           <div className="flex justify-between text-sm mb-2">
             <span className="font-semibold">Tickets</span>
-            <span>M {confirmBookingDetails?.bookingAmount.baseAmount}</span>
+            <span>M{confirmBookingDetails?.bookingAmount.baseAmount}</span>
           </div>
 
           <div className="flex justify-between text-sm mb-2">
             <span className="font-semibold">Taxes & Fees</span>
-            <span>
-              M{" "}
-              {confirmBookingDetails?.bookingAmount.taxAmount }
-               
-            </span>
+            <span>M{confirmBookingDetails?.bookingAmount.taxAmount}</span>
           </div>
           {/* <div className="flex justify-between text-sm mb-2">
             <span className="font-semibold">Platform Fee</span>
@@ -250,7 +248,7 @@ export default function BookingConfirmed() {
           <div className="border-t my-2"></div>
           <div className="flex justify-between font-semibold text-lg">
             <span>Total Amount Paid</span>
-            <span>M {confirmBookingDetails?.bookingAmount.totalAmount}</span>
+            <span>M{confirmBookingDetails?.bookingAmount.totalAmount}</span>
           </div>
 
           <div className="mt-3 text-sm text-gray-700">
@@ -331,31 +329,29 @@ export default function BookingConfirmed() {
 
       {/* Footer Note / Cancel Button */}
       {
-      
-      // confirmBookingDetails?.status === "CONFIRMED" && (
-      //   <div className="w-full max-w-5xl mt-6 flex justify-center items-center">
-      //     {canCancel ? (
-      //       <button
-      //         className="bg-red-500 text-white w-40 h-10 rounded-md flex items-center justify-center"
-      //         onClick={() =>
-      //           dispatch(cancelBookingTicket(Number(bookingId), navigate))
-      //         }
-      //         disabled={cancelTicketLoading ?? false} // ✅ disable while loading
-      //       >
-      //         {cancelTicketLoading ? (
-      //           <ImSpinner6 className="animate-spin" />
-      //         ) : (
-      //           "Cancel Ticket"
-      //         )}
-      //       </button>
-      //     ) : (
-      //       <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm">
-      //         ⚠️ Cancellation not available within 24 hours of the event.
-      //       </div>
-      //     )}
-      //   </div>
-      // )
-      
+        // confirmBookingDetails?.status === "CONFIRMED" && (
+        //   <div className="w-full max-w-5xl mt-6 flex justify-center items-center">
+        //     {canCancel ? (
+        //       <button
+        //         className="bg-red-500 text-white w-40 h-10 rounded-md flex items-center justify-center"
+        //         onClick={() =>
+        //           dispatch(cancelBookingTicket(Number(bookingId), navigate))
+        //         }
+        //         disabled={cancelTicketLoading ?? false} // ✅ disable while loading
+        //       >
+        //         {cancelTicketLoading ? (
+        //           <ImSpinner6 className="animate-spin" />
+        //         ) : (
+        //           "Cancel Ticket"
+        //         )}
+        //       </button>
+        //     ) : (
+        //       <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm">
+        //         ⚠️ Cancellation not available within 24 hours of the event.
+        //       </div>
+        //     )}
+        //   </div>
+        // )
       }
     </div>
   );

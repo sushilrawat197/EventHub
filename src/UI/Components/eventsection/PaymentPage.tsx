@@ -178,7 +178,7 @@ export default function PaymentPage() {
             <div className="bg-white shadow rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
               <div className="flex justify-between">
                 <span>Ticket(s) price</span>
-                <span>M {reserveTicket?.fees.baseAmount}</span>
+                <span>M{reserveTicket?.fees.baseAmount}</span>
               </div>
               {/* <div className="flex justify-between">
                 <span>Platform-Fee</span>
@@ -186,18 +186,18 @@ export default function PaymentPage() {
               </div> */}
               <div className="flex justify-between">
                 <span>Tax Amount</span>
-                <span>M {reserveTicket?.fees.taxAmount}</span>
+                <span>M{reserveTicket?.fees.taxAmount}</span>
               </div>
               <hr className="my-2" />
               <div className="flex justify-between font-semibold">
                 <span>Order total</span>
-                <span>M {reserveTicket?.fees.totalAmount}</span>
+                <span>M{reserveTicket?.fees.totalAmount}</span>
               </div>
             </div>
 
             <div className="bg-white shadow rounded-lg p-3 sm:p-4 flex justify-between font-semibold text-sm sm:text-base">
               <span>Amount Payable</span>
-              <span>M {reserveTicket?.fees.totalAmount}</span>
+              <span>M{reserveTicket?.fees.totalAmount}</span>
             </div>
           </div>
         </div>

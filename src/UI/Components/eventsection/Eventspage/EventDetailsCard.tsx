@@ -151,7 +151,7 @@ export default function EventDetailsCard({
       {/* Price & Button */}
       <div className="flex items-center justify-between pt-3 border-t border-sky-300">
         <div>
-          <p className="text-lg font-bold">M-{price} onwards</p>
+          <p className="text-lg font-bold">M{price} Onwards</p>
           {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
         </div>
 

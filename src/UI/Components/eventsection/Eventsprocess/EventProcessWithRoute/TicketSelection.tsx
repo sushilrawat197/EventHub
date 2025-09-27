@@ -111,7 +111,7 @@ useEffect(() => {
         >
           <div>
             <h4 className="font-semibold">Ticket {ticket.name}</h4>
-            <p className="text-gray-600">{ticket.price} M</p>
+            <p className="text-gray-600">M{ticket.price}</p>
             {ticket.capacity < 10 && (
               <span className="text-red-500 text-sm">Fast Filling</span>
             )}

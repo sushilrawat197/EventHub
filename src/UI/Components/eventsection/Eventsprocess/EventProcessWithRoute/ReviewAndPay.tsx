@@ -153,7 +153,7 @@ const ReviewAndPay = () => {
           <div className="space-y-2 mb-4">
             <div className="flex justify-between">
               <span>Base-Amount</span>
-              <span>M {reserveTicket?.fees.baseAmount}</span>
+              <span>M{reserveTicket?.fees.baseAmount}</span>
             </div>
             {/* <div className="flex justify-between">
               <span>Platform-Fee</span>
@@ -161,11 +161,11 @@ const ReviewAndPay = () => {
             </div> */}
             <div className="flex justify-between">
               <span>Tax-Amount</span>
-              <span>M {reserveTicket?.fees.taxAmount}</span>
+              <span>M{reserveTicket?.fees.taxAmount}</span>
             </div>
             <div className="flex justify-between font-semibold text-lg">
               <span>Total Amount</span>
-              <span>M {reserveTicket?.fees.totalAmount}</span>
+              <span>M{reserveTicket?.fees.totalAmount}</span>
             </div>
           </div>
 
