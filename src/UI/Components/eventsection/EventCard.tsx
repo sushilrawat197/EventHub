@@ -2,8 +2,6 @@ import { useState } from "react";
 
 import type {  EventResponseBySearch } from "../../../interfaces/eventInterface/evnetInterFace";
 
-
-
 interface EventCardProps {
   event: EventResponseBySearch;
 }

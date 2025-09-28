@@ -40,7 +40,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
     "THEATRE",
     "COMEDY",
     "EXHIBITION",
-    "FESTIVA",
+    "FESTIVAL",
     "WORKSHOP",
     "OTHER",
   ];

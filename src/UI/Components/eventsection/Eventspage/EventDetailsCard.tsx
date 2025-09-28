@@ -43,6 +43,8 @@ export default function EventDetailsCard({
   price,
   priceNote,
 }: EventDetailsCardProps) {
+
+
   const details = [
 
     ...(date?[{ icon: <FaCalendarAlt />, text: date }]:[]),
@@ -67,10 +69,6 @@ export default function EventDetailsCard({
   const shows = useAppSelector((state) => state.shows.data);
 
 
-
-
-  
-
   const uniqueShows = Array.from(
     new Map(shows.map((s) => [`${s.eventId}-${s.venueId}`, s])).values()
   );
@@ -81,7 +79,7 @@ export default function EventDetailsCard({
     if (eventId) {
       const result = await dispatch(checkEventAvailability(eventId));
       if (result?.soldOut) {
-        dispatch(setEventsErrorMsg("All shows are sold out for this event"));
+        dispatch(setEventsErrorMsg("All tickets are sold out"));
         return;
       }
     }
@@ -125,6 +123,8 @@ export default function EventDetailsCard({
       }
     }
   }
+
+
 
 
 

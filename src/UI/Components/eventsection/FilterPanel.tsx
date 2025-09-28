@@ -295,7 +295,7 @@ export default function FilterPanel() {
     "THEATRE",
     "COMEDY",
     "EXHIBITION",
-    "FESTIVA",
+    "FESTIVAL",
     "WORKSHOP",
     "OTHER",
   ];

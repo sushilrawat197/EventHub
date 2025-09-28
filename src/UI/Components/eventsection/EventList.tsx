@@ -23,7 +23,7 @@ const categoryOptions: string[] = [
   "THEATRE",
   "COMEDY",
   "EXHIBITION",
-  "FESTIVA",
+  "FESTIVAL",
   "WORKSHOP",
   "OTHER",
 ];

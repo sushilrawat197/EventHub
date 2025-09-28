@@ -25,6 +25,7 @@ export default function EventsErrorPage() {
     };
   }, [eventErroMsg]);
 
+  
   if (!eventErroMsg) return null;
 
 
