@@ -17,11 +17,10 @@ import { setFilter } from "../../slices/filter_Slice";
 
 const Navbar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const [searchData, setSearchData] = useState("");
-  
 
   const menuRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
@@ -50,20 +49,17 @@ const Navbar: React.FC = () => {
     setSelectedCityNav(city.label);
     dispatch(setSelectedCity(city.id));
     setCityDropdownOpen(false);
-
     dispatch(setFilter({ key: "cityId", value: city.id }));
     console.log(city.id);
-
     dispatch(listEventsBySearch());
   };
 
-  function handleSearch(){
-    dispatch(setFilter({key:"eventName",value:searchData}));
+  function handleSearch() {
+    dispatch(setFilter({ key: "eventName", value: searchData }));
     dispatch(listEventsBySearch());
     navigate("/events");
   }
 
-  
   useEffect(() => {
     if (cities.length > 0 && selectedCity === "Select City") {
       const preCity = cities.find((item) => item.label === "Maseru");
@@ -77,6 +73,13 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     dispatch(listCitiesByRegion());
   }, [dispatch]);
+
+
+
+  useEffect(() => {
+     setSearchData("");
+     dispatch(setFilter({ key: "eventName", value: "" }));
+  }, [navigate,dispatch]);
 
   return (
     <>
@@ -114,7 +117,6 @@ const Navbar: React.FC = () => {
                 </button>
               </div>
 
-
               <Link to={"/"}>
                 <div className="flex items-center lg:w-24 lg:h-10 w-20 h-10 rounded-lg ">
                   <img
@@ -148,8 +150,6 @@ const Navbar: React.FC = () => {
             </div>
 
             <div className="flex items-center">
-
-          
               {/* City Dropdown */}
               <div className="lg:flex w-fit rounded-full px-2 lg:px-4 py-1 space-x-4 justify-center items-center relative">
                 <div ref={cityRef} className="relative">
@@ -176,7 +176,6 @@ const Navbar: React.FC = () => {
                   )}
                 </div>
               </div>
-              
 
               {/* Sign In */}
               {user === null && (
@@ -201,7 +200,6 @@ const Navbar: React.FC = () => {
           <NavHeader />
         </div>
 
-
         {/* Mobile Nav */}
         {mobileMenuOpen && (
           <>
@@ -210,20 +208,16 @@ const Navbar: React.FC = () => {
               className="lg:hidden bg-white shadow  p-4 space-y-2"
             >
               <div className="bg-white justify-center items-center w-full rounded-full flex border border-sky-400">
-               
-
-                 <input
+                <input
                   value={searchData}
                   onChange={(e) => setSearchData(e.target.value)}
-                 
                   type="text"
                   placeholder="Search for Events"
                   className="focus:outline-none border-none bg-white p-2 rounded-md w-[80%] px-2"
                 />
-                 <span className="text-xl"  onClick={handleSearch}>
+                <span className="text-xl" onClick={handleSearch}>
                   <CiSearch />
                 </span>
-
               </div>
 
               <div className="flex flex-col">
