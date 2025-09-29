@@ -74,12 +74,11 @@ export default function EventDetailsCard({
   );
 
 
-  
   async function bookHandler() {
     if (eventId) {
       const result = await dispatch(checkEventAvailability(eventId));
       if (result?.soldOut) {
-        dispatch(setEventsErrorMsg("All tickets are sold out"));
+        dispatch(setEventsErrorMsg("All tickets are sold out for this event"));
         return;
       }
     }

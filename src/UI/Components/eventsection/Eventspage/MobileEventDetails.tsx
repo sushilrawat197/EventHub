@@ -62,7 +62,7 @@ export default function MobileEventDetailsCard({
     if (eventId) {
       const result = await dispatch(checkEventAvailability(eventId));
       if (result?.soldOut) {
-        dispatch(setEventsErrorMsg("All shows are sold out for this event"));
+        dispatch(setEventsErrorMsg("All tickets are sold out for this event"));
         return;
       }
     }

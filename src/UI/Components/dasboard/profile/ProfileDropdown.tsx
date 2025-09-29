@@ -92,6 +92,7 @@ export default function ProfileDropdown() {
     setTimeout(() => setOpenMenu(false), 300);
   };
 
+
   return (
     <div className="relative z-50">
       {/* Trigger Button */}
@@ -124,12 +125,14 @@ export default function ProfileDropdown() {
             <FaRegUserCircle size={30} />
           )}
 
-          <div className="flex items-center justify-center gap-1">
+          <div className="hidden lg:flex items-center justify-center gap-1 ">
             Hello!
             {user?.firstName && <p>{user?.firstName?.slice(0, 6)}...</p>}
           </div>
+
         </div>
       </div>
+
 
       {/* Dropdown Menu + Overlay */}
       {openMenu && (
@@ -176,6 +179,7 @@ export default function ProfileDropdown() {
                   <GoPersonFill size={40} />
                 )}
               </div>
+
               <h2 className="text-2xl text-sky-400 font-semibold mt-1">
                 Hello!
               </h2>
@@ -188,6 +192,7 @@ export default function ProfileDropdown() {
                 </span>
               </Link>
             </div>
+
 
             {/* Menu Items */}
             <div className="py-4">
@@ -216,6 +221,7 @@ export default function ProfileDropdown() {
                   <FiChevronRight className="text-gray-500" />
                 </div>
               ))}
+
 
               <div className="px-5">
                 {loading ? (

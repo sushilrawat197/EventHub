@@ -128,6 +128,13 @@ console.log(uniqueVenues)
     dispatch(listEventsBySearch());
   }, [eventId, dispatch]);
 
+
+
+  // if(!details){
+  //   return <SpinnerLoading/>
+  // }
+
+
   if (eventLoading) {
     return <SpinnerLoading />;
   }
