@@ -12,6 +12,7 @@ import { useAppSelector, useAppDispatch } from "../../../../reducers/hooks";
 import { checkEventAvailability } from "../../../../services/operations/eventsApi";
 import { setTicketInfo } from "../../../../slices/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../../../slices/eventSlice";
+import { useEffect, useState } from "react";
 
 interface EventDetailsCardProps {
   date?: string;
@@ -38,6 +39,10 @@ export default function MobileEventDetailsCard({
   price,
   priceNote,
 }: EventDetailsCardProps) {
+
+ const [showCard, setShowCard] = useState(false);
+
+
   const details = [
     ...(date ? [{ icon: <FaCalendarAlt />, text: date }] : []),
     ...(time ? [{ icon: <FaClock />, text: time }] : []),
@@ -105,6 +110,28 @@ export default function MobileEventDetailsCard({
       }
     }
   };
+
+
+    // ⏳ 1 sec delay
+   useEffect(() => {
+      const timer = setTimeout(() => {
+        setShowCard(true);
+      }, 700);
+      return () => clearTimeout(timer);
+    }, []);
+  
+  
+      if (!showCard) {
+      return (
+        <div className="animate-pulse border-2 border-sky-200 rounded-xl p-4 w-full max-w-sm bg-white space-y-4">
+          <div className="h-4 bg-sky-200 rounded w-2/3"></div>
+          <div className="h-4 bg-sky-200 rounded w-1/2"></div>
+          <div className="h-4 bg-sky-200 rounded w-1/4"></div>
+          <div className="h-10 bg-sky-200 rounded w-full mt-4"></div>
+        </div>
+      );
+    }
+  
 
   return (
     <div className="lg:hidden shadow-sky-500 rounded-xl w-full max-w-sm bg-white space-y-4">

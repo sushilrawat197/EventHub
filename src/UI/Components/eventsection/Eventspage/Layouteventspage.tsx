@@ -17,6 +17,8 @@ import {
 import SpinnerLoading from "../../common/SpinnerLoading";
 import { clearSingleEvent } from "../../../../slices/eventSlice";
 import { fetchFilteredShows, listAllShowsByEvent } from "../../../../services/operations/showsApi";
+import { clearSetShows } from "../../../../slices/showSlice";
+
 
 export default function Layouteventspage() {
   const location = useLocation();
@@ -118,12 +120,11 @@ console.log(uniqueVenues)
   useEffect(() => {
     if (eventId) {
       dispatch(clearSingleEvent()); // 👈 old data hatao
+      dispatch(clearSetShows()); // 👈 old data hatao
       dispatch(listEventById(eventId));
       dispatch(listAllShowsByEvent(eventId));
       dispatch(checkEventAvailability(eventId));
       dispatch(fetchFilteredShows(eventId));
-      
-      
     }
     dispatch(listEventsBySearch());
   }, [eventId, dispatch]);
@@ -152,6 +153,7 @@ console.log(uniqueVenues)
             image={singleEvent?.thumbnailUrl ?? null}
             tags={singleEvent?.genre ?? ""}
           />
+
 
           <MobileEventDetailsCard {...details} />
 

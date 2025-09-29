@@ -13,7 +13,7 @@ export interface ShowResponse {
   venueName: string;
   status: "SCHEDULED" | "CANCELLED" | "COMPLETED"; // possible status values
   basePrice: number;
-  bookingType:string
+  bookingType: string
 }
 
 
@@ -39,11 +39,14 @@ const showsSlice = createSlice({
     setShowsLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
+    clearSetShows: (state) => {
+      state.data = [];   // 👈 ab yeh allowed hai
+    },
 
   },
 });
 
-export const { setShows, setShowsLoading} =
+export const { setShows, setShowsLoading,clearSetShows } =
   showsSlice.actions;
 
 export default showsSlice.reducer;

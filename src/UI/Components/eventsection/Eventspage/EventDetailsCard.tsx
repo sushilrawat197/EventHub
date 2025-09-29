@@ -13,6 +13,7 @@ import { checkEventAvailability } from "../../../../services/operations/eventsAp
 import { setTicketInfo } from "../../../../slices/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../../../slices/eventSlice";
 import EventsErrorPage from "../EventErrorsd";
+import { useEffect, useState } from "react";
 
 
 export interface EventDetailsCardProps {
@@ -43,7 +44,7 @@ export default function EventDetailsCard({
   price,
   priceNote,
 }: EventDetailsCardProps) {
-
+ const [showCard, setShowCard] = useState(false);
 
   const details = [
 
@@ -123,9 +124,26 @@ export default function EventDetailsCard({
     }
   }
 
+  
+  // ⏳ 1 sec delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowCard(true);
+    }, 700);
+    return () => clearTimeout(timer);
+  }, []);
 
 
-
+    if (!showCard) {
+    return (
+      <div className="animate-pulse border-2 border-sky-200 rounded-xl p-4 w-full max-w-sm bg-white space-y-4">
+        <div className="h-4 bg-sky-200 rounded w-2/3"></div>
+        <div className="h-4 bg-sky-200 rounded w-1/2"></div>
+        <div className="h-4 bg-sky-200 rounded w-1/4"></div>
+        <div className="h-10 bg-sky-200 rounded w-full mt-4"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="border-2 border-sky-500 shadow-sm shadow-sky-500 rounded-xl p-4 w-full max-w-sm bg-white space-y-4">
