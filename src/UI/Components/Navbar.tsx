@@ -113,8 +113,9 @@ const Navbar: React.FC = () => {
                 </button>
               </div>
 
+
               <Link to={"/"}>
-                <div className="flex items-center lg:w-24 lg:h-10 w-24 h-10 rounded-lg ">
+                <div className="flex items-center lg:w-24 lg:h-10 w-20 h-10 rounded-lg ">
                   <img
                     loading="lazy"
                     className="object-cover rounded-sm "
@@ -149,7 +150,7 @@ const Navbar: React.FC = () => {
 
           
               {/* City Dropdown */}
-              <div className="lg:flex w-fit rounded-full px-4 py-1 space-x-4 justify-center items-center relative">
+              <div className="lg:flex w-fit rounded-full px-2 lg:px-4 py-1 space-x-4 justify-center items-center relative">
                 <div ref={cityRef} className="relative">
                   <button
                     className="text-gray-900 whitespace-nowrap bg-white cursor-pointer px-6 py-1 hover:bg-sky-200 rounded-full hover:font-medium flex items-center"
