@@ -76,15 +76,13 @@ export default function BookingConfirmed() {
     };
   }, [bookingId, dispatch, navigate]);
 
-
-const downloadHandler = async () => {
-  const resFn = downloadTicket(Number(bookingId));
-  const res = await resFn(); // execute the returned async function
-  if (res.success) {
-    setShowPopup(true);
-  }
-};
-
+  const downloadHandler = async () => {
+    const resFn = downloadTicket(Number(bookingId));
+    const res = await resFn(); // execute the returned async function
+    if (res.success) {
+      setShowPopup(true);
+    }
+  };
 
   if (loading) {
     return <SpinnerLoading />;
@@ -107,25 +105,38 @@ const downloadHandler = async () => {
 
       {showPopup && (
         <div className="fixed inset-0 backdrop-blur-2xl flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-2xl shadow-lg w-96 text-center">
-            <h2 className="text-lg font-semibold mb-4">Review & Feedback</h2>
+          <div className="bg-white p-8 rounded-2xl shadow-xl w-96 text-center border border-gray-200">
+            {/* Success Message */}
+            <h2 className="text-sm font-semibold mb-2 text-gray-800 uppercase">
+               Ticket Downloaded
+            </h2>
             <p className="text-sm text-gray-600 mb-6">
-              your feedback is important to us!
+              Your ticket has been saved to your downloads folder.
             </p>
 
-            <div className="flex justify-center items-center gap-5">
+            {/* Review Heading */}
+            <h2 className="text-lg font-semibold mb-2 text-gray-800">
+              Review & Feedback
+            </h2>
+            <p className="text-sm text-gray-500 mb-6">
+              Your feedback helps us improve!
+            </p>
+
+            {/* Buttons */}
+            <div className="flex justify-center items-center gap-4">
               <button
-                className="px-4 py-2 bg-sky-400 text-white rounded-md"
+                className="px-5 py-2 bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 
+                 text-white rounded-lg shadow-md transition-all duration-200 text-sm font-medium"
                 onClick={() => navigate("/rate-and-review")}
               >
-                Give Feedback
+                 Give Feedback
               </button>
 
               <button
-                className="px-4 py-2 bg-red-500 text-white rounded-md"
+                className="px-5 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md transition-all duration-200 text-sm font-medium"
                 onClick={() => setShowPopup(false)}
               >
-                Close
+                 Close
               </button>
             </div>
           </div>
@@ -203,10 +214,10 @@ const downloadHandler = async () => {
                 </>
               ) : null}
 
-              <p>
+              {/* <p>
                 <span className="font-semibold">Booking Id:</span>{" "}
                 {confirmBookingDetails?.bookingId}
-              </p>
+              </p> */}
             </div>
 
             {

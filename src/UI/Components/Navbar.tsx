@@ -63,9 +63,10 @@ const Navbar: React.FC = () => {
     navigate("/events");
   }
 
+  
   useEffect(() => {
     if (cities.length > 0 && selectedCity === "Select City") {
-      const preCity = cities.find((item) => item.label === "Cape Town");
+      const preCity = cities.find((item) => item.label === "Maseru");
       if (preCity) {
         dispatch(setSelectedCity(preCity.id));
         setSelectedCityNav(preCity.label);
