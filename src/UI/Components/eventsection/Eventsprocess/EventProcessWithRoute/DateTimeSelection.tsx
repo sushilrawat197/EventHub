@@ -16,7 +16,7 @@ const DateTimeSelection = (
 
   const venueId=useAppSelector((state)=>state.ticket.venueId);
   const shows = useAppSelector((state) => state.shows.data);
-  const singleEvent = useAppSelector((state) => state.events.singleEvent);
+  // const singleEvent = useAppSelector((state) => state.events.singleEvent);
 
 
   // filter shows by event + venue

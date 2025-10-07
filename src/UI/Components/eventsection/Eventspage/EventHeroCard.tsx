@@ -12,7 +12,7 @@ interface EventHeroCardDetails {
 }
 
 
-export default function EventHeroCard({title,image,tags}:EventHeroCardDetails) {
+export default function EventHeroCard({image,tags}:EventHeroCardDetails) {
   
   return (
     <div className="relative">

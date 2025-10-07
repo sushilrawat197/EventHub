@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { checkEventAvailability } from "../../../../services/operations/eventsApi";
 import { setTicketInfo } from "../../../../slices/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../../../slices/eventSlice";
-import EventsErrorPage from "../EventErrorsd";
+// import EventsErrorPage from "../EventErrorsd";
 import { useEffect, useState } from "react";
 
 
@@ -40,7 +40,7 @@ export default function EventDetailsCard({
   languages,
   category,
   venue,
-  bookingAlert,
+  // bookingAlert,
   price,
   priceNote,
 }: EventDetailsCardProps) {

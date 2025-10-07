@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
-import PrimaryButton from "../PrimaryButton";
+// import PrimaryButton from "../PrimaryButton";
 import { useEffect, useState } from "react";
 import { cancelBooking } from "../../../../../services/operations/ticketCategory";
 
@@ -186,7 +186,7 @@ const ReviewAndPay = () => {
                 <h4 className="text-base font-bold text-gray-900 mb-1">
                   {contentName}
                 </h4>
-                <p className="text-xs text-gray-600 mb-3">{ticketCount} Ticket{ticketCount > 1 ? 's' : ''}</p>
+                <p className="text-xs text-gray-600 mb-3">{ticketCount || 0} Ticket{(ticketCount || 0) > 1 ? 's' : ''}</p>
 
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
                   <div className="space-y-2">

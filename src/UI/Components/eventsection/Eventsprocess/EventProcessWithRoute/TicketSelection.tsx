@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { GrFormSubtract } from "react-icons/gr";
 import { IoMdAdd } from "react-icons/io";
-import PrimaryButton from "../PrimaryButton";
+// import PrimaryButton from "../PrimaryButton";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   listAllTicketCategoriesByShowId,
@@ -211,7 +211,7 @@ useEffect(() => {
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
             }`}
-            disabled={userId && categories.length === 0}
+            disabled={!!userId && categories.length === 0}
           >
             <span>
               {!userId ? "Login to Proceed" : categories.length === 0 ? "Select Tickets" : "Review & Pay"}
