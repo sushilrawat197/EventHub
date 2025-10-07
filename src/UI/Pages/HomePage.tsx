@@ -1,10 +1,10 @@
 import HeroSection from "./HeroSection";
 import UpcomingEvents from "../Components/UpcomingEvents";
-import WhyChoose from "../Components/WhyChoose";
-import PosterRanking from "../Components/PosterRanking";
+// import WhyChoose from "../Components/WhyChoose";
+// import PosterRanking from "../Components/PosterRanking";
 import ContactPage from "../Components/ContactUs";
 import Footer from "../Components/Footer";
-import SellWithEase from "../Components/SellWithEase";
+// import SellWithEase from "../Components/SellWithEase";
 
 export default function HomePage() {
 
@@ -14,9 +14,9 @@ export default function HomePage() {
       <div className="px-3">
         <HeroSection />
         <UpcomingEvents />
-        <WhyChoose />
+        {/* <WhyChoose />
         <PosterRanking />
-        <SellWithEase />
+        <SellWithEase /> */}
         {/* <TicketPlans /> */}
         <ContactPage />
 
