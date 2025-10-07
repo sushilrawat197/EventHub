@@ -109,68 +109,129 @@ const events = [
 
 const UpcomingEvents: React.FC = () => {
   return (
-    <div className="px-2 py-20  ">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8  ">
-        <h2 className="border-l-5 border-sky-500 pl-2 ">
-          <FaTicketAlt className="text-sky-500 text-2xl" />
-          <span className="  text-3xl font-medium">UPCOMING EVENTS</span>
-          <p className="text-[#777777] max-w-xl mt-2 font-light">
-            Explore the most exciting events happening soon! Book your spot now
-            and stay updated.
-          </p>
-        </h2>
-
-        <button className="mt-4 md:mt-0 border border-sky-500 hover:bg-sky-500 hover:text-white transition px-6 py-2 rounded-full text-sm font-semibold text-sky-600">
-          SEE ALL UPCOMING EVENTS
-        </button>
-      </div>
-
-      <Swiper
-        modules={[Navigation]}
-        navigation
-        spaceBetween={16}
-        slidesPerView={1}
-        breakpoints={{
-          480: { slidesPerView: 1.2 },
-          640: { slidesPerView: 2 },
-          768: { slidesPerView: 3 },
-          1024: { slidesPerView: 4 },
-          1280: { slidesPerView: 5 },
-        }}
-      >
-        {events.map((event, index) => (
-          <SwiperSlide key={index} className="  ">
-            <div className="relative rounded-lg overflow-hidden shadow-lg ease-in-out transition-transform duration-200   ">
-              <img
-                src={event.image}
-                alt={event.title}
-                className="w-full h-56 object-cover"
-              />
-              <div className="absolute top-3 left-3 bg-sky-500/40   text-white text-xs px-2 py-1 rounded shadow">
-                {event.date} {event.month} {event.year}
-              </div>
-              <div className="absolute top-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded shadow">
-                {event.status}
-              </div>
-              <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-black/20 text-white p-3">
-                <h3 className="text-sm font-semibold truncate">
-                  {event.title}
-                </h3>
-                <p className="text-xs truncate">{event.location}</p>
-                <button
-                  className={`mt-2 text-xs px-3 py-1 rounded-full font-medium  ${
-                    event.status === "SOLD OUT"
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-sky-500 hover:bg-sky-600  cursor-pointer "
-                  }`}
-                >
-                  {event.status === "SOLD OUT" ? "SOLD OUT" : "GET TICKET"}
-                </button>
-              </div>
+    <div className="py-24 bg-gradient-to-br from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+              <FaTicketAlt className="text-blue-600 text-xl" />
             </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+            <h2 className="text-4xl font-bold text-gray-900">Upcoming Events</h2>
+          </div>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Discover the most exciting events happening soon! Book your spot now
+            and stay updated with the latest happenings.
+          </p>
+        </div>
+
+        {/* Events Slider */}
+        <div className="relative">
+          <Swiper
+            modules={[Navigation]}
+            navigation={{
+              nextEl: '.swiper-button-next-custom',
+              prevEl: '.swiper-button-prev-custom',
+            }}
+            spaceBetween={24}
+            slidesPerView={1}
+            breakpoints={{
+              640: { slidesPerView: 2 },
+              768: { slidesPerView: 3 },
+              1024: { slidesPerView: 4 },
+              1280: { slidesPerView: 5 },
+            }}
+            className="pb-12"
+          >
+            {events.map((event, index) => (
+              <SwiperSlide key={index}>
+                <div className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 h-full flex flex-col">
+                  {/* Image Container */}
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    {/* Date Badge */}
+                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-gray-900 text-sm font-bold px-3 py-2 rounded-xl shadow-lg">
+                      <div className="text-center">
+                        <div className="text-lg font-bold">{event.date}</div>
+                        <div className="text-xs">{event.month}</div>
+                      </div>
+                    </div>
+                    
+                    {/* Status Badge */}
+                    <div className="absolute top-4 right-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg ${
+                        event.status === "SOLD OUT" 
+                          ? "bg-red-500 text-white" 
+                          : event.status === "FREE"
+                          ? "bg-green-500 text-white"
+                          : "bg-blue-500 text-white"
+                      }`}>
+                        {event.status}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="p-6 flex-grow flex flex-col">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                      {event.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4 flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {event.location}
+                    </p>
+                    
+                    <div className="mt-auto">
+                      <button
+                      className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 ${
+                        event.status === "SOLD OUT"
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-lg transform hover:scale-105"
+                      }`}
+                      >
+                        {event.status === "SOLD OUT" ? "Sold Out" : "Get Ticket"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          
+          {/* Custom Navigation Buttons */}
+          <button className="swiper-button-prev-custom absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors z-10">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button className="swiper-button-next-custom absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors z-10">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+        
+        {/* View All Button */}
+        <div className="text-center mt-12">
+          <button className="group bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2 mx-auto">
+            <span>View All Events</span>
+            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

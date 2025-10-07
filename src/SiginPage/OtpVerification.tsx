@@ -97,87 +97,138 @@ useEffect(() => {
   if (!ready) return null; // ⛔️ Block rendering before token check
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] flex items-center justify-center bg-sky-100 p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm text-center">
-          {/* Logo */}
-          <div className="mb-6">
-            <img
-              src="ticketlogo2.jpg"
-              alt="logo"
-              className="mx-auto h-[2.2rem] mb-4 rounded"
-            />
+    <div className="h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-start justify-center pt-16 p-4">
+      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+        <div className="flex flex-col lg:flex-row min-h-[450px]">
+          {/* Left Side - Hero Section */}
+          <div className="lg:w-1/2 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 relative overflow-hidden">
+            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="relative h-full flex flex-col justify-center items-center p-6 text-white">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-8 left-8 w-20 h-20 bg-white rounded-full blur-3xl"></div>
+                <div className="absolute bottom-8 right-8 w-24 h-24 bg-white rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-full blur-2xl"></div>
+              </div>
+              
+              <div className="relative z-10 text-center">
+                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h1 className="text-3xl font-bold mb-3">Verify OTP</h1>
+                <p className="text-lg text-blue-100 mb-6 max-w-sm">
+                  We've sent a verification code to your email address
+                </p>
+                <div className="flex items-center justify-center gap-4 text-blue-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span className="text-sm">Secure Code</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-sm">Quick Verify</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                    <span className="text-sm">Safe Process</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-semibold text-black mb-1">
-            Enter OTP
-          </h2>
-          <p className="text-sm text-[#777777] mb-3">
-            We have sent an OTP to your e-mail address
-          </p>
-
-          <PopUpMessage/>
-
-          <div className="flex justify-center gap-2 mb-8 mt-2">
-            <OtpInput
-              value={otp}
-              onChange={(otp: string) => setOtp(otp)}
-              numInputs={6}
-              renderInput={(props) => (
-                <input
-                  {...props}
-                  placeholder="-"
-                  style={{
-                    boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                  }}
-                  className="w-10 h-12 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-lg"
+          {/* Right Side - OTP Form */}
+          <div className="lg:w-1/2 p-6 lg:p-8 flex flex-col justify-center">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <img
+                  src="ticketlogo2.jpg"
+                  alt="EventHub Logo"
+                  className="w-8 h-8 object-contain"
                 />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Enter OTP</h2>
+              <p className="text-sm text-gray-600">
+                We have sent an OTP to your email address
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="w-full space-y-6">
+              <PopUpMessage />
+
+              {/* OTP Input Section */}
+              <div className="space-y-4">
+                <label className="text-sm font-semibold text-gray-700 text-center block">
+                  Enter 6-digit verification code
+                </label>
+                <div className="flex justify-center">
+                  <OtpInput
+                    value={otp}
+                    onChange={(otp: string) => setOtp(otp)}
+                    numInputs={6}
+                    renderInput={(props) => (
+                      <input
+                        {...props}
+                        placeholder="-"
+                        className="w-16 h-16 text-center border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xl font-bold bg-gray-50 focus:bg-white transition-all duration-300"
+                      />
+                    )}
+                    containerStyle={{
+                      justifyContent: "space-between",
+                      gap: "0 12px",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Verify Button */}
+              {!loading ? (
+                <button
+                  type="submit"
+                  disabled={isDisabled}
+                  className={`w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+                    isDisabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+                  }`}
+                >
+                  Verify OTP
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-3"
+                >
+                  <ClipLoader color="#ffffff" size={20} />
+                  <span>Verifying...</span>
+                </button>
               )}
-              containerStyle={{
-                justifyContent: "space-between",
-                gap: "0 6px",
-              }}
-            />
+
+              {/* Resend OTP with Timer */}
+              <div className="text-center pt-4">
+                <p className="text-sm text-gray-600">
+                  Didn't receive code?{" "}
+                  {timer > 0 ? (
+                    <span className="text-blue-600 opacity-50 font-medium ml-1 cursor-pointer underline">
+                      Resend OTP in {formatTime(timer)}
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={resendOtpHandler}
+                      className="font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                    >
+                      Resend OTP
+                    </button>
+                  )}
+                </p>
+              </div>
+            </form>
           </div>
-
-          {!loading ? (
-            <button
-              type="submit"
-              disabled={isDisabled}
-              className={`w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold h-10 rounded-lg transition text-base ${
-                isDisabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"
-              }`}
-            >
-             Verify Otp
-            </button>
-          ) : (
-            <button
-              disabled
-              className="flex flex-col items-center justify-center w-full bg-sky-700 text-white h-10 rounded-lg transition text-base cursor-not-allowed"
-            >
-              <ClipLoader color="#ffffff" size={20} />
-            </button>
-          )}
-
-          <p className="text-sm text-[#777777] mt-4">
-            Didn’t receive code?{" "}
-            {timer > 0 ? (
-              <span className="text-blue-600 opacity-50 font-medium ml-1 cursor-pointer underline">
-                Resend OTP in {formatTime(timer)}
-              </span>
-            ) : (
-              <button
-                type="button"
-                onClick={resendOtpHandler}
-                className="text-sky-600 hover:underline font-medium cursor-pointer"
-              >
-                Resend OTP
-              </button>
-            )}
-          </p>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

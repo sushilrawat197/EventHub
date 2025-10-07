@@ -26,12 +26,12 @@ const Inputbox: React.FC<InputboxProps> = ({
   maxLength
 }) => {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-      <label htmlFor={id} className="sm:w-40 text-gray-700 font-medium">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+      <label htmlFor={id} className="sm:w-32 text-gray-700 font-semibold text-base">
         {label}
       </label>
 
-      <div className="w-full sm:w-[70%] relative">
+      <div className="w-full sm:w-[70%] relative group">
         <input
           id={id}
           type={type}
@@ -39,12 +39,12 @@ const Inputbox: React.FC<InputboxProps> = ({
           name={name}
           value={value}
           onChange={onChange}
-          onClick={onClick} // ✅ pass onClick to input
+          onClick={onClick}
           maxLength={maxLength}
-          className="w-full p-3 pr-10 rounded-md ring focus:outline-none focus:ring-2 focus:ring-sky-500 transition"
+          className="w-full p-3 pr-10 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all duration-300 bg-gray-50 focus:bg-white shadow-sm focus:shadow-lg group-hover:border-gray-300"
         />
         {Icon && (
-          <Icon className="absolute right-3 top-1/2 -translate-y-1/2" />
+          <Icon className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
         )}
       </div>
     </div>

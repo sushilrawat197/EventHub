@@ -60,6 +60,9 @@ export default function EventDetailsCard({
     ...(venue ? [{ icon: <FaMapMarkerAlt />, text: venue }] : []),
   ];
 
+  // Debug: Log the details to see what's being passed
+  console.log("EventDetailsCard - All details:", details);
+
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -136,48 +139,56 @@ export default function EventDetailsCard({
 
     if (!showCard) {
     return (
-      <div className="animate-pulse border-2 border-sky-200 rounded-xl p-4 w-full max-w-sm bg-white space-y-4">
-        <div className="h-4 bg-sky-200 rounded w-2/3"></div>
-        <div className="h-4 bg-sky-200 rounded w-1/2"></div>
-        <div className="h-4 bg-sky-200 rounded w-1/4"></div>
-        <div className="h-10 bg-sky-200 rounded w-full mt-4"></div>
+      <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden animate-pulse h-96 lg:h-[28rem] flex flex-col">
+        <div className="p-3 space-y-2 flex-1 flex flex-col">
+          <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-6 bg-gray-200 rounded w-full mt-2"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="border-2 border-sky-500 shadow-sm shadow-sky-500 rounded-xl p-4 w-full max-w-sm bg-white space-y-4">
-      {/* Details List */}
-      <EventsErrorPage/>
-      <div className="space-y-4">
-        {details.map((item, idx) => (
-          <div key={idx} className="flex items-center gap-4 text-gray-900">
-            <span className="text-lg text-sky-500">{item.icon}</span>
-            <span className="text-lg">{item.text}</span>
+    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden h-96 lg:h-[28rem] flex flex-col">
+      {/* Content - Reduced Top Padding with Flex Layout */}
+      <div className="pt-2 pb-3 px-3 space-y-2 flex-1 flex flex-col">
+        {/* Event Details - Balanced Padding */}
+        <div className="space-y-1.5 flex-1">
+          {details.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
+                <span className="text-blue-600 text-sm">{item.icon}</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-gray-900">{item.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Price and Book Now Button - Side by Side */}
+        <div className="flex items-center gap-3">
+          {/* Price - Left Side */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2 border border-green-100 flex-1">
+            <div className="text-center">
+              <p className="text-lg font-bold text-green-600">M{price}</p>
+              {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
+            </div>
           </div>
-        ))}
-      </div>
 
-      {/* Booking Alert */}
-      {bookingAlert && (
-        <div className="bg-yellow-50 text-sm border border-yellow-200 px-3 py-2 rounded-md flex items-center gap-2">
-          <span>⚠️</span> {bookingAlert}
+          {/* Book Now Button - Right Side */}
+          <button
+            onClick={bookHandler}
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 px-6 rounded-lg font-bold text-sm shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <LuTickets className="text-sm" />
+            Book Now
+          </button>
         </div>
-      )}
-
-      {/* Price & Button */}
-      <div className="flex items-center justify-between pt-3 border-t border-sky-300">
-        <div>
-          <p className="text-lg font-bold">M{price} Onwards</p>
-          {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
-        </div>
-
-        <button
-          onClick={bookHandler}
-          className="bg-sky-500 hover:bg-sky-600  text-white px-4 py-2 rounded-md text-sm font-bold"
-        >
-          Book Now
-        </button>
       </div>
     </div>
   );

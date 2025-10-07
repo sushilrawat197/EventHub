@@ -10,98 +10,130 @@ import {
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gradient-to-b from-sky-100 to-sky-300 text-gray-700 pt-10 pb-4">
-      <div className="container mx-auto px-4">
-        {/* Logo + Description */}
-        <div className="mb-10 max-w-3xl">
-          <div className="flex items-center mb-4">
-            <div className="bg-white rounded-full flex items-center justify-center text-xl font-bold text-sky-500">
-              <img
-                className="rounded-lg w-20 h-10"
-                src="ticketlogo2.jpg"
-                alt="logo"
-              />
+    <footer className="bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Top Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
+          {/* Brand Section */}
+          <div className="lg:col-span-1">
+            <div className="flex items-center mb-6">
+              <div className="w-24 h-12 bg-white rounded-xl p-2 shadow-lg">
+                <img
+                  className="w-full h-full object-cover rounded-lg"
+                  src="logo.jpeg"
+                  alt="EventHub Logo"
+                />
+              </div>
+              <div className="ml-4">
+                <h2 className="text-2xl font-bold text-white">EventHub</h2>
+                <p className="text-blue-200 text-sm">Discover Amazing Events</p>
+              </div>
+            </div>
+            <p className="text-gray-300 text-sm leading-relaxed mb-6">
+              Your premier destination for discovering and booking the best events. 
+              From concerts to sports, we bring you closer to unforgettable experiences.
+            </p>
+            <div className="flex space-x-4">
+              {[
+                { icon: <FaFacebookF />, href: "#", color: "hover:text-blue-400" },
+                { icon: <FaLinkedinIn />, href: "#", color: "hover:text-blue-400" },
+                { icon: <FaInstagram />, href: "#", color: "hover:text-pink-400" },
+              ].map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  className={`w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center text-gray-300 transition-all duration-200 ${social.color} hover:bg-white/20 hover:scale-110`}
+                >
+                  {social.icon}
+                </a>
+              ))}
             </div>
           </div>
-          
-        </div>
-        <p className="pb-4">
-            MyTag is a robust, secure, and highly customizable ticketing platform tailored for the needs of event organizers and attendees. It stands as the future ticketing in the region.
-        </p>
 
-        {/* Links Grid */}
-        <div className="grid md:grid-cols-5 gap-4 text-sm">
-          {[
-            // {
-            //   title: "Explore",
-            //   links: ["Features", "Pricing", "Example", "Newsletter"],
-            // },
-            // {
-            //   title: "Company",
-            //   links: ["Careers", "Blog", "Press", "Partners"],
-            // },
-            {
-              title: "Support",
-              links: ["Help Center", "Privacy Policy", "Terms of Use"],
-            },
-          ].map((section) => (
-            <div key={section.title}>
-              <h3 className="font-semibold mb-3">{section.title}</h3>
-              <ul className="space-y-2">
-                {section.links.map((link) => (
-                  <li key={link}>
-                    <a href="#" className="hover:text-sky-600">
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
-          {/* Social & Contact */}
-          <div className="md:col-span-2">
-            <h3 className="font-semibold mb-3">Contact & Social</h3>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
-              {/* Social Links */}
-              <div className="flex flex-col space-y-2">
-                {[
-                  { icon: <FaFacebookF />, label: "Facebook" },
-                  { icon: <FaLinkedinIn />, label: "LinkedIn" },
-                  { icon: <FaInstagram />, label: "Instagram" },
-                ].map((social) => (
-                  <div
-                    key={social.label}
-                    className="flex items-center space-x-2 hover:text-sky-600"
-                  >
-                    {social.icon}
-                    <a href="#">{social.label}</a>
-                  </div>
-                ))}
+          {/* Quick Links */}
+          <div className="lg:col-span-1">
+            <h3 className="text-lg font-bold text-white mb-6">Quick Links</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h4 className="text-sm font-semibold text-blue-200 mb-3">Events</h4>
+                <ul className="space-y-2">
+                  {["Concerts", "Sports", "Theater", "Comedy"].map((link) => (
+                    <li key={link}>
+                      <a href="#" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
-
-              {/* Contact Info */}
-              <div className="flex flex-col space-y-2 text-gray-600">
-                <div className="flex items-start space-x-2">
-                  <FaMapMarkerAlt className="mt-1" />
-                  <span>Maseru, Lesotho</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FaEnvelope />
-                  <a href="mailto:support@mytag.com">support@mytag.com</a>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FaPhoneAlt />
-                  <a href="tel:+26663820303">+266 63820303 / 62210465</a>
-                </div>
+              <div>
+                <h4 className="text-sm font-semibold text-blue-200 mb-3">Support</h4>
+                <ul className="space-y-2">
+                  {["Help Center", "Contact Us", "Privacy Policy", "Terms of Service"].map((link) => (
+                    <li key={link}>
+                      <a href="#" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
+
+          {/* Contact Info */}
+          <div className="lg:col-span-1">
+            <h3 className="text-lg font-bold text-white mb-6">Get in Touch</h3>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <FaMapMarkerAlt className="text-blue-400 text-sm" />
+                </div>
+                <div>
+                  <p className="text-white font-medium text-sm">Location</p>
+                  <p className="text-gray-300 text-sm">Maseru, Lesotho</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <FaEnvelope className="text-blue-400 text-sm" />
+                </div>
+                <div>
+                  <p className="text-white font-medium text-sm">Email</p>
+                  <a href="mailto:support@eventhub.com" className="text-gray-300 text-sm hover:text-white transition-colors">
+                    support@eventhub.com
+                  </a>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <FaPhoneAlt className="text-blue-400 text-sm" />
+                </div>
+                <div>
+                  <p className="text-white font-medium text-sm">Phone</p>
+                  <a href="tel:+26663820303" className="text-gray-300 text-sm hover:text-white transition-colors">
+                    +266 63820303
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Footer Bottom */}
-        <div className="mt-10 border-t pt-4 text-center text-xs text-gray-800">
-          &copy; 2025 MyTag - Powered by Giant Technologies
+        {/* Bottom Section */}
+        <div className="border-t border-white/10 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-gray-400 text-sm">
+              © 2025 EventHub. All rights reserved. Powered by Giant Technologies.
+            </div>
+            <div className="flex items-center space-x-6 text-sm">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

@@ -142,39 +142,62 @@ console.log(uniqueVenues)
 
   // console.log(details)
   return (
-    <div className="container mx-auto px-2 py-4 mt-32 relative">
-      {/* Flex Layout */}
-      <div className="flex justify-between gap-20 ">
-        {/* LEFT SIDE */}
-        <div className="flex-1 space-y-5">
-          
-          <EventHeroCard
-            title={singleEvent?.name ?? ""}
-            image={singleEvent?.thumbnailUrl ?? null}
-            tags={singleEvent?.genre ?? ""}
-          />
-
-
-          <MobileEventDetailsCard {...details} />
-
-          <EventDescriptionAndArtists
-            description={singleEvent?.longDescription}
-            artists={singleEvent?.artists}
-          />
-
-          <EventscardSlider events={sliderEvents} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        {/* Event Title - Outside Hero Card */}
+        <div className="mb-3">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
+            {singleEvent?.name ?? ""}
+          </h1>
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="lg:w-96 pt-10 hidden lg:block">
-          <div className="sticky top-36">
-            <EventDetailsCard {...details} />
+        {/* Modern Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* LEFT SIDE - Main Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Hero Section */}
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+              <EventHeroCard
+                title=""
+                image={singleEvent?.thumbnailUrl ?? null}
+                tags={singleEvent?.genre ?? ""}
+              />
+            </div>
+
+            {/* Mobile Event Details - Hidden on desktop */}
+            <div className="lg:hidden">
+              <MobileEventDetailsCard {...details} />
+            </div>
+
+            {/* Event Description */}
+            <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+              <EventDescriptionAndArtists
+                description={singleEvent?.longDescription}
+                artists={singleEvent?.artists}
+              />
+            </div>
+
+            {/* Related Events */}
+            <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+              <EventscardSlider events={sliderEvents} />
+            </div>
+          </div>
+
+          {/* RIGHT SIDE - Booking Card */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8">
+              <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+                <EventDetailsCard {...details} />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Outside flex */}
-      <TermsAndConditions description={singleEvent?.termsAndConditions || []} />
+        {/* Terms and Conditions */}
+        <div className="mt-12">
+          <TermsAndConditions description={singleEvent?.termsAndConditions || []} />
+        </div>
+      </div>
     </div>
   );
 }

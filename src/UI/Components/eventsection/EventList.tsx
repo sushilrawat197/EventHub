@@ -15,7 +15,7 @@ import {
 } from "../../../slices/filterSlice"; // 👈 add setStartDate, setEndDate
 import { listEventsBySearch } from "../../../services/operations/eventsApi";
 import { setFilter } from "../../../slices/filter_Slice";
-import Pagination from "../../Components/common/Pagination";
+import ScrollPagination from "../../Components/common/ScrollPagination";
 
 const categoryOptions: string[] = [
   "CONCERT",
@@ -41,8 +41,10 @@ export default function EventList() {
   );
 
   const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
   
-  const  totalPages = useAppSelector((state) => state.events.allEventsBySearch?.totalPages);
+  const totalPages = useAppSelector((state) => state.events.allEventsBySearch?.totalPages);
+  const hasMore = page < (totalPages || 1) - 1;
 
 
 
@@ -175,70 +177,64 @@ export default function EventList() {
     );
   };
 
+  const handleLoadMore = async () => {
+    if (loading || !hasMore) return;
+    
+    setLoading(true);
+    const nextPage = page + 1;
+    setPage(nextPage);
+    await dispatch(listEventsBySearch(nextPage));
+    setLoading(false);
+  };
   
   useEffect(() => {
     dispatch(listEventsBySearch(page));
-  }, [page,dispatch]);
+  }, [page, dispatch]);
 
   return (
-    <div className="py-4">
-      <h2 className="text-2xl font-bold mb-4">Events</h2>
+    <div className="space-y-4">
 
       {/* Filter Tags */}
-      <div className="overflow-x-auto md:overflow-visible scrollbar-hide mb-6">
-        <div className="flex flex-nowrap md:flex-wrap gap-2">
-          {getAllFilterOptions().map((tag, i) => (
-            <span
-              key={i}
-              onClick={() => {
-                if (categoryOptions.includes(tag))
-                  handleFilterToggle("categories", tag);
-                if (selectedLanguage.includes(tag))
-                  handleFilterToggle("languages", tag);
-                else if (selectedPrice.includes(tag))
-                  handleFilterToggle("prices", tag);
-                else if (selectedDates.includes(tag))
-                  handleFilterToggle("dates", tag);
-              }}
-              className={`min-w-max border px-3 py-1 rounded-full text-[12px] cursor-pointer transition-colors
-                ${
+      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex flex-nowrap gap-2 min-w-max">
+            {getAllFilterOptions().map((tag, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  if (categoryOptions.includes(tag))
+                    handleFilterToggle("categories", tag);
+                  if (selectedLanguage.includes(tag))
+                    handleFilterToggle("languages", tag);
+                  else if (selectedPrice.includes(tag))
+                    handleFilterToggle("prices", tag);
+                  else if (selectedDates.includes(tag))
+                    handleFilterToggle("dates", tag);
+                }}
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   isFilterSelected(tag)
-                    ? "bg-sky-500 text-white border-sky-500"
-                    : "border-gray-200 text-sky-500 hover:text-black hover:border-gray-400"
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+                    : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md"
                 }`}
-            >
-              {tag}
-            </span>
-          ))}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Show active filters summary */}
-      {(selectedDates.length > 0 ||
-        selectedPrice.length > 0 ||
-        selectedLanguage.length > 0 ||
-        selectedCategories.length > 0) && (
-        <div className="mb-4 text-sm text-gray-600">
-          {events?.length} events found
-          {selectedDates.length > 0 && ` • Dates: ${selectedDates.join(", ")}`}
-          {selectedCategories.length > 0 &&
-            ` • Categories: ${selectedCategories.join(", ")}`}
-          {selectedLanguage.length > 0 &&
-            ` • Languages: ${selectedLanguage.join(", ")}`}
-          {selectedPrice.length > 0 && ` • Price: ${selectedPrice.join(", ")}`}
-        </div>
-      )}
 
       {/* Events Grid */}
-      <div className="grid  grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 py-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-stretch">
         {events.length > 0 ? (
           events?.map((event) => {
             const slug = event.eventName
               .toLowerCase()
               .trim()
-              .replace(/&/g, "and") // & ko 'and' me convert
-              .replace(/\s+/g, "-") // spaces ko '-'
-              .replace(/[^\w-]/g, ""); // special characters remove
+              .replace(/&/g, "and")
+              .replace(/\s+/g, "-")
+              .replace(/[^\w-]/g, "");
 
             return (
               <button
@@ -248,17 +244,35 @@ export default function EventList() {
                     state: event,
                   })
                 }
+                className="w-full h-full"
               >
                 <EventCard event={event} />
               </button>
             );
           })
         ) : (
-          <div className="col-span-full text-center py-8 text-gray-500">
-            <p className="text-lg">No events found</p>
-            <p className="text-sm">
-              Try adjusting your filters to see more events
-            </p>
+          <div className="col-span-full">
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No events found</h3>
+              <p className="text-gray-600 mb-6">Try adjusting your filters to see more events</p>
+              <button 
+                onClick={() => {
+                  dispatch(setCategories([]));
+                  dispatch(setLanguages([]));
+                  dispatch(setDates([]));
+                  dispatch(setPrices([]));
+                  dispatch(listEventsBySearch());
+                }}
+                className="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
+              >
+                Clear All Filters
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -266,31 +280,25 @@ export default function EventList() {
       {openFilter && <MobileFilters onClose={() => setOpenFilter(false)} />}
 
       {/* Mobile buttons */}
-      <div className="flex justify-between items-center fixed bottom-0 left-0 right-0 p-2 md:hidden">
+      <div className="flex justify-between items-center fixed bottom-4 left-4 right-4 md:hidden z-30">
         {!openFilter && (
-          <button onClick={() => setOpenFilter(true)}>
-            <span className="p-4 bg-red-500 text-white rounded-full block md:hidden">
-              <FaFilter size={22} />
-            </span>
+          <button 
+            onClick={() => setOpenFilter(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-2xl shadow-lg shadow-blue-200 transition-all duration-200 hover:scale-105"
+          >
+            <FaFilter size={20} />
           </button>
         )}
-        <span className="p-4 bg-sky-500 text-white rounded-full block md:hidden">
-          <FaLocationDot size={22} />
-        </span>
+        <button className="bg-green-600 hover:bg-green-700 text-white p-4 rounded-2xl shadow-lg shadow-green-200 transition-all duration-200 hover:scale-105">
+          <FaLocationDot size={20} />
+        </button>
       </div>
 
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages || 1}
-        onPageChange={(p) => setPage(p)}
+      <ScrollPagination
+        onLoadMore={handleLoadMore}
+        hasMore={hasMore}
+        loading={loading}
       />
-
-      {/* <Pagination
-        currentPage={page}
-        totalPages={size}
-        totalElements={totalElements}
-        totalPages={totalPages}
-      /> */}
     </div>
   );
 }

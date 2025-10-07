@@ -30,71 +30,126 @@ export default function SignUp() {
 
 
   return (
-    <form onSubmit={submitHandler}>
-      <div className="lg:min-h-[calc(100vh-6rem)] min-h-[calc(100vh-40px)] flex items-center justify-center bg-sky-100 p-4">
-        <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row px-4">
-          <div className="md:w-1/2 py-6 md:p-20 flex flex-col justify-center">
-            {/* Logo */}
-            <div className="flex justify-center mb-10">
-              <img
-                src="ticketlogo2.jpg"
-                alt="Ticket Logo"
-                className="h-[3.2rem]"
-              />
+    <div className="h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-start justify-center pt-16 p-4">
+      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+        <div className="flex flex-col lg:flex-row min-h-[450px]">
+          {/* Left Side - Hero Section */}
+          <div className="lg:w-1/2 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 relative overflow-hidden">
+            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="relative h-full flex flex-col justify-center items-center p-6 text-white">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-8 left-8 w-20 h-20 bg-white rounded-full blur-3xl"></div>
+                <div className="absolute bottom-8 right-8 w-24 h-24 bg-white rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-full blur-2xl"></div>
+              </div>
+              
+              <div className="relative z-10 text-center">
+                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                  </svg>
+                </div>
+                <h1 className="text-3xl font-bold mb-3">Join EventHub</h1>
+                <p className="text-lg text-blue-100 mb-6 max-w-sm">
+                  Create your account and start discovering amazing events
+                </p>
+                <div className="flex items-center justify-center gap-4 text-blue-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span className="text-sm">Easy Signup</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span className="text-sm">Quick Access</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                    <span className="text-sm">Secure Process</span>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            {/* Heading */}
-            <div className="text-sm text-[#777777] text-center mb-4 flex flex-col gap-1">
-              Enter your email address
-              <PopUpMessage/>
-            </div>
-
-            {/* Input */}
-            <div className="relative mb-10">
-              <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
-              <input
-                required
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
-              />
-            </div>
-
-            {/* Submit Button */}
-            {!loading ? (
-              <button
-                type="submit"
-                disabled={isDisabled}
-                className={`w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold h-10 rounded-lg transition text-base ${
-                  isDisabled
-                    ? "cursor-not-allowed opacity-70"
-                    : "cursor-pointer"
-                }`}
-              >
-                Sign up
-              </button>
-            ) : (
-              <button
-                disabled
-                className="flex flex-col items-center justify-center w-full bg-sky-700 text-white h-10 rounded-lg transition text-base cursor-not-allowed"
-              >
-                <ClipLoader color="#ffffff" size={20} />
-              </button>
-            )}
           </div>
 
-          {/* Right Image Section */}
-          <div className="hidden md:flex md:w-1/2 flex-col justify-center items-center bg-sky-200">
-            <img
-              src="mainimg.jpg"
-              alt="Slider"
-              className="max-w-[90%] h-auto rounded-xl shadow-lg"
-            />
+          {/* Right Side - Sign Up Form */}
+          <div className="lg:w-1/2 p-6 lg:p-8 flex flex-col justify-center">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <img
+                  src="ticketlogo2.jpg"
+                  alt="EventHub Logo"
+                  className="w-8 h-8 object-contain"
+                />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
+              <p className="text-sm text-gray-600">
+                Enter your email address to get started
+              </p>
+            </div>
+
+            <form onSubmit={submitHandler} className="w-full space-y-4">
+              <PopUpMessage />
+
+              {/* Email Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">Email Address</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <FaEnvelope className="w-5 h-5 text-gray-400 group-focus-within:text-blue-600 transition-colors" />
+                  </div>
+                  <input
+                    required
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-all duration-300 bg-gray-50 focus:bg-white text-base font-medium"
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              {!loading ? (
+                <button
+                  type="submit"
+                  disabled={isDisabled}
+                  className={`w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+                    isDisabled
+                      ? "cursor-not-allowed opacity-70"
+                      : "cursor-pointer"
+                  }`}
+                >
+                  Create Account
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-3"
+                >
+                  <ClipLoader color="#ffffff" size={20} />
+                  <span>Creating Account...</span>
+                </button>
+              )}
+
+              {/* Sign In Link */}
+              <div className="text-center pt-4">
+                <p className="text-sm text-gray-600">
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    className="font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                    onClick={() => window.history.back()}
+                  >
+                    Sign In
+                  </button>
+                </p>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 }

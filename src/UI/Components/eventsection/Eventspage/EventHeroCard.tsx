@@ -15,40 +15,27 @@ interface EventHeroCardDetails {
 export default function EventHeroCard({title,image,tags}:EventHeroCardDetails) {
   
   return (
-    
-    <div className=" max-w-6xl mx-auto ">
-      {/* Title + Share */}
-      <div className="flex items-center  ">
-        <h1 className="text-xl md:text-2xl font-bold">{title}</h1>
-        {/* <button onClick={onShare} className=" ">
-          <FaShareAlt size={18} />
-        </button> */}
-      </div>
-
-      {/* Image Section */}
-      <div className="w-full  mt-2">
-        <div className="aspect-[18/9] w-full rounded-xl overflow-hidden shadow-md">
-        {image && <img src={image} alt="Poster" className="h-full w-full object-cover"  />}
-          
+    <div className="relative">
+      {/* Hero Image - Increased Height */}
+      <div className="relative h-96 lg:h-[28rem] overflow-hidden">
+        {image && (
+          <img 
+            src={image} 
+            alt="Event Poster" 
+            className="w-full h-full object-cover" 
+          />
+        )}
+        
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+        
+        {/* Genre Badge - Bottom Left */}
+        <div className="absolute bottom-4 left-4">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-3 py-2 text-white text-sm font-medium">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span>{tags}</span>
+          </div>
         </div>
-      </div>
-
-      {/* Tags + Interested */}
-      <div className="mt-1 flex flex-wrap justify-between items-center gap-3  ">
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2">
-         
-
-            <span
-          
-              className="bg-sky-500 text-white text-sm px-3 py-1 rounded-md"
-            >
-
-              {tags}
-            </span>
-       
-        </div>
-
       </div>
     </div>
   );

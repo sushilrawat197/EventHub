@@ -1,65 +1,98 @@
 import { useState } from "react";
-
-import type {  EventResponseBySearch } from "../../../interfaces/eventInterface/evnetInterFace";
+import { FaCalendarAlt, FaMapMarkerAlt, FaTicketAlt } from "react-icons/fa";
+import type { EventResponseBySearch } from "../../../interfaces/eventInterface/evnetInterFace";
 
 interface EventCardProps {
   event: EventResponseBySearch;
 }
 
-
 export default function EventCard({ event }: EventCardProps) {
-  // const shows=useAppSelector((state)=>useState)
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return {
+      day: date.getDate().toString().padStart(2, '0'),
+      month: date.toLocaleDateString("en-US", { month: "short" }),
+      weekday: date.toLocaleDateString("en-US", { weekday: "short" })
+    };
+  };
+
+  const dateInfo = formatDate(event.startDate);
+
   return (
-    <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-sm xl:max-w-xs rounded-xl shadow-lg bg-white flex-shrink-0 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div className="group w-full h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 hover:-translate-y-1 flex flex-col">
       {/* Image Section */}
-      <div className="relative w-full aspect-[3/4]">
+      <div className="relative w-full aspect-[4/5] overflow-hidden flex-shrink-0">
         {/* Skeleton Loader */}
         {!imgLoaded && (
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-t-xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
         )}
 
         {/* Event Image */}
         <img
-          src={event.thumbnailUrl} // 👈 yaha actual poster url use karo
-          alt={event.thumbnailUrl}
+          src={event.thumbnailUrl}
+          alt={event.eventName}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
-          className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${
             imgLoaded ? "opacity-100" : "opacity-0"
           }`}
         />
+
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+
+        {/* Genre Badge */}
+        <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
+          {event.genre}
+        </div>
+
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <div className="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+            <FaTicketAlt className="inline mr-2" />
+            Book Now
+          </div>
+        </div>
       </div>
 
-      {/* Date */}
-      <div className="bg-black text-white text-[8px] sm:text-[10px] md:text-xs px-2 sm:px-3 py-1 font-medium tracking-wide">
-       
-        {new Date(event.startDate).toLocaleDateString("en-US", {
-          weekday: "short", // Mon, Tue...
-          day: "numeric", // 20
-          month: "short", // Aug
-        })}
-      </div>
-
-      {/* Info Section */}
-      <div className="p-3 sm:p-4 space-y-1">
-
-        <h3 className="font-semibold text-xs sm:text-sm md:text-base leading-tight line-clamp-2 truncate">
+      {/* Content Section */}
+      <div className="p-4 flex-grow flex flex-col">
+        {/* Event Title */}
+        <h3 className="font-bold text-base text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
           {event.eventName}
         </h3>
 
-        <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 truncate">
-          {event.genre}
-        </p>
+        {/* Event Details - Compressed */}
+        <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
+          <div className="flex items-center">
+            <FaCalendarAlt className="w-3 h-3 mr-1 text-blue-500" />
+            <span>{event.language}</span>
+          </div>
+          
+          <div className="flex items-center">
+            <FaMapMarkerAlt className="w-3 h-3 mr-1 text-blue-500" />
+            <span className="truncate">Multiple Venues</span>
+          </div>
+        </div>
 
-        <p className="text-[10px] sm:text-xs md:text-sm text-gray-500">
-          {event.language}
-        </p>
-
-        <p className="text-xs sm:text-sm md:text-base text-gray-900 font-bold truncate">
-          M{event.price} Onwards
-        </p>
+        {/* Price and Date Section */}
+        <div className="flex items-center justify-between mt-auto">
+          <div>
+            <span className="text-xs text-gray-500">Starting from</span>
+            <div className="text-sm font-bold text-gray-900">
+              M{event.price} Onwards
+            </div>
+          </div>
+          
+          {/* Date Badge */}
+          <div className="bg-gray-100 text-gray-900 px-2 py-1 rounded-lg text-xs font-medium text-center">
+            <div className="font-bold">{dateInfo.day}</div>
+            <div>{dateInfo.month}</div>
+          </div>
+        </div>
       </div>
     </div>
   );

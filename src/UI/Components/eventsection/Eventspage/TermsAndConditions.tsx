@@ -12,55 +12,93 @@ export default function TermsAndConditions({description}:TermsProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="pb-16 pt-2 lg:pb-0 lg:pt-0 mt-8">
-      {/* Trigger Button */}
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center text-lg font-medium text-gray-800 hover:text-red-500   "
-      >
-        Terms & Conditions{" "}
-        <span className="ml-1">
-          <FaChevronRight />
-        </span>
-      </button>
+    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-6 border-b border-gray-100">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Terms & Conditions</h2>
+            <p className="text-gray-600 text-sm">Please read our terms before booking</p>
+          </div>
+        </div>
+      </div>
 
+      {/* Content */}
+      <div className="p-6">
+        <button
+          onClick={() => setOpen(true)}
+          className="group w-full bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 hover:border-blue-300 rounded-2xl p-6 transition-all duration-300 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-blue-100 group-hover:bg-blue-200 rounded-xl flex items-center justify-center transition-colors">
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div className="text-left">
+              <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-700 transition-colors">View Terms & Conditions</h3>
+              <p className="text-sm text-gray-600">Click to read our booking terms</p>
+            </div>
+          </div>
+          <FaChevronRight className="text-blue-600 group-hover:translate-x-1 transition-transform" />
+        </button>
+      </div>
 
       {/* Modal */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-2">
-          <div className="bg-white text-black w-full max-w-2xl rounded-lg shadow-lg p-6 relative">
-            {/* Close Button */}
-            <button
-              onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 text-gray-900  cursor-pointer"
-            >
-              <IoClose size={24} />
-            </button>
-
-            {/* Title */}
-            <h2 className="text-xl font-semibold mb-4">Terms & Conditions</h2>
-
-            {/* Content */}
-            <div className="space-y-3 text-black text-[15px] max-h-[60vh] overflow-y-auto">
-            {
-              description&&(
-                description.map((item,index)=>{
-                 return <p key={index}><span className="text-black font-bold pr-2">{index+1}</span>{item}</p>
-                })
-              )
-            }
-          
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[80vh] overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Terms & Conditions</h2>
+                    <p className="text-blue-100 text-sm">Please read carefully before booking</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors"
+                >
+                  <IoClose className="text-white text-xl" />
+                </button>
+              </div>
             </div>
 
-            {/* Footer Button */}
-            {/* <div className="mt-6 flex justify-end"> */}
-            {/* <button
+            {/* Content */}
+            <div className="p-8 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-6">
+                {description && description.map((item, index) => (
+                  <div key={index} className="flex gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-blue-600 font-bold text-sm">{index + 1}</span>
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 p-6 border-t border-gray-100">
+              <button
                 onClick={() => setOpen(false)}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
-                Close
-              </button> */}
-            {/* </div> */}
+                I Understand
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -61,16 +61,21 @@ export default function BookingFlow() {
             )}
 
             {/* Logo / Title */}
-            <div className="text-sky-500 text-lg sm:text-2xl font-bold mr-4 sm:mr-8">
+            <div className="text-sky-500 text-lg sm:text-2xl font-bold">
               {path.includes("payment") ? (
-                "Ticketing"
+                ""
               ) : (
-                <NavLink to={"/"}> Ticketing</NavLink>
+                <NavLink to={"/events"} className="hover:text-sky-600 transition-colors flex items-center gap-2 group">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>EventHub</span>
+                </NavLink>
               )}
             </div>
 
-            {/* Event Name */}
-            <div className="flex-1 flex items-center gap-2">
+            {/* Event Name - Centered */}
+            <div className="flex-1 flex items-center justify-center">
               <h1 className="text-base sm:text-xl font-bold text-gray-800 capitalize truncate">
                 {contentName}
               </h1>
