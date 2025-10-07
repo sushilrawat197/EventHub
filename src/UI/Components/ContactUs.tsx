@@ -82,7 +82,7 @@ const ContactPage: React.FC = () => {
             </div>
 
             {/* Additional Info */}
-            <div className="bg-gradient-to-r from-blue-400 to-blue-500 rounded-2xl p-8 text-white">
+            {/* <div className="bg-gradient-to-r from-blue-400 to-blue-500 rounded-2xl p-8 text-white">
               <h4 className="text-xl font-bold mb-4">Why Choose EventHub?</h4>
               <ul className="space-y-2 text-blue-100">
                 <li className="flex items-center gap-2">
@@ -102,7 +102,7 @@ const ContactPage: React.FC = () => {
                   <span>Real-time Analytics</span>
                 </li>
               </ul>
-            </div>
+            </div> */}
           </div>
 
           {/* Contact Form */}
