@@ -84,7 +84,7 @@ const HeroSection = () => {
                     alt="Event Experience"
                     className="w-full h-96 object-cover rounded-2xl shadow-2xl"
                   />
-                  <div className="absolute bottom-4 left-4 right-4 bg-black/50 backdrop-blur-sm rounded-xl p-4">
+                  {/* <div className="absolute bottom-4 left-4 right-4 bg-black/50 backdrop-blur-sm rounded-xl p-4">
                     <div className="flex items-center gap-3 text-white">
                       <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -96,12 +96,12 @@ const HeroSection = () => {
                         <div className="text-sm text-gray-300">Starting in 2 hours</div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
               {/* Floating Cards */}
-              <div className="absolute -top-6 -right-6 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+              {/* <div className="absolute -top-6 -right-6 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,7 +127,7 @@ const HeroSection = () => {
                     <div className="text-gray-300 text-sm">Event Duration</div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

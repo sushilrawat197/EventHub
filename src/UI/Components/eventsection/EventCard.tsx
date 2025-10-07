@@ -23,7 +23,7 @@ export default function EventCard({ event }: EventCardProps) {
   return (
     <div className="group w-full h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 hover:-translate-y-1 flex flex-col">
       {/* Image Section */}
-      <div className="relative w-full aspect-[4/5] overflow-hidden flex-shrink-0">
+      <div className="relative w-full aspect-[3/4] overflow-hidden flex-shrink-0">
         {/* Skeleton Loader */}
         {!imgLoaded && (
           <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
@@ -59,21 +59,21 @@ export default function EventCard({ event }: EventCardProps) {
       </div>
 
       {/* Content Section */}
-      <div className="p-4 flex-grow flex flex-col">
+      <div className="p-6 flex-grow flex flex-col">
         {/* Event Title */}
-        <h3 className="font-bold text-base text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+        <h3 className="font-bold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
           {event.eventName}
         </h3>
 
         {/* Event Details - Compressed */}
-        <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
+        <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
           <div className="flex items-center">
-            <FaCalendarAlt className="w-3 h-3 mr-1 text-blue-500" />
+            <FaCalendarAlt className="w-4 h-4 mr-2 text-blue-500" />
             <span>{event.language}</span>
           </div>
           
           <div className="flex items-center">
-            <FaMapMarkerAlt className="w-3 h-3 mr-1 text-blue-500" />
+            <FaMapMarkerAlt className="w-4 h-4 mr-2 text-blue-500" />
             <span className="truncate">Multiple Venues</span>
           </div>
         </div>
@@ -81,16 +81,16 @@ export default function EventCard({ event }: EventCardProps) {
         {/* Price and Date Section */}
         <div className="flex items-center justify-between mt-auto">
           <div>
-            <span className="text-xs text-gray-500">Starting from</span>
-            <div className="text-sm font-bold text-gray-900">
+            <span className="text-sm text-gray-500">Starting from</span>
+            <div className="text-lg font-bold text-gray-900">
               M{event.price} Onwards
             </div>
           </div>
           
           {/* Date Badge */}
-          <div className="bg-gray-100 text-gray-900 px-2 py-1 rounded-lg text-xs font-medium text-center">
-            <div className="font-bold">{dateInfo.day}</div>
-            <div>{dateInfo.month}</div>
+          <div className="bg-gray-100 text-gray-900 px-3 py-2 rounded-lg text-sm font-medium text-center">
+            <div className="font-bold text-base">{dateInfo.day}</div>
+            <div className="text-xs">{dateInfo.month}</div>
           </div>
         </div>
       </div>
