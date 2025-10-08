@@ -9,7 +9,7 @@ export default function NavHeader() {
   ];
 
   return (
-    <div className="w-full bg-white mx-auto hidden lg:block border-t border-gray-200">
+    <div className="w-full bg-white mx-auto hidden lg:block border-t border-gray-200 py-2">
       <div className="container mx-auto px-4 py-1">
         <ul className="lg:flex items-center text-gray-700 gap-4 hidden">
           {navItems.map((item, index) => (

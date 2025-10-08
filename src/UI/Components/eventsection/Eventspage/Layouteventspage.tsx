@@ -142,7 +142,7 @@ console.log(uniqueVenues)
 
   // console.log(details)
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 lg:mt-32 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         {/* Event Title - Outside Hero Card */}
         <div className="mb-3">
@@ -184,8 +184,8 @@ console.log(uniqueVenues)
           </div>
 
           {/* RIGHT SIDE - Booking Card */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
+          <div className="lg:col-span-1 hidden lg:block">
+            <div className=" sticky top-32">
               <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
                 <EventDetailsCard {...details} />
               </div>
@@ -194,7 +194,7 @@ console.log(uniqueVenues)
         </div>
 
         {/* Terms and Conditions */}
-        <div className="mt-12">
+        <div className="mt-12 mb-20">
           <TermsAndConditions description={singleEvent?.termsAndConditions || []} />
         </div>
       </div>

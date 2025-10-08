@@ -39,9 +39,7 @@ export default function MobileEventDetailsCard({
   price,
   priceNote,
 }: EventDetailsCardProps) {
-
- const [showCard, setShowCard] = useState(false);
-
+  const [showCard, setShowCard] = useState(false);
 
   const details = [
     ...(date ? [{ icon: <FaCalendarAlt />, text: date }] : []),
@@ -111,58 +109,65 @@ export default function MobileEventDetailsCard({
     }
   };
 
+  // ⏳ smooth skeleton loader
+  useEffect(() => {
+    const timer = setTimeout(() => setShowCard(true), 700);
+    return () => clearTimeout(timer);
+  }, []);
 
-    // ⏳ 1 sec delay
-   useEffect(() => {
-      const timer = setTimeout(() => {
-        setShowCard(true);
-      }, 700);
-      return () => clearTimeout(timer);
-    }, []);
-  
-  
-      if (!showCard) {
-      return (
-        <div className="animate-pulse border-2 border-sky-200 rounded-xl p-4 w-full max-w-sm bg-white space-y-4">
-          <div className="h-4 bg-sky-200 rounded w-2/3"></div>
-          <div className="h-4 bg-sky-200 rounded w-1/2"></div>
-          <div className="h-4 bg-sky-200 rounded w-1/4"></div>
-          <div className="h-10 bg-sky-200 rounded w-full mt-4"></div>
-        </div>
-      );
-    }
-  
+  if (!showCard) {
+    return (
+      <div className="animate-pulse bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden p-6 space-y-4">
+        <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+        <div className="h-10 bg-gray-200 rounded w-full mt-4"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="lg:hidden shadow-sky-500 rounded-xl w-full max-w-sm bg-white space-y-4">
+    <div className="lg:hidden bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden mb-24">
       {/* Details List */}
-      <div className="space-y-4 p-4">
+      <div className="space-y-2 p-4">
         {details.map((item, idx) => (
-          <div key={idx} className="flex items-center gap-4 text-gray-900">
-            <span className="text-lg text-sky-500">{item.icon}</span>
-            <span className="text-lg">{item.text}</span>
+          <div
+            key={idx}
+            className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
+              <span className="text-blue-600 text-sm">{item.icon}</span>
+            </div>
+            <span className="text-sm font-semibold text-gray-900">
+              {item.text}
+            </span>
           </div>
         ))}
       </div>
 
       {/* Booking Alert */}
       {bookingAlert && (
-        <div className="bg-yellow-50 text-sm border border-yellow-200 px-3 py-2 rounded-md flex items-center gap-2 mx-4">
+        <div className="bg-yellow-50 text-sm border border-yellow-200 px-3 py-2 rounded-md flex items-center gap-2 mx-4 mb-4">
           <span>⚠️</span> {bookingAlert}
         </div>
       )}
 
       {/* Price & Book Button Fixed Bottom */}
-      <div className="flex justify-between items-center py-3 border-t border-sky-300 fixed bottom-0 left-0 right-0 bg-white w-full px-4 z-40">
+      <div className="flex justify-between items-center py-3 border-t border-gray-200 fixed bottom-0 left-0 right-0 bg-white w-full px-4 z-40 shadow-lg">
         <div className="flex flex-col">
-          <p className="text-lg font-bold">M{price} Onwards</p>
-          {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
+          <p className="text-lg font-bold text-green-600">
+            M{price} Onwards
+          </p>
+          {priceNote && (
+            <p className="text-xs text-red-500">{priceNote}</p>
+          )}
         </div>
 
         <button
           onClick={bookHandler}
-          className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-md text-sm font-bold"
+          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-2.5 rounded-lg font-bold text-sm shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2"
         >
+          <LuTickets className="text-sm" />
           Book Now
         </button>
       </div>

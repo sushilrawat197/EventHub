@@ -96,77 +96,123 @@ const ReviewAndPay = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* LEFT SIDE - Delivery Options */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Delivery Options
-                </h3>
-              </div>
+          {/* LEFT SIDE - Delivery Options */}
+<div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+  <div className="flex items-center gap-2 mb-4">
+    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+      <svg
+        className="w-4 h-4 text-green-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+        />
+      </svg>
+    </div>
+    <h3 className="text-lg font-bold text-gray-900">Payment Options</h3>
+  </div>
 
-              {/* M-Ticket Option */}
-              <div className="space-y-3">
-                <label className="flex items-start space-x-3 cursor-pointer group">
-                  <div className="relative">
-                    <input
-                      type="radio"
-                      name="delivery"
-                      checked
-                      readOnly
-                      className="sr-only"
-                    />
-                    <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-6 h-6 bg-blue-100 rounded-md flex items-center justify-center">
-                        <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-base font-bold text-gray-900">M-Ticket</p>
-                        <p className="text-xs text-gray-600">
-                          Save the planet. Use your phone as a ticket.
-                        </p>
-                      </div>
-                    </div>
+  {/* 🌿 New M-Ticket Option (Card Style) */}
+  <div className="space-y-3">
+    <div
+      className="relative group cursor-pointer bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-600/50 hover:border-blue-600 rounded-2xl p-5 shadow-md transition-all duration-300 hover:shadow-xl"
+    >
+      {/* Checkmark indicator */}
+      <div className="absolute top-4 right-4 w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-md">
+        <svg
+          className="w-3 h-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
 
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mt-3">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="w-5 h-5 bg-blue-100 rounded-md flex items-center justify-center">
-                          <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        </div>
-                        <p className="font-semibold text-gray-900 text-sm">M-Ticket Information</p>
-                      </div>
-                      <ol className="space-y-2 text-xs text-gray-700">
-                        <li className="flex items-start gap-2">
-                          <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-600 flex-shrink-0 mt-0.5">1</span>
-                          <span>Customer(s) can access their ticket(s) from the 'My Profile' section on the app/mobile-web.</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-600 flex-shrink-0 mt-0.5">2</span>
-                          <span>It is mandatory to present the ticket(s) in My Profile at the venue.</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-600 flex-shrink-0 mt-0.5">3</span>
-                          <span>No physical ticket(s) are required to enter the venue.</span>
-                        </li>
-                      </ol>
-                    </div>
-                  </div>
-                </label>
-              </div>
-            </div>
+      {/* Icon + Title */}
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+          <svg
+            className="w-5 h-5 text-blue-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h4 className="text-base font-bold text-gray-900">M-Ticket</h4>
+          <p className="text-sm text-gray-600">
+            Save the planet. Use your phone as a ticket.
+          </p>
+        </div>
+      </div>
+
+      {/* Information Box */}
+      <div className="bg-white border border-blue-100 rounded-xl p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
+            <svg
+              className="w-3 h-3 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <p className="font-semibold text-gray-900 text-sm">
+            M-Ticket Information
+          </p>
+        </div>
+
+        <ol className="space-y-2 text-xs text-gray-700">
+          <li className="flex items-start gap-2">
+            <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-600 flex-shrink-0 mt-0.5">
+              1
+            </span>
+            <span>
+              Access your tickets anytime in <b>My Profile</b> on the app or
+              mobile web.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-600 flex-shrink-0 mt-0.5">
+              2
+            </span>
+            <span>
+              Present the digital ticket at the venue. Physical printouts not
+              required.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-600 flex-shrink-0 mt-0.5">
+              3
+            </span>
+            <span>Fast, easy, and environment-friendly entry process.</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
 
             {/* RIGHT SIDE - Order Summary */}
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">

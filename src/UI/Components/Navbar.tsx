@@ -93,7 +93,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 fixed top-0 left-0 w-full z-50 shadow-lg backdrop-blur-sm">
+      <nav className="bg-gradient-to-r from-blue-600 via-blue-900 to-blue-600 fixed top-0 left-0 w-full z-50 shadow-lg backdrop-blur-sm">
         <div className="flex flex-col mx-auto">
           <div className="container mx-auto flex items-center justify-between px-4 py-2">
             <div className="flex items-center gap-6">
@@ -172,10 +172,10 @@ const Navbar: React.FC = () => {
 
             <div className="flex items-center gap-4">
               {/* City Dropdown */}
-              <div className="hidden lg:flex">
+              <div className="">
                 <div ref={cityRef} className="relative">
                   <button
-                    className="bg-white text-gray-700 px-4 py-2 rounded-xl hover:bg-gray-50 transition-all duration-200 flex items-center gap-2 shadow-lg"
+                    className="bg-white text-gray-700 px-4 lg:py-2 py-1 rounded-xl hover:bg-gray-50 transition-all duration-200 flex items-center gap-2 shadow-lg"
                     onClick={() => setCityDropdownOpen((prev) => !prev)}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
