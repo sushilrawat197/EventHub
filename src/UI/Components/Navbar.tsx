@@ -95,8 +95,9 @@ const Navbar: React.FC = () => {
     <>
       <nav className="bg-gradient-to-r from-blue-600 via-blue-900 to-blue-600 fixed top-0 left-0 w-full z-50 shadow-lg backdrop-blur-sm">
         <div className="flex flex-col mx-auto">
-          <div className="container mx-auto flex items-center justify-between px-4 py-2">
-            <div className="flex items-center gap-6">
+          <div className="container mx-auto flex items-center justify-between px-2 py-2">
+
+            <div className="flex items-center gap-2 lg:gap-6">
               {/* Mobile Menu Toggle */}
               <div className="flex items-center lg:hidden">
                 <button className="text-white hover:text-blue-200 transition-colors" title="Menu">
@@ -170,7 +171,7 @@ const Navbar: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 lg:gap-4">
               {/* City Dropdown */}
               <div className="">
                 <div ref={cityRef} className="relative">

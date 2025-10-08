@@ -139,7 +139,7 @@ export default function ProfileCard() {
 
       {showNumber && <EditProfileEmail setShowNumber={setShowNumber} />}
 
-      <div className="mx-auto max-w-4xl mt-24 lg:mt-28">
+      <div className="mx-auto max-w-4xl mt-24 lg:mt-36 pb-7">
         <div className="bg-white rounded-3xl shadow-2xl relative overflow-hidden border border-gray-100">
           {editImage && (
             <div className="fixed inset-0 z-[60] flex items-center justify-center">

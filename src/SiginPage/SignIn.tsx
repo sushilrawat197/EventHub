@@ -44,15 +44,18 @@ const SignIn: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="h-[calc(100vh+100px)] bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-start justify-center pt-9 p-4">
+    <div className="max-h-[calc(100vh-100px)]  flex items-start justify-center pt-9 p-4">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
         <div className="flex flex-col lg:flex-row min-h-[450px]">
+
           {/* Left Side - Hero Section */}
-          <div className="lg:w-1/2 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 relative overflow-hidden">
+          <div className="lg:w-1/2 hidden lg:block bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 relative overflow-hidden">
             <div className="absolute inset-0 bg-black/20"></div>
+           
             <div className="relative h-full flex flex-col justify-center items-center p-6 text-white">
+          
               {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0 opacity-10 hi">
                 <div className="absolute top-8 left-8 w-20 h-20 bg-white rounded-full blur-3xl"></div>
                 <div className="absolute bottom-8 right-8 w-24 h-24 bg-white rounded-full blur-3xl"></div>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-full blur-2xl"></div>
@@ -90,13 +93,13 @@ const SignIn: React.FC = () => {
           <div className="lg:w-1/2 p-6 lg:p-8 flex flex-col justify-center">
             {/* Header */}
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              {/* <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <img
                   src="ticketlogo2.jpg"
                   alt="EventHub Logo"
                   className="w-12 h-12 object-contain"
                 />
-              </div>
+              </div> */}
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Sign In</h2>
               <p className="text-sm text-gray-600">Enter your credentials to access your account</p>
             </div>
@@ -118,7 +121,7 @@ const SignIn: React.FC = () => {
                 type="email"
                     placeholder="Enter your email"
                 aria-label="Email"
-                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-all duration-300 bg-gray-50 focus:bg-white text-base font-medium"
+                    className="w-full pl-12 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-all duration-300 bg-gray-50 focus:bg-white text-base font-medium"
               />
                 </div>
             </div>
@@ -137,7 +140,7 @@ const SignIn: React.FC = () => {
                 type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                 aria-label="Password"
-                    className="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-all duration-300 bg-gray-50 focus:bg-white text-base font-medium"
+                    className="w-full pl-12 pr-12 py-2 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-all duration-300 bg-gray-50 focus:bg-white text-base font-medium"
               />
               <button
                 type="button"
@@ -169,7 +172,7 @@ const SignIn: React.FC = () => {
               <button
                 type="submit"
                 disabled={isDisabled}
-                  className={`w-full py-4 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-3 ${
+                  className={`w-full py-2 rounded-xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-3 ${
                   isDisabled
                       ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                       : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -183,7 +186,7 @@ const SignIn: React.FC = () => {
             ) : (
               <button
                 disabled
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-base flex items-center justify-center gap-3"
+                  className="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-base flex items-center justify-center gap-3"
               >
                 <ClipLoader color="#ffffff" size={20} />
                   <span>Signing In...</span>
