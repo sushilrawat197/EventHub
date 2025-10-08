@@ -8,6 +8,7 @@ import {
 import { IoIosArrowBack } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { cancelBooking } from "../../../../services/operations/ticketCategory";
+import { useEffect } from "react";
 
 export default function BookingFlow() {
   const { contentName, eventId } = useParams();
@@ -16,8 +17,7 @@ export default function BookingFlow() {
   const dispatch = useAppDispatch();
 
   const bookingId = useAppSelector(
-    (state) => state.reserveTicket.booking?.bookingId
-  );
+    (state) => state.reserveTicket.booking?.bookingId);
 
   const path = location.pathname;
   let step = 1;
@@ -43,6 +43,19 @@ export default function BookingFlow() {
     }
   }
 
+
+useEffect(() => {
+  const handlePopState = () => {
+    navigate(location.pathname, { replace: true });
+  };
+
+  window.addEventListener("popstate", handlePopState);
+
+  return () => {
+    window.removeEventListener("popstate", handlePopState);
+  };
+}, [location.pathname, navigate]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -54,22 +67,22 @@ export default function BookingFlow() {
             {path.includes("payment") && (
               <button
                 onClick={backHandler}
-                className="pr-3 text-xl sm:text-2xl"
+                className="pr-3 text-xl sm:text-2xl gap-2 flex items-center text-blue-500 font-bold justify-center"
               >
-                <IoIosArrowBack />
+                <IoIosArrowBack size={20} className="text-blue-500"/> Back To Ticket
               </button>
             )}
 
             {/* Logo / Title */}
-            <div className="text-sky-500 text-lg sm:text-2xl font-bold">
+            <div className="text-blue-600 text-lg sm:text-2xl font-bold">
               {path.includes("payment") ? (
                 ""
               ) : (
-                <NavLink to={"/events"} className="hover:text-sky-600 transition-colors flex items-center gap-2 group">
+                <NavLink to={"/events"} className="hover:text-blue-700 transition-colors flex items-center gap-2 group">
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  <span>EventHub</span>
+                  <span>MyTag</span>
                 </NavLink>
               )}
             </div>
@@ -101,7 +114,7 @@ export default function BookingFlow() {
                       stepItem.completed
                         ? "bg-gray-900 text-white"
                         : stepItem.active
-                        ? "bg-sky-500 text-white"
+                        ? "bg-blue-600 text-white"
                         : "bg-gray-200 text-gray-600"
                     }`}
                   >

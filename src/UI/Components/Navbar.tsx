@@ -137,10 +137,10 @@ const Navbar: React.FC = () => {
                     alt="logo"
                   />
                 </div>
-                <div className="hidden sm:block ml-3">
+                {/* <div className="hidden sm:block ml-3">
                   <h1 className="text-white font-bold text-xl">EventHub</h1>
                   <p className="text-blue-100 text-xs">Discover Events</p>
-                </div>
+                </div> */}
               </Link>
 
               {/* Desktop Search */}

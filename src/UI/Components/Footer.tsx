@@ -24,10 +24,10 @@ const Footer: React.FC = () => {
                   alt="EventHub Logo"
                 />
               </div>
-              <div className="ml-4">
-                <h2 className="text-2xl font-bold text-white">EventHub</h2>
+              {/* <div className="ml-4">
+                <h2 className="text-2xl font-bold text-white">My Tag</h2>
                 <p className="text-blue-200 text-sm">Discover Amazing Events</p>
-              </div>
+              </div> */}
             </div>
             <p className="text-gray-300 text-sm leading-relaxed mb-6">
               Your premier destination for discovering and booking the best events. 
@@ -102,7 +102,7 @@ const Footer: React.FC = () => {
                 <div>
                   <p className="text-white font-medium text-sm">Email</p>
                   <a href="mailto:support@eventhub.com" className="text-gray-300 text-sm hover:text-white transition-colors">
-                    support@eventhub.com
+                    support@mytag.com
                   </a>
                 </div>
               </div>
@@ -126,7 +126,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-gray-400 text-sm">
-              © 2025 EventHub. All rights reserved. Powered by Giant Technologies.
+              © 2025 Mytag. All rights reserved. Powered by Giant Technologies.
             </div>
             <div className="flex items-center space-x-6 text-sm">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>

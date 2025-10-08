@@ -71,7 +71,7 @@ const BookingOrder: React.FC = () => {
   if (status === "error") return <p>Failed to load orders.</p>;
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen mt-32">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
         {/* Header with search */}
         <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white p-6 sm:p-8">

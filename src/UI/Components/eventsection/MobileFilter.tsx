@@ -66,7 +66,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
     {
       title: "Languages",
       key: "languages",
-      items: [{ label: "English" }, { label: "Hindi" }],
+      items: [{ label: "English" }],
     },
     {
       title: "Categories",
@@ -185,7 +185,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
   return (
     <>
       {/* Main Filter Panel */}
-      <div className="fixed inset-0 bg-white z-50 flex flex-col md:hidden">
+      <div className="fixed h-screen inset-0 bg-white z-50 flex flex-col md:hidden">
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <IoClose className="text-2xl cursor-pointer" onClick={onClose} />
           <h2 className="text-lg font-semibold">Filters</h2>
@@ -225,7 +225,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
         </div>
 
         <div className="p-2 border-t border-gray-200">
-          <button className="w-full py-2 bg-sky-500 text-white rounded-md font-extrabold" onClick={onClose}>
+          <button className="w-full py-2 bg-blue-600 text-white rounded-md font-extrabold" onClick={onClose}>
             Apply
           </button>
         </div>

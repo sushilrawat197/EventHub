@@ -26,13 +26,13 @@ const ContactPage: React.FC = () => {
     {
       icon: FaEnvelope,
       title: "Email Us",
-      details: "support@eventhub.com",
+      details: "support@mytag.com",
       description: "We'll respond within 24 hours"
     },
     {
       icon: FaPhone,
       title: "Call Us",
-      details: "+1 (555) 123-4567",
+      details: "+266 63820303",
       description: "Mon-Fri from 8am to 6pm"
     },
     {
@@ -44,17 +44,17 @@ const ContactPage: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
+    <section className="py-3 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-16">
+        {/* <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
             Get in <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Touch</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Have a question or need help? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Contact Information */}

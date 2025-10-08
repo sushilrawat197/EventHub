@@ -69,7 +69,7 @@ const emojis = [
         </div>
         <button
          onClick={handleSubmit}
-          className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
         >
           SUBMIT YOUR RESPONSE
         </button>
@@ -90,8 +90,8 @@ const emojis = [
 
         {/* ✅ Success Popup */}
         {showPopup && (
-          <div className="absolute inset-0 backdrop-blur-lg flex items-center justify-center rounded-2xl">
-            <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+          <div className="absolute inset-0 bg-white flex items-center justify-center rounded-2xl">
+            <div className="bg-white p-6 rounded-xl text-center">
               <h3 className="text-lg font-semibold mb-4">
                 🎉 Thank you for your response!
               </h3>
@@ -100,7 +100,7 @@ const emojis = [
                   setShowPopup(false);
                   navigate("/orders");
                 }}
-                className="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
                 Close
               </button>

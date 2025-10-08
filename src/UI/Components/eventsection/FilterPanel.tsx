@@ -346,7 +346,7 @@ export default function FilterPanel() {
     "DATE RANGE",
   ];
 
-  const languageOptions: string[] = ["English", "Hindi"];
+  const languageOptions: string[] = ["English"];
 
   const priceOptions: string[] = ["0 - 500", "501 - 2000", "Above 2000"];
 

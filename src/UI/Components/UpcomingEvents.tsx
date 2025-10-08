@@ -114,8 +114,8 @@ const UpcomingEvents: React.FC = () => {
         {/* Header Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-              <FaTicketAlt className="text-blue-600 text-xl" />
+            <div className="w-12 h-12 bg-blue-100 hidden  rounded-2xl lg:flex items-center justify-center">
+              <FaTicketAlt className="text-blue-600 text-xl " />
             </div>
             <h2 className="text-4xl font-bold text-gray-900">Upcoming Events</h2>
           </div>

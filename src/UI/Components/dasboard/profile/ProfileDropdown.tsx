@@ -128,8 +128,8 @@ export default function ProfileDropdown() {
 
           <div className="hidden lg:flex items-center justify-center gap-2">
             <div className="text-right">
-              <p className="text-sm font-semibold">{user?.firstName?.slice(0, 8)}</p>
-              <p className="text-xs text-blue-100">Profile</p>
+              <p className="text-sm font-semibold">Hello! {user?.firstName?.slice(0, 8)}</p>
+              {/* <p className="text-xs text-blue-100">Profile</p> */}
             </div>
             <svg className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

@@ -1,5 +1,4 @@
-// import EventsFilter from "../Components/EventsFilter";
-import { Link } from "react-router-dom";
+
 
 const HeroSection = () => {
 
@@ -19,22 +18,21 @@ const HeroSection = () => {
   
 
               {/* Main Heading */}
-              <div className="space-y-4">
-                        <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
-                          <span className="block text-white">Your Ultimate</span>
-                          <span className="block bg-gradient-to-r from-blue-400 via-blue-300 to-white bg-clip-text text-transparent">
+              <div className="space-y-4 ">
+                        <h1 className="text-4xl text-center  font-bold leading-tight">
+                          <span className="block text-white text-7xl">Your Ultimate</span>
+                          <span className="block text-[55px] bg-gradient-to-r from-blue-400 via-blue-300 to-white bg-clip-text text-transparent">
                             Ticket Destination
                           </span>
                         </h1>
                 
-                <p className="text-xl text-gray-300 leading-relaxed max-w-lg">
-                  Experience the magic of live events. From concerts to conferences, 
-                  find your perfect event and create unforgettable memories.
+                <p className="text-xl text-gray-300 leading-relaxed max-w-lg text-center" >
+                 Step into the future of events with MyTag. We offer a hassle free experience. #No lines, just vibes!
                 </p>
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              {/* <div className="flex flex-col sm:flex-row gap-4">
                         <Link to={'/events'}>
                           <button className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300 flex items-center gap-3">
                     <span className="relative z-10">Explore Events</span>
@@ -45,7 +43,7 @@ const HeroSection = () => {
                   </button>
                 </Link>
      
-              </div>
+              </div> */}
 
                      
             </div>
