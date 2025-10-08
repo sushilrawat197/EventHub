@@ -19,9 +19,9 @@ const HeroSection = () => {
 
               {/* Main Heading */}
               <div className="space-y-4 ">
-                        <h1 className="text-4xl text-center  font-bold leading-tight">
-                          <span className="block text-white text-7xl">Your Ultimate</span>
-                          <span className="block text-[55px] bg-gradient-to-r from-blue-400 via-blue-300 to-white bg-clip-text text-transparent">
+                        <h1 className="lg:text-4xl text-3xl text-center  font-bold leading-tight">
+                          <span className="block text-white lg:text-7xl">Your Ultimate</span>
+                          <span className="block lg:text-[55px] bg-gradient-to-r from-blue-400 via-blue-300 to-white bg-clip-text text-transparent">
                             Ticket Destination
                           </span>
                         </h1>
