@@ -27,11 +27,16 @@ jobs:
 
       - name: Remove old dist
         run: |
-          if [ -d /home/apps/frontendserver-ticketing/dist ]; then
-            rm -rf /home/apps/frontendserver-ticketing/dist
+          if [ -d /home/apps/frontendserver-EventHub/dist ]; then
+            rm -rf /home/apps/frontendserver-EventHub/dist
           fi
 
-      - name: Transfer new dist
+      - name: Deploy new dist folder
         run: |
-          mkdir -p /home/apps/frontendserver-ticketing
-          mv ~/githubrunners/ticktingrunner/ticketrepo/Ticketing/Ticketing/dist /home/apps/frontendserver-ticketing/
+          if [ -d dist ]; then
+            echo "New build found. Copying dist folder..."
+            cp -r dist ~/frontendserver-ticketing/
+          else
+            echo "Build folder 'dist' not found. Skipping deployment."
+            exit 1
+          fi
