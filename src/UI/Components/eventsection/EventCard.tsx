@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaCalendarAlt, FaMapMarkerAlt, FaTicketAlt } from "react-icons/fa";
+import { FaMapMarkerAlt, FaTicketAlt } from "react-icons/fa";
 import type { EventResponseBySearch } from "../../../interfaces/eventInterface/evnetInterFace";
 
 interface EventCardProps {
