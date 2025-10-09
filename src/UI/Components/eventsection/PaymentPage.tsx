@@ -6,7 +6,6 @@ import {
 } from "../../../services/operations/ticketCategory";
 import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { FaWallet } from "react-icons/fa";
 import BookingErrorPage from "./Eventsprocess/BookingError";
 import { ClipLoader } from "react-spinners";
 
@@ -22,6 +21,7 @@ export default function PaymentPage() {
   const paymentLoading = useAppSelector((state) => state.pay.payTicketLoading);
 
   const isValid = mobile.length === 12;
+
 
   const eventDate = reserveTicket
     ? new Date(reserveTicket.showDate).toLocaleDateString("en-GB", {
@@ -62,6 +62,7 @@ export default function PaymentPage() {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [reserveTicket, bookingId, navigate, dispatch]);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
@@ -122,65 +123,182 @@ export default function PaymentPage() {
                     Payment Method
                   </h2>
 
-                  <div className="space-y-3">
-                    <div
-                      className={`group p-4 border-2 rounded-xl transition-all duration-300 ${
-                        ["Mpesa", "Apesa"].includes(selectedMethod)
-                          ? "border-blue-500 bg-blue-50 shadow-lg"
-                          : "border-gray-200 hover:border-blue-300 hover:shadow-md"
-                      }`}
+                  <div className="space-y-4">
+                    {/* Modern Wallet Selection Cards */}
+                    <div className="grid grid-cols-1 gap-3">
+                      {/* M-Pesa Card */}
+                      <div
+                        className={`group relative p-4 border-2 rounded-2xl transition-all duration-300 cursor-pointer ${
+                          selectedMethod === "Mpesa"
+                            ? "border-green-500 bg-green-50 shadow-lg scale-105"
+                            : "border-gray-200 hover:border-green-300 hover:shadow-md hover:scale-102"
+                        }`}
+                        onClick={() => setSelectedMethod("Mpesa")}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-4">
+                            {/* M-Pesa Icon */}
+                            <div
+                              className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                                selectedMethod === "Mpesa"
+                                  ? "bg-green-100"
+                                  : "bg-gray-100"
+                              }`}
+                            >
+                              <svg
+                                className="w-6 h-6"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M12 2L2 7L12 12L22 7L12 2Z"
+                                  fill={selectedMethod === "Mpesa" ? "#10B981" : "#6B7280"}
+                                />
+                                <path
+                                  d="M2 17L12 22L22 17"
+                                  stroke={selectedMethod === "Mpesa" ? "#10B981" : "#6B7280"}
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M2 12L12 17L22 12"
+                                  stroke={selectedMethod === "Mpesa" ? "#10B981" : "#6B7280"}
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </div>
+
+                            <div>
+                              <h3 className="text-lg font-bold text-gray-900">
+                                M-Pesa
+                              </h3>
+                              <div className="flex items-center gap-1 mt-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span className="text-xs text-green-600 font-medium">
+                                  Most Popular
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Selection Indicator */}
                           <div
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                              ["Mpesa", "Apesa"].includes(selectedMethod)
-                                ? "bg-blue-100"
-                                : "bg-gray-100"
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                              selectedMethod === "Mpesa"
+                                ? "border-green-500 bg-green-500"
+                                : "border-gray-300"
                             }`}
                           >
-                            <FaWallet
-                              className={`text-xl ${
-                                ["Mpesa", "Apesa"].includes(selectedMethod)
-                                  ? "text-blue-600"
-                                  : "text-gray-600"
+                            {selectedMethod === "Mpesa" && (
+                              <svg
+                                className="w-3 h-3 text-white"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* C-Pay Card */}
+                      <div
+                        className={`group relative p-4 border-2 rounded-2xl transition-all duration-300 cursor-pointer ${
+                          selectedMethod === "Apesa"
+                            ? "border-blue-500 bg-blue-50 shadow-lg scale-105"
+                            : "border-gray-200 hover:border-blue-300 hover:shadow-md hover:scale-102"
+                        }`}
+                        onClick={() => setSelectedMethod("Apesa")}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            {/* C-Pay Icon */}
+                            <div
+                              className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                                selectedMethod === "Apesa"
+                                  ? "bg-blue-100"
+                                  : "bg-gray-100"
                               }`}
-                            />
+                            >
+                              <svg
+                                className="w-6 h-6"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <rect
+                                  x="2"
+                                  y="4"
+                                  width="20"
+                                  height="16"
+                                  rx="2"
+                                  fill={selectedMethod === "Apesa" ? "#3B82F6" : "#6B7280"}
+                                />
+                                <path
+                                  d="M2 8H22"
+                                  stroke="white"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                />
+                                <circle
+                                  cx="8"
+                                  cy="14"
+                                  r="2"
+                                  fill="white"
+                                />
+                                <circle
+                                  cx="16"
+                                  cy="14"
+                                  r="2"
+                                  fill="white"
+                                />
+                              </svg>
                           </div>
 
                           <div>
-                            <h3 className="text-base font-bold text-gray-900">
-                              Mobile Wallet
+                              <h3 className="text-lg font-bold text-gray-900">
+                                C-Pay
                             </h3>
-                            <p className="text-xs text-gray-600">
-                              Choose your wallet type
-                            </p>
-
-                            {/* Dropdown */}
-                            <select
-                              value={selectedMethod}
-                              onChange={(e) =>
-                                setSelectedMethod(e.target.value)
-                              }
-                              className="mt-2 border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                            >
-                             
-                              <option value="Mpesa">M-Pesa</option>
-                              <option value="Apesa">C-Pay</option>
-                            </select>
+                              <div className="flex items-center gap-1 mt-1">
+                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                <span className="text-xs text-blue-600 font-medium">
+                                  Secure & Fast
+                                </span>
+                              </div>
                           </div>
                         </div>
 
+                          {/* Selection Indicator */}
                         <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                            ["Mpesa", "Apesa"].includes(selectedMethod)
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                              selectedMethod === "Apesa"
                               ? "border-blue-500 bg-blue-500"
                               : "border-gray-300"
                           }`}
                         >
-                          {["Mpesa", "Apesa"].includes(selectedMethod) && (
-                            <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                          )}
+                            {selectedMethod === "Apesa" && (
+                              <svg
+                                className="w-3 h-3 text-white"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -295,6 +413,8 @@ export default function PaymentPage() {
                         </>
                       )}
                     </button>
+
+
                   </div>
                 </div>
               </div>
