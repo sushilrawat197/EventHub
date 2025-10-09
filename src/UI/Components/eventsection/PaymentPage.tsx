@@ -301,6 +301,8 @@ export default function PaymentPage() {
             </div>
           </div>
 
+
+
           {/* RIGHT: Order Summary */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 sticky top-8">

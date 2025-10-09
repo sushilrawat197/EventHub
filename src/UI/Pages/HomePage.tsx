@@ -2,9 +2,11 @@ import HeroSection from "./HeroSection";
 import UpcomingEvents from "../Components/UpcomingEvents";
 // import WhyChoose from "../Components/WhyChoose";
 // import PosterRanking from "../Components/PosterRanking";
-import ContactPage from "../Components/ContactUs";
+// import ContactPage from "../Components/ContactUs";
 import Footer from "../Components/Footer";
 // import SellWithEase from "../Components/SellWithEase";
+import ThreeImgComponent from "../Components/threeImageComponent";
+import ContactPage from "../Components/ContactUs";
 
 export default function HomePage() {
 
@@ -15,12 +17,13 @@ export default function HomePage() {
         <HeroSection />
         <UpcomingEvents />
         {/* <WhyChoose />
-        <PosterRanking /> 
-        <SellWithEase /> 
-        {/* <TicketPlans /> */}
+        <PosterRanking />  */}
+        <ThreeImgComponent/>
+        {/* <SellWithEase />  */}
+        {/* <TicketPlans />  */}
         <ContactPage />
 
-        {/* <WhatsApppop /> */}
+        {/* <WhatsApppop />  */}
       </div>
       <Footer />
     </>
