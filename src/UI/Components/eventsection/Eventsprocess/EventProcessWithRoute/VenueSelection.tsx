@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
 import { useEffect, useState } from "react";
 import { listAllShowsByEvent } from "../../../../../services/operations/showsApi";
 import { setTicketInfo } from "../../../../../slices/ticketInfoSlice";
-import { listDetailsByCityId } from "../../../../../services/operations/venue";
+import { getVenueByVenueId, listDetailsByCityId } from "../../../../../services/operations/venue";
 
 const VenueSelection = () => {
   const dispatch = useAppDispatch();
@@ -14,6 +14,9 @@ const VenueSelection = () => {
   const shows = useAppSelector((state) => state.shows.data);
 
   const venueDetailsArray = useAppSelector((state) => state.venue.data || []);
+  const details = useAppSelector((state) => state.venue.venueDetails );
+
+  
 
   // Track which venue's details are open
   const [expandedVenue, setExpandedVenue] = useState<number | null>(null);
@@ -34,9 +37,9 @@ const VenueSelection = () => {
 
 
   function toggleDetails(venueId: number) {
+    dispatch(getVenueByVenueId(venueId));
     setExpandedVenue(expandedVenue === venueId ? null : venueId);
   }
-
 
 
   useEffect(() => {
@@ -137,8 +140,10 @@ const VenueSelection = () => {
                   </div>
                 </div>
 
+
                 {/* Expanded Details */}
                 {expandedVenue === venue.venueId && (
+                  
                   <div className="px-4 pb-4">
                     <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-4 border border-gray-100">
                       <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
@@ -159,7 +164,7 @@ const VenueSelection = () => {
                             </div>
                             <div>
                               <p className="text-xs font-semibold text-gray-700">Address</p>
-                              <p className="text-xs text-gray-600">{venueDetail?.address || "N/A"}</p>
+                              <p className="text-xs text-gray-600">{ details?.address || "N/A"}</p>
                             </div>
                           </div>
 
@@ -171,7 +176,7 @@ const VenueSelection = () => {
                             </div>
                             <div>
                               <p className="text-xs font-semibold text-gray-700">Capacity</p>
-                              <p className="text-xs text-gray-600">{venueDetail?.totalCapacity || "N/A"} seats</p>
+                              <p className="text-xs text-gray-600">{ details?.totalCapacity || "N/A"} seats</p>
                             </div>
                           </div>
 
@@ -183,7 +188,7 @@ const VenueSelection = () => {
                             </div>
                             <div>
                               <p className="text-xs font-semibold text-gray-700">Contact</p>
-                              <p className="text-xs text-gray-600">{venueDetail?.contactNumber || "N/A"}</p>
+                              <p className="text-xs text-gray-600">{ details?.contactNumber || "N/A"}</p>
                             </div>
                           </div>
                         </div>
@@ -197,7 +202,7 @@ const VenueSelection = () => {
                             </div>
                             <div>
                               <p className="text-xs font-semibold text-gray-700">Pincode</p>
-                              <p className="text-xs text-gray-600">{venueDetail?.pincode || "N/A"}</p>
+                              <p className="text-xs text-gray-600">{ details?.pincode || "N/A"}</p>
                             </div>
                           </div>
 
@@ -209,7 +214,7 @@ const VenueSelection = () => {
                             </div>
                             <div>
                               <p className="text-xs font-semibold text-gray-700">Type</p>
-                              <p className="text-xs text-gray-600">{venueDetail?.venueType || "N/A"}</p>
+                              <p className="text-xs text-gray-600">{ details?.venueType || "N/A"}</p>
                             </div>
                           </div>
 
@@ -222,7 +227,7 @@ const VenueSelection = () => {
                               </div>
                               <div>
                                 <p className="text-xs font-semibold text-gray-700">Description</p>
-                                <p className="text-xs text-gray-600">{venueDetail.description}</p>
+                                <p className="text-xs text-gray-600">{ details?.description}</p>
                               </div>
                             </div>
                           )}
@@ -235,6 +240,7 @@ const VenueSelection = () => {
           );
         })}
         </div>
+
       </div>
     </div>
   );

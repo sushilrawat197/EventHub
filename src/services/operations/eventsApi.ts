@@ -9,49 +9,6 @@ import { setAvailableEventShows } from "../../slices/availabilitySlice";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
-
-
-// export function listEventsBySearch() {
-//   return async (dispatch: AppDispatch, getState: () => RootState): Promise<{ success: boolean }> => {
-//     dispatch(setEventsLoading(true));
-
-//     try {
-
-//       const filters = getState().searchFilter; // 👈 redux filters state
-
-//       console.log("Printing Filters Data", filters)
-
-//       const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
-//         method: "POST",
-//         url: `${BASE_URL}/ticketcore-api/api/v1/events/search`,
-//         bodyData: filters,
-//         headers: { "X-Client-Source": "WEB" },
-//         withCredentials: true,
-//       });
-
-//       console.log("Search Data", response.data);
-
-//       if (response.data.statusCode === 200) {
-//         dispatch(setAllEventsBySearch(response.data.data));
-//         return { success: true };
-//       }
-
-//       return { success: false };
-//     } catch (error) {
-//       if (axios.isAxiosError(error)) {
-//         console.error("Axios error:", error.response);
-//       } else {
-//         console.error("Unknown error:", error);
-//       }
-//       return { success: false };
-//     } finally {
-//       dispatch(setEventsLoading(false));
-//     }
-//   };
-// }
-
-
-
 export function listEventsBySearch(page: number = 0) {
   return async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(setEventsLoading(true));

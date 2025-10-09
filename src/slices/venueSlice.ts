@@ -6,12 +6,14 @@ import type { VenueResponse } from "../interfaces/venueInterface";
 
 interface VenueState {
   data:VenueResponse[] | null;
+  venueDetails:VenueResponse | null,
   loading: boolean;
   error: string | null;
 }
 
 const initialState: VenueState = {
   data: [],
+  venueDetails:null,
   loading: false,
   error: null,
 };
@@ -23,6 +25,9 @@ const venueSlice = createSlice({
   reducers: {
     setVenues: (state, action: PayloadAction<VenueResponse[]>) => {
       state.data = action.payload;
+    },
+    setVenueDetails: (state, action: PayloadAction<VenueResponse>) => {
+      state.venueDetails = action.payload;
     },
     setVenueLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -36,7 +41,7 @@ const venueSlice = createSlice({
   },
 });
 
-export const { setVenues, setVenueLoading, setVenueError, clearVenuesError } =
+export const { setVenues, setVenueLoading, setVenueError, clearVenuesError, setVenueDetails } =
   venueSlice.actions;
 
 export default venueSlice.reducer;

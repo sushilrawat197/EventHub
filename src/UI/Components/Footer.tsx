@@ -129,7 +129,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-gray-400 text-sm">
-              © 2025 MyTag. All rights reserved. Powered by Giant Technologies.
+              © 2025 MyTag. All rights reserved. Powered by THINK IT.
             </div>
             <div className="flex items-center space-x-6 text-sm">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>

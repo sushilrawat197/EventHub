@@ -38,7 +38,7 @@ const ContactPage: React.FC = () => {
     {
       icon: FaMapMarkerAlt,
       title: "Visit Us",
-      details: "123 Event Street, City",
+      details: "Thetsane West, Maseru",
       description: "Come say hello at our office"
     }
   ];
