@@ -15,8 +15,8 @@ export default function HomePage() {
         <HeroSection />
         <UpcomingEvents />
         {/* <WhyChoose />
-        <PosterRanking />
-        <SellWithEase /> */}
+        <PosterRanking /> 
+        <SellWithEase /> 
         {/* <TicketPlans /> */}
         <ContactPage />
 

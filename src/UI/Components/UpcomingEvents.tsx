@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 
@@ -8,107 +8,123 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { FaTicketAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../reducers/hooks";
+import { listEventsBySearch } from "../../services/operations/eventsApi";
 
-const events = [
-  {
-    date: "17",
-    month: "SEP",
-    year: "2020",
-    title: "Golf Clubbers Annual Agenda",
-    location: "University of Golf Clubbers",
-    status: "SOLD OUT",
-    image: "Events1.jpg",
-  },
-  {
-    date: "16",
-    month: "APR",
-    year: "2021",
-    title: "Rio Olympic Games 1st Run",
-    location: "Rio Olympic Hall",
-    status: "M 5.00",
-    image: "Events2.jpg",
-  },
-  {
-    date: "11",
-    month: "MAR",
-    year: "2023",
-    title: "Riga Saxophone Days",
-    location: "Arena Riga",
-    status: "M 33.00",
-    discount: "M 48.00",
-    image: "Events3.jpg",
-  },
-  {
-    date: "05",
-    month: "JAN",
-    year: "2024",
-    title: "Football League Start",
-    location: "Bangalore Stadium",
-    status: "M 10.00",
-    image: "Events4.jpg",
-  },
-  {
-    date: "22",
-    month: "JUN",
-    year: "2025",
-    title: "Tech Conference 2025",
-    location: "Delhi Tech Park",
-    status: "FREE",
-    image: "Events5.jpg",
-  },
-  {
-    date: "09",
-    month: "AUG",
-    year: "2025",
-    title: "Startup Pitch Day",
-    location: "Hyderabad Expo",
-    status: "M 7.00",
-    image: "Events6.jpg",
-  },
+// const events = [
+//   {
+//     date: "17",
+//     month: "SEP",
+//     year: "2020",
+//     title: "Golf Clubbers Annual Agenda",
+//     location: "University of Golf Clubbers",
+//     status: "SOLD OUT",
+//     image: "Events1.jpg",
+//   },
+//   {
+//     date: "16",
+//     month: "APR",
+//     year: "2021",
+//     title: "Rio Olympic Games 1st Run",
+//     location: "Rio Olympic Hall",
+//     status: "M 5.00",
+//     image: "Events2.jpg",
+//   },
+//   {
+//     date: "11",
+//     month: "MAR",
+//     year: "2023",
+//     title: "Riga Saxophone Days",
+//     location: "Arena Riga",
+//     status: "M 33.00",
+//     discount: "M 48.00",
+//     image: "Events3.jpg",
+//   },
+//   {
+//     date: "05",
+//     month: "JAN",
+//     year: "2024",
+//     title: "Football League Start",
+//     location: "Bangalore Stadium",
+//     status: "M 10.00",
+//     image: "Events4.jpg",
+//   },
+//   {
+//     date: "22",
+//     month: "JUN",
+//     year: "2025",
+//     title: "Tech Conference 2025",
+//     location: "Delhi Tech Park",
+//     status: "FREE",
+//     image: "Events5.jpg",
+//   },
+//   {
+//     date: "09",
+//     month: "AUG",
+//     year: "2025",
+//     title: "Startup Pitch Day",
+//     location: "Hyderabad Expo",
+//     status: "M 7.00",
+//     image: "Events6.jpg",
+//   },
 
-  {
-    date: "09",
-    month: "AUG",
-    year: "2025",
-    title: "Startup Pitch Day",
-    location: "Hyderabad Expo",
-    status: "M 7.00",
-    image: "Events7.jpg",
-  },
+//   {
+//     date: "09",
+//     month: "AUG",
+//     year: "2025",
+//     title: "Startup Pitch Day",
+//     location: "Hyderabad Expo",
+//     status: "M 7.00",
+//     image: "Events7.jpg",
+//   },
 
-  {
-    date: "09",
-    month: "AUG",
-    year: "2025",
-    title: "Startup Pitch Day",
-    location: "Hyderabad Expo",
-    status: "M 7.00",
-    image: "Events8.jpg",
-  },
+//   {
+//     date: "09",
+//     month: "AUG",
+//     year: "2025",
+//     title: "Startup Pitch Day",
+//     location: "Hyderabad Expo",
+//     status: "M 7.00",
+//     image: "Events8.jpg",
+//   },
 
-  {
-    date: "09",
-    month: "AUG",
-    year: "2025",
-    title: "Startup Pitch Day",
-    location: "Hyderabad Expo",
-    status: "M 7.00",
-    image: "Events9.jpg",
-  },
+//   {
+//     date: "09",
+//     month: "AUG",
+//     year: "2025",
+//     title: "Startup Pitch Day",
+//     location: "Hyderabad Expo",
+//     status: "M 7.00",
+//     image: "Events9.jpg",
+//   },
 
-  {
-    date: "09",
-    month: "AUG",
-    year: "2025",
-    title: "Startup Pitch Day",
-    location: "Hyderabad Expo",
-    status: "M 7.00",
-    image: "Events6.jpg",
-  },
-];
+//   {
+//     date: "09",
+//     month: "AUG",
+//     year: "2025",
+//     title: "Startup Pitch Day",
+//     location: "Hyderabad Expo",
+//     status: "M 7.00",
+//     image: "Events6.jpg",
+//   },
+// ];
+
+
+
 
 const UpcomingEvents: React.FC = () => {
+  const navigate=useNavigate();
+
+  const dispatch=useAppDispatch();
+  const events=useAppSelector((state)=>state.events.allEventsBySearch?.content || []);
+  console.log(events);
+
+  useEffect(()=>{
+    dispatch(listEventsBySearch());
+
+  },[dispatch])
+
   return (
     <div className="py-24 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -150,8 +166,8 @@ const UpcomingEvents: React.FC = () => {
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden">
                     <img
-                      src={event.image}
-                      alt={event.title}
+                      src={event.posterUrl}
+                      alt={event.eventName}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     
@@ -161,13 +177,13 @@ const UpcomingEvents: React.FC = () => {
                     {/* Date Badge */}
                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-gray-900 text-sm font-bold px-3 py-2 rounded-xl shadow-lg">
                       <div className="text-center">
-                        <div className="text-lg font-bold">{event.date}</div>
-                        <div className="text-xs">{event.month}</div>
+                        <div className="text-lg font-bold">{event.startDate}</div>
+                        {/* <div className="text-xs">{event.month}</div> */}
                       </div>
                     </div>
                     
                     {/* Status Badge */}
-                    <div className="absolute top-4 right-4">
+                    {/* <div className="absolute top-4 right-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg ${
                         event.status === "SOLD OUT" 
                           ? "bg-red-500 text-white" 
@@ -177,31 +193,31 @@ const UpcomingEvents: React.FC = () => {
                       }`}>
                         {event.status}
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                   
                   {/* Content */}
                   <div className="p-6 flex-grow flex flex-col">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                      {event.title}
+                    <h3 className=" truncate text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                      {event.eventName}
                     </h3>
                     <p className="text-gray-600 text-sm mb-4 flex items-center">
                       <svg className="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      {event.location}
+                      {event.venueName}
                     </p>
                     
                     <div className="mt-auto">
                       <button
-                      className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 ${
-                        event.status === "SOLD OUT"
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-lg transform hover:scale-105"
+                      onClick={()=>navigate(`/events/${event.eventName.replace(/\s+/g, "-")}/${event.eventId}`)}
+                      className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 
+                       
+                          bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-lg transform hover:scale-105"
                       }`}
                       >
-                        {event.status === "SOLD OUT" ? "Sold Out" : "Get Ticket"}
+                        Get Ticket
                       </button>
                     </div>
                   </div>

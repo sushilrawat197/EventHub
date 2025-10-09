@@ -33,7 +33,7 @@ const ContactPage: React.FC = () => {
       icon: FaPhone,
       title: "Call Us",
       details: "+266 63820303",
-      description: "Mon-Fri from 8am to 6pm"
+      description: "Mon-Fri from 8AM to 6PM"
     },
     {
       icon: FaMapMarkerAlt,

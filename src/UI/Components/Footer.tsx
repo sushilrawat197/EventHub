@@ -56,19 +56,7 @@ const Footer: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <h4 className="text-sm font-semibold text-blue-200 mb-3">Events</h4>
-                <ul className="space-y-2">
-                  {["Concerts", "Sports", "Theater", "Comedy"].map((link) => (
-                    <li key={link}>
-                      <a href="#" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
-                        {link}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-blue-200 mb-3">Support</h4>
-                <ul className="space-y-2">
+                 <ul className="space-y-2">
                   {["Help Center", "Contact Us", "Privacy Policy", "Terms of Service"].map((link) => (
                     <li key={link}>
                       <a href="#" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
@@ -77,7 +65,17 @@ const Footer: React.FC = () => {
                     </li>
                   ))}
                 </ul>
+                {/* <ul className="space-y-2">
+                  {["Comedy"].map((link) => (
+                    <li key={link}>
+                      <a href="#" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul> */}
               </div>
+             
             </div>
           </div>
 
