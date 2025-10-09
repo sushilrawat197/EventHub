@@ -5,7 +5,7 @@ import UpcomingEvents from "../Components/UpcomingEvents";
 // import ContactPage from "../Components/ContactUs";
 import Footer from "../Components/Footer";
 // import SellWithEase from "../Components/SellWithEase";
-import ThreeImgComponent from "../Components/threeImageComponent";
+import ThreeImgComponent from "../Components/ThreeImageComponent";
 import ContactPage from "../Components/ContactUs";
 
 export default function HomePage() {
