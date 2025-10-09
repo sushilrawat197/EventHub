@@ -7,6 +7,7 @@ import {
   FaEnvelope,
   FaPhoneAlt,
 } from "react-icons/fa";
+import {NavLink } from "react-router-dom";
 
 const Footer: React.FC = () => {
   return (
@@ -55,16 +56,20 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-bold text-white mb-6">Quick Links</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h4 className="text-sm font-semibold text-blue-200 mb-3">Events</h4>
+               <NavLink to={"/events"}>
+                <h4 className="text-sm font-semibold text-blue-200 mb-3 hover:text-white ">Events</h4>
+               </NavLink> 
+                
                  <ul className="space-y-2">
                   {["Help Center", "Contact Us", "Privacy Policy", "Terms of Service"].map((link) => (
                     <li key={link}>
-                      <a href="#" className="text-gray-300 hover:text-white text-sm transition-colors duration-200">
+                      <a href="#" className="text-blue-200 font-semibold hover:text-white text-sm transition-colors duration-200">
                         {link}
                       </a>
                     </li>
                   ))}
                 </ul>
+
                 {/* <ul className="space-y-2">
                   {["Comedy"].map((link) => (
                     <li key={link}>
