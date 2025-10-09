@@ -134,6 +134,7 @@ export interface EventAvailableShows {
 }
 
 
+
 export function checkEventAvailability(eventId: string) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean; soldOut: boolean; data?: EventAvailableShows }> => {
     try {
@@ -150,6 +151,11 @@ export function checkEventAvailability(eventId: string) {
         
         const eventData = response.data.data;
         dispatch(setAvailableEventShows(eventData.shows));
+
+        // if(eventData.eventSoldOut){
+        //   console.log(eventData.eventSoldOut)
+        //    dispatch(setEventsErrorMsg("All tickets are sold out for this event"));
+        // }
 
         return { success: true, soldOut: eventData.eventSoldOut, data: eventData };
       }

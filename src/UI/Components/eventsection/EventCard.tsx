@@ -74,7 +74,7 @@ export default function EventCard({ event }: EventCardProps) {
           
           <div className="flex items-center">
             <FaMapMarkerAlt className="w-4 h-4 mr-2 text-blue-500" />
-            <span className="truncate">Multiple Venues</span>
+            <span className="truncate">{event.venueName}</span>
           </div>
         </div>
 

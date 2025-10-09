@@ -35,24 +35,18 @@ export default function Layouteventspage() {
   const singleEvent = useAppSelector((state) => state.events.singleEvent);
   const eventLoading = useAppSelector((state) => state.events.eventloading);
   const shows = useAppSelector((state) => state.shows.data);
-  // const availableShow=useAppSelector((state)=>state.availability.eventShows);
 
-
-  // console.log('AVAILABLE SHOWSS....',availableShow);
   console.log("list all shows :", shows);
 
+
+
   // ------------------ FILTER SHOWS BASED ON AVAILABILITY ------------------
-// const filteredShows = shows.filter(show =>
-//   availableShow?.some(av => av.showId === show.showId && !av.soldOut)
-// );
 
-// console.log("FILTERED SHOW...",filteredShows);
-
-  // console.log("SHOWS...",shows)
 
   const showDateObjs = shows.map((e) => new Date(e.showDate));
 
   let formattedDates = ""; // 👈 pehle declare karo
+
 
   if (showDateObjs.length > 0) {
     // ascending sort
@@ -75,12 +69,18 @@ export default function Layouteventspage() {
       year: "numeric",
     });
 
-    formattedDates = `${formattedStart} - ${formattedEnd}`; // 👈 assign kiya
+     // ✅ Check if start and end are same
+  if (startDate.getTime() === endDate.getTime()) {
+    formattedDates = formattedStart; // same date, sirf ek baar show karo
+  } else {
+    formattedDates = `${formattedStart} - ${formattedEnd}`; // range show karo
+  }
   }
 
   // ab yaha available hai
 
 
+  
  let formattedTime = "";
 
 if (shows.length === 1) {
@@ -93,6 +93,7 @@ if (shows.length === 1) {
 
 
   console.log(formattedTime);
+
 
  const uniqueVenues = Array.from(
   new Map(shows.map((s) => [s.venueId, s.venueName])).entries()
@@ -116,6 +117,7 @@ console.log(uniqueVenues)
     venue: uniqueVenues.map((v) => v.venueName).join(", "),
     price: singleEvent?.basePrice,
   };
+
 
   useEffect(() => {
     if (eventId) {

@@ -56,7 +56,7 @@ export default function PasswordSet() {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-sky-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-blue-50 p-4">
       <div className="w-full max-w-sm bg-white p-8 rounded-2xl shadow-lg text-center space-y-6">
         {/* Logo */}
         <div className="flex justify-center">
@@ -110,14 +110,14 @@ export default function PasswordSet() {
           <button
             type="submit"
             onClick={handleSubmit}
-            className={`w-full bg-sky-700 hover:bg-sky-600 text-white font-semibold h-10 rounded-lg transition text-base cursor-pointer`}
+            className={`w-full bg-blue-500 hover:bg-blue-700 text-white font-semibold h-10 rounded-lg transition text-base cursor-pointer`}
           >
             Sign up
           </button>
         ) : (
           <button
             disabled
-            className="flex flex-col items-center justify-center w-full bg-sky-700 text-white h-10 rounded-lg transition text-base cursor-not-allowed"
+            className="flex flex-col items-center justify-center w-full bg-blue-600 text-white h-10 rounded-lg transition text-base cursor-not-allowed"
           >
             <ClipLoader color="#ffffff" size={20} />
           </button>

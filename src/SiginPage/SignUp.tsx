@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../reducers/hooks";
 import { ClipLoader } from "react-spinners";
 import PopUpMessage from "./popUpMassage";
+import { setOtpContext } from "../slices/authSlice";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -22,11 +23,13 @@ export default function SignUp() {
     if (isDisabled) return; // 👈 prevent rapid clicks
     setIsDisabled(true); // 👈 disable button
     dispatch(signUp(email, navigate, dispatch));
+    dispatch(setOtpContext("signup"))
     // 👇 re-enable button after 2 seconds
     setTimeout(() => {
       setIsDisabled(false);
     }, 2000);
   };
+
 
 
   return (

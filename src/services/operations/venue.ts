@@ -6,6 +6,7 @@ import { setVenues } from "../../slices/venueSlice";
 import { apiConnector } from "../apiConnector";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
+
 export function listDetailsByCityId(cityId:number | null) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
 

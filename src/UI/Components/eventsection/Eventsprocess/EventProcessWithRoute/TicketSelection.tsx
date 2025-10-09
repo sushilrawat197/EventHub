@@ -76,6 +76,7 @@ const TicketSelection = () => {
 
 
 
+  
 useEffect(() => {
    if(!showId){
      navigate(`/events/${contentName}/${eventId}`,{ replace: true })

@@ -166,21 +166,24 @@ useEffect(() => {
                 </label>
                 <div className="flex justify-center">
                   <OtpInput
-                    value={otp}
-                    onChange={(otp: string) => setOtp(otp)}
-                    numInputs={6}
-                    renderInput={(props) => (
-                      <input
-                        {...props}
-                        placeholder="-"
-                        className="w-16 h-16 text-center border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xl font-bold bg-gray-50 focus:bg-white transition-all duration-300"
-                      />
-                    )}
-                    containerStyle={{
-                      justifyContent: "space-between",
-                      gap: "0 12px",
-                    }}
-                  />
+              value={otp}
+              onChange={(otp: string) => setOtp(otp)}
+              numInputs={6}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  placeholder="-"
+                  style={{
+                    boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                  }}
+                  className="w-10 h-12 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-lg"
+                />
+              )}
+              containerStyle={{
+                justifyContent: "space-between",
+                gap: "0 6px",
+              }}
+            />
                 </div>
               </div>
 

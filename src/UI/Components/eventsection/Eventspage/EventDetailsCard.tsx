@@ -14,6 +14,7 @@ import { setTicketInfo } from "../../../../slices/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../../../slices/eventSlice";
 // import EventsErrorPage from "../EventErrorsd";
 import { useEffect, useState } from "react";
+import EventsErrorPage from "../EventErrorsd";
 
 
 export interface EventDetailsCardProps {
@@ -78,15 +79,21 @@ export default function EventDetailsCard({
   );
 
 
+
+
   async function bookHandler() {
+
+
     if (eventId) {
       const result = await dispatch(checkEventAvailability(eventId));
       if (result?.soldOut) {
         dispatch(setEventsErrorMsg("All tickets are sold out for this event"));
+      console.log("Pringint Result",result);
         return;
       }
     }
 
+    
     if (uniqueShows.length > 1) {
       navigate(`${location.pathname}/booking/venue`);
     } else {
@@ -154,10 +161,12 @@ export default function EventDetailsCard({
 
   return (
     <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden h-96 lg:h-[28rem] flex flex-col">
+      <EventsErrorPage/>
       {/* Content - Reduced Top Padding with Flex Layout */}
       <div className="pt-2 pb-3 px-3 space-y-2 flex-1 flex flex-col">
         {/* Event Details - Balanced Padding */}
         <div className="space-y-1.5 flex-1">
+          
           {details.map((item, idx) => (
             <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
               <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
