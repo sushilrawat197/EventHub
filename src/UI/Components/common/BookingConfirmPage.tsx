@@ -1,4 +1,4 @@
-import { FaDownload, FaTicketAlt, FaCalendarAlt, FaMapMarkerAlt, FaCreditCard, FaCheckCircle } from "react-icons/fa";
+import { FaDownload, FaTicketAlt, FaCalendarAlt, FaMapMarkerAlt, FaCreditCard } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -175,7 +175,7 @@ export default function BookingConfirmed() {
                   className="w-full h-full object-cover rounded-xl shadow-lg"
                 />
                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-700">
-                  {confirmBookingDetails?.event.genre}
+                  {confirmBookingDetails?.event.category}
                 </div>
               </div>
 
@@ -187,7 +187,7 @@ export default function BookingConfirmed() {
                       {confirmBookingDetails?.event.eventName}
                     </h2>
                     <p className="text-gray-600 text-sm mb-4">
-                      {confirmBookingDetails?.event.description}
+                      {confirmBookingDetails?.event.eventName}
                     </p>
                   </div>
 

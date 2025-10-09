@@ -3,7 +3,7 @@ import { useAppDispatch } from "../../../reducers/hooks";
 import { ratingAndReview } from "../../../services/operations/rateAndReview";
 import { useNavigate } from "react-router-dom";
 import { ImSad2 } from "react-icons/im";
-import { FaSmile, FaGrinStars, FaSadTear, FaStar, FaHeart, FaThumbsUp, FaCheckCircle } from "react-icons/fa";
+import { FaSmile, FaGrinStars, FaSadTear, FaHeart, FaThumbsUp, FaCheckCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function RateAndReview() {
@@ -11,7 +11,7 @@ export default function RateAndReview() {
   const navigate = useNavigate();
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
-  const [review, setReview] = useState("");
+  // const [review, setReview] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,7 +58,7 @@ export default function RateAndReview() {
     
     setIsSubmitting(true);
     try {
-      const result = await dispatch(ratingAndReview(rating, review));
+      const result = await dispatch(ratingAndReview(rating, ""));
       
       if (result.success) {
         setShowPopup(true);
