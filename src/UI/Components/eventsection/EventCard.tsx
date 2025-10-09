@@ -60,37 +60,30 @@ export default function EventCard({ event }: EventCardProps) {
 
       {/* Content Section */}
       <div className="p-6 flex-grow flex flex-col">
+        {/* Date and Time Display */}
+        <div className="mb-3 text-left">
+          <div className="text-xs text-gray-500 font-medium">
+            {event.dateDisplay}, {event.timeDisplay}
+          </div>
+        </div>
+
         {/* Event Title */}
-        <h3 className="font-bold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+        <h3 className="font-bold text-lg text-gray-900 mb-3 group-hover:text-blue-600 transition-colors text-left">
           {event.eventName}
         </h3>
 
         {/* Event Details - Compressed */}
-        <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
-          <div className="flex items-center">
-            <FaCalendarAlt className="w-4 h-4 mr-2 text-blue-500" />
-            <span>{event.language}</span>
-          </div>
-          
+        <div className="flex items-center text-xs text-gray-600 mb-2">
           <div className="flex items-center">
             <FaMapMarkerAlt className="w-4 h-4 mr-2 text-blue-500" />
             <span className="truncate">{event.venueName}</span>
           </div>
         </div>
 
-        {/* Price and Date Section */}
-        <div className="flex items-center justify-between mt-auto">
-          <div>
-            <span className="text-sm text-gray-500">Starting from</span>
-            <div className="text-lg font-bold text-gray-900 capitalize">
-              M{event.priceDisplay}
-            </div>
-          </div>
-          
-          {/* Date Badge */}
-          <div className="bg-gray-100 text-gray-900 px-3 py-2 rounded-lg text-sm font-medium text-center">
-            <div className="font-bold text-sm">{event.dateDisplay}</div>
-            <div className="text-xs">{event.timeDisplay}</div>
+        {/* Price Section */}
+        <div className="flex items-center justify-between">
+          <div className="text-xs font-bold text-gray-900 capitalize">
+            M{event.priceDisplay}
           </div>
         </div>
       </div>
