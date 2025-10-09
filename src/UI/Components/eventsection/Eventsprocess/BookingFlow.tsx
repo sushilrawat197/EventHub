@@ -88,11 +88,19 @@ useEffect(() => {
             </div>
 
             {/* Event Name - Centered */}
-            <div className="flex-1 flex items-center justify-center">
+            {
+              path.includes("payment")?(null):(
+                  <div className="flex-1 flex items-center justify-center">
               <h1 className="text-base sm:text-xl font-bold text-gray-800 capitalize truncate">
                 {contentName}
               </h1>
             </div>
+
+              )
+
+            }
+          
+
           </div>
         </div>
       </div>

@@ -36,6 +36,8 @@ export default function EventList() {
   const selectedLanguage = useAppSelector((state) => state.filter.languages);
   const selectedDates = useAppSelector((state) => state.filter.dates);
   const selectedPrice = useAppSelector((state) => state.filter.prices);
+
+
   const events = useAppSelector(
     (state) => state.events.allEventsBySearch?.content || []
   );
@@ -45,7 +47,6 @@ export default function EventList() {
   
   const totalPages = useAppSelector((state) => state.events.allEventsBySearch?.totalPages);
   const hasMore = page < (totalPages || 1) - 1;
-
 
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -259,8 +260,9 @@ export default function EventList() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No events found</h3>
+             
               <p className="text-gray-600 mb-6">Try adjusting your filters to see more events</p>
-              <button 
+              {/* <button 
                 onClick={() => {
                   dispatch(setCategories([]));
                   dispatch(setLanguages([]));
@@ -271,7 +273,7 @@ export default function EventList() {
                 className="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
               >
                 Clear All Filters
-              </button>
+              </button> */}
             </div>
           </div>
         )}

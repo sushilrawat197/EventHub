@@ -9,16 +9,16 @@ interface EventCardProps {
 export default function EventCard({ event }: EventCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return {
-      day: date.getDate().toString().padStart(2, '0'),
-      month: date.toLocaleDateString("en-US", { month: "short" }),
-      weekday: date.toLocaleDateString("en-US", { weekday: "short" })
-    };
-  };
+  // const formatDate = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   return {
+  //     day: date.getDate().toString().padStart(2, '0'),
+  //     month: date.toLocaleDateString("en-US", { month: "short" }),
+  //     weekday: date.toLocaleDateString("en-US", { weekday: "short" })
+  //   };
+  // };
 
-  const dateInfo = formatDate(event.startDate);
+  // const dateInfo = formatDate(event.dateDisplay);
 
   return (
     <div className="group w-full h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 hover:-translate-y-1 flex flex-col">
@@ -82,15 +82,15 @@ export default function EventCard({ event }: EventCardProps) {
         <div className="flex items-center justify-between mt-auto">
           <div>
             <span className="text-sm text-gray-500">Starting from</span>
-            <div className="text-lg font-bold text-gray-900">
-              M{event.price} Onwards
+            <div className="text-lg font-bold text-gray-900 capitalize">
+              M{event.priceDisplay}
             </div>
           </div>
           
           {/* Date Badge */}
           <div className="bg-gray-100 text-gray-900 px-3 py-2 rounded-lg text-sm font-medium text-center">
-            <div className="font-bold text-base">{dateInfo.day}</div>
-            <div className="text-xs">{dateInfo.month}</div>
+            <div className="font-bold text-sm">{event.dateDisplay}</div>
+            <div className="text-xs">{event.timeDisplay}</div>
           </div>
         </div>
       </div>

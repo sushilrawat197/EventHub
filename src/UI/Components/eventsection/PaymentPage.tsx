@@ -14,7 +14,7 @@ export default function PaymentPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const [selectedMethod, setSelectedMethod] = useState("");
+  const [selectedMethod, setSelectedMethod] = useState("Mpesa");
   const [mobile, setMobile] = useState("");
 
   const reserveTicket = useAppSelector((state) => state.reserveTicket.booking);
@@ -164,7 +164,7 @@ export default function PaymentPage() {
                               }
                               className="mt-2 border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
                             >
-                              <option value="">Select Wallet</option>
+                             
                               <option value="Mpesa">M-Pesa</option>
                               <option value="Apesa">C-Pay</option>
                             </select>

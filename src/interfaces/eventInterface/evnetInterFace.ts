@@ -50,4 +50,8 @@ export interface EventResponseBySearch {
   startDate: string;  // ISO date string
   endDate: string;    // ISO date string
   price: number;
+  dateDisplay: string,
+  timeDisplay: string,
+  priceDisplay: string
+
 }
