@@ -227,9 +227,7 @@ const BookingOrder: React.FC = () => {
                           : "text-red-700"
                       }`}
                     >
-                      {transaction.status === "CONFIRMED"
-                        ? "Confirmed"
-                        : "Cancelled"}
+                      {transaction.status}
                     </span>
                   </div>
                 </div>
