@@ -49,7 +49,7 @@ const HeroSection = () => {
             </div>
 
             {/* Right Content - Hero Image */}
-            <div className="relative">
+            <div className="relative mt-5">
               <div className="relative z-10">
                 <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-30"></div>
 
