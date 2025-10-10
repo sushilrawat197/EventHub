@@ -97,6 +97,7 @@ export default function MobileEventDetailsCard({
         };
         dispatch(setTicketInfo(ticketData));
         localStorage.setItem("ticketInfo", JSON.stringify(ticketData));
+        localStorage.setItem("dairectnavigate","singleD&T");
         navigate(`${location.pathname}/booking/ticket`);
       } else {
         const ticketData = {
