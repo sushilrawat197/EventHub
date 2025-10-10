@@ -41,6 +41,7 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   const selectedFilters = useAppSelector((state) => state.filter[filterKey]);
 
   
+  
   const handleOptionClick = (opt: string) => {
     if (opt === "Date Range") {
       setShowCalendar(true);

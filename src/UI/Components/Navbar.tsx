@@ -79,6 +79,7 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     dispatch(listCitiesByRegion());
+    dispatch(setFilter({ key: "cityId", value: 10 }))
   }, [dispatch]);
 
 
