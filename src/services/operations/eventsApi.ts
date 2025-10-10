@@ -15,6 +15,8 @@ export function listEventsBySearch(page: number = 0) {
     try {
       const filters = getState().searchFilter;
 
+      console.log(filters);
+
       const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
         method: "POST",
         url: `${BASE_URL}/ticketcore-api/api/v1/events/search?page=${page}&size=8`,
@@ -22,6 +24,8 @@ export function listEventsBySearch(page: number = 0) {
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
       });
+
+      console.log("LIST EVENT BY SEARCH RESPONSE",response)
 
       if (response.data.statusCode === 200) {
         dispatch(setAllEventsBySearch(response.data.data));
