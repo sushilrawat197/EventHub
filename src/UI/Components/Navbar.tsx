@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
   const cityRef = useRef<HTMLDivElement>(null);
 
   const cities = useAppSelector((state) => state?.cities.data || []);
-  const [selectedCity, setSelectedCityNav] = useState("Select City");
+  const [selectedCity, setSelectedCityNav] = useState("Maseru");
 
   // console.log(cities)
 
@@ -63,8 +63,8 @@ const Navbar: React.FC = () => {
 
 
   // useEffect(() => {
-  //   if (cities.length > 0 && selectedCity === "Select City") {
-  //     const preCity = cities.find((item) => item.label === "Maseru");
+  //   if (selectedCity) {
+  //     const preCity = cities.find((item) => item.label === selectedCity);
   //     console.log(preCity);
 
   //     if (preCity) {
@@ -75,6 +75,7 @@ const Navbar: React.FC = () => {
   //   }
   // }, [cities, dispatch, selectedCity]);
 
+  
 
   useEffect(() => {
     dispatch(listCitiesByRegion());

@@ -189,6 +189,7 @@ export default function EventList() {
   };
   
   useEffect(() => {
+    dispatch(setFilter({ key: "cityId", value: 10 }))
     dispatch(listEventsBySearch(page));
   }, [page, dispatch]);
 
