@@ -33,7 +33,7 @@ const ThreeImgComponent = () => {
               <p className="text-xl text-gray-600 leading-relaxed">
                 No more struggling with complex{" "}
                 <span className="font-semibold text-gray-900">event ticketing systems</span>.
-                EventHub makes it simple to set up and manage your events. Host
+                MyTag makes it simple to set up and manage your events. Host
                 standout experiences — we'll handle the technology.
               </p>
             </div>

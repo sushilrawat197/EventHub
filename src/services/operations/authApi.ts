@@ -36,8 +36,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { clearUser } from "../../slices/userSlice";
 import { getCurrentUser } from "./userApi";
-import type { AppDispatch} from "../../reducers/store";
-import {  listCitiesByRegion } from "./location/cityApi";
+import type { AppDispatch } from "../../reducers/store";
+import { listCitiesByRegion } from "./location/cityApi";
 
 
 type SendOtpApiResponse = {
@@ -55,7 +55,7 @@ type SendOtpApiResponse = {
 export function sendOtp(
   otpString: string,
   email: string,
-  signupToken:string,
+  signupToken: string,
   navigate: NavigateFunction
 ) {
   return async (dispatch: AppDispatch): Promise<void> => {
@@ -110,13 +110,13 @@ export function signUp(
         success: boolean;
         message: string;
         status: string;
-        data:{
-          signupToken:string
+        data: {
+          signupToken: string
         }
       }>({
         method: "POST",
         url: SIGNUP_API,
-        bodyData:{email}
+        bodyData: { email }
         // headers: {
         //   "X-Client-Source": "OTHER",
         // },
@@ -160,19 +160,19 @@ export function signUp(
 
 //SIGN UP RESEND OTP
 export function resendOTP(email: string) {
-  return async (dispatch:AppDispatch): Promise<void> => {
+  return async (dispatch: AppDispatch): Promise<void> => {
     try {
       const response = await apiConnector<{
         success: boolean;
         message: string;
         status: string;
-        data:{
-          signupToken:string
+        data: {
+          signupToken: string
         }
       }>({
         method: "POST",
         url: SIGNUP_RESEND_OTP,
-        bodyData:{ email},
+        bodyData: { email },
         headers: {
           "X-Client-Source": "OTHER",
         },
@@ -208,14 +208,14 @@ export function resendOTP(email: string) {
 export function setPassword(
   password: string,
   email: string,
-   otp:string,
+  otp: string,
   signupToken: string,
   navigate: NavigateFunction,
   dispatch: AppDispatch
 ) {
   return async (): Promise<void> => {
     try {
-      console.log(otp,password,email)
+      console.log(otp, password, email)
       dispatch(setLoading(true));
       const response = await apiConnector<{
         message: string;
@@ -230,7 +230,7 @@ export function setPassword(
       }>({
         method: "POST",
         url: SET_PASS_API,
-        bodyData: {email:email,otp:otp,password,signupToken },
+        bodyData: { email: email, otp: otp, password, signupToken },
         headers: {
           "X-Client-Source": "OTHER",
         },
@@ -295,7 +295,7 @@ export function forgot_passwordOtp(
 
       const pwdToken = response.data.data.resetToken;
       dispatch(setPwdToken(pwdToken));
-      
+
 
       toast.success("OTP sent successfully");
       // console.log(data.message); // Optional
@@ -327,7 +327,7 @@ export function varifyFogotOtp(
 ) {
   return async (): Promise<void> => {
     try {
-    
+
       const response = await apiConnector<{
         message: string;
         status: string;
@@ -415,7 +415,7 @@ export function resetPassword(
 ) {
   return async (): Promise<void> => {
     // dispatch(setLoading(true));
-    console.log("OTP...",otp)
+    console.log("OTP...", otp)
     try {
       const response = await apiConnector<{
         message: string;
@@ -471,7 +471,7 @@ export function changePassword(
   newPassword: string,
   navigate: NavigateFunction
 ) {
-  return async (dispatch:AppDispatch): Promise<void> => {
+  return async (dispatch: AppDispatch): Promise<void> => {
     // dispatch(setLoading(true));
 
     try {
@@ -483,7 +483,7 @@ export function changePassword(
         };
       }>({
         method: "POST",
-        url:CHANGE_PASSWORD ,
+        url: CHANGE_PASSWORD,
         bodyData: {
           pwdChangeToken,
           oldPassword,
@@ -569,8 +569,8 @@ export function signIn(
       const now = new Date();
 
       console.log("current time : ", now.toLocaleTimeString())
-      console.log("accessTokenExpiry Time :" ,aceessTokenExpirTime.toLocaleTimeString());
-      console.log("refreshTokenExpiry Time :",refrehTokenExpirTime.toLocaleTimeString());
+      console.log("accessTokenExpiry Time :", aceessTokenExpirTime.toLocaleTimeString());
+      console.log("refreshTokenExpiry Time :", refrehTokenExpirTime.toLocaleTimeString());
 
       if (data.statusCode === 200) {
         dispatch(getCurrentUser());
@@ -586,15 +586,23 @@ export function signIn(
           dispatch(setTempToken(tempToken)) // store tempToken for OTP verification
           dispatch(setOtpContext("2FA"))
           navigate("/otpverification");
-        }else if(pwdChangeToken){
-              navigate("/change-password");
-              dispatch(setPwdToken(pwdChangeToken));
+        } else if (pwdChangeToken) {
+          navigate("/change-password");
+          dispatch(setPwdToken(pwdChangeToken));
         } else {
           // ✅ Normal user → navigate to home
           dispatch(setOtpContext("signup"))
-          navigate(from, { replace: true });
+          if (from) {
+            localStorage.setItem("dairectnavigate", "singleD&T");
+            navigate(from, { replace: true });
+
+          } else {
+            navigate("/");
+          }
+
+
         }
-      } else if( data.statusCode === 409) {
+      } else if (data.statusCode === 409) {
         navigate("/forgetpassword")
         dispatch(setMassage(response.data.message));
       }
@@ -619,13 +627,13 @@ export function verify_2fa_otp(
   otp: string,
   navigate: NavigateFunction,
 ) {
-  return async (dispatch:AppDispatch): Promise<void> => {
+  return async (dispatch: AppDispatch): Promise<void> => {
     try {
       // dispatch(setLoading(true));
 
       const response = await apiConnector<{
         message: string;
-        statusCode:number;
+        statusCode: number;
         data: {
           tempToken?: string; // ✅ tempToken optional
         };
@@ -645,12 +653,12 @@ export function verify_2fa_otp(
       const data = response.data;
       console.log("2FA VARIFY OTP API RESPONSE............", data);
 
-      if (response.data.statusCode===200) {
+      if (response.data.statusCode === 200) {
         dispatch(getCurrentUser());
         navigate("/");
       }
-      
-   
+
+
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -669,13 +677,13 @@ export function verify_2fa_otp(
 export function resend_2fa_otp(
   tempToken: string,
 ) {
-  return async (dispatch:AppDispatch): Promise<void> => {
+  return async (dispatch: AppDispatch): Promise<void> => {
     try {
       // dispatch(setLoading(true));
 
       const response = await apiConnector<{
         message: string;
-        statusCode:number;
+        statusCode: number;
         data: {
           tempToken?: string; // ✅ tempToken optional
         };
@@ -694,10 +702,10 @@ export function resend_2fa_otp(
       const data = response.data;
       console.log("2FA VARIFY OTP API RESPONSE............", data);
 
-      if (response.data.statusCode===200) {
-       toast.success(response.data.message);
+      if (response.data.statusCode === 200) {
+        toast.success(response.data.message);
       }
-      
+
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -750,7 +758,7 @@ export function logout(
       } else {
         console.error("Unexpected Logout Error:", error);
       }
-    }finally{
+    } finally {
       dispatch(setLoading(false))
     }
   };

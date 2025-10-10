@@ -26,12 +26,23 @@ const VenueSelection = () => {
     new Map(shows.map((s) => [s.venueId, s])).values()
   );
 
+  const singleD_T = localStorage.getItem("dairectnavigate");
+
+
   function clickHandler(venueId: number) {
     dispatch(setTicketInfo({ venueId }));
     setSearchParams(searchParams);
-    navigate(`/events/${contentName}/${eventId}/booking/datetime`, {
+
+    if(singleD_T){
+       navigate(`/events/${contentName}/${eventId}/booking/ticket`, {
       replace: true,
     });
+    }else{
+       navigate(`/events/${contentName}/${eventId}/booking/datetime`, {
+      replace: true,
+    });
+    }
+   
   }
 
 
@@ -40,6 +51,7 @@ const VenueSelection = () => {
     dispatch(getVenueByVenueId(venueId));
     setExpandedVenue(expandedVenue === venueId ? null : venueId);
   }
+
 
 
   useEffect(() => {

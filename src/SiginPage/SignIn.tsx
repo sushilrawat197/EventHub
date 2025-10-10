@@ -21,7 +21,7 @@ const SignIn: React.FC = () => {
   const [password, setPassword] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
 
-  const from = (location.state?.from || "/").replace(/^\/ticketing/, "");
+  const from = (location.state?.from || "").replace(/^\/ticketing/, "");
 
   console.log("PRINTING FROM...",from);
   

@@ -11,7 +11,12 @@ import { cancelBooking } from "../../../../services/operations/ticketCategory";
 import { useEffect } from "react";
 
 export default function BookingFlow() {
-  const { contentName, eventId } = useParams();
+  const { contentName, eventId} = useParams();
+  
+  
+
+
+
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -20,17 +25,39 @@ export default function BookingFlow() {
     (state) => state.reserveTicket.booking?.bookingId);
 
   const path = location.pathname;
-  let step = 1;
+
+const singleD_T = localStorage.getItem("dairectnavigate");
+
+
+let step = 1;
+if (!singleD_T) {
   if (path.includes("datetime")) step = 2;
   if (path.includes("ticket")) step = 3;
   if (path.includes("reviewandpay")) step = 4;
+} else {
+  if (path.includes("ticket")) step = 2;
+  if (path.includes("reviewandpay")) step = 3;
+}
 
-  const steps = [
+let steps;
+
+if (singleD_T) {
+  // If value exists → only 3 steps
+  steps = [
+    { number: 1, title: "Venue", active: step >= 1, completed: step > 1 },
+    { number: 2, title: "Ticket", active: step >= 2, completed: step > 2 },
+    { number: 3, title: "Review & Pay", active: step >= 3, completed: false },
+  ];
+} else {
+  // If value not found → all 4 steps
+  steps = [
     { number: 1, title: "Venue", active: step >= 1, completed: step > 1 },
     { number: 2, title: "Date & Time", active: step >= 2, completed: step > 2 },
     { number: 3, title: "Ticket", active: step >= 3, completed: step > 3 },
     { number: 4, title: "Review & Pay", active: step >= 4, completed: false },
   ];
+}
+
 
   async function backHandler() {
     if (bookingId) {
@@ -55,6 +82,16 @@ useEffect(() => {
     window.removeEventListener("popstate", handlePopState);
   };
 }, [location.pathname, navigate]);
+
+
+
+useEffect(() => {
+  return () => {
+      localStorage.removeItem("dairectnavigate");
+  };
+}, []);
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -99,11 +136,11 @@ useEffect(() => {
               )
 
             }
-          
 
           </div>
         </div>
       </div>
+
 
       {/* Progress Indicator */}
       <div className="bg-white border-b">

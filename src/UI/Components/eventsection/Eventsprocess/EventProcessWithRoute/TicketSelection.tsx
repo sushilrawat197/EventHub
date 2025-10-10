@@ -75,9 +75,12 @@ const TicketSelection = () => {
   }
 
 
+  const singleD_T = localStorage.getItem("dairectnavigate");
 
+  console.log("PRINTING DIRECTNAVIGATE VALUE: ",singleD_T);
   
 useEffect(() => {
+  // console.count("TicketSelection rendered");
    if(!showId){
      navigate(`/events/${contentName}/${eventId}`,{ replace: true })
     }else {
@@ -97,16 +100,27 @@ useEffect(() => {
           <div className="flex items-center gap-3 mb-3">
             <button
               onClick={() =>
-                navigate(`/events/${contentName}/${eventId}/booking/datetime`, {
+
+                {
+                  if(singleD_T){
+                     navigate(`/events/${contentName}/${eventId}/booking/venue`, {
                   replace: true,
                 })
+                  }else{
+                     navigate(`/events/${contentName}/${eventId}/booking/datetime`, {
+                  replace: true,
+                })
+                  }
+                }
+                
+               
               }
               className="group flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
             >
               <svg className="w-3 h-3 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              <span>Back to Date & Time</span>
+              <span>{singleD_T?("Back to venue"):("Back to Date & Time")}</span>
             </button>
           </div>
           <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-1">

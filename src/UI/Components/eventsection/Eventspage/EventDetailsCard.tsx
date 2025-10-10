@@ -98,17 +98,16 @@ export default function EventDetailsCard({
       navigate(`${location.pathname}/booking/venue`);
     } else {
       const currentShow = uniqueShows[0];
-
       const showSchedules = shows.filter(
         (s) =>
           s.eventId === currentShow.eventId && s.venueId === currentShow.venueId
       );
-
       const uniqueDateTimes = Array.from(
         new Set(
           showSchedules.map((s) => `${s.showDate}-${s.startTime}-${s.endTime}`)
         )
       );
+
 
       if (uniqueDateTimes.length === 1) {
         const selectedShow = showSchedules[0];
@@ -119,7 +118,8 @@ export default function EventDetailsCard({
         };
 
         dispatch(setTicketInfo(ticketData));
-        localStorage.setItem("ticketInfo", JSON.stringify(ticketData));  
+        localStorage.setItem("ticketInfo", JSON.stringify(ticketData));
+        localStorage.setItem("dairectnavigate","singleD&T");
         navigate(`${location.pathname}/booking/ticket`);
         
       } else {
