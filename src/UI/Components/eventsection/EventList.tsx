@@ -20,9 +20,9 @@ import ScrollPagination from "../../Components/common/ScrollPagination";
 const categoryOptions: string[] = [
   "CONCERT",
   "SPORTS",
-  "THEATRE",
+  "GALA DINNERS",
   "COMEDY",
-  "EXHIBITION",
+  "SEMINARS",
   "FESTIVAL",
   "WORKSHOP",
   "OTHER",
@@ -37,17 +37,17 @@ export default function EventList() {
   const selectedDates = useAppSelector((state) => state.filter.dates);
   const selectedPrice = useAppSelector((state) => state.filter.prices);
 
-
   const events = useAppSelector(
     (state) => state.events.allEventsBySearch?.content || []
   );
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
-  
-  const totalPages = useAppSelector((state) => state.events.allEventsBySearch?.totalPages);
-  const hasMore = page < (totalPages || 1) - 1;
 
+  const totalPages = useAppSelector(
+    (state) => state.events.allEventsBySearch?.totalPages
+  );
+  const hasMore = page < (totalPages || 1) - 1;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -180,22 +180,20 @@ export default function EventList() {
 
   const handleLoadMore = async () => {
     if (loading || !hasMore) return;
-    
+
     setLoading(true);
     const nextPage = page + 1;
     setPage(nextPage);
     await dispatch(listEventsBySearch(nextPage));
     setLoading(false);
   };
-  
+
   useEffect(() => {
-    
     dispatch(listEventsBySearch(page));
   }, [page, dispatch]);
 
   return (
     <div className="space-y-4">
-
       {/* Filter Tags */}
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
         <div className="overflow-x-auto scrollbar-hide">
@@ -226,7 +224,6 @@ export default function EventList() {
         </div>
       </div>
 
-
       {/* Events Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
         {events.length > 0 ? (
@@ -256,13 +253,27 @@ export default function EventList() {
           <div className="col-span-full">
             <div className="text-center py-16">
               <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg
+                  className="w-12 h-12 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No events found</h3>
-             
-              <p className="text-gray-600 mb-6">Try adjusting your filters to see more events</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No events found
+              </h3>
+
+              <p className="text-gray-600 mb-6">
+                Try adjusting your filters to see more events
+              </p>
               {/* <button 
                 onClick={() => {
                   dispatch(setCategories([]));
@@ -285,7 +296,7 @@ export default function EventList() {
       {/* Mobile buttons */}
       <div className="flex justify-between items-center fixed bottom-4 left-4 right-4 md:hidden z-30">
         {!openFilter && (
-          <button 
+          <button
             onClick={() => setOpenFilter(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-2xl shadow-lg shadow-blue-200 transition-all duration-200 hover:scale-105"
           >

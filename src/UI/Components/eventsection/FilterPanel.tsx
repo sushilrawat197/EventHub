@@ -330,9 +330,9 @@ export default function FilterPanel() {
   const categoryOptions: string[] = [
     "CONCERT",
     "SPORTS",
-    "THEATRE",
+    "GALA DINNERS",
     "COMEDY",
-    "EXHIBITION",
+    "SEMINARS",
     "FESTIVAL",
     "WORKSHOP",
     "OTHER",

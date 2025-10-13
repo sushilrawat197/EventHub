@@ -37,9 +37,9 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
   const categoryOptions = [
     "CONCERT",
     "SPORTS",
-    "THEATRE",
+    "GALA DINNERS",
     "COMEDY",
-    "EXHIBITION",
+    "SEMINARS",
     "FESTIVAL",
     "WORKSHOP",
     "OTHER",
@@ -123,7 +123,8 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
       const mapped = newFilters.map((f) => {
         if (f === "0 - 500") return { min: 0, max: 500 };
         if (f === "501 - 2000") return { min: 501, max: 2000 };
-        if (f === "Above 2000") return { min: 2001, max: Number.MAX_SAFE_INTEGER };
+        if (f === "Above 2000")
+          return { min: 2001, max: Number.MAX_SAFE_INTEGER };
         return { min: 0, max: Number.MAX_SAFE_INTEGER };
       });
 
@@ -164,11 +165,15 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
   // Close calendar on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target as Node)
+      ) {
         setShowCalendar(false);
       }
     };
-    if (showCalendar) document.addEventListener("mousedown", handleClickOutside);
+    if (showCalendar)
+      document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showCalendar]);
 
@@ -180,7 +185,10 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
   }, [startDate, endDate, dispatch]);
 
   const formatLocalDate = (date: Date) =>
-    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(date.getDate()).padStart(2, "0")}`;
 
   return (
     <>
@@ -189,7 +197,10 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <IoClose className="text-2xl cursor-pointer" onClick={onClose} />
           <h2 className="text-lg font-semibold">Filters</h2>
-          <button className="text-red-500 font-medium" onClick={() => handleClear()}>
+          <button
+            className="text-red-500 font-medium"
+            onClick={() => handleClear()}
+          >
             Clear All
           </button>
         </div>
@@ -197,14 +208,20 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
         <div className="flex-1 overflow-y-auto">
           {filterSections.map((section, idx) => (
             <div key={idx}>
-              <h3 className="bg-gray-200 px-3 py-2 font-semibold text-[14px]">{section.title}</h3>
+              <h3 className="bg-gray-200 px-3 py-2 font-semibold text-[14px]">
+                {section.title}
+              </h3>
               <div>
                 {section.items.map((item, i) => {
                   const isSelected =
-                    (section.key === "categories" && selectedCategories.includes(item.label)) ||
-                    (section.key === "languages" && selectedLanguages.includes(item.label)) ||
-                    (section.key === "dates" && selectedDates.includes(item.label)) ||
-                    (section.key === "prices" && selectedPrices.includes(item.label));
+                    (section.key === "categories" &&
+                      selectedCategories.includes(item.label)) ||
+                    (section.key === "languages" &&
+                      selectedLanguages.includes(item.label)) ||
+                    (section.key === "dates" &&
+                      selectedDates.includes(item.label)) ||
+                    (section.key === "prices" &&
+                      selectedPrices.includes(item.label));
 
                   return (
                     <div
@@ -225,7 +242,10 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
         </div>
 
         <div className="p-2 border-t border-gray-200">
-          <button className="w-full py-2 bg-blue-600 text-white rounded-md font-extrabold" onClick={onClose}>
+          <button
+            className="w-full py-2 bg-blue-600 text-white rounded-md font-extrabold"
+            onClick={onClose}
+          >
             Apply
           </button>
         </div>
@@ -235,28 +255,44 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
       {showCalendar && (
         <div className="fixed inset-0 z-[60] flex flex-col backdrop-blur-sm">
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <IoClose className="text-2xl cursor-pointer" onClick={() => setShowCalendar(false)} />
+            <IoClose
+              className="text-2xl cursor-pointer"
+              onClick={() => setShowCalendar(false)}
+            />
             <h2 className="text-lg font-semibold">Select Date Range</h2>
-            <button className="text-red-500 font-medium" onClick={() => setShowCalendar(false)}>
+            <button
+              className="text-red-500 font-medium"
+              onClick={() => setShowCalendar(false)}
+            >
               Cancel
             </button>
           </div>
 
-          <div className="flex-1 flex justify-center items-center" ref={calendarRef}>
+          <div
+            className="flex-1 flex justify-center items-center"
+            ref={calendarRef}
+          >
             <DatePicker
               selected={startDate ? new Date(startDate) : null}
               onChange={(dates) => {
                 const [start, end] = dates as [Date | null, Date | null];
                 if (start) {
                   dispatch(setStartDate(formatLocalDate(start)));
-                  dispatch(setFilter({ key: "startDate", value: formatLocalDate(start) }));
+                  dispatch(
+                    setFilter({
+                      key: "startDate",
+                      value: formatLocalDate(start),
+                    })
+                  );
                 } else {
                   dispatch(setStartDate(null));
                   dispatch(setFilter({ key: "startDate", value: null }));
                 }
                 if (end) {
                   dispatch(setEndDate(formatLocalDate(end)));
-                  dispatch(setFilter({ key: "endDate", value: formatLocalDate(end) }));
+                  dispatch(
+                    setFilter({ key: "endDate", value: formatLocalDate(end) })
+                  );
                 } else {
                   dispatch(setEndDate(null));
                   dispatch(setFilter({ key: "endDate", value: null }));
