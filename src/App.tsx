@@ -52,17 +52,12 @@ function App() {
     return <SpinnerLoading />; // spinner while refresh token loads
   }
 
-
-
   return (
     <>
       <Routes>
-
-        
-
+       
         <Route element={<MainLayout />}>
-
-            <Route path="/" element={<HomePage />} /> 
+          <Route path="/" element={<HomePage />} />
 
           <Route
             path="/login"
@@ -144,34 +139,32 @@ function App() {
           />
           <Route path="/helpandsupport" element={<HelpAndSupport />} />
 
-            <Route
-          path="/orders"
-          element={
-            <ProtectedRoute>
-              <BookingOrder />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <BookingOrder />
+              </ProtectedRoute>
+            }
+          />
 
-         <Route
-          path="order/:bookingId"
-          element={
-            <ProtectedRoute>
-              <BookingConfirmed />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="order/:bookingId"
+            element={
+              <ProtectedRoute>
+                <BookingConfirmed />
+              </ProtectedRoute>
+            }
+          />
 
-         <Route
-          path="/rate-and-review"
-          element={
-            <ProtectedRoute>
-             <RateAndReview/>
-            </ProtectedRoute>
-          }
-        />
-
-
+          <Route
+            path="/rate-and-review"
+            element={
+              <ProtectedRoute>
+                <RateAndReview />
+              </ProtectedRoute>
+            }
+          />
         </Route>
 
         {/* <Route
@@ -183,7 +176,6 @@ function App() {
           }
         /> */}
 
-      
         {/* Normal Route End */}
 
         {/* BOOKING ROUTE START */}

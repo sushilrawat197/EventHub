@@ -8,6 +8,7 @@ import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import BookingErrorPage from "./Eventsprocess/BookingError";
 import { ClipLoader } from "react-spinners";
+import ScrollToTop from "../common/ScrollToTop";
 
 export default function PaymentPage() {
   const dispatch = useAppDispatch();
@@ -65,7 +66,8 @@ export default function PaymentPage() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="min-h-[calc(100vh-200px)] bg-gradient-to-br from-gray-50 to-blue-50">
+      <ScrollToTop />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <BookingErrorPage />
 
