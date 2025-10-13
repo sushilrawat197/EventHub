@@ -328,7 +328,7 @@ export default function FilterPanel() {
   const [openMobileFilters, setOpenMobileFilters] = useState(false);
 
   const categoryOptions: string[] = [
-    "CONCERT",
+    "FOOD",
     "SPORTS",
     "GALA DINNERS",
     "COMEDY",

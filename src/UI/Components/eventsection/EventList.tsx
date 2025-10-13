@@ -18,7 +18,7 @@ import { setFilter } from "../../../slices/filter_Slice";
 import ScrollPagination from "../../Components/common/ScrollPagination";
 
 const categoryOptions: string[] = [
-  "CONCERT",
+  "FOOD",
   "SPORTS",
   "GALA DINNERS",
   "COMEDY",

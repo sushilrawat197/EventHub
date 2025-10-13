@@ -35,7 +35,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const categoryOptions = [
-    "CONCERT",
+    "FOOD",
     "SPORTS",
     "GALA DINNERS",
     "COMEDY",

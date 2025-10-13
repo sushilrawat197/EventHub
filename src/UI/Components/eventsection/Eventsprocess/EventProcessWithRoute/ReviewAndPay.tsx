@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
 // import PrimaryButton from "../PrimaryButton";
 import { useEffect, useState } from "react";
 import { cancelBooking } from "../../../../../services/operations/ticketCategory";
+import ScrollToTop from "../../../common/ScrollToTop";
 
 // Review & Payment Component
 const ReviewAndPay = () => {
@@ -81,6 +82,7 @@ const ReviewAndPay = () => {
   return (
     <>
       <div className="min-h-[calc(100vh-200px)] bg-gradient-to-br from-gray-50 to-blue-50">
+        <ScrollToTop />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Back Button */}
           <div className="mb-4">
