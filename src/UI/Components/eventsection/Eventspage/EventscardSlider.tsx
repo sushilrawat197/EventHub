@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import type {  EventResponseBySearch } from "../../../../interfaces/eventInterface/evnetInterFace";
+
 
 interface EventscardSliderProps {
   events: EventResponseBySearch[];
@@ -15,6 +16,7 @@ export default function EventscardSlider({
   const navigate = useNavigate();
   // const location = useLocation();
   // const dispatch = useAppDispatch();
+
 
   const settings = {
     dots: true,
@@ -53,6 +55,16 @@ export default function EventscardSlider({
       },
     ],
   };
+
+  //   const { eventId } = useParams<{ eventId: string }>();
+
+  //  const allEvents = useAppSelector(
+  //     (state) => state.events.allEventsBySearch?.content || []
+  //   );
+
+  //   const sliderEvents = allEvents.filter((e) => e?.eventId === Number(eventId));
+  //   console.log("SLIDER EVENT...",sliderEvents.map((e)=>e.genre)
+  //   )
 
 
   // useEffect(() => {

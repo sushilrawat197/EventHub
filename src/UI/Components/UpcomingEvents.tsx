@@ -167,7 +167,9 @@ const UpcomingEvents: React.FC = () => {
                     navigate(
                       `/events/${event.eventName.replace(/\s+/g, "-")}/${
                         event.eventId
-                      }`
+                      }`,{
+                        state:event
+                      }
                     )
                   }
                   className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 h-full flex flex-col"
