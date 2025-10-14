@@ -162,7 +162,16 @@ const UpcomingEvents: React.FC = () => {
           >
             {events.map((event, index) => (
               <SwiperSlide key={index}>
-                <div className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 h-full flex flex-col">
+                <div
+                  onClick={() =>
+                    navigate(
+                      `/events/${event.eventName.replace(/\s+/g, "-")}/${
+                        event.eventId
+                      }`
+                    )
+                  }
+                  className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 h-full flex flex-col"
+                >
                   {/* Image Container */}
                   <div className="relative h-64 overflow-hidden">
                     <img
@@ -170,6 +179,14 @@ const UpcomingEvents: React.FC = () => {
                       alt={event.eventName}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
+
+                    <div
+                      className={`absolute top-4 right-4 ${
+                        event.eventSoldOut ? "bg-red-500" : "bg-blue-600"
+                      } text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg`}
+                    >
+                      {event.eventSoldOut ? "Sold out" : event.genre}
+                    </div>
 
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

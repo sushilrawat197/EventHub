@@ -45,8 +45,11 @@ export default function EventCard({ event }: EventCardProps) {
 
 
         {/* Genre Badge */}
-        <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
-          {event.genre}
+        {/* <div className={`absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg`}>
+          {event.eventSoldOut?("Sold Out"):(null)}
+        </div> */}
+        <div className={`absolute top-4 right-4 ${event.eventSoldOut?("bg-red-500"):("bg-blue-600")} text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg`}>
+          {event.eventSoldOut?("Sold out"):(event.genre)}
         </div>
 
         {/* Hover Overlay */}

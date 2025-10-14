@@ -52,6 +52,7 @@ export interface EventResponseBySearch {
   price: number;
   dateDisplay: string,
   timeDisplay: string,
-  priceDisplay: string
+  priceDisplay: string,
+  eventSoldOut:boolean
 
 }

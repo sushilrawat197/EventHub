@@ -330,7 +330,7 @@ export default function FilterPanel() {
   const categoryOptions: string[] = [
     "FOOD",
     "SPORTS",
-    "GALA DINNERS",
+    "GALA_DINNER",
     "COMEDY",
     "SEMINARS",
     "FESTIVAL",

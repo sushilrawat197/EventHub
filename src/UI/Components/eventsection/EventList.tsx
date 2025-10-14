@@ -20,7 +20,7 @@ import ScrollPagination from "../../Components/common/ScrollPagination";
 const categoryOptions: string[] = [
   "FOOD",
   "SPORTS",
-  "GALA DINNERS",
+  "GALA_DINNER",
   "COMEDY",
   "SEMINARS",
   "FESTIVAL",

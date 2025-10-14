@@ -82,6 +82,7 @@ export default function EventscardSlider({
                   onClick={() =>
                     navigate(`/events/${slug}/${event.eventId}`, {
                       state: event,
+                       replace: true
                     })
                   }
                 >
@@ -93,8 +94,11 @@ export default function EventscardSlider({
                         className="h-full w-full object-cover rounded-md"
                       />
                     </div>
-                    <p className="mt-2 text-center lg:w-40 md:w-30 sm:w-20 text-sm lg:font-semibold lg:text-lg">
+                    <p className="mt-2 text-center lg:w-40 md:w-30 sm:w-20 text-sm lg:font-semibold lg:text-sm">
                       {event.genre}
+                    </p>
+                    <p className="mt-2 text-center lg:w-40 md:w-30 sm:w-20 text-sm lg:font-semibold lg:text-lg truncate">
+                      {event.eventName}
                     </p>
                   </div>
                 </div>
