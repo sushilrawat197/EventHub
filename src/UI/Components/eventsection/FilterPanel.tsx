@@ -43,7 +43,7 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   
   
   const handleOptionClick = (opt: string) => {
-    if (opt === "Date Range") {
+    if (opt === "DATE RANGE") {
       setShowCalendar(true);
     }
 
@@ -68,8 +68,8 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
     }
 
     if (filterKey === "dates") {
-      if (newFilters.includes("Date Range")) {
-        dispatch(setDates(newFilters));
+      if (newFilters.includes("DATE RANGE")) {
+        // dispatch(setDates(newFilters));
         return;
       }
       dispatch(setDates(newFilters));
@@ -303,11 +303,11 @@ const handleClear = () => {
               }
 
 
-              if (start && end && !selectedDates.includes("Date Range")) {
+              if (start && end && !selectedDates.includes("DATE RANGE")) {
                 dispatch(
                   setDates([
-                    ...selectedDates.filter((d) => d !== "Date Range"),
-                    "Date Range",
+                    ...selectedDates.filter((d) => d !== "DATE RANGE"),
+                    "DATE RANGE",
                   ])
                 );
               }
