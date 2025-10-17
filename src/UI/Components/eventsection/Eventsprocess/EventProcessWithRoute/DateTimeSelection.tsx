@@ -2,7 +2,7 @@ import {  useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
 import { useNavigate, useParams} from "react-router-dom";
 import { setTicketInfo } from "../../../../../slices/ticketInfoSlice";
-import { listEventById } from "../../../../../services/operations/eventsApi";
+// import { listEventById } from "../../../../../services/operations/eventsApi";
 import ScrollToTop from "../../../common/ScrollToTop";
 
 const DateTimeSelection = (
@@ -88,13 +88,16 @@ const DateTimeSelection = (
   };
 
 
+
   useEffect(()=>{
     if(!venueId){
      navigate(`/events/${contentName}/${eventId}`,{ replace: true })
     }
-    if(eventId) {
-      dispatch(listEventById(eventId));
-    }
+    
+    // if(eventId) {
+    //   dispatch(listEventById(eventId));
+    // }
+
   },[dispatch, eventId,contentName,navigate,venueId])
 
 

@@ -45,7 +45,9 @@ export default function EventDetailsCard({
   price,
   priceNote,
 }: EventDetailsCardProps) {
+
  const [showCard, setShowCard] = useState(false);
+
 
   const details = [
 
@@ -61,6 +63,7 @@ export default function EventDetailsCard({
     ...(venue ? [{ icon: <FaMapMarkerAlt />, text: venue }] : []),
   ];
 
+
   // Debug: Log the details to see what's being passed
   console.log("EventDetailsCard - All details:", details);
 
@@ -71,12 +74,14 @@ export default function EventDetailsCard({
   const { eventId } = useParams();
 
 
+   
   const shows = useAppSelector((state) => state.shows.data);
 
 
   const uniqueShows = Array.from(
     new Map(shows.map((s) => [`${s.eventId}-${s.venueId}`, s])).values()
   );
+
 
 
 
@@ -93,6 +98,7 @@ export default function EventDetailsCard({
       }
     }
 
+    
     
     if (uniqueShows.length > 1) {
       navigate(`${location.pathname}/booking/venue`);

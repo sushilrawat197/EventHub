@@ -6,6 +6,8 @@ import { checkEventAvailability } from "./eventsApi";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
+
+
   // ✅ List all shows
 export function listAllShowsByEvent(eventId: string | undefined) {
   return async (dispatch: AppDispatch): Promise<ShowResponse[] | null> => {

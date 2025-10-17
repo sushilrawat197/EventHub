@@ -11,16 +11,19 @@ const VenueSelection = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { contentName, eventId } = useParams();
+
+
   const cityId = useAppSelector((state) => state.cities.selectedCity);
   const shows = useAppSelector((state) => state.shows.data);
+
 
   const venueDetailsArray = useAppSelector((state) => state.venue.data || []);
   const details = useAppSelector((state) => state.venue.venueDetails );
 
   
-
   // Track which venue's details are open
   const [expandedVenue, setExpandedVenue] = useState<number | null>(null);
+
 
   // remove duplicate venueIds from shows
   const uniqueVenueShows = Array.from(
@@ -59,6 +62,7 @@ const VenueSelection = () => {
     if (eventId) dispatch(listAllShowsByEvent(eventId));
     if (cityId) dispatch(listDetailsByCityId(cityId));
   }, [dispatch, eventId, cityId]);
+
 
   
   return (
