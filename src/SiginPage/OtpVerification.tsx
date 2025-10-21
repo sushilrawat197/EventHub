@@ -176,7 +176,7 @@ useEffect(() => {
                   style={{
                     boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
                   }}
-                  className="w-10 h-12 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-lg"
+                  className="w-10 h-12 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500  text-lg"
                 />
               )}
               containerStyle={{

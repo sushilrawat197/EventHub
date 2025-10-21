@@ -137,13 +137,16 @@ const ForgotVarifyOtp: React.FC = () => {
                     renderInput={(props) => (
                       <input
                         {...props}
+                         style={{
+                    boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                  }}
                         placeholder="-"
-                        className="w-16 h-16 text-center border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xl font-bold bg-gray-50 focus:bg-white transition-all duration-300"
+                        className="w-10 h-12 text-center border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xl font-bold bg-gray-50 focus:bg-white transition-all duration-300"
                       />
                     )}
                     containerStyle={{
                       justifyContent: "space-between",
-                      gap: "0 12px",
+                      gap: "0 5px",
                     }}
                   />
                 </div>
