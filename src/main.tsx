@@ -16,7 +16,8 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
     <Provider store={store}>
-      <BrowserRouter basename="/ticketing">
+      {/* <BrowserRouter basename="/ticketing"> */}
+      <BrowserRouter>
         {/* TanStack Query Provider */}
         <QueryClientProvider client={queryClient}>
           <App />
