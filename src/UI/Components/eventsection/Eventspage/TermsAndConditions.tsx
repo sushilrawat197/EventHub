@@ -77,14 +77,14 @@ export default function TermsAndConditions({description}:TermsProps) {
             </div>
 
             {/* Footer */}
-            <div className="bg-gray-50 p-6 border-t border-gray-100">
+            {/* <div className="bg-gray-50 p-6 border-t border-gray-100">
               <button
                 onClick={() => setOpen(false)}
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 I Understand
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       )}

@@ -140,7 +140,7 @@ const Navbar: React.FC = () => {
                   <img
                     loading="lazy"
                     className="object-cover rounded-lg w-full h-full"
-                    src="logo.jpeg"
+                    src="/logo.jpeg"
                     alt="logo"
                   />
                 </div>

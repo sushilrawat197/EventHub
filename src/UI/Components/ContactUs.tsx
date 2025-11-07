@@ -26,7 +26,7 @@ const ContactPage: React.FC = () => {
     {
       icon: FaEnvelope,
       title: "Email Us",
-      details: "support@mytag.com",
+      details: "support@mytag.co.ls",
       description: "We'll respond within 24 hours"
     },
     {

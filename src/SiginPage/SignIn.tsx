@@ -208,7 +208,7 @@ const SignIn: React.FC = () => {
             type="button"
               onClick={() => {
                 window.location.href =
-                  "https://thedemonstrate.com/ticketcore-api/oauth2/authorization/google";
+                  "https://www.mytag.co.ls/ticketcore-api/oauth2/authorization/google";
               }}
                 className="w-full py-3 px-4 border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-3"
             >
