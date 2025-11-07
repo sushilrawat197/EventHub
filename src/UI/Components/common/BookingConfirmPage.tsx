@@ -1,4 +1,10 @@
-import { FaDownload, FaTicketAlt, FaCalendarAlt, FaMapMarkerAlt, FaCreditCard } from "react-icons/fa";
+import {
+  FaDownload,
+  FaTicketAlt,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaCreditCard,
+} from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -12,6 +18,8 @@ export default function BookingConfirmed() {
   const dispatch = useAppDispatch();
   const { bookingId } = useParams();
   const navigate = useNavigate();
+
+  const [downloading, setDownloading] = useState(false);
 
   const confirmBookingDetails = useAppSelector(
     (state) => state.confirmBooking.booking
@@ -38,6 +46,20 @@ export default function BookingConfirmed() {
       })
     : "";
 
+  const downloadHandler = async () => {
+    try {
+      setDownloading(true); // disable button + show loader
+      const res = await dispatch(downloadTicket(Number(bookingId)));
+      if (res.success) {
+        setShowPopup(true);
+      }
+    } finally {
+      setDownloading(false); // re-enable button
+    }
+  };
+
+
+
   useEffect(() => {
     const context = localStorage.getItem("navigateContext");
     if (context === "confirmBooking") {
@@ -48,13 +70,9 @@ export default function BookingConfirmed() {
     };
   }, [bookingId, dispatch, navigate]);
 
-  const downloadHandler = async () => {
-    const resFn = downloadTicket(Number(bookingId));
-    const res = await resFn();
-    if (res.success) {
-      setShowPopup(true);
-    }
-  };
+  useEffect(()=>{
+    dispatch(getOrderDetails(Number(bookingId), navigate));
+  },[])
 
   if (loading) {
     return <SpinnerLoading />;
@@ -65,7 +83,13 @@ export default function BookingConfirmed() {
       {/* Header Confirmation */}
       <div className="w-full max-w-7xl bg-white shadow-xl rounded-xl p-4 sm:p-5 mb-4 flex items-center justify-center border border-gray-100">
         <div className="text-center">
-          <div className={`w-8 h-8 sm:w-10 sm:h-10  ${confirmBookingDetails?.status === "CONFIRMED"?(" bg-green-500"):("bg-red-500")}   rounded-lg flex items-center justify-center mx-auto mb-2 shadow-lg`}>
+          <div
+            className={`w-8 h-8 sm:w-10 sm:h-10  ${
+              confirmBookingDetails?.status === "CONFIRMED"
+                ? " bg-green-500"
+                : "bg-red-500"
+            }   rounded-lg flex items-center justify-center mx-auto mb-2 shadow-lg`}
+          >
             {confirmBookingDetails?.status === "CONFIRMED" ? (
               <svg
                 className="w-4 h-4 sm:w-5 sm:h-5 text-white"
@@ -193,11 +217,30 @@ export default function BookingConfirmed() {
 
                   {confirmBookingDetails?.status === "CONFIRMED" && (
                     <button
-                      onClick={downloadHandler}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl flex items-center gap-2 transition-all duration-300 transform hover:scale-105"
+                      onClick={!downloading ? downloadHandler : undefined}
+                      disabled={downloading}
+                      className={`relative bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2 transition-all duration-300 transform ${
+                        downloading
+                          ? "opacity-60 cursor-not-allowed"
+                          : "hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-105"
+                      }`}
                     >
-                      <FaDownload className="w-4 h-4" />
-                      Download Tickets
+                      {downloading ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                          <span>Downloading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaDownload className="w-4 h-4" />
+                          <span>Download Tickets</span>
+                        </>
+                      )}
+
+                      {/* Simple animated progress bar (optional) */}
+                      {downloading && (
+                        <span className="absolute bottom-0 left-0 h-[2px] bg-white animate-[progress_2s_linear_infinite] w-full"></span>
+                      )}
                     </button>
                   )}
                 </div>
@@ -207,7 +250,9 @@ export default function BookingConfirmed() {
                   <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4">
                     <div className="flex items-center gap-3 mb-2">
                       <FaMapMarkerAlt className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm font-semibold text-gray-900">Venue</span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        Venue
+                      </span>
                     </div>
                     <p className="text-sm font-bold text-gray-900 mb-1">
                       {confirmBookingDetails?.show.venue}
@@ -220,7 +265,9 @@ export default function BookingConfirmed() {
                   <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
                     <div className="flex items-center gap-3 mb-2">
                       <FaCalendarAlt className="w-4 h-4 text-green-600" />
-                      <span className="text-sm font-semibold text-gray-900">Date & Time</span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        Date & Time
+                      </span>
                     </div>
                     <p className="text-sm font-bold text-gray-900 mb-1">
                       {eventDate}
@@ -234,11 +281,15 @@ export default function BookingConfirmed() {
                   <div className="mt-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4">
                     <div className="flex items-center gap-3 mb-4">
                       <FaTicketAlt className="w-4 h-4 text-purple-600" />
-                      <h3 className="text-sm font-bold text-gray-900">Ticket Information</h3>
+                      <h3 className="text-sm font-bold text-gray-900">
+                        Ticket Information
+                      </h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                       <div>
-                        <p className="font-semibold text-gray-700 mb-1">Seats</p>
+                        <p className="font-semibold text-gray-700 mb-1">
+                          Seats
+                        </p>
                         <p className="font-bold text-gray-900">
                           {confirmBookingDetails.tickets
                             .map((t) => t.seatCode)
@@ -246,7 +297,9 @@ export default function BookingConfirmed() {
                         </p>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-700 mb-1">Ticket IDs</p>
+                        <p className="font-semibold text-gray-700 mb-1">
+                          Ticket IDs
+                        </p>
                         <p className="font-bold text-gray-900">
                           {confirmBookingDetails.tickets
                             .map((t) => t.ticketId)
@@ -254,7 +307,9 @@ export default function BookingConfirmed() {
                         </p>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-700 mb-1">Booking No</p>
+                        <p className="font-semibold text-gray-700 mb-1">
+                          Booking No
+                        </p>
                         <p className="font-bold text-gray-900">
                           {confirmBookingDetails?.bookingNo}
                         </p>
@@ -265,7 +320,6 @@ export default function BookingConfirmed() {
               </div>
             </div>
           </div>
-
         </div>
 
         {/* RIGHT SECTION - Payment Summary */}
@@ -274,13 +328,17 @@ export default function BookingConfirmed() {
           <div className="bg-white shadow-xl rounded-2xl p-6 border border-gray-100 h-full">
             <div className="flex items-center gap-3 mb-6">
               <FaCreditCard className="w-5 h-5 text-blue-600" />
-              <h3 className="text-lg font-bold text-gray-900">Payment Summary</h3>
+              <h3 className="text-lg font-bold text-gray-900">
+                Payment Summary
+              </h3>
             </div>
-            
+
             <div className="space-y-4">
               <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-semibold text-gray-700">Order ID</span>
+                  <span className="text-sm font-semibold text-gray-700">
+                    Order ID
+                  </span>
                   <span className="text-sm font-bold text-gray-900">
                     #{confirmBookingDetails?.orderNo}
                   </span>
@@ -289,7 +347,9 @@ export default function BookingConfirmed() {
 
               <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-semibold text-gray-700">Payment Status</span>
+                  <span className="text-sm font-semibold text-gray-700">
+                    Payment Status
+                  </span>
                   <span className="text-sm font-bold text-gray-900">
                     {confirmBookingDetails?.payment?.responseDesc}
                   </span>
@@ -298,7 +358,9 @@ export default function BookingConfirmed() {
 
               <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-semibold text-gray-700">Tickets</span>
+                  <span className="text-sm font-semibold text-gray-700">
+                    Tickets
+                  </span>
                   <span className="text-sm font-bold text-gray-900">
                     M{confirmBookingDetails?.bookingAmount.baseAmount}
                   </span>
@@ -307,7 +369,9 @@ export default function BookingConfirmed() {
 
               <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl p-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-semibold text-gray-700">Taxes & Fees</span>
+                  <span className="text-sm font-semibold text-gray-700">
+                    Taxes & Fees
+                  </span>
                   <span className="text-sm font-bold text-gray-900">
                     M{confirmBookingDetails?.bookingAmount.taxAmount}
                   </span>
@@ -317,7 +381,9 @@ export default function BookingConfirmed() {
               <div className="border-t border-gray-200 pt-4">
                 <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-base font-bold text-gray-900">Total Amount Paid</span>
+                    <span className="text-base font-bold text-gray-900">
+                      Total Amount Paid
+                    </span>
                     <span className="text-lg font-bold text-green-600">
                       M{confirmBookingDetails?.bookingAmount.totalAmount}
                     </span>
@@ -326,7 +392,6 @@ export default function BookingConfirmed() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

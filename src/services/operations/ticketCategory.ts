@@ -202,6 +202,7 @@ export function getOrderDetails(bookingId: number | null,navigate:NavigateFuncti
 export function downloadTicket(bookingId: number | null) {
   return async (): Promise<{ success: boolean }> => {
     try {
+    
       const response = await axios.get(
         `${BASE_URL}/ticketcore-api/api/v1/orders/${bookingId}/download`,
         {
