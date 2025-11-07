@@ -1,41 +1,38 @@
-name: Build Ticketing Project
+name: Build & Deploy MyTag 
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18 # or your project version
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Build Project
+      - name: Build React App
         run: npm run build
-
-      - name: Remove old dist
+    
+      - name: Remove old dist folder (if exists)
         run: |
-          if [ -d /home/apps/frontendserver-EventHub/dist ]; then
-            rm -rf /home/apps/frontendserver-EventHub/dist
+          if [ -d /var/www/html/mytagfrontend/dist ]; then
+            echo "Old dist folder found. Removing..."
+            rm -rf /var/www/html/mytagfrontend/dist
+          else
+            echo "No old dist folder found. Skipping removal."
           fi
 
       - name: Deploy new dist folder
         run: |
           if [ -d dist ]; then
             echo "New build found. Copying dist folder..."
-            cp -r dist ~/frontendserver-ticketing/
+            cp -r dist /var/www/html/mytagfrontend
           else
             echo "Build folder 'dist' not found. Skipping deployment."
             exit 1
