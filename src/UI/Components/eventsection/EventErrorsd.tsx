@@ -12,7 +12,7 @@ export default function EventsErrorPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const eventErroMsg = useAppSelector((state) => state.events.eventErrorMsg);
-  console.log(eventErroMsg);
+  //(eventErroMsg);
 
  useEffect(() => {
   if (!eventErroMsg) return;

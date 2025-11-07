@@ -9,7 +9,7 @@ export default function BookingErrorPage() {
     const dispatch=useAppDispatch();
   const navigate = useNavigate();
   const payMessage = useAppSelector((state) => state.pay.payMessege);
-  console.log(payMessage);
+  //(payMessage);
 
   // Agar payMessage empty hai ya null, component kuch render na kare
   if (!payMessage) return null;

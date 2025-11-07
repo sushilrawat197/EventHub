@@ -18,7 +18,7 @@ const DateTimeSelection = (
   const venueId=useAppSelector((state)=>state.ticket.venueId);
   const shows = useAppSelector((state) => state.shows.data);
 
-  console.log(shows);
+  //(shows);
 
 
 
@@ -82,7 +82,7 @@ const DateTimeSelection = (
   // 5️⃣ handle proceed
   const proceedHandler = () => {
     if (!selectedShowId) return alert("Please select date and time first!");
-    console.log("Clicked Proceed Handler",contentName,eventId)
+    //("Clicked Proceed Handler",contentName,eventId)
     navigate(`/events/${contentName}/${eventId}/booking/ticket`,{ replace: true })
     dispatch(setTicketInfo({ showId:selectedShowId}));
   };

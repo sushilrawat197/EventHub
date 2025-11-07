@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
   const cities = useAppSelector((state) => state?.cities.data || []);
   const [selectedCity, setSelectedCityNav] = useState("Maseru");
 
-  // console.log(cities)
+  // //(cities)
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
     dispatch(setSelectedCity(city.id));
     setCityDropdownOpen(false);
     dispatch(setFilter({ key: "cityId", value: city.id }));
-    console.log(city.id);
+    //(city.id);
     dispatch(listEventsBySearch());
   };
 
@@ -65,7 +65,7 @@ const Navbar: React.FC = () => {
   // useEffect(() => {
   //   if (selectedCity) {
   //     const preCity = cities.find((item) => item.label === selectedCity);
-  //     console.log(preCity);
+  //     //(preCity);
 
   //     if (preCity) {
   //       dispatch(setFilter({ key: "cityId", value: preCity.id }))

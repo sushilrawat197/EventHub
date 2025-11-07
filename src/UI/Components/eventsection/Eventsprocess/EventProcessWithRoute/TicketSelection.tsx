@@ -21,7 +21,7 @@ const TicketSelection = () => {
   );
 
   const showId = useAppSelector((state) => state.ticket.showId);
-  console.log("SHOW ID", showId);
+  //("SHOW ID", showId);
 
   const { contentName, eventId } = useParams();
 
@@ -61,7 +61,7 @@ const TicketSelection = () => {
       try {
         const res = await dispatch(reserveTicket(categories));
 
-        console.log("Reserve ticket details ", categories);
+        //("Reserve ticket details ", categories);
 
         if (res?.success) {
           navigate(`/events/${contentName}/${eventId}/booking/reviewandpay`, {
@@ -78,7 +78,7 @@ const TicketSelection = () => {
 
   const singleD_T = localStorage.getItem("dairectnavigate");
 
-  console.log("PRINTING DIRECTNAVIGATE VALUE: ",singleD_T);
+  //("PRINTING DIRECTNAVIGATE VALUE: ",singleD_T);
   
 useEffect(() => {
   // console.count("TicketSelection rendered");

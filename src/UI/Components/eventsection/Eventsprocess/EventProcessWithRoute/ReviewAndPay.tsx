@@ -53,7 +53,7 @@ const ReviewAndPay = () => {
     });
 
     setShowPopup(false);
-    console.log("Transaction cancelled ✅");
+    //("Transaction cancelled ✅");
   }
 
   

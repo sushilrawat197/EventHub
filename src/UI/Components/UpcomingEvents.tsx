@@ -117,7 +117,7 @@ const UpcomingEvents: React.FC = () => {
   const events = useAppSelector(
     (state) => state.events.allEventsBySearch?.content || []
   );
-  console.log(events);
+  //(events);
 
   useEffect(() => {
     dispatch(listEventsBySearch());

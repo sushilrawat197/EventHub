@@ -32,8 +32,6 @@ import PaymentPage from "./UI/Components/eventsection/PaymentPage";
 import BookingConfirmed from "./UI/Components/common/BookingConfirmPage";
 import BookingOrder from "./UI/Components/dasboard/BookingOrder";
 import RateAndReview from "./UI/Components/common/RateAndReview";
-// import TicketSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/TicketSelection";
-// import ReviewAndPay from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/ReviewAndPay";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -48,6 +46,12 @@ function App() {
     init();
   }, [dispatch]);
 
+  if (process.env.NODE_ENV === "production") {
+    console.log = function () {};
+    console.error = function () {};
+    console.warn = function () {};
+  }
+
   if (bootLoading) {
     return <SpinnerLoading />; // spinner while refresh token loads
   }
@@ -55,7 +59,6 @@ function App() {
   return (
     <>
       <Routes>
-       
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
 

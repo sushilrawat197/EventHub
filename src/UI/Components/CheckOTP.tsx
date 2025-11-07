@@ -6,7 +6,7 @@ export default function CheckOTP() {
 
     const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
       e.preventDefault();
-      console.log(otp);
+      //(otp);
     }
 
   return (
