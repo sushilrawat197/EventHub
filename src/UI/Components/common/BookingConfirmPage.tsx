@@ -219,7 +219,7 @@ export default function BookingConfirmed() {
                     <button
                       onClick={!downloading ? downloadHandler : undefined}
                       disabled={downloading}
-                      className={`relative bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2 transition-all duration-300 transform ${
+                      className={`relative justify-center  bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2 transition-all duration-300 transform ${
                         downloading
                           ? "opacity-60 cursor-not-allowed"
                           : "hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-105"

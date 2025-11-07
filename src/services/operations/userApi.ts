@@ -112,13 +112,13 @@ export function updateUserDetails(
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || "User update failed");
+        toast.error(error.response?.data?.message ||error.response?.data?.message?.gender || "User update failed");
         console.error("Error updating user:", error.response?.data);
       } else {
         console.error("Unknown error:", error);
       }
     }finally {
-        dispatch(setLoading(false));
+        setProfileLoading(false);
     }
   };
 
