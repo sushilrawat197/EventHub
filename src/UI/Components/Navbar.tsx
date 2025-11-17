@@ -16,6 +16,7 @@ import { setFilter } from "../../slices/filter_Slice";
 // import { setFilter } from "../../slices/filter_Slice";
 
 const Navbar: React.FC = () => {
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,6 +31,7 @@ const Navbar: React.FC = () => {
   const [selectedCity, setSelectedCityNav] = useState("Maseru");
 
   // //(cities)
+
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -46,6 +48,8 @@ const Navbar: React.FC = () => {
 
   const user = useAppSelector((state) => state.user.user);
 
+
+
   const handleCitySelect = (city: { id: number; label: string }) => {
     setSelectedCityNav(city.label);
     dispatch(setSelectedCity(city.id));
@@ -55,6 +59,7 @@ const Navbar: React.FC = () => {
     dispatch(listEventsBySearch());
   };
 
+  
   function handleSearch() {
     dispatch(setFilter({ key: "eventName", value: searchData }));
     dispatch(listEventsBySearch());
@@ -62,20 +67,6 @@ const Navbar: React.FC = () => {
   }
 
 
-  // useEffect(() => {
-  //   if (selectedCity) {
-  //     const preCity = cities.find((item) => item.label === selectedCity);
-  //     //(preCity);
-
-  //     if (preCity) {
-  //       dispatch(setFilter({ key: "cityId", value: preCity.id }))
-  //       dispatch(setSelectedCity(preCity.id));
-  //       setSelectedCityNav(preCity.label);
-  //     }
-  //   }
-  // }, [cities, dispatch, selectedCity]);
-
-  
 
   useEffect(() => {
     dispatch(listCitiesByRegion());

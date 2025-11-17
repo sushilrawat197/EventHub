@@ -84,8 +84,6 @@ export default function EventDetailsCard({
 
 
 
-
-
   async function bookHandler() {
 
 
@@ -103,6 +101,9 @@ export default function EventDetailsCard({
     if (uniqueShows.length > 1) {
       navigate(`${location.pathname}/booking/venue`);
     } else {
+
+      
+
       const currentShow = uniqueShows[0];
       const showSchedules = shows.filter(
         (s) =>
@@ -113,6 +114,8 @@ export default function EventDetailsCard({
           showSchedules.map((s) => `${s.showDate}-${s.startTime}-${s.endTime}`)
         )
       );
+
+    
 
 
       if (uniqueDateTimes.length === 1) {
@@ -129,6 +132,15 @@ export default function EventDetailsCard({
         navigate(`${location.pathname}/booking/ticket`);
         
       } else {
+
+        const venueId=currentShow?.venueId;
+
+        if(!venueId){
+          window.alert("Event Expired")
+          console.log("Venue Id not present")
+           return
+        }
+
         const ticketData = {
           venueId: currentShow.venueId,
         };

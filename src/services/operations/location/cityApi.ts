@@ -41,12 +41,13 @@ const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
 
+
 export function listCitiesByRegion() {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       const response = await apiConnector<OtherApiResponse<citiesResponse[]>>({
         method: "GET",
-        url: `${BASE_URL}/ticketcore-api/api/v1/regions/20/cities`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/regions/1/cities`,
         headers: {
           "X-Client-Source": "WEB",
         },
