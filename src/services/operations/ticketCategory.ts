@@ -248,6 +248,7 @@ export function downloadTicket(bookingId: number | null) {
 
 
 
+
 export function ticketPay(bookingId: number | null, phoneNumber: string | null, navigate: NavigateFunction) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
