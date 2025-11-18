@@ -58,8 +58,6 @@ export default function BookingConfirmed() {
     }
   };
 
-
-
   useEffect(() => {
     const context = localStorage.getItem("navigateContext");
     if (context === "confirmBooking") {
@@ -70,9 +68,9 @@ export default function BookingConfirmed() {
     };
   }, [bookingId, dispatch, navigate]);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getOrderDetails(Number(bookingId), navigate));
-  },[])
+  }, []);
 
   if (loading) {
     return <SpinnerLoading />;
@@ -286,16 +284,34 @@ export default function BookingConfirmed() {
                       </h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                      
+                      {confirmBookingDetails.tickets.some(
+                        (t) => t.seatCode
+                      ) && (
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-1">
+                            Seats
+                          </p>
+                          <p className="font-bold text-gray-900">
+                            {confirmBookingDetails.tickets
+                              .map((t) => t.seatCode)
+                              .filter(Boolean)
+                              .join(", ")}
+                          </p>
+                        </div>
+                      )}
+
                       <div>
                         <p className="font-semibold text-gray-700 mb-1">
-                          Seats
+                          Category
                         </p>
                         <p className="font-bold text-gray-900">
                           {confirmBookingDetails.tickets
-                            .map((t) => t.seatCode)
+                            .map((t) => t.category)
                             .join(", ")}
                         </p>
                       </div>
+
                       <div>
                         <p className="font-semibold text-gray-700 mb-1">
                           Ticket IDs
