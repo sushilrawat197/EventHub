@@ -32,6 +32,7 @@ import PaymentPage from "./UI/Components/eventsection/PaymentPage";
 import BookingConfirmed from "./UI/Components/common/BookingConfirmPage";
 import BookingOrder from "./UI/Components/dasboard/BookingOrder";
 import RateAndReview from "./UI/Components/common/RateAndReview";
+import VerifyTicketOtp from "./UI/Components/eventsection/VerifyTicketOtp";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -201,6 +202,14 @@ function App() {
             }
           />
 
+          <Route
+            path="verifyticketotp"
+            element={
+              <ProtectedRoute>
+                <VerifyTicketOtp />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="payment"
             element={

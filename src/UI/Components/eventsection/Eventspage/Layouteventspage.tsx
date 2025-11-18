@@ -27,7 +27,7 @@ export default function Layouteventspage() {
 
   const { eventId } = useParams<{ eventId: string }>();
 
-  console.log(eventId);
+  // console.log(eventId);
 
   const allEvents = useAppSelector(
     (state) => state.events.allEventsBySearch?.content || []
@@ -36,7 +36,7 @@ export default function Layouteventspage() {
   const eventLoading = useAppSelector((state) => state.events.eventloading);
   const shows = useAppSelector((state) => state.shows.data);
 
-  console.log("list all shows :", shows);
+  // console.log("list all shows :", shows);
 
 
 
@@ -92,14 +92,14 @@ if (shows.length === 1) {
 }
 
 
-  console.log(formattedTime);
+  // console.log(formattedTime);
 
 
  const uniqueVenues = Array.from(
   new Map(shows.map((s) => [s.venueId, s.venueName])).entries()
 ).map(([venueId, venueName]) => ({ venueId, venueName }));
 
-console.log(uniqueVenues)
+// console.log(uniqueVenues)
 
   // const cityname=shows.map((data)=>(
   // data.

@@ -15,7 +15,7 @@ export function ratingAndReview(rating: number, comments: string) {
         withCredentials: true,
       });
 
-      console.log("RATING AND REVIEW RESPONSE:", response.data);
+      // console.log("RATING AND REVIEW RESPONSE:", response.data);
 
       if (response.data.statusCode === 201) {
         return { success: true };

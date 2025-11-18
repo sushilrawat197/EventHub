@@ -54,7 +54,7 @@ export function listCitiesByRegion() {
         withCredentials: true,
       });
 
-      console.log("LIST ALL CITIES RESPONSE:", response);
+      // console.log("LIST ALL CITIES RESPONSE:", response);
 
       if (response.data.statusCode === 200) {
         dispatch(setCities(response.data.data));
@@ -88,7 +88,7 @@ export function listVenueByCityId() {
         withCredentials: true,
       });
 
-      console.log("LIST ALL CITIES RESPONSE:", response);
+      // console.log("LIST ALL CITIES RESPONSE:", response);
 
       if (response.data.statusCode === 200) {
         dispatch(setCities(response.data.data));

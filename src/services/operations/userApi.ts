@@ -108,7 +108,7 @@ export function updateUserDetails(
         toast.success(response.data.message);
       }
 
-      console.log("UPDATED USER RESPONSE:", response);
+      // console.log("UPDATED USER RESPONSE:", response);
 
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -147,11 +147,11 @@ export function updateUserProfilPicture(file: FormData) {
       if (response.data.statusCode === 200) {
 
         await dispatch(getCurrentUser());
-        console.log(response)
+        // console.log(response)
         toast.success(response?.data?.masssage)
       }
 
-      console.log("UPDATED USER RESPONSE:", response);
+      // console.log("UPDATED USER RESPONSE:", response);
     } catch (error) {
       // error handling...
       console.log(error);

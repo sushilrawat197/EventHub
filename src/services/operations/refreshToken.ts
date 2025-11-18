@@ -33,9 +33,9 @@ export function refreshAccessToken() {
             });
 
             if (response.data.statusCode === 200) {
-                console.log("Fetching user...");
+                // console.log("Fetching user...");
                 await dispatch(getCurrentUser());
-                console.log(response);
+                // console.log(response);
             }
 
             // console.log("REFRESH_ACCESS_TOKEN.....", response)
@@ -58,7 +58,7 @@ export function refreshAccessToken() {
 
                 if (timeToRefresh > 0) {
                     refreshTimer = setTimeout(() => {
-                        console.log(" Refreshing token before expiry...");
+                        // console.log(" Refreshing token before expiry...");
                         dispatch(refreshAccessToken());
                     }, timeToRefresh);
 

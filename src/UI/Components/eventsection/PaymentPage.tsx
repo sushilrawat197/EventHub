@@ -2,27 +2,34 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
 import {
   cancelBooking,
+  cPayPayment,
+  normalCPayInitiate,
   ticketPay,
 } from "../../../services/operations/ticketCategory";
 import { IoLocationSharp } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import BookingErrorPage from "./Eventsprocess/BookingError";
 import { ClipLoader } from "react-spinners";
 import ScrollToTop from "../common/ScrollToTop";
+import { toast } from "react-toastify";
 
 export default function PaymentPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+    const { contentName, eventId} = useParams();
+
   const [selectedMethod, setSelectedMethod] = useState("Mpesa");
   const [mobile, setMobile] = useState("");
+  const [cpayLoading, setcPayloading] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
 
   const reserveTicket = useAppSelector((state) => state.reserveTicket.booking);
   const bookingId = useAppSelector((state) => state.ticket.bookingId);
   const paymentLoading = useAppSelector((state) => state.pay.payTicketLoading);
 
-  const isValid = mobile.length === 12;
-
+  const [showOtpPopup, setShowOtpPopup] = useState(false);
+  const [otp, setOtp] = useState("");
 
   const eventDate = reserveTicket
     ? new Date(reserveTicket.showDate).toLocaleDateString("en-GB", {
@@ -43,9 +50,55 @@ export default function PaymentPage() {
       )
     : "";
 
-  function submitHandler() {
-    dispatch(ticketPay(bookingId, mobile, navigate));
+  // OLD SUBMIT HANDLER
+  // function submitHandler() {
+  //   dispatch(ticketPay(bookingId, mobile, navigate));
+  // }
+
+
+    async function backHandler() {
+      setcPayloading(true)
+    if (bookingId) {
+      
+      const res = dispatch(cancelBooking(bookingId));
+      if ((await res).success) {
+        navigate(`/events/${contentName}/${eventId}/booking/ticket`, {
+          replace: true,
+        });
+      }
+    }
+    setcPayloading(false)
   }
+
+
+  async function submitHandler() {
+
+    if (selectedMethod === "Cpay") {
+
+      setcPayloading(true);
+      const res = await normalCPayInitiate(bookingId, mobile,dispatch);
+      if (res.success) {
+        setShowOtpPopup(true); // <-- Open popup
+      }
+      setcPayloading(false);
+
+    } else if (selectedMethod === "Mpesa") {
+      dispatch(ticketPay(bookingId, mobile, navigate));
+    }
+  }
+
+  async function verifyOtpHandler() {
+    if (!otp.trim()) {
+      toast.error("Please enter OTP");
+      return;
+    }
+    const res = await cPayPayment(bookingId, mobile, otp, navigate,dispatch);
+
+    if (!res.success) {
+      toast.error(res.message);
+    }
+  }
+
 
   useEffect(() => {
     if (!bookingId) {
@@ -64,12 +117,94 @@ export default function PaymentPage() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [reserveTicket, bookingId, navigate, dispatch]);
 
+  useEffect(() => {
+    setIsValid(mobile.length >= 8 && mobile.length <= 12);
+  }, [mobile]);
 
   return (
     <div className="min-h-[calc(100vh-200px)] bg-gradient-to-br from-gray-50 to-blue-50">
       <ScrollToTop />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <BookingErrorPage />
+
+        {showOtpPopup && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 animate-fadeIn">
+            <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 w-[95%] max-w-lg shadow-2xl border border-white/40 animate-scaleIn">
+              {/* HEADER */}
+              <h2 className="text-2xl font-bold text-gray-800 text-center mb-3">
+                Verify OTP
+              </h2>
+              <p className="text-sm text-gray-600 text-center mb-6">
+                A verification code has been sent to your mobile number.
+              </p>
+
+              {/* OTP INPUT */}
+              <input
+                type="text"
+                value={otp}
+                maxLength={6}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                placeholder="Enter OTP"
+                className="w-full border-2  border-gray-200 rounded-xl px-4 py-3 text-lg text-center tracking-widest font-semibold
+                   focus:border-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none bg-white shadow-sm"
+              />
+
+
+              {/* BUTTONS */}
+              <div className="flex items-center justify-end gap-2   mt-6">
+                <button
+                disabled={cpayLoading}
+                  onClick={() => {
+                    // setShowOtpPopup(false);
+                    backHandler();
+                  }}
+                  className="px-7 py-3  rounded-xl bg-red-500 text-white hover:bg-red-600  font-medium transition hover:scale-[1.03]"
+                >
+                  {
+                    !cpayLoading ? ("Cancel"):("Processing...")
+                  }
+                </button>
+
+                <button
+                  disabled={cpayLoading}
+                  onClick={verifyOtpHandler}
+                  className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg transition-transform hover:scale-[1.03]"
+                >
+
+                  {paymentLoading ?(
+                        <>
+                          <ClipLoader size={16} color="#ffffff" />
+                          <span>Processing Payment...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Verify & Pay</span>
+                        </>
+                      )}
+
+                </button>
+              </div>
+            </div>
+
+            {/* Animations */}
+            <style>{`
+      .animate-scaleIn {
+        animation: scaleIn 0.25s ease-out;
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.2s ease-out;
+      }
+      @keyframes scaleIn {
+        0% { transform: scale(0.8); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+    `}</style>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* LEFT: Payment Options */}
@@ -136,8 +271,8 @@ export default function PaymentPage() {
                             : "border-gray-200 hover:border-green-300 hover:shadow-md hover:scale-102"
                         }`}
                         onClick={() => setSelectedMethod("Mpesa")}
-                    >
-                      <div className="flex items-center justify-between">
+                      >
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             {/* M-Pesa Icon */}
                             <div
@@ -155,18 +290,30 @@ export default function PaymentPage() {
                               >
                                 <path
                                   d="M12 2L2 7L12 12L22 7L12 2Z"
-                                  fill={selectedMethod === "Mpesa" ? "#10B981" : "#6B7280"}
+                                  fill={
+                                    selectedMethod === "Mpesa"
+                                      ? "#10B981"
+                                      : "#6B7280"
+                                  }
                                 />
                                 <path
                                   d="M2 17L12 22L22 17"
-                                  stroke={selectedMethod === "Mpesa" ? "#10B981" : "#6B7280"}
+                                  stroke={
+                                    selectedMethod === "Mpesa"
+                                      ? "#10B981"
+                                      : "#6B7280"
+                                  }
                                   strokeWidth="2"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                 />
                                 <path
                                   d="M2 12L12 17L22 12"
-                                  stroke={selectedMethod === "Mpesa" ? "#10B981" : "#6B7280"}
+                                  stroke={
+                                    selectedMethod === "Mpesa"
+                                      ? "#10B981"
+                                      : "#6B7280"
+                                  }
                                   strokeWidth="2"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
@@ -213,20 +360,21 @@ export default function PaymentPage() {
                       </div>
 
                       {/* C-Pay Card */}
+                      {/* C-Pay Card */}
                       <div
                         className={`group relative p-4 border-2 rounded-2xl transition-all duration-300 cursor-pointer ${
-                          selectedMethod === "Apesa"
+                          selectedMethod === "Cpay"
                             ? "border-blue-500 bg-blue-50 shadow-lg scale-105"
                             : "border-gray-200 hover:border-blue-300 hover:shadow-md hover:scale-102"
                         }`}
-                        onClick={() => setSelectedMethod("Apesa")}
+                        onClick={() => setSelectedMethod("Cpay")}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
                             {/* C-Pay Icon */}
                             <div
                               className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                                selectedMethod === "Apesa"
+                                selectedMethod === "Cpay"
                                   ? "bg-blue-100"
                                   : "bg-gray-100"
                               }`}
@@ -243,7 +391,11 @@ export default function PaymentPage() {
                                   width="20"
                                   height="16"
                                   rx="2"
-                                  fill={selectedMethod === "Apesa" ? "#3B82F6" : "#6B7280"}
+                                  fill={
+                                    selectedMethod === "Cpay"
+                                      ? "#3B82F6"
+                                      : "#6B7280"
+                                  }
                                 />
                                 <path
                                   d="M2 8H22"
@@ -251,43 +403,33 @@ export default function PaymentPage() {
                                   strokeWidth="2"
                                   strokeLinecap="round"
                                 />
-                                <circle
-                                  cx="8"
-                                  cy="14"
-                                  r="2"
-                                  fill="white"
-                                />
-                                <circle
-                                  cx="16"
-                                  cy="14"
-                                  r="2"
-                                  fill="white"
-                                />
+                                <circle cx="8" cy="14" r="2" fill="white" />
+                                <circle cx="16" cy="14" r="2" fill="white" />
                               </svg>
-                          </div>
+                            </div>
 
-                          <div>
+                            <div>
                               <h3 className="text-lg font-bold text-gray-900">
                                 C-Pay
-                            </h3>
+                              </h3>
                               <div className="flex items-center gap-1 mt-1">
                                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                 <span className="text-xs text-blue-600 font-medium">
                                   Secure & Fast
                                 </span>
                               </div>
+                            </div>
                           </div>
-                        </div>
 
                           {/* Selection Indicator */}
-                        <div
+                          <div
                             className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                              selectedMethod === "Apesa"
-                              ? "border-blue-500 bg-blue-500"
-                              : "border-gray-300"
-                          }`}
-                        >
-                            {selectedMethod === "Apesa" && (
+                              selectedMethod === "Cpay"
+                                ? "border-blue-500 bg-blue-500"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            {selectedMethod === "Cpay" && (
                               <svg
                                 className="w-3 h-3 text-white"
                                 fill="currentColor"
@@ -306,7 +448,6 @@ export default function PaymentPage() {
                     </div>
                   </div>
                 </div>
-
 
                 {/* Mobile Input */}
                 <div>
@@ -328,7 +469,6 @@ export default function PaymentPage() {
                     </div>
                     Mobile Number
                   </h2>
-
 
                   <div className="space-y-4">
                     <div>
@@ -364,7 +504,7 @@ export default function PaymentPage() {
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-3">
+                    {/* <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-3">
                       <div className="flex items-start gap-2">
                         <input
                           type="checkbox"
@@ -380,7 +520,7 @@ export default function PaymentPage() {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     <button
                       onClick={submitHandler}
@@ -391,7 +531,7 @@ export default function PaymentPage() {
                           : "bg-gray-300 text-gray-600 cursor-not-allowed"
                       }`}
                     >
-                      {paymentLoading ? (
+                      {paymentLoading || cpayLoading ? (
                         <>
                           <ClipLoader size={16} color="#ffffff" />
                           <span>Processing Payment...</span>
@@ -415,15 +555,11 @@ export default function PaymentPage() {
                         </>
                       )}
                     </button>
-
-
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-
 
           {/* RIGHT: Order Summary */}
           <div className="lg:col-span-2">

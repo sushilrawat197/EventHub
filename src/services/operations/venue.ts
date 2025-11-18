@@ -20,7 +20,7 @@ export function listDetailsByCityId(cityId:number | null) {
         withCredentials: true,
       });
 
-      console.log("LIST VENUE BY CITY RESPONSE...", response.data);
+      // console.log("LIST VENUE BY CITY RESPONSE...", response.data);
 
       if (response.data.statusCode === 200) {
         dispatch(setVenues(response.data.data));
@@ -54,7 +54,7 @@ export function getVenueByVenueId(venueId:number | null) {
         withCredentials: true,
       });
 
-      console.log("LIST VENUE BY VENUE RESPONSE...", response.data);
+      // console.log("LIST VENUE BY VENUE RESPONSE...", response.data);
 
       if (response.data.statusCode === 200) {
         dispatch(setVenueDetails(response.data.data));

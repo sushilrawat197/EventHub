@@ -21,7 +21,7 @@ export function listAllShowsByEvent(eventId: string | undefined) {
         withCredentials: true,
       });
 
-      console.log("LIST ALL SHOWS RESPONSE:", response.data);
+      // console.log("LIST ALL SHOWS RESPONSE:", response.data);
 
       if (response.data.statusCode === 200) {
         dispatch(setShows(response.data.data));
@@ -81,7 +81,7 @@ export function fetchFilteredShows(eventId: string) {
       // (if you return { success, soldOut, data } from checkEventAvailability)
       const availableShows = availableRes.data;
 
-      console.log("AVAILABLE SHOWSSS IN API....",availableShows)
+      // console.log("AVAILABLE SHOWSSS IN API....",availableShows)
 
       // 3️⃣ Filter
       const filteredShows = (allShows ?? []).filter(show =>

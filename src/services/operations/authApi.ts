@@ -70,7 +70,7 @@ export function sendOtp(
         },
       });
 
-      console.log("SENDOTP API RESPONSE............", response);
+      // console.log("SENDOTP API RESPONSE............", response);
       // console.log("PWToken", response?.data?.data?.setPWDToken);
 
       if (response.data.status == "SUCCESS") {
@@ -122,10 +122,10 @@ export function signUp(
         // },
       });
 
-      console.log(email)
+      // console.log(email)
 
       const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
+      // console.log("SIGNUP API RESPONSE............", data);
       toast.success(data.message, { pauseOnHover: false });
 
       if (response.data.status == "SUCCESS") {
@@ -134,7 +134,7 @@ export function signUp(
         dispatch(userEmail(email));
         dispatch(setSignupToken(response.data.data.signupToken));
         navigate("/otpverification");
-        console.log(data.message); // Optional
+        // console.log(data.message); // Optional
       }
 
 
@@ -179,13 +179,13 @@ export function resendOTP(email: string) {
       });
 
       const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
+      // console.log("SIGNUP API RESPONSE............", data);
 
       dispatch(setSignupToken(response.data.data.signupToken));
 
       toast.success(data.message);
 
-      console.log(data.message); // Optional
+      // console.log(data.message); // Optional
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
@@ -215,7 +215,7 @@ export function setPassword(
 ) {
   return async (): Promise<void> => {
     try {
-      console.log(otp, password, email)
+      // console.log(otp, password, email)
       dispatch(setLoading(true));
       const response = await apiConnector<{
         message: string;
@@ -237,7 +237,7 @@ export function setPassword(
       });
 
       const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
+      // console.log("SIGNUP API RESPONSE............", data);
 
       // const token=response.data.data.accessToken
       // dispatch(setAccessToken(token));
@@ -246,7 +246,7 @@ export function setPassword(
         navigate("/login");
       }
 
-      console.log(data.message); // Optional
+      // console.log(data.message); // Optional
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
@@ -289,7 +289,7 @@ export function forgot_passwordOtp(
       });
 
       const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
+      // console.log("SIGNUP API RESPONSE............", data);
 
       dispatch(userEmail(email));
 
@@ -344,7 +344,7 @@ export function varifyFogotOtp(
       });
 
       const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
+      // console.log("SIGNUP API RESPONSE............", data);
 
       dispatch(setOtp(otp));
 
@@ -385,11 +385,11 @@ export function forgotp_password_resend_OTP(resetToken: string) {
       });
 
       const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
+      // console.log("SIGNUP API RESPONSE............", data);
 
       toast.success(data.message);
 
-      console.log(data.message); // Optional
+      // console.log(data.message); // Optional
     } catch (error) {
       // ✅ Use AxiosError to get error response
       if (axios.isAxiosError(error)) {
@@ -415,7 +415,7 @@ export function resetPassword(
 ) {
   return async (): Promise<void> => {
     // dispatch(setLoading(true));
-    console.log("OTP...", otp)
+    // console.log("OTP...", otp)
     try {
       const response = await apiConnector<{
         message: string;
@@ -437,7 +437,7 @@ export function resetPassword(
       });
 
       const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
+      // console.log("SIGNUP API RESPONSE............", data);
 
       // const pwdToken= response.data.data.setPWDToken;
       // dispatch(setPwdToken(pwdToken));
@@ -495,7 +495,7 @@ export function changePassword(
       });
 
       const data = response.data;
-      console.log("SIGNUP API RESPONSE............", data);
+      // console.log("SIGNUP API RESPONSE............", data);
 
       // const pwdToken= response.data.data.setPWDToken;
       // dispatch(setPwdToken(pwdToken));
@@ -560,7 +560,7 @@ export function signIn(
       });
 
       const data = response.data;
-      console.log("LOGIN API RESPONSE............", data);
+      // console.log("LOGIN API RESPONSE............", data);
 
       const { accessTokenExpiry, refreshTokenExpiry, tempToken, pwdChangeToken } = data.data;
 
@@ -568,9 +568,9 @@ export function signIn(
       const refrehTokenExpirTime = new Date(refreshTokenExpiry);
       const now = new Date();
 
-      console.log("current time : ", now.toLocaleTimeString())
-      console.log("accessTokenExpiry Time :", aceessTokenExpirTime.toLocaleTimeString());
-      console.log("refreshTokenExpiry Time :", refrehTokenExpirTime.toLocaleTimeString());
+      // console.log("current time : ", now.toLocaleTimeString())
+      // console.log("accessTokenExpiry Time :", aceessTokenExpirTime.toLocaleTimeString());
+      // console.log("refreshTokenExpiry Time :", refrehTokenExpirTime.toLocaleTimeString());
 
       if (data.statusCode === 200) {
         dispatch(getCurrentUser());
@@ -651,7 +651,7 @@ export function verify_2fa_otp(
       });
 
       const data = response.data;
-      console.log("2FA VARIFY OTP API RESPONSE............", data);
+      // console.log("2FA VARIFY OTP API RESPONSE............", data);
 
       if (response.data.statusCode === 200) {
         dispatch(getCurrentUser());
@@ -700,7 +700,7 @@ export function resend_2fa_otp(
       });
 
       const data = response.data;
-      console.log("2FA VARIFY OTP API RESPONSE............", data);
+      // console.log("2FA VARIFY OTP API RESPONSE............", data);
 
       if (response.data.statusCode === 200) {
         toast.success(response.data.message);
@@ -741,7 +741,7 @@ export function logout(
         },
       });
 
-      console.log(response);
+      // console.log(response);
       // ✅ Remove token and other sensitive data from localStorage/cookies
       localStorage.removeItem("accessToken"); // or your actual key
       // localStorage.removeItem("refreshToken"); // or your actual key

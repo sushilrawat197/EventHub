@@ -15,7 +15,7 @@ export function listEventsBySearch(page: number = 0) {
     try {
       const filters = getState().searchFilter;
 
-      console.log(filters);
+      // console.log(filters);
 
       const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
         method: "POST",
@@ -25,7 +25,7 @@ export function listEventsBySearch(page: number = 0) {
         withCredentials: true,
       });
 
-      console.log("LIST EVENT BY SEARCH RESPONSE",response)
+      // console.log("LIST EVENT BY SEARCH RESPONSE",response)
 
       if (response.data.statusCode === 200) {
         dispatch(setAllEventsBySearch(response.data.data));
@@ -107,7 +107,7 @@ export function checkEventAvailability(eventId: string) {
         withCredentials: true,
       });
 
-      console.log("CHECK EVENTS AVAILABILITY RESPONSE:", response.data);
+      // console.log("CHECK EVENTS AVAILABILITY RESPONSE:", response.data);
 
       if (response.data.statusCode === 200) {
         

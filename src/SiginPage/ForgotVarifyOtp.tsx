@@ -12,6 +12,7 @@ const ForgotVarifyOtp: React.FC = () => {
 
   const resetToken=useAppSelector((state)=>state.auth.pwdToken);
 
+  
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();

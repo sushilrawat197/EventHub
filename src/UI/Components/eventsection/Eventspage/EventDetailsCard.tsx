@@ -65,7 +65,7 @@ export default function EventDetailsCard({
 
 
   // Debug: Log the details to see what's being passed
-  console.log("EventDetailsCard - All details:", details);
+  // console.log("EventDetailsCard - All details:", details);
 
 
   const location = useLocation();
@@ -83,7 +83,6 @@ export default function EventDetailsCard({
   );
 
 
-
   async function bookHandler() {
 
 
@@ -91,7 +90,7 @@ export default function EventDetailsCard({
       const result = await dispatch(checkEventAvailability(eventId));
       if (result?.soldOut) {
         dispatch(setEventsErrorMsg("All tickets are sold out for this event"));
-      console.log("Pringint Result",result);
+      // console.log("Pringint Result",result);
         return;
       }
     }
@@ -152,6 +151,7 @@ export default function EventDetailsCard({
     }
   }
 
+   
   
   // ⏳ 1 sec delay
   useEffect(() => {

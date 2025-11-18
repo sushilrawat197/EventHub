@@ -6,8 +6,8 @@ import { apiConnector } from "../apiConnector";
 import { setBooking } from "../../slices/reserveTicketSlice";
 import type { BookingData } from "../../interfaces/reserveTicketInterface";
 import { setTicketInfo } from "../../slices/ticketInfoSlice";
-import {  type NavigateFunction } from "react-router-dom";
-import {  setCancelTicketLoading, setConfirmBooking } from "../../slices/confirmBookingSlice";
+import { type NavigateFunction } from "react-router-dom";
+import { setCancelTicketLoading, setConfirmBooking } from "../../slices/confirmBookingSlice";
 import type { BookingResponse } from "../../interfaces/confirmBookingInterface";
 import { setLoading } from "../../slices/confirmBookingSlice";
 import type { payTickeResponse } from "../../interfaces/payTicketInterface";
@@ -27,7 +27,7 @@ export function listAllTicketCategoriesByShowId(showId: number) {
         withCredentials: true,
       });
 
-      console.log("TICKET CATEGORY RESPONSE  ", response);
+      // console.log("TICKET CATEGORY RESPONSE  ", response);
 
       if (response.data.statusCode === 200) {
         dispatch(setTicketCategories(response.data.data));
@@ -66,7 +66,7 @@ export function reserveTicket(categories: CategorySelection[]) {
         withCredentials: true,
       });
 
-      console.log("RESERVE TICKET  RESPONSE  ", response);
+      // console.log("RESERVE TICKET  RESPONSE  ", response);
 
       if (response.data.statusCode === 201) {
 
@@ -105,15 +105,19 @@ export function cancelBooking(bookingId: number) {
 
       console.log("Cancel TICKET Booking RESPONSE  ", response);
 
-      if (response.data.statusCode === 200) {
-
+      if (response.data.statusCode === 200 || response.data.statusCode === 409) {
         return { success: true };
       }
 
       return { success: false };
     } catch (error) {
+
       if (axios.isAxiosError(error)) {
         console.error("Axios error:", error.response);
+        if (error.response?.status === 409) {
+          return { success: true };
+        }
+
       } else {
         console.error("Unknown error:", error);
       }
@@ -145,7 +149,7 @@ export function confirmBooking(bookingId: number | null, navigate: NavigateFunct
         return { success: true };
       }
 
-      console.log("Confirm TICKET RESPONSE  ", response);
+      // console.log("Confirm TICKET RESPONSE  ", response);
 
       return { success: false };
     } catch (error) {
@@ -163,7 +167,7 @@ export function confirmBooking(bookingId: number | null, navigate: NavigateFunct
 
 
 
-export function getOrderDetails(bookingId: number | null,navigate:NavigateFunction) {
+export function getOrderDetails(bookingId: number | null, navigate: NavigateFunction) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       dispatch(setLoading(true));
@@ -174,14 +178,14 @@ export function getOrderDetails(bookingId: number | null,navigate:NavigateFuncti
         withCredentials: true,
       });
 
-         console.log("GET ORDER RESPONSE  ", response);
+      //  console.log("GET ORDER RESPONSE  ", response);
 
       if (response.data.statusCode === 200) {
         dispatch(setConfirmBooking(response.data.data));
         navigate(`/order/${bookingId}`)
         return { success: true };
       }
- 
+
       return { success: false };
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -202,7 +206,7 @@ export function getOrderDetails(bookingId: number | null,navigate:NavigateFuncti
 export function downloadTicket(bookingId: number | null) {
   return async (): Promise<{ success: boolean }> => {
     try {
-    
+
       const response = await axios.get(
         `${BASE_URL}/ticketcore-api/api/v1/orders/${bookingId}/download`,
         {
@@ -247,8 +251,6 @@ export function downloadTicket(bookingId: number | null) {
 
 
 
-
-
 export function ticketPay(bookingId: number | null, phoneNumber: string | null, navigate: NavigateFunction) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
@@ -262,12 +264,12 @@ export function ticketPay(bookingId: number | null, phoneNumber: string | null, 
       });
 
       if (response.data.statusCode === 200) {
-       localStorage.setItem("navigateContext", "confirmBooking");
-        navigate(`/order/${response?.data?.data?.bookingId}`,{replace:true});
+        localStorage.setItem("navigateContext", "confirmBooking");
+        navigate(`/order/${response?.data?.data?.bookingId}`, { replace: true });
         return { success: true };
       }
 
-      console.log("PAY TICKET RESPONSE  ", response);
+      // console.log("PAY TICKET RESPONSE  ", response);
 
       return { success: false };
     } catch (error) {
@@ -286,9 +288,99 @@ export function ticketPay(bookingId: number | null, phoneNumber: string | null, 
 
 
 
+// NEW C PAY INITIATE
+
+export async function normalCPayInitiate(
+  bookingId: number | null,
+  phoneNumber: string | null,
+  dispatch:AppDispatch
+): Promise<{ success: boolean; message?: string }> {
+  try {
+
+    const response = await apiConnector<OtherApiResponse<payTickeResponse>>({
+      method: "POST",
+      url: `${BASE_URL}/ticketcore-api/api/v1/payments/cpay/initiate`,
+      bodyData: { bookingId, phoneNumber },
+      headers: { "X-Client-Source": "WEB" },
+      withCredentials: true,
+    });
+
+    // SUCCESS CHECK
+    if (response?.data?.statusCode === 200) {
+      // localStorage.setItem("navigateContext", "confirmBooking");
+      return { success: true, message: response.data.message };
+    }
+
+    return {
+      success: false,
+      message: response?.data?.message || "Something went wrong",
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      dispatch(setPayMessage(error?.response?.data.message))
+      console.error("Axios Error:", error.response);
+      return {
+        success: false,
+        message: error?.response?.data?.message || "Request failed",
+      };
+    } else {
+      console.error("Unknown Error:", error);
+      return { success: false, message: "Unknown error occurred" };
+    }
+  }
+}
 
 
-export function cancelBookingTicket(bookingId: number,navigate:NavigateFunction) {
+
+export async function cPayPayment(
+  bookingId: number | null,
+  phoneNumber: string | null,
+  otp: string,
+  navigate: NavigateFunction,
+  dispatch:AppDispatch
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    dispatch(setPayTicketLoading(true));
+    const response = await apiConnector<OtherApiResponse<payTickeResponse>>({
+      method: "POST",
+      url: `${BASE_URL}/ticketcore-api/api/v1/payments/cpay/pay`,
+      bodyData: { bookingId, phoneNumber, otp },
+      headers: { "X-Client-Source": "WEB" },
+      withCredentials: true,
+    });
+
+    console.log(response);
+
+    // SUCCESS CHECK
+    if (response?.data?.statusCode === 200) {
+      localStorage.setItem("navigateContext", "confirmBooking");
+      navigate(`/order/${response?.data?.data?.bookingId}`, { replace: true });
+      return { success: true };
+    }
+
+    return {
+      success: false,
+      message: response?.data?.message || "Something went wrong",
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios Error:", error.response);
+      return {
+        success: false,
+        message: error?.response?.data?.message || "Request failed",
+      };
+    } else {
+      console.error("Unknown Error:", error);
+      return { success: false, message: "Unknown error occurred" };
+    }
+  }finally {
+      dispatch(setLoading(false));
+    }
+}
+
+
+
+export function cancelBookingTicket(bookingId: number, navigate: NavigateFunction) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       dispatch(setCancelTicketLoading(true));
@@ -302,11 +394,11 @@ export function cancelBookingTicket(bookingId: number,navigate:NavigateFunction)
 
       if (response.data.statusCode === 200) {
         // navigate(`/order${bookingId}`);
-        dispatch(getOrderDetails(bookingId,navigate));
+        dispatch(getOrderDetails(bookingId, navigate));
         return { success: true };
       }
 
-      console.log("CANCEL TICKET RESPONSE  ", response);
+      // console.log("CANCEL TICKET RESPONSE  ", response);
 
       return { success: false };
     } catch (error) {
@@ -318,7 +410,7 @@ export function cancelBookingTicket(bookingId: number,navigate:NavigateFunction)
       }
       return { success: false };
     } finally {
-      dispatch(setCancelTicketLoading (false));
+      dispatch(setCancelTicketLoading(false));
     }
   };
 }
