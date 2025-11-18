@@ -340,7 +340,7 @@ export async function cPayPayment(
   dispatch:AppDispatch
 ): Promise<{ success: boolean; message?: string }> {
   try {
-    dispatch(setPayTicketLoading(true));
+    // dispatch(setPayTicketLoading(true));
     const response = await apiConnector<OtherApiResponse<payTickeResponse>>({
       method: "POST",
       url: `${BASE_URL}/ticketcore-api/api/v1/payments/cpay/pay`,
@@ -364,6 +364,7 @@ export async function cPayPayment(
     };
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      dispatch(setPayMessage(error?.response?.data.message))
       console.error("Axios Error:", error.response);
       return {
         success: false,
@@ -374,7 +375,7 @@ export async function cPayPayment(
       return { success: false, message: "Unknown error occurred" };
     }
   }finally {
-      dispatch(setLoading(false));
+      // dispatch(setPayTicketLoading(false));
     }
 }
 

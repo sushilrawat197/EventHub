@@ -236,7 +236,7 @@ export function setPassword(
         },
       });
 
-      const data = response.data;
+      // const data = response.data;
       // console.log("SIGNUP API RESPONSE............", data);
 
       // const token=response.data.data.accessToken
@@ -288,7 +288,7 @@ export function forgot_passwordOtp(
         },
       });
 
-      const data = response.data;
+      // const data = response.data;
       // console.log("SIGNUP API RESPONSE............", data);
 
       dispatch(userEmail(email));
@@ -331,6 +331,7 @@ export function varifyFogotOtp(
       const response = await apiConnector<{
         message: string;
         status: string;
+        statusCode: number;
         data: {
           accessToken: string;
         };
@@ -343,13 +344,15 @@ export function varifyFogotOtp(
         },
       });
 
-      const data = response.data;
+      if (response.data.statusCode === 200) {
+        dispatch(setOtp(otp));
+        toast.success("OTP verificaion Successfull");
+        navigate("/passwordreset");
+      }
+      // const data = response.data;
       // console.log("SIGNUP API RESPONSE............", data);
 
-      dispatch(setOtp(otp));
 
-      toast.success("OTP verificaion Successfull");
-      navigate("/passwordreset");
 
     } catch (error) {
       // ✅ Use AxiosError to get error response
@@ -564,9 +567,9 @@ export function signIn(
 
       const { accessTokenExpiry, refreshTokenExpiry, tempToken, pwdChangeToken } = data.data;
 
-      const aceessTokenExpirTime = new Date(accessTokenExpiry);
-      const refrehTokenExpirTime = new Date(refreshTokenExpiry);
-      const now = new Date();
+      // const aceessTokenExpirTime = new Date(accessTokenExpiry);
+      // const refrehTokenExpirTime = new Date(refreshTokenExpiry);
+      // const now = new Date();
 
       // console.log("current time : ", now.toLocaleTimeString())
       // console.log("accessTokenExpiry Time :", aceessTokenExpirTime.toLocaleTimeString());
@@ -650,7 +653,7 @@ export function verify_2fa_otp(
         withCredentials: true,
       });
 
-      const data = response.data;
+      // const data = response.data;
       // console.log("2FA VARIFY OTP API RESPONSE............", data);
 
       if (response.data.statusCode === 200) {
@@ -699,7 +702,7 @@ export function resend_2fa_otp(
         withCredentials: true,
       });
 
-      const data = response.data;
+      // const data = response.data;
       // console.log("2FA VARIFY OTP API RESPONSE............", data);
 
       if (response.data.statusCode === 200) {
@@ -741,7 +744,7 @@ export function logout(
         },
       });
 
-      // console.log(response);
+      console.log(response);
       // ✅ Remove token and other sensitive data from localStorage/cookies
       localStorage.removeItem("accessToken"); // or your actual key
       // localStorage.removeItem("refreshToken"); // or your actual key

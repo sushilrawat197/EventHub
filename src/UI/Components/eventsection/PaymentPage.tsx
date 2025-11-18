@@ -27,6 +27,7 @@ export default function PaymentPage() {
   const reserveTicket = useAppSelector((state) => state.reserveTicket.booking);
   const bookingId = useAppSelector((state) => state.ticket.bookingId);
   const paymentLoading = useAppSelector((state) => state.pay.payTicketLoading);
+  const [paymentVerifyLoading,setPaymentVerifyLoading] = useState(false);
 
   const [showOtpPopup, setShowOtpPopup] = useState(false);
   const [otp, setOtp] = useState("");
@@ -73,30 +74,38 @@ export default function PaymentPage() {
 
   async function submitHandler() {
 
+
+
     if (selectedMethod === "Cpay") {
 
       setcPayloading(true);
+      
       const res = await normalCPayInitiate(bookingId, mobile,dispatch);
       if (res.success) {
         setShowOtpPopup(true); // <-- Open popup
       }
-      setcPayloading(false);
+      setcPayloading(false)
 
     } else if (selectedMethod === "Mpesa") {
       dispatch(ticketPay(bookingId, mobile, navigate));
     }
   }
 
+
   async function verifyOtpHandler() {
+    
     if (!otp.trim()) {
       toast.error("Please enter OTP");
       return;
     }
-    const res = await cPayPayment(bookingId, mobile, otp, navigate,dispatch);
 
-    if (!res.success) {
-      toast.error(res.message);
-    }
+    setPaymentVerifyLoading(true)
+    await cPayPayment(bookingId, mobile, otp, navigate,dispatch);
+    // if (!res.success) {
+    //   toast.error(res.message);
+    // }
+    setShowOtpPopup(false);
+    setPaymentVerifyLoading(false);
   }
 
 
@@ -165,13 +174,14 @@ export default function PaymentPage() {
                   }
                 </button>
 
+
                 <button
-                  disabled={cpayLoading}
+                  disabled={paymentVerifyLoading}
                   onClick={verifyOtpHandler}
                   className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg transition-transform hover:scale-[1.03]"
                 >
 
-                  {paymentLoading ?(
+                  {paymentVerifyLoading ?(
                         <>
                           <ClipLoader size={16} color="#ffffff" />
                           <span>Processing Payment...</span>

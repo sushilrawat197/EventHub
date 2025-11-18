@@ -15,8 +15,6 @@ export default function BookingFlow() {
   
   
 
-
-
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
