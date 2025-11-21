@@ -14,7 +14,7 @@ export default function HelpAndSupport() {
           <h2 className="text-xl font-semibold text-gray-700">Contact Information</h2>
           <div className="space-y-3 text-gray-700">
             <p>
-              <span className="font-medium">Email:</span> support@mytag.com
+              <span className="font-medium">Email:</span> support@mytag.co.ls
             </p>
             <p>
               <span className="font-medium">Phone:</span> +266 63820303 / 62210465

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaMapMarkerAlt, FaTicketAlt } from "react-icons/fa";
 import type { EventResponseBySearch } from "../../../interfaces/eventInterface/evnetInterFace";
+import { MdEvent } from "react-icons/md";
 
 interface EventCardProps {
   event: EventResponseBySearch;
@@ -9,16 +10,8 @@ interface EventCardProps {
 export default function EventCard({ event }: EventCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  // const formatDate = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   return {
-  //     day: date.getDate().toString().padStart(2, '0'),
-  //     month: date.toLocaleDateString("en-US", { month: "short" }),
-  //     weekday: date.toLocaleDateString("en-US", { weekday: "short" })
-  //   };
-  // };
 
-  // const dateInfo = formatDate(event.dateDisplay);
+  const isSaleStarted = new Date(event.saleStartTime) <= new Date();
 
   return (
     <div className="group w-full h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 hover:-translate-y-1 flex flex-col">
@@ -43,21 +36,30 @@ export default function EventCard({ event }: EventCardProps) {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-
         {/* Genre Badge */}
         {/* <div className={`absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg`}>
           {event.eventSoldOut?("Sold Out"):(null)}
         </div> */}
-        <div className={`absolute top-4 right-4 ${event.eventSoldOut?("bg-red-500"):("bg-blue-600")} text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg`}>
-          {event.eventSoldOut?("Sold out"):(event.genre)}
+        <div
+          className={`absolute top-4 right-4 ${
+            event.eventSoldOut ? "bg-red-500" : "bg-blue-600"
+          } text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg`}
+        >
+          {event.eventSoldOut ? "Sold out" : event.genre}
         </div>
 
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-            <FaTicketAlt className="inline mr-2" />
-            Book Now
-          </div>
+          {isSaleStarted ? (
+            <div className="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+              <FaTicketAlt className="inline mr-2" />
+              Book Now
+            </div>
+          ) : (
+            <div className="bg-white text-green-500 px-6 py-3 rounded-full font-semibold text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+             <MdEvent  className="inline mr-2 size-5"/> Upcoming
+            </div>
+          )}
         </div>
       </div>
 

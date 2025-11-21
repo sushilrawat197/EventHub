@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { setPayMessage } from "../../../../slices/payTicketSlice";
 
 export default function BookingErrorPage() {
-    const dispatch=useAppDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const payMessage = useAppSelector((state) => state.pay.payMessege);
   //(payMessage);

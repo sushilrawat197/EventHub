@@ -12,6 +12,7 @@ import type { BookingResponse } from "../../interfaces/confirmBookingInterface";
 import { setLoading } from "../../slices/confirmBookingSlice";
 import type { payTickeResponse } from "../../interfaces/payTicketInterface";
 import { setPayMessage, setPayTicketLoading } from "../../slices/payTicketSlice";
+import { setEventsErrorMsg } from "../../slices/eventSlice";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 
@@ -79,7 +80,8 @@ export function reserveTicket(categories: CategorySelection[]) {
     } catch (error) {
 
       if (axios.isAxiosError(error)) {
-        alert(error.response?.data?.data?.categories || error.response?.data?.message)
+          dispatch(setEventsErrorMsg(error.response?.data?.data?.categories || error.response?.data?.message))
+        // alert(error.response?.data?.data?.categories || error.response?.data?.message)
 
         console.error("Axios error:", error.response);
       } else {

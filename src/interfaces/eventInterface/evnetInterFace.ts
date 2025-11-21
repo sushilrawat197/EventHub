@@ -47,6 +47,7 @@ export interface EventResponseBySearch {
   language: string;   // agar fix list hai (English, Hindi, etc.) to enum use kar sakte ho
   venueName: string;
   city: string;
+  saleStartTime:string;
   startDate: string;  // ISO date string
   endDate: string;    // ISO date string
   price: number;

@@ -12,16 +12,17 @@ export default function EventsErrorPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const eventErroMsg = useAppSelector((state) => state.events.eventErrorMsg);
+  const user = useAppSelector((state) => state.user.user?.userId);
   //(eventErroMsg);
 
- useEffect(() => {
-  if (!eventErroMsg) return;
+  useEffect(() => {
+    if (!eventErroMsg) return;
 
-  document.body.style.overflow = "hidden";
-  return () => {
-    document.body.style.overflow = "auto";
-  };
-}, [eventErroMsg]);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [eventErroMsg]);
 
   if (!eventErroMsg) return null;
 
@@ -50,7 +51,9 @@ export default function EventsErrorPage() {
         </div>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Booking Failed</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Booking Failed
+        </h2>
 
         {/* Message */}
         <p className="text-gray-700 text-base mb-6">{eventErroMsg}</p>
@@ -59,17 +62,20 @@ export default function EventsErrorPage() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           {location.pathname.includes("/ticket") ? (
             <>
-              <button
-                onClick={handleLogin}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-semibold shadow hover:shadow-md transition-all flex items-center justify-center gap-2"
-              >
-                Login to Continue
-              </button>
+              {!user && (
+                <button
+                  onClick={handleLogin}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-semibold shadow hover:shadow-md transition-all flex items-center justify-center gap-2"
+                >
+                  Login to Continue
+                </button>
+              )}
+
               <button
                 onClick={handleClose}
                 className="flex-1 border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-3 rounded-xl font-semibold transition-all"
               >
-                Cancel
+               {!user?("Cancel"):("OK")}
               </button>
             </>
           ) : (

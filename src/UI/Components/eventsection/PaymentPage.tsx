@@ -61,8 +61,8 @@ export default function PaymentPage() {
       setcPayloading(true)
     if (bookingId) {
       
-      const res = dispatch(cancelBooking(bookingId));
-      if ((await res).success) {
+      const res = await dispatch(cancelBooking(bookingId));
+      if ( res.success) {
         navigate(`/events/${contentName}/${eventId}/booking/ticket`, {
           replace: true,
         });

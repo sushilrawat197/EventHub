@@ -269,6 +269,7 @@ const ReviewAndPay = () => {
                 </div>
               </div>
 
+
               {/* Price Breakdown */}
               <div className="space-y-3 mb-4">
                 <h4 className="text-base font-bold text-gray-900 mb-3">Price Breakdown</h4>
@@ -289,6 +290,7 @@ const ReviewAndPay = () => {
                   </div>
                 </div>
               </div>
+
 
               {/* Consent + Button */}
               <div className="bg-gray-50 rounded-xl p-3 mb-4">
@@ -357,5 +359,6 @@ const ReviewAndPay = () => {
     </>
   );
 };
+
 
 export default ReviewAndPay;
