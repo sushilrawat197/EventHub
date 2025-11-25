@@ -21,6 +21,7 @@ export function listAllShowsByEvent(eventId: string | undefined) {
         withCredentials: true,
       });
 
+      
       // console.log("LIST ALL SHOWS RESPONSE:", response.data);
 
       if (response.data.statusCode === 200) {
