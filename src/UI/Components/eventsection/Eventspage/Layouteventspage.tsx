@@ -282,12 +282,16 @@ export default function Layouteventspage() {
     ).map(([venueId, venueName]) => ({ venueId, venueName }));
   }, [shows]);
 
+
   // ------------------ MEMOIZED RELATED EVENTS ------------------
   const sliderEvents = useMemo(() => {
     return allEvents.filter(
       (e) => e?.genre === event?.genre && String(e?.eventId) !== eventId
     );
   }, [allEvents, event?.genre, eventId]);
+
+  console.log("SLIDER Events....",sliderEvents);
+
 
   // ------------------ MEMOIZED DETAILS ------------------
   const details = useMemo(

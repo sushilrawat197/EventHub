@@ -38,6 +38,7 @@ import { clearUser } from "../../slices/userSlice";
 import { getCurrentUser } from "./userApi";
 import type { AppDispatch } from "../../reducers/store";
 import { listCitiesByRegion } from "./location/cityApi";
+import { scheduleTokenRefresh } from "../tokenManager";
 
 
 type SendOtpApiResponse = {
@@ -49,6 +50,7 @@ type SendOtpApiResponse = {
     setPWDTokenExpiry: string;
   };
 };
+
 
 
 // VARIFY_SIGNUP_OTP_API
@@ -565,7 +567,7 @@ export function signIn(
       const data = response.data;
       // console.log("LOGIN API RESPONSE............", data);
 
-      const { accessTokenExpiry, refreshTokenExpiry, tempToken, pwdChangeToken } = data.data;
+      const { refreshTokenExpiry, tempToken, pwdChangeToken } = data.data;
 
       // const aceessTokenExpirTime = new Date(accessTokenExpiry);
       // const refrehTokenExpirTime = new Date(refreshTokenExpiry);
@@ -575,8 +577,15 @@ export function signIn(
       // console.log("accessTokenExpiry Time :", aceessTokenExpirTime.toLocaleTimeString());
       // console.log("refreshTokenExpiry Time :", refrehTokenExpirTime.toLocaleTimeString());
 
+      
       if (data.statusCode === 200) {
-        dispatch(getCurrentUser());
+        
+      await  dispatch(getCurrentUser());
+         const accessTokenExpiry = response.data.data.refreshTokenExpiry;
+        if (accessTokenExpiry) {
+          dispatch(scheduleTokenRefresh(accessTokenExpiry));
+        }
+
         localStorage.setItem("accessTokenExpiry", accessTokenExpiry);
         localStorage.setItem("refreshTokenExpiry", refreshTokenExpiry);
 

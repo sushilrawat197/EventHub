@@ -15,7 +15,7 @@ import { Route, Routes } from "react-router-dom";
 import { useAppDispatch } from "./reducers/hooks";
 import { useEffect } from "react";
 const Layout = lazy(() => import("./UI/Components/eventsection/Layout"));
-import { refreshAccessToken } from "./services/operations/refreshToken";
+
 import Layouteventspage from "./UI/Components/eventsection/Eventspage/Layouteventspage";
 import HelpAndSupport from "./UI/Components/HelpAndSupport";
 // import BookingFlow from "./UI/Components/eventsection/Eventsprocess/BookingFlow";
@@ -32,6 +32,7 @@ import PaymentPage from "./UI/Components/eventsection/PaymentPage";
 import BookingConfirmed from "./UI/Components/common/BookingConfirmPage";
 import BookingOrder from "./UI/Components/dasboard/BookingOrder";
 import RateAndReview from "./UI/Components/common/RateAndReview";
+import { refreshAccessToken } from "./services/tokenManager";
 
 
 function App() {
@@ -39,13 +40,36 @@ function App() {
 
   const [bootLoading, setBootLoading] = useState(true); // ✅ app booting state
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   async function init() {
+  //     await dispatch(refreshAccessToken()); // refresh token call
+  //     setBootLoading(false); // boot complete
+  //   }
+  //   init();
+  // }, [dispatch]);
+
+
+    useEffect(() => {
     async function init() {
-      await dispatch(refreshAccessToken()); // refresh token call
-      setBootLoading(false); // boot complete
+      try {
+        console.log("Attempting to restore session...");
+        const success = await dispatch(refreshAccessToken());
+
+        if (success) {
+          console.log("✅ Session restored successfully");
+        } else {
+          console.log("ℹ️ No active session found");
+        }
+      } catch (error) {
+        console.error("❌ Boot initialization failed:", error);
+      } finally {
+        setBootLoading(false);
+      }
     }
+
     init();
   }, [dispatch]);
+
 
   if (process.env.NODE_ENV === "production") {
     console.log = function () {};
