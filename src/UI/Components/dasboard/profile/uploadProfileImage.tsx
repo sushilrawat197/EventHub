@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { updateUserProfilPicture } from "../../../../services/operations/userApi";
 import { GoPersonFill } from "react-icons/go";
+import { IoClose } from "react-icons/io5";
 
 type Props = {
   setEditImage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -53,8 +54,15 @@ export default function UploadProfileImage({ setEditImage }: Props) {
 
 
   return (
-    <div className="bg-gradient-to-b from-white to-sky-50 shadow-lg border border-sky-100 flex flex-col items-center px-6 py-8 rounded-2xl gap-5 w-[280px] md:w-[320px] transition-transform duration-300 hover:scale-[1.02] z-50">
+    <div className="bg-gradient-to-b relative from-white to-sky-50 shadow-lg border border-sky-100 flex flex-col items-center px-6 py-8 rounded-2xl gap-5 w-[280px] md:w-[320px] transition-transform duration-300 hover:scale-[1.02] z-50">
       {/* Profile Image with Hover Glow */}
+
+      <button
+        onClick={() => setEditImage(false)}
+        className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 bg-white rounded-full p-1 shadow-md"
+      >
+        <IoClose className="text-red-400" size={20} />
+      </button>
 
       <div className="relative group">
         <div className="border-4 border-white rounded-full h-24 w-24 flex justify-center items-center overflow-hidden shadow-md transition-shadow duration-300 group-hover:shadow-sky-300/50">
@@ -87,7 +95,7 @@ export default function UploadProfileImage({ setEditImage }: Props) {
               />
             ) : (
               <div className="animate-none flex items-center justify-center">
-                <GoPersonFill className="text-sky-500 " size={40} />
+                <GoPersonFill className="text-blue-600 " size={40} />
               </div>
             )}
           </button>
@@ -97,7 +105,7 @@ export default function UploadProfileImage({ setEditImage }: Props) {
 
         <div
           onClick={handleSelectClick}
-          className="absolute z-50 bottom-0 right-0 bg-sky-500 text-white text-xs px-2 py-1 rounded-full shadow hover:bg-sky-600 transition-colors"
+          className="absolute z-50 bottom-0 right-0 bg-blue-600 text-white text-xs px-2 py-1 rounded-full shadow hover:bg-sky-600 transition-colors"
         >
           Edit
         </div>
@@ -111,7 +119,7 @@ export default function UploadProfileImage({ setEditImage }: Props) {
         <button
           onClick={uploadHandler}
           type="button"
-          className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg shadow-sm transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition-colors"
         >
           Save picture
         </button>

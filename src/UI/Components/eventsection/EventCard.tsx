@@ -45,7 +45,7 @@ export default function EventCard({ event }: EventCardProps) {
             event.eventSoldOut ? "bg-red-500" : "bg-blue-600"
           } text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg`}
         >
-          {event.eventSoldOut ? "Sold out" : event.genre}
+          {event.eventSoldOut ? "SOLD OUT" : event.genre}
         </div>
 
         {/* Hover Overlay */}

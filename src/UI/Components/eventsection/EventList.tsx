@@ -224,6 +224,7 @@ export default function EventList() {
         </div>
       </div>
 
+
       {/* Events Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
         {events.length > 0 ? (
@@ -274,18 +275,6 @@ export default function EventList() {
               <p className="text-gray-600 mb-6">
                 Try adjusting your filters to see more events
               </p>
-              {/* <button 
-                onClick={() => {
-                  dispatch(setCategories([]));
-                  dispatch(setLanguages([]));
-                  dispatch(setDates([]));
-                  dispatch(setPrices([]));
-                  dispatch(listEventsBySearch());
-                }}
-                className="bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors"
-              >
-                Clear All Filters
-              </button> */}
             </div>
           </div>
         )}
