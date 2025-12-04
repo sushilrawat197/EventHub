@@ -36,6 +36,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
 
   const categoryOptions = [
     "FOOD",
+    "KIDS EVENT",
     "SPORTS",
     "GALA_DINNER",
     "COMEDY",
