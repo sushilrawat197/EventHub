@@ -82,6 +82,7 @@ const Navbar: React.FC = () => {
      dispatch(setFilter({ key: "eventName", value: "" }));
   }, [navigate,dispatch]);
 
+
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {

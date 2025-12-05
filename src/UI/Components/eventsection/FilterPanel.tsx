@@ -329,7 +329,7 @@ export default function FilterPanel() {
 
   const categoryOptions: string[] = [
     "FOOD",
-    "KIDS EVENT",
+    "KIDS_EVENT",
     "SPORTS",
     "GALA_DINNER",
     "COMEDY",
@@ -346,7 +346,7 @@ export default function FilterPanel() {
     "DATE RANGE",
   ];
 
-  const languageOptions: string[] = ["English"];
+  const languageOptions: string[] = ["English","Sesotho"];
 
   const priceOptions: string[] = ["0 - 500", "501 - 2000", "Above 2000"];
 
