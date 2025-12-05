@@ -28,6 +28,8 @@ const Navbar: React.FC = () => {
   const cityRef = useRef<HTMLDivElement>(null);
 
   const cities = useAppSelector((state) => state?.cities.data || []);
+
+
   const [selectedCity, setSelectedCityNav] = useState("Maseru");
 
   // //(cities)
@@ -70,7 +72,7 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     dispatch(listCitiesByRegion());
-    dispatch(setFilter({ key: "cityId", value: 1 }))
+    dispatch(setFilter({ key: "cityId", value: 11 }))
   }, [dispatch]);
 
 
