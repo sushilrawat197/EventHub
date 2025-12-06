@@ -19,14 +19,13 @@ import ScrollPagination from "../../Components/common/ScrollPagination";
 
 const categoryOptions: string[] = [
   "FOOD",
-  "KIDS EVENT",
+  "KIDS_EVENT",
   "SPORTS",
   "GALA_DINNER",
   "COMEDY",
   "SEMINARS",
   "FESTIVAL",
   "WORKSHOP",
-  "OTHER",
 ];
 
 export default function EventList() {

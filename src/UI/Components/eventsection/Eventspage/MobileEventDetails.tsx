@@ -351,7 +351,7 @@ export default function MobileEventDetailsCard({
 
       <div className="flex justify-between items-center py-3 border-t border-gray-200 fixed bottom-0 left-0 right-0 bg-white w-full px-4 z-40 shadow-lg">
         <div className="flex flex-col">
-          <p className="text-lg font-bold text-green-600">M{price} Onwards</p>
+          <p className="text-lg font-bold text-green-600">M{price}</p>
           {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
         </div>
 
