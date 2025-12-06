@@ -22,7 +22,6 @@ interface FilterItemProps {
   filterKey: "categories" | "languages" | "dates" | "prices";
 }
 
-
 const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   const dispatch = useAppDispatch();
   const selectedCategories = useAppSelector((state) => state.filter.categories);
@@ -40,8 +39,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
 
   const selectedFilters = useAppSelector((state) => state.filter[filterKey]);
 
-  
-  
   const handleOptionClick = (opt: string) => {
     if (opt === "DATE RANGE") {
       setShowCalendar(true);
@@ -77,8 +74,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
       dispatch(listEventsBySearch());
     }
 
-      
-
     if (filterKey === "prices") {
       const mappedFilters = newFilters.map((f) => {
         if (f === "0 - 500") return { min: 0, max: 500 };
@@ -102,40 +97,39 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
   };
 
   // Clear button
-// Clear button
-const handleClear = () => {
-  setShowCalendar(false);
+  // Clear button
+  const handleClear = () => {
+    setShowCalendar(false);
 
-  // Calendar values clear
-  dispatch(setStartDate(null));
-  dispatch(setEndDate(null));
-  dispatch(setFilter({ key: "startDate", value: null }));
-  dispatch(setFilter({ key: "endDate", value: null }));
+    // Calendar values clear
+    dispatch(setStartDate(null));
+    dispatch(setEndDate(null));
+    dispatch(setFilter({ key: "startDate", value: null }));
+    dispatch(setFilter({ key: "endDate", value: null }));
 
-  if (filterKey === "categories") {
-    dispatch(setCategories([]));
-    dispatch(setFilter({ key: "genres", value: [] }));
-  }
+    if (filterKey === "categories") {
+      dispatch(setCategories([]));
+      dispatch(setFilter({ key: "genres", value: [] }));
+    }
 
-  if (filterKey === "languages") {
-    dispatch(setLanguages([]));
-    dispatch(setFilter({ key: "languages", value: [] }));
-  }
+    if (filterKey === "languages") {
+      dispatch(setLanguages([]));
+      dispatch(setFilter({ key: "languages", value: [] }));
+    }
 
-  if (filterKey === "dates") {
-    dispatch(setDates([]));
-    dispatch(setFilter({ key: "datePresets", value: [] }));
-  }
+    if (filterKey === "dates") {
+      dispatch(setDates([]));
+      dispatch(setFilter({ key: "datePresets", value: [] }));
+    }
 
-  if (filterKey === "prices") {
-    dispatch(setPrices([]));
-    dispatch(setFilter({ key: "priceGroups", value: [] }));
-  }
+    if (filterKey === "prices") {
+      dispatch(setPrices([]));
+      dispatch(setFilter({ key: "priceGroups", value: [] }));
+    }
 
-  // ✅ Clear ke baad events dobara fetch karo
-  dispatch(listEventsBySearch());
-};
-
+    // ✅ Clear ke baad events dobara fetch karo
+    dispatch(listEventsBySearch());
+  };
 
   // Calendar close on outside click
   useEffect(() => {
@@ -187,8 +181,6 @@ const handleClear = () => {
     selectedPrice,
   ]);
 
-
-
   // ✅ Yaha automatic API call jab dono date select ho jaye
   useEffect(() => {
     if (startDate && endDate) {
@@ -206,22 +198,54 @@ const handleClear = () => {
         <div className="flex items-center gap-3">
           <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
             {title === "Date" && (
-              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <svg
+                className="w-4 h-4 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
             )}
             {title === "Languages" && (
-              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+              <svg
+                className="w-4 h-4 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                />
               </svg>
             )}
             {title === "Categories" && (
-              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              <svg
+                className="w-4 h-4 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
               </svg>
             )}
             {title === "Price" && (
-              <span className="w-4 h-4 text-blue-600 font-bold text-sm flex items-center justify-center">M</span>
+              <span className="w-4 h-4 text-blue-600 font-bold text-sm flex items-center justify-center">
+                M
+              </span>
             )}
           </div>
           <span className="font-semibold text-gray-900 text-base">{title}</span>
@@ -242,13 +266,20 @@ const handleClear = () => {
           >
             Clear
           </button>
-          <svg 
-            className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+              open ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </div>
       </div>
@@ -268,8 +299,8 @@ const handleClear = () => {
                 }`}
               >
                 {opt
-                ?.replace(/_/g, " ")
-                .replace(/\b\w/g, (char) => char.toUpperCase())}
+                  ?.replace(/_/g, " ")
+                  .replace(/\b\w/g, (char) => char.toUpperCase())}
               </button>
             ))}
           </div>
@@ -304,7 +335,6 @@ const handleClear = () => {
                 dispatch(setFilter({ key: "endDate", value: null }));
               }
 
-
               if (start && end && !selectedDates.includes("DATE RANGE")) {
                 dispatch(
                   setDates([
@@ -338,17 +368,15 @@ export default function FilterPanel() {
     "SEMINARS",
     "FESTIVAL",
     "WORKSHOP",
+    "LIFESTYLE",
+    "OUTDOOR",
+    "INDOOR",
     "OTHER",
   ];
 
-  const dateOptions: string[] = [
-    "TODAY",
-    "TOMORROW",
-    "WEEKEND",
-    "DATE RANGE",
-  ];
+  const dateOptions: string[] = ["TODAY", "TOMORROW", "WEEKEND", "DATE RANGE"];
 
-  const languageOptions: string[] = ["English","Sesotho"];
+  const languageOptions: string[] = ["English", "Sesotho"];
 
   const priceOptions: string[] = ["0 - 500", "501 - 2000", "Above 2000"];
 
@@ -359,8 +387,18 @@ export default function FilterPanel() {
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              <svg
+                className="w-5 h-5 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                />
               </svg>
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Filters</h2>
@@ -368,9 +406,21 @@ export default function FilterPanel() {
 
           <div className="space-y-4">
             <FilterItem title="Date" options={dateOptions} filterKey="dates" />
-            <FilterItem title="Languages" options={languageOptions} filterKey="languages" />
-            <FilterItem title="Categories" options={categoryOptions} filterKey="categories" />
-            <FilterItem title="Price" options={priceOptions} filterKey="prices" />
+            <FilterItem
+              title="Languages"
+              options={languageOptions}
+              filterKey="languages"
+            />
+            <FilterItem
+              title="Categories"
+              options={categoryOptions}
+              filterKey="categories"
+            />
+            <FilterItem
+              title="Price"
+              options={priceOptions}
+              filterKey="prices"
+            />
           </div>
         </div>
 
@@ -380,25 +430,53 @@ export default function FilterPanel() {
           <div className="space-y-3">
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
               <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5z" />
+                <svg
+                  className="w-5 h-5 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 17h5l-5 5v-5z"
+                  />
                 </svg>
               </div>
               <div>
-                <div className="font-medium text-gray-900 text-sm">Trending Events</div>
-                <div className="text-xs text-gray-500">Most popular this week</div>
+                <div className="font-medium text-gray-900 text-sm">
+                  Trending Events
+                </div>
+                <div className="text-xs text-gray-500">
+                  Most popular this week
+                </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-5 h-5 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
               <div>
-                <div className="font-medium text-gray-900 text-sm">Last Minute</div>
-                <div className="text-xs text-gray-500">Events starting soon</div>
+                <div className="font-medium text-gray-900 text-sm">
+                  Last Minute
+                </div>
+                <div className="text-xs text-gray-500">
+                  Events starting soon
+                </div>
               </div>
             </div>
           </div>
@@ -422,25 +500,47 @@ export default function FilterPanel() {
           <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                  />
                 </svg>
               </div>
               <h2 className="text-xl font-bold">Filters</h2>
             </div>
-            <button 
+            <button
               onClick={() => setOpenMobileFilters(false)}
               className="p-2 hover:bg-white/20 rounded-lg transition-colors"
             >
               <IoClose size={24} />
             </button>
           </div>
-          
+
           <div className="p-6 space-y-4 overflow-y-auto h-full">
             <FilterItem title="Date" options={dateOptions} filterKey="dates" />
-            <FilterItem title="Languages" options={languageOptions} filterKey="languages" />
-            <FilterItem title="Categories" options={categoryOptions} filterKey="categories" />
-            <FilterItem title="Price" options={priceOptions} filterKey="prices" />
+            <FilterItem
+              title="Languages"
+              options={languageOptions}
+              filterKey="languages"
+            />
+            <FilterItem
+              title="Categories"
+              options={categoryOptions}
+              filterKey="categories"
+            />
+            <FilterItem
+              title="Price"
+              options={priceOptions}
+              filterKey="prices"
+            />
           </div>
         </div>
       </div>

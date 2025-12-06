@@ -26,6 +26,10 @@ const categoryOptions: string[] = [
   "SEMINARS",
   "FESTIVAL",
   "WORKSHOP",
+  "LIFESTYLE",
+  "OUTDOOR",
+  "INDOOR",
+  "OTHER",
 ];
 
 export default function EventList() {
@@ -196,7 +200,7 @@ export default function EventList() {
     <div className="space-y-4">
       {/* Filter Tags */}
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <div className="overflow-x-auto scrollbar-hide">
+        <div className="overflow-x-auto modern-scrollbar py-3">
           <div className="flex flex-nowrap gap-2 min-w-max">
             {getAllFilterOptions().map((tag, i) => (
               <button
@@ -217,15 +221,14 @@ export default function EventList() {
                     : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md"
                 }`}
               >
-                 {tag
-                ?.replace(/_/g, " ")
-                .replace(/\b\w/g, (char) => char.toUpperCase())}
+                {tag
+                  ?.replace(/_/g, " ")
+                  .replace(/\b\w/g, (char) => char.toUpperCase())}
               </button>
             ))}
           </div>
         </div>
       </div>
-
 
       {/* Events Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">

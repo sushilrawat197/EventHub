@@ -84,3 +84,27 @@
   animation-delay: 4s;
 }
 
+/* Modern Thin Scrollbar */
+.modern-scrollbar::-webkit-scrollbar {
+  height: 6px; /* Thin horizontal scrollbar */
+}
+
+.modern-scrollbar::-webkit-scrollbar-track {
+  background: #e5e7eb; /* Light gray */
+  border-radius: 10px;
+}
+
+.modern-scrollbar::-webkit-scrollbar-thumb {
+  background: #9ca3af; /* Gray thumb */
+  border-radius: 10px;
+}
+
+.modern-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280; /* Darker on hover */
+}
+
+/* Firefox */
+.modern-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #e5e7eb;
+}

@@ -187,7 +187,8 @@ const UpcomingEvents: React.FC = () => {
                         event.eventSoldOut ? "bg-red-500" : "bg-blue-600"
                       } text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg`}
                     >
-                      {event.eventSoldOut ? "Sold out" : event.genre}
+                      {event.eventSoldOut ? "Sold out" : event.genre?.replace(/_/g, " ")
+                .replace(/\b\w/g, (char) => char.toUpperCase())}
                     </div>
 
                     {/* Gradient Overlay */}

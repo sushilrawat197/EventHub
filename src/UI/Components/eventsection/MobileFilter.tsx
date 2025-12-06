@@ -44,6 +44,9 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
     "FESTIVAL",
     "WORKSHOP",
     "OTHER",
+    "LIFESTYLE",
+    "OUTDOOR",
+    "INDOOR"
   ];
 
   const filterSections = [
