@@ -47,7 +47,7 @@ export function listCitiesByRegion() {
     try {
       const response = await apiConnector<OtherApiResponse<citiesResponse[]>>({
         method: "GET",
-        url: `${BASE_URL}/ticketcore-api/api/v1/regions/1/cities`,
+        url: `${BASE_URL}/ticketcore-api/api/v1/regions/2/cities`,
         headers: {
           "X-Client-Source": "WEB",
         },
