@@ -10,7 +10,6 @@ interface EventCardProps {
 export default function EventCard({ event }: EventCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
 
-
   const isSaleStarted = new Date(event.saleStartTime) <= new Date();
 
   return (
@@ -45,7 +44,11 @@ export default function EventCard({ event }: EventCardProps) {
             event.eventSoldOut ? "bg-red-500" : "bg-blue-600"
           } text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg`}
         >
-          {event.eventSoldOut ? "SOLD OUT" : event.genre}
+          {event.eventSoldOut
+            ? "SOLD OUT"
+            : event.genre
+                .replace(/_/g, " ")
+                .replace(/\b\w/g, (char) => char.toUpperCase())}
         </div>
 
         {/* Hover Overlay */}
@@ -57,7 +60,7 @@ export default function EventCard({ event }: EventCardProps) {
             </div>
           ) : (
             <div className="bg-white text-green-500 px-6 py-3 rounded-full font-semibold text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-             <MdEvent  className="inline mr-2 size-5"/> Upcoming
+              <MdEvent className="inline mr-2 size-5" /> Upcoming
             </div>
           )}
         </div>

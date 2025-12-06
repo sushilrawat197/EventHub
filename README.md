@@ -67,3 +67,7 @@ export default tseslint.config([
   },
 ])
 ```
+
+
+city id is hard coded in navbar
+region id is hardcode in list city by region
