@@ -211,6 +211,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
             <div key={idx}>
               <h3 className="bg-gray-200 px-3 py-2 font-semibold text-[14px]">
                 {section.title}
+                
               </h3>
               <div>
                 {section.items.map((item, i) => {
@@ -232,7 +233,8 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
                         isSelected ? "bg-sky-100 text-sky-600 font-medium" : ""
                       }`}
                     >
-                      <span>{item.label}</span>
+                      <span>{item.label?.replace(/_/g, " ")
+                .replace(/\b\w/g, (char) => char.toUpperCase())}</span>
                       {item.right && item.right}
                     </div>
                   );

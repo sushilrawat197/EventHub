@@ -267,7 +267,9 @@ const handleClear = () => {
                     : "bg-gray-100 text-gray-800 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md"
                 }`}
               >
-                {opt}
+                {opt
+                ?.replace(/_/g, " ")
+                .replace(/\b\w/g, (char) => char.toUpperCase())}
               </button>
             ))}
           </div>

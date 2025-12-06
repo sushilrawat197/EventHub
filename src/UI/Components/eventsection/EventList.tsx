@@ -217,7 +217,9 @@ export default function EventList() {
                     : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md"
                 }`}
               >
-                {tag}
+                 {tag
+                ?.replace(/_/g, " ")
+                .replace(/\b\w/g, (char) => char.toUpperCase())}
               </button>
             ))}
           </div>
