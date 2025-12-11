@@ -105,7 +105,7 @@ const Footer: React.FC = () => {
                 <div>
                   <p className="text-white font-medium text-sm">Email</p>
                   <a href="mailto:support@eventhub.com" className="text-gray-300 text-sm hover:text-white transition-colors">
-                    support@mytag.co.ls
+                    mytagtankiso@gmail.com
                   </a>
                 </div>
               </div>
@@ -117,7 +117,8 @@ const Footer: React.FC = () => {
                 <div>
                   <p className="text-white font-medium text-sm">Phone</p>
                   <a href="tel:+26663820303" className="text-gray-300 text-sm hover:text-white transition-colors">
-                    +266 63820303
+                    +266 63820303,
+                    +266 5787 5950
                   </a>
                 </div>
               </div>

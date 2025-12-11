@@ -26,13 +26,13 @@ const ContactPage: React.FC = () => {
     {
       icon: FaEnvelope,
       title: "Email Us",
-      details: "support@mytag.co.ls",
+      details: "mytagtankiso@gmail.com",
       description: "We'll respond within 24 hours"
     },
     {
       icon: FaPhone,
       title: "Call Us",
-      details: "+266 63820303",
+      details: "+266 63820303, +266 5787 5950",
       description: "Mon-Fri from 8AM to 6PM"
     },
     {
