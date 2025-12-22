@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
 import {
   cancelBooking,
+  cardPay,
   cPayPayment,
+  getPaymentStatus,
   normalCPayInitiate,
   ticketPay,
 } from "../../../services/operations/ticketCategory";
@@ -12,14 +14,21 @@ import BookingErrorPage from "./Eventsprocess/BookingError";
 import { ClipLoader } from "react-spinners";
 import ScrollToTop from "../common/ScrollToTop";
 import { toast } from "react-toastify";
+import { setPayMessage } from "../../../slices/payTicketSlice";
 
 export default function PaymentPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-    const { contentName, eventId} = useParams();
+  const [showCardIframe, setShowCardIframe] = useState(false);
+  const [cardIframeHtml, setCardIframeHtml] = useState<string | null>(null);
+  const [paymentId, setPaymentId] = useState<number | null>(null);
 
-  const [selectedMethod, setSelectedMethod] = useState("Mpesa");
+  const { contentName, eventId } = useParams();
+
+  const [selectedMethod, setSelectedMethod] = useState<
+    "Mpesa" | "Cpay" | "CardPayment"
+  >("Mpesa");
   const [mobile, setMobile] = useState("");
   const [cpayLoading, setcPayloading] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -27,7 +36,7 @@ export default function PaymentPage() {
   const reserveTicket = useAppSelector((state) => state.reserveTicket.booking);
   const bookingId = useAppSelector((state) => state.ticket.bookingId);
   const paymentLoading = useAppSelector((state) => state.pay.payTicketLoading);
-  const [paymentVerifyLoading,setPaymentVerifyLoading] = useState(false);
+  const [paymentVerifyLoading, setPaymentVerifyLoading] = useState(false);
 
   const [showOtpPopup, setShowOtpPopup] = useState(false);
   const [otp, setOtp] = useState("");
@@ -56,51 +65,52 @@ export default function PaymentPage() {
   //   dispatch(ticketPay(bookingId, mobile, navigate));
   // }
 
-
-    async function backHandler() {
-      setcPayloading(true)
+  async function backHandler() {
+    setcPayloading(true);
     if (bookingId) {
-      
       const res = await dispatch(cancelBooking(bookingId));
-      if ( res.success) {
+      if (res.success) {
         navigate(`/events/${contentName}/${eventId}/booking/ticket`, {
           replace: true,
         });
       }
     }
-    setcPayloading(false)
+    setcPayloading(false);
   }
 
-
   async function submitHandler() {
-
-
-
     if (selectedMethod === "Cpay") {
-
       setcPayloading(true);
-      
-      const res = await normalCPayInitiate(bookingId, mobile,dispatch);
-      if (res.success) {
-        setShowOtpPopup(true); // <-- Open popup
-      }
-      setcPayloading(false)
+      const res = await normalCPayInitiate(bookingId, mobile, dispatch);
+      if (res.success) setShowOtpPopup(true);
+      setcPayloading(false);
+      return;
+    }
 
-    } else if (selectedMethod === "Mpesa") {
+    if (selectedMethod === "Mpesa") {
       dispatch(ticketPay(bookingId, mobile, navigate));
+      return;
+    }
+
+    if (selectedMethod === "CardPayment") {
+      const res = await dispatch(cardPay(bookingId, mobile));
+
+      if (res.success && res.iframeHtml && res.paymentId) {
+        setCardIframeHtml(res.iframeHtml);
+        setPaymentId(res.paymentId);
+        setShowCardIframe(true);
+      }
     }
   }
 
-
   async function verifyOtpHandler() {
-    
     if (!otp.trim()) {
       toast.error("Please enter OTP");
       return;
     }
 
-    setPaymentVerifyLoading(true)
-    await cPayPayment(bookingId, mobile, otp, navigate,dispatch);
+    setPaymentVerifyLoading(true);
+    await cPayPayment(bookingId, mobile, otp, navigate, dispatch);
     // if (!res.success) {
     //   toast.error(res.message);
     // }
@@ -108,6 +118,84 @@ export default function PaymentPage() {
     setPaymentVerifyLoading(false);
   }
 
+  useEffect(() => {
+    if (!paymentId) return;
+
+    let isActive = true;
+
+    const POLL_INTERVAL = 5000; // 5 seconds
+    const TIMEOUT_DURATION = 1 * 60 * 1000; // 2 minutes
+
+    // ⏱ Timeout
+    const timeoutId = setTimeout(() => {
+      if (!isActive) return;
+
+      isActive = false;
+      clearInterval(intervalId);
+
+      setShowCardIframe(false);
+      dispatch(setPayMessage("Payment timed out. Please try again."));
+      // toast.error("Payment timed out. Please try again.");
+    }, TIMEOUT_DURATION);
+
+    // 🔁 Poll
+    const intervalId = setInterval(async () => {
+      if (!isActive) return;
+
+      try {
+        const res = await getPaymentStatus(paymentId);
+        const data = res.data.data;
+
+        // ✅ SUCCESS CONDITION
+        if (data.status === "CONFIRMED" || data.payment?.status === "SUCCESS") {
+          isActive = false;
+          clearInterval(intervalId);
+          clearTimeout(timeoutId);
+
+          setShowCardIframe(false);
+
+          navigate(`/order/${data.bookingId}`, {
+            replace: true,
+          });
+          return;
+        }
+
+        // ❌ FAILURE CONDITION
+        if (data.status === "FAILED" || data.payment?.status === "FAILED") {
+          isActive = false;
+          clearInterval(intervalId);
+          clearTimeout(timeoutId);
+          setShowCardIframe(false);
+          dispatch(setPayMessage(res.data.message));
+          // toast.error("Payment failed. Please try again.");
+          return;
+        }
+      } catch (error) {
+        console.error("Polling error", error);
+      }
+    }, POLL_INTERVAL);
+
+    return () => {
+      isActive = false;
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+    };
+  }, [paymentId, navigate]);
+
+  useEffect(() => {
+    if (showCardIframe) {
+      // 🔒 Lock background scroll
+      document.body.style.overflow = "hidden";
+    } else {
+      // 🔓 Restore scroll
+      document.body.style.overflow = "";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showCardIframe]);
 
   useEffect(() => {
     if (!bookingId) {
@@ -132,6 +220,25 @@ export default function PaymentPage() {
 
   return (
     <div className="min-h-[calc(100vh-200px)] bg-gradient-to-br from-gray-50 to-blue-50">
+      {showCardIframe && cardIframeHtml && (
+        <div className="fixed inset-0 z-50 bg-white overflow-hidden">
+          <div
+            className="w-screen h-screen"
+            dangerouslySetInnerHTML={{ __html: cardIframeHtml }}
+          />
+
+          <style>
+            {`
+        iframe {
+          width: 100vw !important;
+          height: 100vh !important;
+          border: none !important;
+        }
+      `}
+          </style>
+        </div>
+      )}
+
       <ScrollToTop />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <BookingErrorPage />
@@ -158,40 +265,34 @@ export default function PaymentPage() {
                    focus:border-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none bg-white shadow-sm"
               />
 
-
               {/* BUTTONS */}
               <div className="flex items-center justify-end gap-2   mt-6">
                 <button
-                disabled={cpayLoading}
+                  disabled={cpayLoading}
                   onClick={() => {
                     // setShowOtpPopup(false);
                     backHandler();
                   }}
                   className="px-7 py-3  rounded-xl bg-red-500 text-white hover:bg-red-600  font-medium transition hover:scale-[1.03]"
                 >
-                  {
-                    !cpayLoading ? ("Cancel"):("Processing...")
-                  }
+                  {!cpayLoading ? "Cancel" : "Processing..."}
                 </button>
-
 
                 <button
                   disabled={paymentVerifyLoading}
                   onClick={verifyOtpHandler}
                   className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg transition-transform hover:scale-[1.03]"
                 >
-
-                  {paymentVerifyLoading ?(
-                        <>
-                          <ClipLoader size={16} color="#ffffff" />
-                          <span>Processing Payment...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Verify & Pay</span>
-                        </>
-                      )}
-
+                  {paymentVerifyLoading ? (
+                    <>
+                      <ClipLoader size={16} color="#ffffff" />
+                      <span>Processing Payment...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Verify & Pay</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -249,7 +350,7 @@ export default function PaymentPage() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Payment Methods */}
-                {/* Payment Methods */}
+
                 <div>
                   <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <div className="w-5 h-5 bg-green-100 rounded-md flex items-center justify-center">
@@ -272,8 +373,10 @@ export default function PaymentPage() {
 
                   <div className="space-y-4">
                     {/* Modern Wallet Selection Cards */}
+
                     <div className="grid grid-cols-1 gap-3">
                       {/* M-Pesa Card */}
+
                       <div
                         className={`group relative p-4 border-2 rounded-2xl transition-all duration-300 cursor-pointer ${
                           selectedMethod === "Mpesa"
@@ -370,7 +473,6 @@ export default function PaymentPage() {
                       </div>
 
                       {/* C-Pay Card */}
-                      {/* C-Pay Card */}
                       <div
                         className={`group relative p-4 border-2 rounded-2xl transition-all duration-300 cursor-pointer ${
                           selectedMethod === "Cpay"
@@ -455,6 +557,92 @@ export default function PaymentPage() {
                           </div>
                         </div>
                       </div>
+
+                      {/* Card Payment */}
+                      <div
+                        className={`group relative p-4 border-2 rounded-2xl transition-all duration-300 cursor-pointer ${
+                          selectedMethod === "CardPayment"
+                            ? "border-purple-500 bg-purple-50 shadow-lg scale-105"
+                            : "border-gray-200 hover:border-purple-300 hover:shadow-md hover:scale-102"
+                        }`}
+                        onClick={() => setSelectedMethod("CardPayment")}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            {/* Card Payment Icon */}
+                            <div
+                              className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                                selectedMethod === "CardPayment"
+                                  ? "bg-purple-100"
+                                  : "bg-gray-100"
+                              }`}
+                            >
+                              <svg
+                                className="w-6 h-6"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <rect
+                                  x="2"
+                                  y="4"
+                                  width="20"
+                                  height="16"
+                                  rx="2"
+                                  fill={
+                                    selectedMethod === "CardPayment"
+                                      ? "#8B5CF6" // purple-500
+                                      : "#6B7280"
+                                  }
+                                />
+                                <path
+                                  d="M2 8H22"
+                                  stroke="white"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                />
+                                <circle cx="8" cy="14" r="2" fill="white" />
+                                <circle cx="16" cy="14" r="2" fill="white" />
+                              </svg>
+                            </div>
+
+                            <div>
+                              <h3 className="text-lg font-bold text-gray-900">
+                                Card Payment
+                              </h3>
+                              <div className="flex items-center gap-1 mt-1">
+                                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                                <span className="text-xs text-purple-600 font-medium">
+                                  Debit / Credit Card
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Selection Indicator */}
+                          <div
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                              selectedMethod === "CardPayment"
+                                ? "border-purple-500 bg-purple-500"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            {selectedMethod === "CardPayment" && (
+                              <svg
+                                className="w-3 h-3 text-white"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -513,24 +701,6 @@ export default function PaymentPage() {
                         />
                       </div>
                     </div>
-
-                    {/* <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-3">
-                      <div className="flex items-start gap-2">
-                        <input
-                          type="checkbox"
-                          defaultChecked
-                          className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <div>
-                          <p className="text-xs text-gray-700">
-                            <span className="font-semibold text-blue-600">
-                              Securely save Number.
-                            </span>{" "}
-                            Your Mobile Number is 100% safe with us.
-                          </p>
-                        </div>
-                      </div>
-                    </div> */}
 
                     <button
                       onClick={submitHandler}

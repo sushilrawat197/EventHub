@@ -25,6 +25,7 @@ const TicketSelection = () => {
   const { contentName, eventId } = useParams();
 
   const userId = useAppSelector((state) => state.user.user?.userId);
+  const [loading, setLoading] = useState(false);
 
   const [selectedTickets, setSelectedTickets] = useState<{
     [key: number]: number;
@@ -52,6 +53,7 @@ const TicketSelection = () => {
     }));
 
   async function clickHandler() {
+    if (loading) return;
     if (!userId) {
       dispatch(
         setEventsErrorMsg(
@@ -63,6 +65,7 @@ const TicketSelection = () => {
       window.alert("Add at least one ticket!");
     } else {
       try {
+         setLoading(true);
         const res = await dispatch(reserveTicket(categories));
 
         //("Reserve ticket details ", categories);
@@ -77,6 +80,8 @@ const TicketSelection = () => {
         }
       } catch (err) {
         console.error("Reservation failed", err);
+      } finally {
+        setLoading(false);
       }
     }
   }
@@ -256,38 +261,71 @@ const TicketSelection = () => {
 
         {/* Proceed Button */}
         <div className="flex justify-center">
-          <button
-            onClick={clickHandler}
-            className={`group px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center gap-3 ${
-              !userId
-                ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-                : categories.length === 0
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-            }`}
-            disabled={!!userId && categories.length === 0}
-          >
-            <span>
-              {!userId
-                ? "Login to Proceed"
-                : categories.length === 0
-                ? "Select Tickets"
-                : "Review & Pay"}
-            </span>
-            <svg
-              className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="flex justify-center">
+            <button
+              onClick={clickHandler}
+              disabled={loading || (!!userId && categories.length === 0)}
+              className={`group px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300
+      flex items-center gap-3
+      ${
+        loading
+          ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+          : !userId
+          ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+          : categories.length === 0
+          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+          : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+      }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
-          </button>
+              {loading ? (
+                <>
+                  <svg
+                    className="w-5 h-5 animate-spin"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    />
+                  </svg>
+                  Processing…
+                </>
+              ) : (
+                <>
+                  <span>
+                    {!userId
+                      ? "Login to Proceed"
+                      : categories.length === 0
+                      ? "Select Tickets"
+                      : "Review & Pay"}
+                  </span>
+                  <svg
+                    className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

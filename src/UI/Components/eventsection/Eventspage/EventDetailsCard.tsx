@@ -1,5 +1,4 @@
-
-import React from "react"; // ✅ FIX
+import React, { useState } from "react"; // ✅ FIX
 import {
   FaCalendarAlt,
   FaClock,
@@ -14,7 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
 import { checkEventAvailability } from "../../../../services/operations/eventsApi";
 import { setTicketInfo } from "../../../../slices/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../../../slices/eventSlice";
-import {  useMemo,  } from "react";
+import { useMemo } from "react";
 import EventsErrorPage from "../EventErrorsd";
 
 export interface EventDetailsCardProps {
@@ -42,7 +41,6 @@ function EventDetailsCard({
 }: EventDetailsCardProps) {
   // const [showCard, setShowCard] = useState(false);
 
-
   // ------------------ MEMOIZE DETAILS ARRAY ------------------
   const details = useMemo(() => {
     return [
@@ -59,11 +57,12 @@ function EventDetailsCard({
     ];
   }, [date, time, duration, ageLimit, languages, category, venue]);
 
-
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { eventId } = useParams();
+
+  const [loading, setLoading] = useState(false);
 
   const shows = useAppSelector((state) => state.shows.data);
 
@@ -75,56 +74,69 @@ function EventDetailsCard({
   }, [shows]);
 
   // ------------------ BOOK HANDLER (NO CHANGE) ------------------
+
   async function bookHandler() {
-    if (eventId) {
-      const result = await dispatch(checkEventAvailability(eventId));
-      if (result?.soldOut) {
-        dispatch(setEventsErrorMsg("All tickets are sold out for this event"));
-        return;
+    if (loading) return; // ⛔ prevent double click
+
+    try {
+      setLoading(true);
+
+      if (eventId) {
+        const result = await dispatch(checkEventAvailability(eventId));
+        if (result?.soldOut) {
+          dispatch(
+            setEventsErrorMsg("All tickets are sold out for this event")
+          );
+          return;
+        }
       }
-    }
 
-    if (uniqueShows.length > 1) {
-      navigate(`${location.pathname}/booking/venue`);
-      return;
-    }
-
-    // One show case
-    const currentShow = uniqueShows[0];
-    const showSchedules = shows.filter(
-      (s) =>
-        s.eventId === currentShow.eventId && s.venueId === currentShow.venueId
-    );
-
-    const uniqueDateTimes = Array.from(
-      new Set(
-        showSchedules.map((s) => `${s.showDate}-${s.startTime}-${s.endTime}`)
-      )
-    );
-
-    if (uniqueDateTimes.length === 1) {
-      const selectedShow = showSchedules[0];
-      const ticketData = {
-        venueId: selectedShow.venueId,
-        showId: selectedShow.showId,
-      };
-
-      dispatch(setTicketInfo(ticketData));
-      localStorage.setItem("ticketInfo", JSON.stringify(ticketData));
-      localStorage.setItem("dairectnavigate", "singleD&T");
-
-      navigate(`${location.pathname}/booking/ticket`);
-    } else {
-      const venueId = currentShow?.venueId;
-      if (!venueId) {
-        window.alert("Event Expired");
+      if (uniqueShows.length > 1) {
+        navigate(`${location.pathname}/booking/venue`);
         return;
       }
 
-      const ticketData = { venueId: currentShow.venueId };
-      dispatch(setTicketInfo(ticketData));
-      localStorage.setItem("ticketInfo", JSON.stringify(ticketData));
-      navigate(`${location.pathname}/booking/datetime`);
+      // One show case
+      const currentShow = uniqueShows[0];
+      const showSchedules = shows.filter(
+        (s) =>
+          s.eventId === currentShow.eventId && s.venueId === currentShow.venueId
+      );
+
+      const uniqueDateTimes = Array.from(
+        new Set(
+          showSchedules.map((s) => `${s.showDate}-${s.startTime}-${s.endTime}`)
+        )
+      );
+
+      if (uniqueDateTimes.length === 1) {
+        const selectedShow = showSchedules[0];
+        const ticketData = {
+          venueId: selectedShow.venueId,
+          showId: selectedShow.showId,
+        };
+
+        dispatch(setTicketInfo(ticketData));
+        localStorage.setItem("ticketInfo", JSON.stringify(ticketData));
+        localStorage.setItem("dairectnavigate", "singleD&T");
+
+        navigate(`${location.pathname}/booking/ticket`);
+      } else {
+        const venueId = currentShow?.venueId;
+        if (!venueId) {
+          window.alert("Event Expired");
+          return;
+        }
+
+        const ticketData = { venueId: currentShow.venueId };
+        dispatch(setTicketInfo(ticketData));
+        localStorage.setItem("ticketInfo", JSON.stringify(ticketData));
+
+        navigate(`${location.pathname}/booking/datetime`);
+      }
+    } finally {
+      // 🔓 ensure loading resets in all cases
+      setLoading(false);
     }
   }
 
@@ -144,17 +156,13 @@ function EventDetailsCard({
   //   );
   // }, []);
 
-  
-// useEffect(() => {
-//   if (shows?.length > 0) {
-//     setShowCard(true);
-//   }
-// }, [shows]);
+  // useEffect(() => {
+  //   if (shows?.length > 0) {
+  //     setShowCard(true);
+  //   }
+  // }, [shows]);
 
-
-
-
-//   if (!showCard) return skeleton;
+  //   if (!showCard) return skeleton;
 
   return (
     <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden h-96 lg:h-[28rem] flex flex-col">
@@ -183,18 +191,50 @@ function EventDetailsCard({
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2 border border-green-100 flex-1">
             <div className="text-center">
               <p className="text-lg font-bold text-green-600">M{price}</p>
-              {priceNote && (
-                <p className="text-xs text-red-500">{priceNote}</p>
-              )}
+              {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
             </div>
           </div>
 
           <button
             onClick={bookHandler}
-            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 px-6 rounded-lg font-bold text-sm shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+            disabled={loading}
+            className={`py-3 px-6 rounded-lg font-bold text-sm shadow-lg transition-all duration-300
+    flex items-center justify-center gap-2
+    ${
+      loading
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
+    }`}
           >
-            <LuTickets className="text-sm" />
-            Book Now
+            {loading ? (
+              <>
+                <svg
+                  className="w-4 h-4 animate-spin text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  />
+                </svg>
+                Processing…
+              </>
+            ) : (
+              <>
+                <LuTickets className="text-sm" />
+                Book Now
+              </>
+            )}
           </button>
         </div>
       </div>

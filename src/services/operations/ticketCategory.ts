@@ -288,6 +288,66 @@ export function ticketPay(bookingId: number | null, phoneNumber: string | null, 
   };
 }
 
+export function cardPay(
+  bookingId: number | null,
+  phoneNumber: string | null
+) {
+  return async (
+    dispatch: AppDispatch
+  ): Promise<{
+    success: boolean;
+    iframeHtml?: string;
+    paymentId?: number;
+    extTransactionId?: string;
+  }> => {
+    try {
+      dispatch(setPayTicketLoading(true));
+
+      const response = await apiConnector<
+        OtherApiResponse<{
+          iframeHtml: string;
+          paymentId: number;
+          extTransactionId: string;
+        }>
+      >({
+        method: "POST",
+        url: `${BASE_URL}/ticketcore-api/api/v1/payments/cpay/card/initiate`,
+        bodyData: { bookingId, phoneNumber },
+        headers: { "X-Client-Source": "WEB" },
+        withCredentials: true,
+      });
+
+      if (response.data.statusCode === 200) {
+        return {
+          success: true,
+          iframeHtml: response.data.data.iframeHtml,
+          paymentId: response.data.data.paymentId,
+          extTransactionId: response.data.data.extTransactionId,
+        };
+      }
+
+      return { success: false };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        dispatch(setPayMessage(error?.response?.data.message));
+      }
+      return { success: false };
+    } finally {
+      dispatch(setPayTicketLoading(false));
+    }
+  };
+}
+
+
+export async function getPaymentStatus(paymentId: number) {
+  return apiConnector<OtherApiResponse<payTickeResponse>>({
+    method: "GET",
+    url: `${BASE_URL}/ticketcore-api/api/v1/payments/status/${paymentId}`,
+    withCredentials: true,
+  });
+}
+
+
 
 
 // NEW C PAY INITIATE
