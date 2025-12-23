@@ -125,7 +125,7 @@ export default function PaymentPage() {
     let isActive = true;
 
     const POLL_INTERVAL = 5000; // 5 seconds
-    const TIMEOUT_DURATION = 1 * 60 * 1000; // 2 minutes
+    const TIMEOUT_DURATION = 3 * 60 * 1000; // 3 minutes
 
     // ⏱ Timeout
     const timeoutId = setTimeout(() => {
