@@ -199,12 +199,12 @@ function EventDetailsCard({
             onClick={bookHandler}
             disabled={loading}
             className={`py-3 px-6 rounded-lg font-bold text-sm shadow-lg transition-all duration-300
-    flex items-center justify-center gap-2
-    ${
-      loading
-        ? "bg-gray-400 cursor-not-allowed"
-        : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
-    }`}
+                        flex items-center justify-center gap-2
+                        ${
+                          loading
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
+                        }`}
           >
             {loading ? (
               <>

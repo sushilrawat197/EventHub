@@ -118,6 +118,7 @@ export default function PaymentPage() {
     setPaymentVerifyLoading(false);
   }
 
+  
   useEffect(() => {
     if (!paymentId) return;
 
@@ -137,6 +138,8 @@ export default function PaymentPage() {
       dispatch(setPayMessage("Payment timed out. Please try again."));
       // toast.error("Payment timed out. Please try again.");
     }, TIMEOUT_DURATION);
+
+
 
     // 🔁 Poll
     const intervalId = setInterval(async () => {
@@ -182,6 +185,7 @@ export default function PaymentPage() {
     };
   }, [paymentId, navigate]);
 
+
   useEffect(() => {
     if (showCardIframe) {
       // 🔒 Lock background scroll
@@ -196,6 +200,7 @@ export default function PaymentPage() {
       document.body.style.overflow = "";
     };
   }, [showCardIframe]);
+
 
   useEffect(() => {
     if (!bookingId) {
@@ -214,9 +219,11 @@ export default function PaymentPage() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [reserveTicket, bookingId, navigate, dispatch]);
 
+
   useEffect(() => {
     setIsValid(mobile.length >= 8 && mobile.length <= 12);
   }, [mobile]);
+
 
   return (
     <div className="min-h-[calc(100vh-200px)] bg-gradient-to-br from-gray-50 to-blue-50">
@@ -238,6 +245,7 @@ export default function PaymentPage() {
           </style>
         </div>
       )}
+
 
       <ScrollToTop />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
