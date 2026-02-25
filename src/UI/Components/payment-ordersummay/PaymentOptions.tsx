@@ -53,7 +53,7 @@ export default function PaymentOptions({
             <MethodCard
               method="Mpesa"
               title="M-Pesa"
-              subtitle="Most Popular"
+              subtitle="Mobile Wallet"
               colorClass="red"
               selectedMethod={selectedMethod}
               onClick={() => setSelectedMethod("Mpesa")}
@@ -61,7 +61,7 @@ export default function PaymentOptions({
             <MethodCard
               method="Cpay"
               title="C-Pay"
-              subtitle="Secure & Fast"
+              subtitle="Mobile Wallet"
               colorClass="green"
               selectedMethod={selectedMethod}
               onClick={() => setSelectedMethod("Cpay")}
@@ -70,7 +70,7 @@ export default function PaymentOptions({
               method="EcoCash"
               title="EcoCash"
               subtitle="Mobile Wallet"
-              colorClass="blue"
+              colorClass="darkBlue"
               selectedMethod={selectedMethod}
               onClick={() => setSelectedMethod("EcoCash")}
             />
@@ -182,6 +182,16 @@ function MethodCard({ method, title, subtitle, colorClass, selectedMethod, onCli
       dot: "bg-orange-500",
       iconBg: "bg-orange-100",
       iconBgDefault: "bg-orange-50"
+    },
+    darkBlue: {
+      border: "border-blue-800",
+      borderDefault: "border-blue-300",
+      borderHover: "hover:border-blue-600",
+      bgSelected: "bg-blue-50",
+      text: "text-blue-800",
+      dot: "bg-blue-800",
+      iconBg: "bg-blue-200",
+      iconBgDefault: "bg-blue-50"
     },
   };
 
