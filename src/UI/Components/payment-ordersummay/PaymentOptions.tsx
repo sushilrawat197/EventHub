@@ -54,7 +54,7 @@ export default function PaymentOptions({
               method="Mpesa"
               title="M-Pesa"
               subtitle="Most Popular"
-              colorClass="green"
+              colorClass="red"
               selectedMethod={selectedMethod}
               onClick={() => setSelectedMethod("Mpesa")}
             />
@@ -62,7 +62,7 @@ export default function PaymentOptions({
               method="Cpay"
               title="C-Pay"
               subtitle="Secure & Fast"
-              colorClass="blue"
+              colorClass="green"
               selectedMethod={selectedMethod}
               onClick={() => setSelectedMethod("Cpay")}
             />
@@ -70,7 +70,7 @@ export default function PaymentOptions({
               method="EcoCash"
               title="EcoCash"
               subtitle="Mobile Wallet"
-              colorClass="amber"
+              colorClass="blue"
               selectedMethod={selectedMethod}
               onClick={() => setSelectedMethod("EcoCash")}
             />
@@ -78,7 +78,7 @@ export default function PaymentOptions({
               method="CardPayment"
               title="Card Payment"
               subtitle="Debit / Credit Card"
-              colorClass="purple"
+              colorClass="orange"
               selectedMethod={selectedMethod}
               onClick={() => setSelectedMethod("CardPayment")}
             />
@@ -141,8 +141,18 @@ export default function PaymentOptions({
 function MethodCard({ method, title, subtitle, colorClass, selectedMethod, onClick }: any) {
   const isSelected = selectedMethod === method;
 
-  // Define color mappings for selected vs default states
+  // Define color mappings for brand specific states
   const colorMap: Record<string, any> = {
+    red: {
+      border: "border-red-500",
+      borderDefault: "border-red-200",
+      borderHover: "hover:border-red-400",
+      bgSelected: "bg-red-50",
+      text: "text-red-600",
+      dot: "bg-red-500",
+      iconBg: "bg-red-100",
+      iconBgDefault: "bg-red-50"
+    },
     green: {
       border: "border-green-500",
       borderDefault: "border-green-200",
@@ -163,25 +173,15 @@ function MethodCard({ method, title, subtitle, colorClass, selectedMethod, onCli
       iconBg: "bg-blue-100",
       iconBgDefault: "bg-blue-50"
     },
-    amber: {
-      border: "border-amber-500",
-      borderDefault: "border-amber-200",
-      borderHover: "hover:border-amber-400",
-      bgSelected: "bg-amber-50",
-      text: "text-amber-600",
-      dot: "bg-amber-500",
-      iconBg: "bg-amber-100",
-      iconBgDefault: "bg-amber-50"
-    },
-    purple: {
-      border: "border-purple-500",
-      borderDefault: "border-purple-200",
-      borderHover: "hover:border-purple-400",
-      bgSelected: "bg-purple-50",
-      text: "text-purple-600",
-      dot: "bg-purple-500",
-      iconBg: "bg-purple-100",
-      iconBgDefault: "bg-purple-50"
+    orange: {
+      border: "border-orange-500",
+      borderDefault: "border-orange-200",
+      borderHover: "hover:border-orange-400",
+      bgSelected: "bg-orange-50",
+      text: "text-orange-600",
+      dot: "bg-orange-500",
+      iconBg: "bg-orange-100",
+      iconBgDefault: "bg-orange-50"
     },
   };
 
