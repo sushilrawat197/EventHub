@@ -74,7 +74,7 @@ export default function PaymentPage() {
 
   async function submitHandler() {
     // Both Cpay and EcoCash use normalCPayInitiate for now
-    if (selectedMethod === "Cpay" || selectedMethod === "EcoCash") {
+    if (selectedMethod === "Cpay") {
       setcPayloading(true);
       const res = await normalCPayInitiate(bookingId, mobile, dispatch);
       if (res.success) setShowOtpPopup(true);
@@ -82,7 +82,7 @@ export default function PaymentPage() {
       return;
     }
 
-    if (selectedMethod === "Mpesa") {
+    if (selectedMethod === "Mpesa" || selectedMethod === "EcoCash") {
       dispatch(ticketPay(bookingId, mobile, navigate));
       return;
     }
