@@ -2,7 +2,7 @@
 
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
-console.log('BASE URL; ', BASE_URL);
+// console.log('BASE URL; ', BASE_URL);
 // AUTH ENDPOINTS
 
 export const endpoints = {

@@ -1,10 +1,10 @@
 import axios from "axios";
 import type { AppDispatch } from "../reducers/store";
 import { clearUser } from "../slices/userSlice";
-import { onSessionExpired } from "../auth/authEvents";
 import { initAuthRuntime, refreshAccessTokenSingleFlight } from "../auth/refreshCoordinator";
 import { clearProactiveRefreshTimer, clearTokens } from "../auth/tokenManager";
 import { getCurrentUser } from "./operations/userApi";
+import { onSessionExpired } from "../auth/authEvents";
 
 let initialized = false;
 
@@ -20,9 +20,8 @@ function ensureInit(dispatch: AppDispatch) {
 
   onSessionExpired(() => {
     dispatch(clearUser());
-    if (window.location.pathname !== "/login") {
-      window.location.assign("/login");
-    }
+    // Navigation should be handled inside React Router to avoid hard reloads
+    // that can break base paths after OAuth redirects.
   });
 }
 

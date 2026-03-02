@@ -7,6 +7,7 @@ import { store } from "./reducers/store.ts";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AuthListener from "./auth/AuthListener";
 
 // TanStack Query imports
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,9 +18,10 @@ createRoot(document.getElementById("root")!).render(
   // <StrictMode>
     <Provider store={store}>
       {/* <BrowserRouter basename="/ticketing"> */}
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         {/* TanStack Query Provider */}
         <QueryClientProvider client={queryClient}>
+          <AuthListener />
           <App />
 
           <ToastContainer
