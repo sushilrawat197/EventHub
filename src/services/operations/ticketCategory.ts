@@ -286,6 +286,42 @@ export function ticketPay(bookingId: number | null, phoneNumber: string | null, 
   };
 }
 
+export function ecoCashPay(bookingId: number | null, phoneNumber: string | null, navigate: NavigateFunction) {
+  return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
+    try {
+      dispatch(setPayTicketLoading(true));
+      const response = await apiConnector<OtherApiResponse<payTickeResponse>>({
+        method: "POST",
+        url: `${BASE_URL}/ticketcore-api/api/v1/payments/econet/pay`,
+        bodyData: { bookingId, phoneNumber },
+        headers: { "X-Client-Source": "WEB" },
+        withCredentials: true,
+      });
+
+      if (response.data.statusCode === 200) {
+        localStorage.setItem("navigateContext", "confirmBooking");
+        navigate(`/order/${response?.data?.data?.bookingId}`, { replace: true });
+        return { success: true };
+      }
+
+      // console.log("PAY TICKET RESPONSE  ", response);
+
+      return { success: false };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        dispatch(setPayMessage(error?.response?.data.message))
+        console.error("Axios error:", error.response);
+      } else {
+        console.error("Unknown error:", error);
+      }
+      return { success: false };
+    } finally {
+      dispatch(setPayTicketLoading(false));
+    }
+  };
+}
+
+
 export function cardPay(
   bookingId: number | null,
   phoneNumber: string | null
