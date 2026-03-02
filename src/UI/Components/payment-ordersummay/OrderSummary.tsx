@@ -1,7 +1,8 @@
 import { IoLocationSharp } from "react-icons/io5";
+import type { BookingData } from "../../../interfaces/reserveTicketInterface";
 
 interface OrderSummaryProps {
-  reserveTicket: any; // Replace 'any' with your actual Ticket type
+  reserveTicket: BookingData | null;
   eventDate: string;
   eventTime: string;
 }

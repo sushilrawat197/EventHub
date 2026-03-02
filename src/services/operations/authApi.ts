@@ -20,7 +20,6 @@ const {
   VARIFY_SIGNUP_OTP_API,
   SIGNUP_RESEND_OTP,
   SET_PASS_API,
-  LOGIN_API,
   VARIFY_OTP,
   RESEND_OTP,
   CHANGE_PASSWORD,
@@ -28,7 +27,6 @@ const {
   RESET_PASSWORD,
   FORGOT_PASSWORD_OTP,
   VARIFY_RESET_PASSWORD_OTP,
-  LOGOUT_API,
   FORGOT_RESEND_PASSWORD_OTP_API
 } = endpoints;
 
@@ -39,6 +37,10 @@ import { getCurrentUser } from "./userApi";
 import type { AppDispatch } from "../../reducers/store";
 import { listCitiesByRegion } from "./location/cityApi";
 import { scheduleTokenRefresh } from "../tokenManager";
+import { login as loginCall, logout as logoutCall } from "../../auth/authService";
+import { clearTokens, scheduleProactiveRefresh, setTokens } from "../../auth/tokenManager";
+import type { AuthTokens } from "../../auth/types";
+import { refreshAccessTokenSingleFlight } from "../../auth/refreshCoordinator";
 
 
 type SendOtpApiResponse = {
@@ -542,33 +544,9 @@ export function signIn(
   return async (): Promise<void> => {
     try {
       dispatch(setLoading(true));
+      const data = await loginCall({ email, password });
 
-      const response = await apiConnector<{
-        message: string;
-        statusCode: number;
-        data: {
-          accessTokenExpiry: string;
-          refreshTokenExpiry: string;
-          tempToken?: string; // ✅ tempToken optional
-          pwdChangeToken?: string; // ✅ tempToken optional
-        };
-      }>({
-        method: "POST",
-        url: LOGIN_API,
-        bodyData: {
-          email,
-          password,
-        },
-        headers: {
-          "X-Client-Source": "WEB",
-        },
-        withCredentials: true,
-      });
-
-      const data = response.data;
-      // console.log("LOGIN API RESPONSE............", data);
-
-      const { refreshTokenExpiry, tempToken, pwdChangeToken } = data.data;
+      const { accessToken, accessTokenExpiry, refreshTokenExpiry, tempToken, pwdChangeToken } = data.data;
 
       // const aceessTokenExpirTime = new Date(accessTokenExpiry);
       // const refrehTokenExpirTime = new Date(refreshTokenExpiry);
@@ -578,20 +556,17 @@ export function signIn(
       // console.log("accessTokenExpiry Time :", aceessTokenExpirTime.toLocaleTimeString());
       // console.log("refreshTokenExpiry Time :", refrehTokenExpirTime.toLocaleTimeString());
 
-      
       if (data.statusCode === 200) {
-        
-      await  dispatch(getCurrentUser());
-         const accessTokenExpiry = response.data.data.refreshTokenExpiry;
-        if (accessTokenExpiry) {
-          dispatch(scheduleTokenRefresh(accessTokenExpiry));
-        }
+        const tokens: AuthTokens = { accessToken, accessTokenExpiry };
+        setTokens(tokens);
+        scheduleProactiveRefresh(tokens.accessTokenExpiry, () =>
+          refreshAccessTokenSingleFlight("proactive")
+        );
+        dispatch(setAccessTokenExpiry(accessTokenExpiry ?? ""));
+        dispatch(setRefreshTokenExpiry(refreshTokenExpiry ?? ""));
+        dispatch(scheduleTokenRefresh());
 
-        localStorage.setItem("accessTokenExpiry", accessTokenExpiry);
-        localStorage.setItem("refreshTokenExpiry", refreshTokenExpiry);
-
-        dispatch(setAccessTokenExpiry(accessTokenExpiry));
-        dispatch(setRefreshTokenExpiry(refreshTokenExpiry));
+        await dispatch(getCurrentUser());
         dispatch(listCitiesByRegion());
 
         if (tempToken) {
@@ -617,7 +592,7 @@ export function signIn(
         }
       } else if (data.statusCode === 409) {
         navigate("/forgetpassword")
-        dispatch(setMassage(response.data.message));
+        dispatch(setMassage(data.message ?? ""))
       }
 
     } catch (error) {
@@ -741,30 +716,9 @@ export function logout(
   dispatch: AppDispatch
 ) {
   return async (): Promise<void> => {
+    dispatch(setLoading(true));
     try {
-      // Make logout API call if needed
-      dispatch(setLoading(true))
-      const response = await apiConnector({
-        method: "POST",
-        url: LOGOUT_API, // ✅ Use the correct endpoint
-        withCredentials: true,
-        headers: {
-          "X-Client-Source": "WEB",
-
-        },
-      });
-
-      console.log(response);
-      // ✅ Remove token and other sensitive data from localStorage/cookies
-      localStorage.removeItem("accessToken"); // or your actual key
-      // localStorage.removeItem("refreshToken"); // or your actual key
-      localStorage.removeItem("accessTokenExpiry"); // or your actual key
-      dispatch(setAccessToken(null)); // if you're storing user data
-      dispatch(setAccessTokenExpiry(""));
-      dispatch(setTempToken(""));
-      dispatch(setOtpContext(""));
-      dispatch(clearUser());
-      navigate("/login");
+      await logoutCall();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Logout Error:", error.response?.data?.message);
@@ -772,6 +726,13 @@ export function logout(
         console.error("Unexpected Logout Error:", error);
       }
     } finally {
+      clearTokens("logout");
+      dispatch(setAccessToken(null));
+      dispatch(setAccessTokenExpiry(""));
+      dispatch(setTempToken(""));
+      dispatch(setOtpContext(""));
+      dispatch(clearUser());
+      navigate("/login");
       dispatch(setLoading(false))
     }
   };

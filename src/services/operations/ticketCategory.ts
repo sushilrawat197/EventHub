@@ -1,4 +1,5 @@
 import axios from "axios";
+import { api } from "../../api/axios";
 import type { OtherApiResponse } from "../../interfaces/country";
 import type { AppDispatch } from "../../reducers/store";
 import { setTicketCategories, type TicketCategory } from "../../slices/ticketCategory";
@@ -209,14 +210,11 @@ export function downloadTicket(bookingId: number | null) {
   return async (): Promise<{ success: boolean }> => {
     try {
 
-      const response = await axios.get(
-        `${BASE_URL}/ticketcore-api/api/v1/orders/${bookingId}/download`,
-        {
-          headers: { "X-Client-Source": "WEB" },
-          withCredentials: true,
-          responseType: "blob", // important
-        }
-      );
+      const response = await api.get(`${BASE_URL}/ticketcore-api/api/v1/orders/${bookingId}/download`, {
+        withCredentials: true,
+        responseType: "blob", // important
+        skipRefresh: false,
+      });
 
       // console.log(response);
 

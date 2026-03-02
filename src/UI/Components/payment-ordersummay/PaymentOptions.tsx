@@ -2,6 +2,19 @@ import { ClipLoader } from "react-spinners";
 
 export type PaymentMethodType = "Mpesa" | "Cpay" | "CardPayment" | "EcoCash";
 
+type MethodColorClass = "red" | "green" | "blue" | "orange" | "darkBlue";
+
+type MethodColorConfig = {
+  border: string;
+  borderDefault: string;
+  borderHover: string;
+  bgSelected: string;
+  text: string;
+  dot: string;
+  iconBg: string;
+  iconBgDefault: string;
+};
+
 interface PaymentOptionsProps {
   selectedMethod: PaymentMethodType;
   setSelectedMethod: (method: PaymentMethodType) => void;
@@ -138,11 +151,20 @@ export default function PaymentOptions({
 }
 
 // Colorful MethodCard Component with Checkmark
-function MethodCard({ method, title, subtitle, colorClass, selectedMethod, onClick }: any) {
+type MethodCardProps = {
+  method: PaymentMethodType;
+  title: string;
+  subtitle: string;
+  colorClass: MethodColorClass;
+  selectedMethod: PaymentMethodType;
+  onClick: () => void;
+};
+
+function MethodCard({ method, title, subtitle, colorClass, selectedMethod, onClick }: MethodCardProps) {
   const isSelected = selectedMethod === method;
 
   // Define color mappings for brand specific states
-  const colorMap: Record<string, any> = {
+  const colorMap: Record<MethodColorClass, MethodColorConfig> = {
     red: {
       border: "border-red-500",
       borderDefault: "border-red-200",

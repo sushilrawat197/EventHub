@@ -33,8 +33,16 @@ const filterSlice = createSlice({
   name: "filters",
   initialState,
   reducers: {
-    setFilter: (state, action: PayloadAction<{ key: keyof EventSearchFilters; value: any }>) => {
-      state[action.payload.key] = action.payload.value;
+    setFilter: (
+      state,
+      action: PayloadAction<{
+        key: keyof EventSearchFilters;
+        value: EventSearchFilters[keyof EventSearchFilters];
+      }>
+    ) => {
+      (state as Record<keyof EventSearchFilters, EventSearchFilters[keyof EventSearchFilters]>)[
+        action.payload.key
+      ] = action.payload.value;
     },
     resetFilter: () => initialState,
   },

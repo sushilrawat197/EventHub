@@ -1,10 +1,7 @@
-import axios, {
-  type AxiosRequestConfig,
-  type AxiosResponse,
-  type Method,
-  // type InternalAxiosRequestConfig
-} from "axios";
-export const axiosInstance = axios.create({});
+import type { AxiosRequestConfig, AxiosResponse, Method } from "axios";
+import { api } from "../api/axios";
+
+export const axiosInstance = api;
 
 
 // Type for connector params
