@@ -36,13 +36,14 @@ const Footer: React.FC = () => {
             </p>
             <div className="flex space-x-4">
               {[
-                { icon: <FaFacebookF />, href: "#", color: "hover:text-blue-400" },
+                { icon: <FaFacebookF />, href: "https://www.facebook.com/profile.php?id=61587717204108", color: "hover:text-blue-400" },
                 { icon: <FaLinkedinIn />, href: "#", color: "hover:text-blue-400" },
                 { icon: <FaInstagram />, href: "#", color: "hover:text-pink-400" },
               ].map((social, index) => (
                 <a
                   key={index}
                   href={social.href}
+                  target="_blank"
                   className={`w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center text-gray-300 transition-all duration-200 ${social.color} hover:bg-white/20 hover:scale-110`}
                 >
                   {social.icon}
