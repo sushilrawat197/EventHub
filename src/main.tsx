@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthListener from "./auth/AuthListener";
+import GlobalPopup from "./UI/Components/common/GlobalPopup.tsx";
 
 // TanStack Query imports
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -31,6 +32,7 @@ createRoot(document.getElementById("root")!).render(
             theme="light"
             className={"px-2"}
           />
+          <GlobalPopup />
         </QueryClientProvider>
       </BrowserRouter>
     </Provider>

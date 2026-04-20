@@ -32,8 +32,7 @@ export default function PaymentPage() {
   const { contentName, eventId } = useParams();
 
   // Added EcoCash to the type
-  const [selectedMethod, setSelectedMethod] =
-    useState<PaymentMethodType>("Mpesa");
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethodType>("Mpesa");
   const [mobile, setMobile] = useState("");
   const [cpayLoading, setcPayloading] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -48,21 +47,21 @@ export default function PaymentPage() {
 
   const eventDate = reserveTicket
     ? new Date(reserveTicket.showDate).toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
     : "";
 
   const eventTime = reserveTicket
     ? new Date(`1970-01-01T${reserveTicket.showTime}`).toLocaleTimeString(
-        "en-GB",
-        {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        },
-      )
+      "en-GB",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      },
+    )
     : "";
 
   async function backHandler() {
@@ -78,7 +77,7 @@ export default function PaymentPage() {
     setcPayloading(false);
   }
 
-  
+
   async function submitHandler() {
     if (!selectedMethod) {
       console.log("Please select payment method");
@@ -146,12 +145,15 @@ export default function PaymentPage() {
     setPaymentVerifyLoading(false);
   }
 
+
+
   // --- useEffects remain exactly the same ---
   useEffect(() => {
     if (!paymentId) return;
     let isActive = true;
+
     const POLL_INTERVAL = 5000;
-    const TIMEOUT_DURATION = 3 * 60 * 1000;
+    const TIMEOUT_DURATION = 5 * 60 * 1000;
 
     const timeoutId = setTimeout(() => {
       if (!isActive) return;
@@ -194,6 +196,8 @@ export default function PaymentPage() {
     };
   }, [paymentId, navigate]);
 
+
+
   useEffect(() => {
     if (showCardIframe) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -202,11 +206,13 @@ export default function PaymentPage() {
     };
   }, [showCardIframe]);
 
+
   useEffect(() => {
     if (!bookingId) {
       navigate("/events");
       return;
     }
+
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (reserveTicket && bookingId) {
         dispatch(cancelBooking(bookingId));
@@ -214,6 +220,7 @@ export default function PaymentPage() {
         e.returnValue = "";
       }
     };
+
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [reserveTicket, bookingId, navigate, dispatch]);

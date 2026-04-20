@@ -286,6 +286,8 @@ export function ticketPay(bookingId: number | null, phoneNumber: string | null, 
   };
 }
 
+
+// ---------------------- EcoCash Payment ----------------------
 export function ecoCashPay(bookingId: number | null, phoneNumber: string | null, navigate: NavigateFunction) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
@@ -320,6 +322,7 @@ export function ecoCashPay(bookingId: number | null, phoneNumber: string | null,
     }
   };
 }
+
 
 
 export function cardPay(
