@@ -7,6 +7,7 @@ import Footer from "../Components/Footer";
 // import SellWithEase from "../Components/SellWithEase";
 import ThreeImgComponent from "../Components/ThreeImageComponent";
 import ContactPage from "../Components/ContactUs";
+import WhatsApppop from "../Components/Whatsapppop";
 
 export default function HomePage() {
 
@@ -23,7 +24,7 @@ export default function HomePage() {
         {/* <TicketPlans />  */}
         <ContactPage />
 
-        {/* <WhatsApppop />  */}
+        <WhatsApppop /> 
       </div>
       <Footer />
     </>

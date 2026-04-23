@@ -99,6 +99,7 @@ export function reserveTicket(categories: CategorySelection[]) {
 export function cancelBooking(bookingId: number) {
   return async (): Promise<{ success: boolean }> => {
     try {
+      
       const response = await apiConnector<OtherApiResponse<BookingData>>({
         method: "POST",
         url: `${BASE_URL}/ticketcore-api/api/v1/bookings/${bookingId}/cancel`,
@@ -306,6 +307,7 @@ export function ecoCashPay(bookingId: number | null, phoneNumber: string | null,
         return { success: true };
       }
 
+
       // console.log("PAY TICKET RESPONSE  ", response);
 
       return { success: false };
@@ -376,6 +378,7 @@ export function cardPay(
 }
 
 
+
 export async function getPaymentStatus(paymentId: number) {
   return apiConnector<OtherApiResponse<payTickeResponse>>({
     method: "GET",
@@ -414,6 +417,7 @@ export async function normalCPayInitiate(
       success: false,
       message: response?.data?.message || "Something went wrong",
     };
+
   } catch (error) {
     if (axios.isAxiosError(error)) {
       dispatch(setPayMessage(error?.response?.data.message))
