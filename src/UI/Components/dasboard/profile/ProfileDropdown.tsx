@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { logout } from "../../../../services/operations/authApi";
-import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
 import { GoPersonFill } from "react-icons/go";

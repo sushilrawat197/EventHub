@@ -8,10 +8,10 @@ import {
 import { MdOutlineTranslate } from "react-icons/md";
 import { LuTickets } from "react-icons/lu";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useAppSelector, useAppDispatch } from "../../../../reducers/hooks";
+import { useAppSelector, useAppDispatch } from "../../../../app/store/hooks";
 import { checkEventAvailability } from "../../../../services/operations/eventsApi";
-import { setTicketInfo } from "../../../../slices/ticketInfoSlice";
-import { setEventsErrorMsg } from "../../../../slices/eventSlice";
+import { setTicketInfo } from "../../../../app/store/slices/ticketInfoSlice";
+import { setEventsErrorMsg } from "../../../../app/store/slices/eventSlice";
 import { useEffect, useState } from "react";
 
 interface EventDetailsCardProps {

@@ -7,10 +7,10 @@ import {
   listAllTicketCategoriesByShowId,
   reserveTicket,
 } from "../../../../../services/operations/ticketCategory";
-import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
-import { setEventsErrorMsg } from "../../../../../slices/eventSlice";
+import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
+import { setEventsErrorMsg } from "../../../../../app/store/slices/eventSlice";
 import EventsErrorPage from "../../EventErrorsd";
-import ScrollToTop from "../../../common/ScrollToTop";
+import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 
 const TicketSelection = () => {
   const dispatch = useAppDispatch();

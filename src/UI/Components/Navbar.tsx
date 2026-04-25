@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/store/hooks";
 import ProfileDropdown from "./dasboard/profile/ProfileDropdown";
 import { CiSearch } from "react-icons/ci";
 import NavHeader from "./navbar/NavHeader";
@@ -11,9 +11,9 @@ import { RiMenuFold3Fill } from "react-icons/ri";
 import { listCitiesByRegion } from "../../services/operations/location/cityApi";
 
 import { listEventsBySearch } from "../../services/operations/eventsApi";
-import { setSelectedCity } from "../../slices/citySlice";
-import { setFilter } from "../../slices/filter_Slice";
-// import { setFilter } from "../../slices/filter_Slice";
+import { setSelectedCity } from "../../app/store/slices/citySlice";
+import { setFilter } from "../../app/store/slices/filter_Slice";
+// import { setFilter } from "../../app/store/slices/filter_Slice";
 
 const Navbar: React.FC = () => {
 

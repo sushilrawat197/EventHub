@@ -2,8 +2,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
-import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
-import { setEventsErrorMsg } from "../../../slices/eventSlice";
+import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
+import { setEventsErrorMsg } from "../../../app/store/slices/eventSlice";
 import { createPortal } from "react-dom";
 import { useEffect } from "react";
 

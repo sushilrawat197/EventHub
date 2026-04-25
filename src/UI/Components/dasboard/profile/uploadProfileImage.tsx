@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
 import { updateUserProfilPicture } from "../../../../services/operations/userApi";
 import { GoPersonFill } from "react-icons/go";
 import { IoClose } from "react-icons/io5";

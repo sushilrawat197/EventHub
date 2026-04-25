@@ -1,8 +1,8 @@
 import axios from "axios";
 import type { OtherApiResponse } from "../../interfaces/country";
 import type { VenueResponse } from "../../interfaces/venueInterface";
-import type { AppDispatch } from "../../reducers/store";
-import { setVenueDetails, setVenues } from "../../slices/venueSlice";
+import type { AppDispatch } from "../../app/store/store";
+import { setVenueDetails, setVenues } from "../../app/store/slices/venueSlice";
 import { apiConnector } from "../apiConnector";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 

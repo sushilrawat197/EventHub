@@ -1,11 +1,11 @@
 import { apiConnector } from "../apiConnector";
-import { clearUser, setUser } from "../../slices/userSlice";
+import { clearUser, setUser } from "../../app/store/slices/userSlice";
 import { toast } from "react-toastify";
 import { type Dispatch } from "@reduxjs/toolkit";
 import axios from "axios";
 import { userEndpoint } from "../apis";
-import type { AppDispatch } from "../../reducers/store";
-import { setLoading } from "../../slices/userSlice";
+import type { AppDispatch } from "../../app/store/store";
+import { setLoading } from "../../app/store/slices/userSlice";
 
 const { GET_USER_API, UPDATE_USER_API, UPDATE_USER_IMAGE_API } = userEndpoint;
 

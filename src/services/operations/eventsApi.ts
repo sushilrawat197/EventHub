@@ -1,11 +1,11 @@
 import axios from "axios";
-import type { AppDispatch } from "../../reducers/store";
+import type { AppDispatch } from "../../app/store/store";
 import { apiConnector } from "../apiConnector";
-import { setAllEventsBySearch, setEventsLoading, setSingleEvent } from "../../slices/eventSlice"; // yaha se import karo
+import { setAllEventsBySearch, setEventsLoading, setSingleEvent } from "../../app/store/slices/eventSlice"; // yaha se import karo
 import type { ApiResponse, OtherApiResponse } from "../../interfaces/country";
 import type { EventResponse, EventResponseBySearch } from "../../interfaces/eventInterface/evnetInterFace";
-import type { RootState } from "../../reducers/store"; // apna store path
-import { setAvailableEventShows } from "../../slices/availabilitySlice";
+import type { RootState } from "../../app/store/store"; // apna store path
+import { setAvailableEventShows } from "../../app/store/slices/availabilitySlice";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 

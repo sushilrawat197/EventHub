@@ -1,6 +1,6 @@
 import type { OtherApiResponse } from "../../interfaces/country";
-import type { AppDispatch } from "../../reducers/store";
-import { setShows, type ShowResponse } from "../../slices/showSlice";
+import type { AppDispatch } from "../../app/store/store";
+import { setShows, type ShowResponse } from "../../app/store/slices/showSlice";
 import { apiConnector } from "../apiConnector";
 import { checkEventAvailability } from "./eventsApi";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;

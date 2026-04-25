@@ -1,0 +1,23 @@
+// OpenRoute.tsx
+import { Navigate } from "react-router-dom";
+import type { ReactNode } from "react";
+import { useAppSelector } from "../store/hooks";
+
+
+interface OpenRouteProps {
+  children: ReactNode;
+}
+
+function ProtectedRoute({ children }: OpenRouteProps) {
+
+  const user=useAppSelector((state)=>state.user.user); 
+
+  if (user !== null) {
+    return children;
+  } else {
+    return <Navigate to="/login" />;
+  }
+}
+
+
+export default ProtectedRoute;

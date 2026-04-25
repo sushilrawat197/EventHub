@@ -2,10 +2,10 @@
 // import { apiConnector } from "../apiConnector";
 // import { endpoints } from "../apis";
 // const { REFRESH_ACCESS_TOKEN } = endpoints;
-// import { clearUser } from "../../slices/userSlice";
-// import type { AppDispatch } from "../../reducers/store";
+// import { clearUser } from "../../app/store/slices/userSlice";
+// import type { AppDispatch } from "../../app/store/store";
 // import { getCurrentUser } from "./userApi";
-// import { setLoading } from "../../slices/authSlice";
+// import { setLoading } from "../../app/store/slices/authSlice";
 
 // let refreshTimer: NodeJS.Timeout | null = null;
 

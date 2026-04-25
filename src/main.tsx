@@ -3,13 +3,13 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
-import { store } from "./reducers/store.ts";
+import { store } from "./app/store/store.ts";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthListener from "./auth/AuthListener";
-import GlobalPopup from "./UI/Components/common/GlobalPopup.tsx";
-import NetworkStatusMonitor from "./UI/Components/common/NetworkStatusMonitor.tsx";
+import GlobalPopup from "./shared/components/common/GlobalPopup.tsx";
+import NetworkStatusMonitor from "./shared/components/common/NetworkStatusMonitor.tsx";
 
 // TanStack Query imports
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

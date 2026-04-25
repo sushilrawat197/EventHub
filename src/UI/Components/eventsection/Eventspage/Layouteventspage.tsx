@@ -6,7 +6,7 @@
 // import MobileEventDetailsCard from "./MobileEventDetails";
 // import { useLocation, useParams } from "react-router-dom";
 // import type { Content } from "../../../../interfaces/eventInterface/eventInterface";
-// import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+// import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
 // import { useEffect } from "react";
 // import {
 //   listEventsBySearch,
@@ -14,13 +14,13 @@
 //   checkEventAvailability,
 // } from "../../../../services/operations/eventsApi";
 
-// import SpinnerLoading from "../../common/SpinnerLoading";
-// import { clearSingleEvent } from "../../../../slices/eventSlice";
+// import SpinnerLoading from "../../../../shared/components/common/SpinnerLoading";
+// import { clearSingleEvent } from "../../../../app/store/slices/eventSlice";
 // import {
 //   fetchFilteredShows,
 //   listAllShowsByEvent,
 // } from "../../../../services/operations/showsApi";
-// import { clearSetShows } from "../../../../slices/showSlice";
+// import { clearSetShows } from "../../../../app/store/slices/showSlice";
 
 // export default function Layouteventspage() {
 //   const location = useLocation();
@@ -212,7 +212,7 @@ import EventscardSlider from "./EventscardSlider";
 import MobileEventDetailsCard from "./MobileEventDetails";
 import { useLocation, useParams } from "react-router-dom";
 import type { Content } from "../../../../interfaces/eventInterface/eventInterface";
-import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
 import { useEffect, useMemo } from "react";
 import {
   listEventsBySearch,
@@ -220,13 +220,13 @@ import {
   checkEventAvailability,
 } from "../../../../services/operations/eventsApi";
 
-import SpinnerLoading from "../../common/SpinnerLoading";
-import { clearSingleEvent } from "../../../../slices/eventSlice";
+import SpinnerLoading from "../../../../shared/components/common/SpinnerLoading";
+import { clearSingleEvent } from "../../../../app/store/slices/eventSlice";
 import {
   fetchFilteredShows,
   listAllShowsByEvent,
 } from "../../../../services/operations/showsApi";
-import { clearSetShows } from "../../../../slices/showSlice";
+import { clearSetShows } from "../../../../app/store/slices/showSlice";
 
 export default function Layouteventspage() {
   const location = useLocation();

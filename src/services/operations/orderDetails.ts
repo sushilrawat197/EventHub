@@ -1,6 +1,6 @@
 import type { ApiResponse, PageData, } from "../../interfaces/country";
 
-import { type OrderDetails } from "../../slices/orderDetails";
+import { type OrderDetails } from "../../app/store/slices/orderDetails";
 import { apiConnector } from "../apiConnector";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 

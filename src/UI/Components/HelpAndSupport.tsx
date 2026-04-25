@@ -51,7 +51,7 @@ export default function HelpAndSupport() {
         </div>
 
         {/* Contact Form */}
-        <div className="bg-white shadow-md rounded-2xl p-6">
+        {/* <div className="bg-white shadow-md rounded-2xl p-6">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Send us a Message</h2>
           <form className="space-y-4">
             <input
@@ -76,7 +76,7 @@ export default function HelpAndSupport() {
               Send Message
             </button>
           </form>
-        </div>
+        </div> */}
       </div>
     </div>
   )

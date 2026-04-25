@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
+import { useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import {
-  cancelBooking,
   cardPay,
   cPayPayment,
   ecoCashPay,
   getPaymentStatus,
   normalCPayInitiate,
   ticketPay,
-} from "../../../services/operations/ticketCategory";
+} from "../../../services/operations/payment";
+import { cancelBooking } from "../../../services/operations/ticketCategory";
 import { useNavigate, useParams } from "react-router-dom";
 import BookingErrorPage from "./Eventsprocess/BookingError";
 import { ClipLoader } from "react-spinners";
-import ScrollToTop from "../common/ScrollToTop";
+import ScrollToTop from "../../../shared/components/common/ScrollToTop";
 import { toast } from "react-toastify";
-import { setPayMessage } from "../../../slices/payTicketSlice";
+import { setPayMessage } from "../../../app/store/slices/payTicketSlice";
 import type { PaymentMethodType } from "../payment-ordersummay/PaymentOptions";
 import PaymentOptions from "../payment-ordersummay/PaymentOptions";
 import OrderSummary from "../payment-ordersummay/OrderSummary";
@@ -44,6 +44,8 @@ export default function PaymentPage() {
 
   const [showOtpPopup, setShowOtpPopup] = useState(false);
   const [otp, setOtp] = useState("");
+  const [showPaymentTimeoutPopup, setShowPaymentTimeoutPopup] = useState(false);
+  const paymentInitiationInFlightRef = useRef(false);
 
   const eventDate = reserveTicket
     ? new Date(reserveTicket.showDate).toLocaleDateString("en-GB", {
@@ -78,18 +80,31 @@ export default function PaymentPage() {
   }
 
 
+  function handlePaymentTimeoutAcknowledge() {
+    setShowPaymentTimeoutPopup(false);
+    navigate("/events", { replace: true });
+  }
+
   async function submitHandler() {
+    if (paymentInitiationInFlightRef.current || paymentLoading || cpayLoading) {
+      return;
+    }
+
     if (!selectedMethod) {
       console.log("Please select payment method");
       return;
     }
 
+    paymentInitiationInFlightRef.current = true;
     try {
       switch (selectedMethod) {
         case "Cpay": {
           setcPayloading(true);
-
           const res = await normalCPayInitiate(bookingId, mobile, dispatch);
+          if (res?.timedOut) {
+            setShowPaymentTimeoutPopup(true);
+            return;
+          }
 
           if (res?.success) {
             setShowOtpPopup(true);
@@ -101,17 +116,27 @@ export default function PaymentPage() {
         }
 
         case "Mpesa": {
-          await dispatch(ticketPay(bookingId, mobile, navigate));
+          const res = await dispatch(ticketPay(bookingId, mobile, navigate));
+          if (res?.timedOut) {
+            setShowPaymentTimeoutPopup(true);
+          }
           break;
         }
 
         case "EcoCash": {
-          await dispatch(ecoCashPay(bookingId, mobile, navigate));
+          const res = await dispatch(ecoCashPay(bookingId, mobile, navigate));
+          if (res?.timedOut) {
+            setShowPaymentTimeoutPopup(true);
+          }
           break;
         }
 
         case "CardPayment": {
           const res = await dispatch(cardPay(bookingId, mobile));
+          if (res?.timedOut) {
+            setShowPaymentTimeoutPopup(true);
+            break;
+          }
 
           if (res?.success && res?.iframeHtml && res?.paymentId) {
             setCardIframeHtml(res.iframeHtml);
@@ -131,6 +156,7 @@ export default function PaymentPage() {
       console.error("Payment error:", error);
     } finally {
       setcPayloading(false);
+      paymentInitiationInFlightRef.current = false;
     }
   }
 
@@ -285,6 +311,28 @@ export default function PaymentPage() {
                   ) : (
                     <span>Verify & Pay</span>
                   )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Payment timeout popup */}
+        {showPaymentTimeoutPopup && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 animate-fadeIn">
+            <div className="bg-white rounded-2xl p-6 w-[92%] max-w-md shadow-2xl border border-gray-200">
+              <h2 className="text-xl font-bold text-gray-800 text-center mb-2">
+                Payment request timed out
+              </h2>
+              <p className="text-sm text-gray-600 text-center mb-6">
+                We did not receive a response in time. Please check your booking status and try again if needed.
+              </p>
+              <div className="flex justify-center">
+                <button
+                  onClick={handlePaymentTimeoutAcknowledge}
+                  className="px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg transition-transform hover:scale-[1.02]"
+                >
+                  OK
                 </button>
               </div>
             </div>

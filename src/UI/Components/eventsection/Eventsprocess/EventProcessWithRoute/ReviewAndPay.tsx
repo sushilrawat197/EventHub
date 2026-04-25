@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 // import PrimaryButton from "../PrimaryButton";
 import { useEffect, useState } from "react";
 import { cancelBooking } from "../../../../../services/operations/ticketCategory";
-import ScrollToTop from "../../../common/ScrollToTop";
+import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 
 // Review & Payment Component
 const ReviewAndPay = () => {

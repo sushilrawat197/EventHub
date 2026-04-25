@@ -1,10 +1,10 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 import { useEffect, useState } from "react";
 import { listAllShowsByEvent } from "../../../../../services/operations/showsApi";
-import { setTicketInfo } from "../../../../../slices/ticketInfoSlice";
+import { setTicketInfo } from "../../../../../app/store/slices/ticketInfoSlice";
 import { getVenueByVenueId, listDetailsByCityId } from "../../../../../services/operations/venue";
-import ScrollToTop from "../../../common/ScrollToTop";
+import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 
 const VenueSelection = () => {
   const dispatch = useAppDispatch();

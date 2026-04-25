@@ -6,7 +6,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
-import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
 import { cancelBooking } from "../../../../services/operations/ticketCategory";
 import { useEffect } from "react";
 

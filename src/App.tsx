@@ -1,38 +1,41 @@
-import { lazy, useState } from "react";
-import OpenRoute from "./route/OpenRoute";
-import ProtectedRoute from "./route/ProtectedRoute";
-import ForgotPassword from "./SiginPage/Forgotpassword";
-import ForgotPasswordConfirmation from "./SiginPage/ForgotPasswordCofirmation";
-import LoginVarifyOtp from "./SiginPage/ForgotVarifyOtp";
-import OtpVerification from "./SiginPage/OtpVerification";
-import PasswordReset from "./SiginPage/PasswordReset";
-import PasswordSet from "./SiginPage/PasswordSet";
-import SignIn from "./SiginPage/SignIn";
-import SignUp from "./SiginPage/SignUp";
-import ProfileCard from "./UI/Components/dasboard/profile/ProfileCard";
-const HomePage = lazy(() => import("./UI/Pages/HomePage"));
+import { lazy, Suspense, type ReactNode, useState } from "react";
+import OpenRoute from "./app/routes/OpenRoute";
+import ProtectedRoute from "./app/routes/ProtectedRoute";
+const ForgotPassword = lazy(() => import("./features/auth/Forgotpassword"));
+const ForgotPasswordConfirmation = lazy(() => import("./features/auth/ForgotPasswordCofirmation"));
+const LoginVarifyOtp = lazy(() => import("./features/auth/ForgotVarifyOtp"));
+const OtpVerification = lazy(() => import("./features/auth/OtpVerification"));
+const PasswordReset = lazy(() => import("./features/auth/PasswordReset"));
+const PasswordSet = lazy(() => import("./features/auth/PasswordSet"));
+const SignIn = lazy(() => import("./features/auth/SignIn"));
+const SignUp = lazy(() => import("./features/auth/SignUp"));
+const ProfileCard = lazy(() => import("./UI/Components/dasboard/profile/ProfileCard"));
+const HomePage = lazy(() => import("./features/home/pages/HomePage"));
 import { Route, Routes } from "react-router-dom";
-import { useAppDispatch } from "./reducers/hooks";
+import { useAppDispatch } from "./app/store/hooks";
 import { useEffect } from "react";
 const Layout = lazy(() => import("./UI/Components/eventsection/Layout"));
 
-import Layouteventspage from "./UI/Components/eventsection/Eventspage/Layouteventspage";
-import HelpAndSupport from "./UI/Components/HelpAndSupport";
+const Layouteventspage = lazy(() => import("./UI/Components/eventsection/Eventspage/Layouteventspage"));
+const HelpAndSupport = lazy(() => import("./UI/Components/HelpAndSupport"));
 // import BookingFlow from "./UI/Components/eventsection/Eventsprocess/BookingFlow";
-import MainLayout from "./UI/Layout/AppLayout";
-import ForgotVarifyOtp from "./SiginPage/ForgotVarifyOtp";
-import SpinnerLoading from "./UI/Components/common/SpinnerLoading";
-import ChangePassword from "./SiginPage/ChangePassword";
-import BookingFlow from "./UI/Components/eventsection/Eventsprocess/BookingFlow";
-import VenueSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/VenueSelection";
-import DateTimeSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/DateTimeSelection";
-import TicketSelection from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/TicketSelection";
-import ReviewAndPay from "./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/ReviewAndPay";
-import PaymentPage from "./UI/Components/eventsection/PaymentPage";
-import BookingConfirmed from "./UI/Components/common/BookingConfirmPage";
-import BookingOrder from "./UI/Components/dasboard/BookingOrder";
-import RateAndReview from "./UI/Components/common/RateAndReview";
+import MainLayout from "./shared/layouts/AppLayout";
+import SpinnerLoading from "./shared/components/common/SpinnerLoading";
+const ChangePassword = lazy(() => import("./features/auth/ChangePassword"));
+const BookingFlow = lazy(() => import("./UI/Components/eventsection/Eventsprocess/BookingFlow"));
+const VenueSelection = lazy(() => import("./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/VenueSelection"));
+const DateTimeSelection = lazy(() => import("./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/DateTimeSelection"));
+const TicketSelection = lazy(() => import("./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/TicketSelection"));
+const ReviewAndPay = lazy(() => import("./UI/Components/eventsection/Eventsprocess/EventProcessWithRoute/ReviewAndPay"));
+const PaymentPage = lazy(() => import("./UI/Components/eventsection/PaymentPage"));
+const BookingConfirmed = lazy(() => import("./shared/components/common/BookingConfirmPage"));
+const BookingOrder = lazy(() => import("./UI/Components/dasboard/BookingOrder"));
+const RateAndReview = lazy(() => import("./shared/components/common/RateAndReview"));
 import { refreshAccessToken } from "./services/tokenManager";
+
+function withSuspense(element: ReactNode) {
+  return <Suspense fallback={<SpinnerLoading />}>{element}</Suspense>;
+}
 
 
 function App() {
@@ -86,26 +89,26 @@ function App() {
     <>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={withSuspense(<HomePage />)} />
 
           <Route
             path="/login"
             element={
               <OpenRoute>
-                <SignIn />
+                {withSuspense(<SignIn />)}
               </OpenRoute>
             }
           />
 
-          <Route path="/forgetpassword" element={<ForgotPassword />} />
-          <Route path="/verifyforgototp" element={<ForgotVarifyOtp />} />
-          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/forgetpassword" element={withSuspense(<ForgotPassword />)} />
+          <Route path="/verifyforgototp" element={withSuspense(<LoginVarifyOtp />)} />
+          <Route path="/change-password" element={withSuspense(<ChangePassword />)} />
 
           <Route
             path="/signup"
             element={
               <OpenRoute>
-                <SignUp />
+                {withSuspense(<SignUp />)}
               </OpenRoute>
             }
           />
@@ -114,7 +117,7 @@ function App() {
             path="/otpverification"
             element={
               <OpenRoute>
-                <OtpVerification />
+                {withSuspense(<OtpVerification />)}
               </OpenRoute>
             }
           />
@@ -122,7 +125,7 @@ function App() {
             path="/setpassword"
             element={
               <OpenRoute>
-                <PasswordSet />
+                {withSuspense(<PasswordSet />)}
               </OpenRoute>
             }
           />
@@ -130,7 +133,7 @@ function App() {
             path="/varifylgoinotp"
             element={
               <OpenRoute>
-                <LoginVarifyOtp />
+                {withSuspense(<LoginVarifyOtp />)}
               </OpenRoute>
             }
           />
@@ -138,7 +141,7 @@ function App() {
             path="/passwordreset"
             element={
               <OpenRoute>
-                <PasswordReset />
+                {withSuspense(<PasswordReset />)}
               </OpenRoute>
             }
           />
@@ -146,33 +149,33 @@ function App() {
             path="/passwordresetsuccess"
             element={
               <OpenRoute>
-                <ForgotPasswordConfirmation />
+                {withSuspense(<ForgotPasswordConfirmation />)}
               </OpenRoute>
             }
           />
 
-          <Route path="/events" element={<Layout />} />
+          <Route path="/events" element={withSuspense(<Layout />)} />
 
           <Route
             path="/my-profile/edit-profile"
             element={
               <ProtectedRoute>
-                <ProfileCard />
+                {withSuspense(<ProfileCard />)}
               </ProtectedRoute>
             }
           />
 
           <Route
             path="/events/:contentName/:eventId"
-            element={<Layouteventspage />}
+            element={withSuspense(<Layouteventspage />)}
           />
-          <Route path="/helpandsupport" element={<HelpAndSupport />} />
+          <Route path="/helpandsupport" element={withSuspense(<HelpAndSupport />)} />
 
           <Route
             path="/orders"
             element={
               <ProtectedRoute>
-                <BookingOrder />
+                {withSuspense(<BookingOrder />)}
               </ProtectedRoute>
             }
           />
@@ -181,7 +184,7 @@ function App() {
             path="order/:bookingId"
             element={
               <ProtectedRoute>
-                <BookingConfirmed />
+                {withSuspense(<BookingConfirmed />)}
               </ProtectedRoute>
             }
           />
@@ -190,7 +193,7 @@ function App() {
             path="/rate-and-review"
             element={
               <ProtectedRoute>
-                <RateAndReview />
+                {withSuspense(<RateAndReview />)}
               </ProtectedRoute>
             }
           />
@@ -211,17 +214,17 @@ function App() {
 
         <Route
           path="/events/:contentName/:eventId/booking/*"
-          element={<BookingFlow />}
+          element={withSuspense(<BookingFlow />)}
         >
-          <Route path="venue" element={<VenueSelection />} />
-          <Route path="datetime" element={<DateTimeSelection />} />
+          <Route path="venue" element={withSuspense(<VenueSelection />)} />
+          <Route path="datetime" element={withSuspense(<DateTimeSelection />)} />
 
-          <Route path="ticket" element={<TicketSelection />} />
+          <Route path="ticket" element={withSuspense(<TicketSelection />)} />
           <Route
             path="reviewandpay"
             element={
               <ProtectedRoute>
-                <ReviewAndPay />
+                {withSuspense(<ReviewAndPay />)}
               </ProtectedRoute>
             }
           />
@@ -230,7 +233,7 @@ function App() {
             path="payment"
             element={
               <ProtectedRoute>
-                <PaymentPage />
+                {withSuspense(<PaymentPage />)}
               </ProtectedRoute>
             }
           />

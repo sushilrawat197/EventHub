@@ -1,9 +1,9 @@
 import {  useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 import { useNavigate, useParams} from "react-router-dom";
-import { setTicketInfo } from "../../../../../slices/ticketInfoSlice";
+import { setTicketInfo } from "../../../../../app/store/slices/ticketInfoSlice";
 // import { listEventById } from "../../../../../services/operations/eventsApi";
-import ScrollToTop from "../../../common/ScrollToTop";
+import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 
 const DateTimeSelection = (
 

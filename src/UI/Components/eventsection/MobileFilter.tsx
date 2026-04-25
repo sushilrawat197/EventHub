@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IoClose } from "react-icons/io5";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { useAppSelector, useAppDispatch } from "../../../reducers/hooks";
+import { useAppSelector, useAppDispatch } from "../../../app/store/hooks";
 import {
   setCategories,
   setDates,
@@ -11,8 +11,8 @@ import {
   setLanguages,
   setPrices,
   setStartDate,
-} from "../../../slices/filterSlice";
-import { setFilter } from "../../../slices/filter_Slice";
+} from "../../../app/store/slices/filterSlice";
+import { setFilter } from "../../../app/store/slices/filter_Slice";
 import { listEventsBySearch } from "../../../services/operations/eventsApi";
 
 interface MobileFiltersProps {

@@ -1,6 +1,6 @@
 import axios from "axios";
-import type { AppDispatch } from "../reducers/store";
-import { clearUser } from "../slices/userSlice";
+import type { AppDispatch } from "../app/store/store";
+import { clearUser } from "../app/store/slices/userSlice";
 import { initAuthRuntime, refreshAccessTokenSingleFlight } from "../auth/refreshCoordinator";
 import { clearProactiveRefreshTimer, clearTokens } from "../auth/tokenManager";
 import { getCurrentUser } from "./operations/userApi";

@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
-import { useAppDispatch, useAppSelector } from "../../../../reducers/hooks";
-import { setPayMessage } from "../../../../slices/payTicketSlice";
+import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
+import { setPayMessage } from "../../../../app/store/slices/payTicketSlice";
 
 export default function BookingErrorPage() {
   const dispatch = useAppDispatch();

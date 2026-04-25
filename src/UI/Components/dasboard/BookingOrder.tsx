@@ -3,10 +3,10 @@ import { Search } from "lucide-react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { listAllOrdersApi } from "../../../services/operations/orderDetails";
 import { format } from "date-fns";
-import { clearConfirmBooking } from "../../../slices/confirmBookingSlice";
+import { clearConfirmBooking } from "../../../app/store/slices/confirmBookingSlice";
 import { getOrderDetails } from "../../../services/operations/ticketCategory";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../reducers/hooks";
+import { useAppDispatch } from "../../../app/store/hooks";
 
 const BookingOrder: React.FC = () => {
   const navigate = useNavigate();

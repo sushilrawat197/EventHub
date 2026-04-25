@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IoClose } from "react-icons/io5";
-import { useAppSelector, useAppDispatch } from "../../../reducers/hooks";
+import { useAppSelector, useAppDispatch } from "../../../app/store/hooks";
 import {
   setCategories,
   setDates,
@@ -10,10 +10,10 @@ import {
   setLanguages,
   setPrices,
   setStartDate,
-} from "../../../slices/filterSlice";
+} from "../../../app/store/slices/filterSlice";
 import { useSearchParams } from "react-router-dom";
 
-import { setFilter } from "../../../slices/filter_Slice";
+import { setFilter } from "../../../app/store/slices/filter_Slice";
 import { listEventsBySearch } from "../../../services/operations/eventsApi";
 
 interface FilterItemProps {

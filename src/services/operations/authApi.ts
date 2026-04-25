@@ -14,7 +14,7 @@ import {
   setTempToken,
   setOtpContext,
   // setOtpContext,
-} from "../../slices/authSlice";
+} from "../../app/store/slices/authSlice";
 const {
   SIGNUP_API,
   VARIFY_SIGNUP_OTP_API,
@@ -32,9 +32,9 @@ const {
 
 import axios from "axios";
 import { toast } from "react-toastify";
-import { clearUser } from "../../slices/userSlice";
+import { clearUser } from "../../app/store/slices/userSlice";
 import { getCurrentUser } from "./userApi";
-import type { AppDispatch } from "../../reducers/store";
+import type { AppDispatch } from "../../app/store/store";
 import { listCitiesByRegion } from "./location/cityApi";
 import { scheduleTokenRefresh } from "../tokenManager";
 import { login as loginCall, logout as logoutCall } from "../../auth/authService";

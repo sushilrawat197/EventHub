@@ -16,8 +16,8 @@ type Connection<TData = unknown, TParams = Record<string, unknown>> = {
   params?: TParams;
   withCredentials?: boolean;
   timeout?: number;
+  suppressTimeoutPopup?: boolean;
 };
-
 export const apiConnector = async <
   TResponse,
   TData = unknown,
@@ -30,7 +30,11 @@ export const apiConnector = async <
   params,
   withCredentials,
   timeout,
+  suppressTimeoutPopup,
 }: Connection<TData, TParams>): Promise<AxiosResponse<TResponse>> => {
+
+  const controller = new AbortController(); // 👈 create controller
+
   const config: AxiosRequestConfig<TData> = {
     method,
     url,
@@ -38,19 +42,32 @@ export const apiConnector = async <
     headers,
     params,
     withCredentials,
-    timeout: timeout ?? API_TIMEOUT_MS,
+    signal: controller.signal, // 👈 attach signal
   };
 
+  // 👇 manual timeout logic (real cancel)
+  const timeoutId = setTimeout(() => {
+    controller.abort(); // 👈 request cancel
+  }, timeout ?? API_TIMEOUT_MS);
+
   try {
-    return await axiosInstance(config);
+    const response = await axiosInstance(config);
+    clearTimeout(timeoutId); // cleanup
+    return response;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error) && error.code === "ECONNABORTED") {
-      showGlobalPopup({
-        message: REQUEST_TIMEOUT_ERROR_MESSAGE,
-        variant: "error",
-      });
+    clearTimeout(timeoutId);
+
+    if (axios.isAxiosError(error)) {
+      if (error.code === "ERR_CANCELED") {
+        if (!suppressTimeoutPopup) {
+          showGlobalPopup({
+            message: REQUEST_TIMEOUT_ERROR_MESSAGE,
+            variant: "error",
+          });
+        }
+      }
     }
+
     throw error;
   }
 };
-

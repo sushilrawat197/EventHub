@@ -9,7 +9,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { FaTicketAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/store/hooks";
 import { listEventsBySearch } from "../../services/operations/eventsApi";
 
 // const events = [

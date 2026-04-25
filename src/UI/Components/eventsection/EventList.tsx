@@ -4,7 +4,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import MobileFilters from "./MobileFilter";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../reducers/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import {
   setCategories,
   setDates,
@@ -12,10 +12,10 @@ import {
   setPrices,
   setStartDate,
   setEndDate,
-} from "../../../slices/filterSlice"; // 👈 add setStartDate, setEndDate
+} from "../../../app/store/slices/filterSlice"; // 👈 add setStartDate, setEndDate
 import { listEventsBySearch } from "../../../services/operations/eventsApi";
-import { setFilter } from "../../../slices/filter_Slice";
-import ScrollPagination from "../../Components/common/ScrollPagination";
+import { setFilter } from "../../../app/store/slices/filter_Slice";
+import ScrollPagination from "../../../shared/components/common/ScrollPagination";
 
 const categoryOptions: string[] = [
   "FOOD",
@@ -200,8 +200,8 @@ export default function EventList() {
     <div className="space-y-4">
       {/* Filter Tags */}
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <div className="overflow-x-auto modern-scrollbar py-3">
-          <div className="flex flex-nowrap gap-2 min-w-max">
+        <div className="py-3">
+          <div className="flex flex-wrap gap-2">
             {getAllFilterOptions().map((tag, i) => (
               <button
                 key={i}
