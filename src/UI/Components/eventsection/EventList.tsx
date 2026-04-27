@@ -33,6 +33,7 @@ const categoryOptions: string[] = [
 ];
 
 export default function EventList() {
+  const DEFAULT_VISIBLE_CHIPS = 8;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -56,6 +57,7 @@ export default function EventList() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [openFilter, setOpenFilter] = useState(false);
+  const [showAllChips, setShowAllChips] = useState(false);
 
   // Sync URL params with Redux state on mount
   useEffect(() => {
@@ -196,13 +198,19 @@ export default function EventList() {
     dispatch(listEventsBySearch(page));
   }, [page, dispatch]);
 
+  const allFilterOptions = getAllFilterOptions();
+  const visibleFilterOptions = showAllChips
+    ? allFilterOptions
+    : allFilterOptions.slice(0, DEFAULT_VISIBLE_CHIPS);
+  const hasMoreChips = allFilterOptions.length > DEFAULT_VISIBLE_CHIPS;
+
   return (
     <div className="space-y-4">
       {/* Filter Tags */}
       <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div className="py-2 md:py-3">
           <div className="flex flex-wrap gap-1.5 md:gap-2">
-            {getAllFilterOptions().map((tag, i) => (
+            {visibleFilterOptions.map((tag, i) => (
               <button
                 key={i}
                 onClick={() => {
@@ -215,7 +223,7 @@ export default function EventList() {
                   else if (selectedDates.includes(tag))
                     handleFilterToggle("dates", tag);
                 }}
-                className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                className={`px-3 md:px-3 py-1.5 md:py-1.5 rounded-full text-xs md:text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
                   isFilterSelected(tag)
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
                     : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md"
@@ -226,6 +234,15 @@ export default function EventList() {
                   .replace(/\b\w/g, (char) => char.toUpperCase())}
               </button>
             ))}
+            {hasMoreChips && (
+              <button
+                type="button"
+                onClick={() => setShowAllChips((prev) => !prev)}
+                className="px-3 md:px-3 py-1.5 md:py-1.5 rounded-full text-xs md:text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors whitespace-nowrap"
+              >
+                {showAllChips ? "Show less" : "Show More.."}
+              </button>
+            )}
           </div>
         </div>
       </div>

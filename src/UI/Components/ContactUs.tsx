@@ -56,7 +56,7 @@ const ContactPage: React.FC = () => {
           </p>
         </div> 
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div className="max-w-4xl mx-auto bg-gray-50 rounded-3xl p-5 md:p-8 border border-gray-200">
           {/* Contact Information */}
           <div className="space-y-8">
             <div>
@@ -80,101 +80,8 @@ const ContactPage: React.FC = () => {
                 </div>
               ))}
             </div>
-
-            {/* Additional Info */}
-            {/* <div className="bg-gradient-to-r from-blue-400 to-blue-500 rounded-2xl p-8 text-white">
-              <h4 className="text-xl font-bold mb-4">Why Choose EventHub?</h4>
-              <ul className="space-y-2 text-blue-100">
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                  <span>24/7 Customer Support</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                  <span>Secure Payment Processing</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                  <span>Easy Event Management</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                  <span>Real-time Analytics</span>
-                </li>
-              </ul>
-            </div> */}
           </div>
-
-          {/* Contact Form */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Send us a Message</h3>
-              <p className="text-gray-600">Fill out the form below and we'll get back to you as soon as possible.</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="relative">
-                  <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Your Name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
-                    required
-                  />
-                </div>
-                <div className="relative">
-                  <FaEnvelope className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Your Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="relative">
-                <FaPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="Your Phone Number"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
-                />
-              </div>
-
-              <div className="relative">
-                <FaComment className="absolute left-4 top-6 text-gray-400" />
-                <textarea
-                  name="message"
-                  placeholder="Your Message"
-                  rows={5}
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 resize-none"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-500 hover:to-blue-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                <FaPaperPlane className="text-lg" />
-                Send Message
-              </button>
-            </form>
-          </div>
-        </div>
+        </div> 
       </div>
     </section>
   );
