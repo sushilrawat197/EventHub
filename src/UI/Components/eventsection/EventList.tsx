@@ -199,9 +199,9 @@ export default function EventList() {
   return (
     <div className="space-y-4">
       {/* Filter Tags */}
-      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-        <div className="py-3">
-          <div className="flex flex-wrap gap-2">
+      <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
+        <div className="py-2 md:py-3">
+          <div className="flex flex-wrap gap-1.5 md:gap-2">
             {getAllFilterOptions().map((tag, i) => (
               <button
                 key={i}
@@ -215,7 +215,7 @@ export default function EventList() {
                   else if (selectedDates.includes(tag))
                     handleFilterToggle("dates", tag);
                 }}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                className={`px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
                   isFilterSelected(tag)
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
                     : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md"
