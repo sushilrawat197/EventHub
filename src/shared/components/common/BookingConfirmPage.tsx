@@ -8,10 +8,17 @@ import {
 import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   downloadTicket,
   getOrderDetails,
 } from "../../../features/booking/api/ticketCategory";
+import {
+  getMarathonRegistrationByUserId,
+  type MarathonRegistrationDetails,
+  submitMarathonRegistration,
+  type MarathonRegistrationPayload,
+} from "../../../features/booking/api/marathonRegistration";
 import SpinnerLoading from "./SpinnerLoading";
 
 interface ParticipantFormData {
@@ -24,7 +31,7 @@ interface ParticipantFormData {
   district: string;
   emergencyContactName: string;
   emergencyNumber: string;
-  tshirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "";
+  shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "";
   disclaimerAccepted: boolean;
 }
 
@@ -47,15 +54,22 @@ export default function BookingConfirmed() {
     district: "",
     emergencyContactName: "",
     emergencyNumber: "",
-    tshirtSize: "",
+    shirtSize: "",
     disclaimerAccepted: false,
   });
   const [participantErrors, setParticipantErrors] =
     useState<ParticipantFormErrors>({});
+  const [submittingParticipant, setSubmittingParticipant] = useState(false);
+  const [loadingParticipantRegistration, setLoadingParticipantRegistration] =
+    useState(false);
+  const [existingRegistration, setExistingRegistration] =
+    useState<MarathonRegistrationDetails | null>(null);
 
   const confirmBookingDetails = useAppSelector(
     (state) => state.confirmBooking.booking
   );
+  const currentUser = useAppSelector((state) => state.user.user);
+  const isExistingRegistration = existingRegistration !== null;
 
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const loading = useAppSelector((state) => state.confirmBooking.loading);
@@ -159,7 +173,7 @@ export default function BookingConfirmed() {
       errors.emergencyNumber = "Emergency number must be 8 digits.";
     }
 
-    if (!data.tshirtSize) errors.tshirtSize = "Please select a T-shirt size.";
+    if (!data.shirtSize) errors.shirtSize = "Please select a T-shirt size.";
 
     if (!data.disclaimerAccepted) {
       errors.disclaimerAccepted = "You must accept the disclaimer.";
@@ -174,12 +188,134 @@ export default function BookingConfirmed() {
     setParticipantErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
-    // TODO: integrate participant submit API
-    console.log("Participant form payload:", {
-      bookingId: Number(bookingId),
-      ...participantForm,
-    });
-    setShowParticipantForm(false);
+    const userId = Number(currentUser?.userId);
+    if (!userId || Number.isNaN(userId)) {
+      toast.error("Unable to identify user. Please login again.");
+      return;
+    }
+
+    const normalizePhoneNumber = (value: string) => {
+      const digits = value.replace(/\D/g, "");
+      if (digits.startsWith("266")) return `+${digits}`;
+      if (digits.length === 8) return `+266${digits}`;
+      return value.trim();
+    };
+
+    const registrationPayload: MarathonRegistrationPayload = {
+      userId,
+      name: participantForm.name.trim(),
+      surname: participantForm.surname.trim(),
+      identityType:
+        participantForm.identityType === "id" ? "LS_CITIZEN" : "FOREIGN_NATIONAL",
+      idNumber:
+        participantForm.identityType === "id"
+          ? participantForm.identityValue.trim()
+          : null,
+      passportNumber:
+        participantForm.identityType === "passport"
+          ? participantForm.identityValue.trim()
+          : null,
+      emailAddress: participantForm.email.trim(),
+      cellNumber: normalizePhoneNumber(participantForm.cellNumber),
+      district: participantForm.district.trim(),
+      emergencyContactName: participantForm.emergencyContactName.trim(),
+      emergencyNumber: normalizePhoneNumber(participantForm.emergencyNumber),
+      shirtSize: participantForm.shirtSize as
+        | "XS"
+        | "S"
+        | "M"
+        | "L"
+        | "XL"
+        | "XXL",
+      disclaimerAccepted: participantForm.disclaimerAccepted,
+    };
+
+    setSubmittingParticipant(true);
+    submitMarathonRegistration(registrationPayload)
+      .then((result) => {
+        if (!result.success) {
+          toast.error(result.message);
+          return;
+        }
+
+        toast.success(result.message || "Registration submitted successfully.");
+        setShowParticipantForm(false);
+        setParticipantForm({
+          name: "",
+          surname: "",
+          identityType: "id",
+          identityValue: "",
+          email: "",
+          cellNumber: "",
+          district: "",
+          emergencyContactName: "",
+          emergencyNumber: "",
+          shirtSize: "",
+          disclaimerAccepted: false,
+        });
+        setParticipantErrors({});
+      })
+      .finally(() => {
+        setSubmittingParticipant(false);
+      });
+  };
+
+  const openParticipantForm = async () => {
+    const userId = Number(currentUser?.userId);
+    if (!userId || Number.isNaN(userId)) {
+      toast.error("Unable to identify user. Please login again.");
+      return;
+    }
+
+    setLoadingParticipantRegistration(true);
+    setParticipantErrors({});
+    setExistingRegistration(null);
+
+    const response = await getMarathonRegistrationByUserId(userId);
+
+    if (!response.success) {
+      toast.error(response.message);
+      setLoadingParticipantRegistration(false);
+      return;
+    }
+
+    if (response.data) {
+      setExistingRegistration(response.data);
+      setParticipantForm({
+        name: response.data.name || "",
+        surname: response.data.surname || "",
+        identityType:
+          response.data.identityType === "LS_CITIZEN" ? "id" : "passport",
+        identityValue:
+          response.data.identityType === "LS_CITIZEN"
+            ? response.data.idNumber || ""
+            : response.data.passportNumber || "",
+        email: response.data.emailAddress || "",
+        cellNumber: response.data.cellNumber || "",
+        district: response.data.district || "",
+        emergencyContactName: response.data.emergencyContactName || "",
+        emergencyNumber: response.data.emergencyNumber || "",
+        shirtSize: response.data.shirtSize || response.data.tShirtSize || "",
+        disclaimerAccepted: !!response.data.disclaimerAccepted,
+      });
+    } else {
+      setParticipantForm({
+        name: "",
+        surname: "",
+        identityType: "id",
+        identityValue: "",
+        email: "",
+        cellNumber: "",
+        district: "",
+        emergencyContactName: "",
+        emergencyNumber: "",
+        shirtSize: "",
+        disclaimerAccepted: false,
+      });
+    }
+
+    setShowParticipantForm(true);
+    setLoadingParticipantRegistration(false);
   };
 
   useEffect(() => {
@@ -368,10 +504,22 @@ export default function BookingConfirmed() {
                         Number(confirmBookingDetails?.orderNo) === 690) && (
                         <button
                           type="button"
-                          onClick={() => setShowParticipantForm(true)}
-                          className="justify-center bg-red-600 text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center transition-all duration-300 transform hover:from-red-700 hover:to-red-800 hover:shadow-xl hover:scale-105"
+                          onClick={openParticipantForm}
+                          disabled={loadingParticipantRegistration}
+                          className={`justify-center text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2 transition-all duration-300 transform ${
+                            loadingParticipantRegistration
+                              ? "bg-red-400 cursor-not-allowed"
+                              : "bg-red-600 hover:bg-red-700 hover:shadow-xl hover:scale-105"
+                          }`}
                         >
-                          Registration Form
+                          {loadingParticipantRegistration ? (
+                            <>
+                              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                              <span>Loading...</span>
+                            </>
+                          ) : (
+                            "Registration Form"
+                          )}
                         </button>
                       )}
                     </div>
@@ -563,6 +711,21 @@ export default function BookingConfirmed() {
             </div>
 
             <form onSubmit={handleParticipantSubmit} className="p-6 space-y-4">
+              {isExistingRegistration && (
+                <div className="bg-blue-50 text-blue-700 text-sm rounded-lg px-3 py-2">
+                  Registration already exists. Showing saved details.
+                </div>
+              )}
+
+              {loadingParticipantRegistration ? (
+                <div className="py-8 flex items-center justify-center text-gray-600">
+                  Loading registration details...
+                </div>
+              ) : (
+                <fieldset
+                  disabled={isExistingRegistration}
+                  className={isExistingRegistration ? "opacity-80" : ""}
+                >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -742,15 +905,15 @@ export default function BookingConfirmed() {
                     T-shirt Size
                   </label>
                   <select
-                    value={participantForm.tshirtSize}
+                    value={participantForm.shirtSize}
                     onChange={(e) =>
                       handleParticipantChange(
-                        "tshirtSize",
-                        e.target.value as ParticipantFormData["tshirtSize"]
+                        "shirtSize",
+                        e.target.value as ParticipantFormData["shirtSize"]
                       )
                     }
                     className={`w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 ${
-                      participantErrors.tshirtSize
+                      participantErrors.shirtSize
                         ? "border-red-500 focus:ring-red-400"
                         : "border-gray-300 focus:ring-blue-500"
                     }`}
@@ -763,9 +926,9 @@ export default function BookingConfirmed() {
                     <option value="XL">XL</option>
                     <option value="XXL">XXL</option>
                   </select>
-                  {participantErrors.tshirtSize && (
+                  {participantErrors.shirtSize && (
                     <p className="mt-1 text-xs text-red-600">
-                      {participantErrors.tshirtSize}
+                      {participantErrors.shirtSize}
                     </p>
                   )}
                 </div>
@@ -843,19 +1006,23 @@ export default function BookingConfirmed() {
                 </p>
               )}
 
+              {!isExistingRegistration && (
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={!participantForm.disclaimerAccepted}
+                  disabled={!participantForm.disclaimerAccepted || submittingParticipant}
                   className={`w-full text-white font-semibold py-2.5 rounded-lg transition-colors ${
-                    participantForm.disclaimerAccepted
+                    participantForm.disclaimerAccepted && !submittingParticipant
                       ? "bg-blue-600 hover:bg-blue-700"
                       : "bg-gray-400 cursor-not-allowed"
                   }`}
                 >
-                  Submit
+                  {submittingParticipant ? "Submitting..." : "Submit"}
                 </button>
               </div>
+              )}
+                </fieldset>
+              )}
             </form>
           </div>
         </div>
