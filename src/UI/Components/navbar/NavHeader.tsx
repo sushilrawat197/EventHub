@@ -5,7 +5,7 @@ export default function NavHeader() {
   const navItems = [
     { label: "Home", path: "/" },
     { label: "Browse Events", path: "/events" },
-    // { label: "About", path: "/about" }, 
+    { label: "Marathon Event", path: "/events/marathon-event/39" }, 
   ];
 
   return (
