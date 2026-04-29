@@ -19,6 +19,7 @@ import {
   submitMarathonRegistration,
   type MarathonRegistrationPayload,
 } from "../../../features/booking/api/marathonRegistration";
+import { useLockBodyScroll } from "../../../hooks/useLockBodyScroll";
 import SpinnerLoading from "./SpinnerLoading";
 
 interface ParticipantFormData {
@@ -70,6 +71,7 @@ export default function BookingConfirmed() {
   );
   const currentUser = useAppSelector((state) => state.user.user);
   const isExistingRegistration = existingRegistration !== null;
+  useLockBodyScroll(showParticipantForm);
 
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const loading = useAppSelector((state) => state.confirmBooking.loading);
@@ -500,8 +502,7 @@ export default function BookingConfirmed() {
                           <span className="absolute bottom-0 left-0 h-[2px] bg-white animate-[progress_2s_linear_infinite] w-full"></span>
                         )}
                       </button>
-                      {(Number(bookingId) === 690 ||
-                        Number(confirmBookingDetails?.orderNo) === 690) && (
+                      {Number(confirmBookingDetails?.event?.eventId) === 39 && (
                         <button
                           type="button"
                           onClick={openParticipantForm}

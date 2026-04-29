@@ -184,7 +184,10 @@ export function getOrderDetails(bookingId: number | null, navigate: NavigateFunc
 
       if (response.data.statusCode === 200) {
         dispatch(setConfirmBooking(response.data.data));
-        navigate(`/order/${bookingId}`)
+        const targetPath = `/order/${bookingId}`;
+        if (window.location.pathname !== targetPath) {
+          navigate(targetPath);
+        }
         return { success: true };
       }
 
