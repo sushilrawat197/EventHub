@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../../app/store/hooks";
-import { resend_2fa_otp, resendOTP, sendOtp, verify_2fa_otp } from "../../services/operations/authApi";
+import { resend_2fa_otp, resendOTP, sendOtp, verify_2fa_otp } from "./api/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/store/hooks";
 import OtpInput from "react-otp-input";

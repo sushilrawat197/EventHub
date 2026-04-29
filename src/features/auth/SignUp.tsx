@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { FaEnvelope } from "react-icons/fa";
-import { signUp } from "../../services/operations/authApi";
+import { signUp } from "./api/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/store/hooks";
 import { ClipLoader } from "react-spinners";
 import PopUpMessage from "./popUpMassage";
-import { setOtpContext } from "../../app/store/slices/authSlice";
+import { setOtpContext } from "./store/authSlice";
 
 export default function SignUp() {
   const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { FaLock, FaEnvelope } from "react-icons/fa";
 import { AiFillEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
 import { Link, useLocation } from "react-router-dom";
-import { signIn } from "../../services/operations/authApi";
+import { signIn } from "./api/authApi";
 import { useAppDispatch, useAppSelector } from "../../app/store/hooks";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";

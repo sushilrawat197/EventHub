@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { useAppDispatch } from "../../app/store/hooks";
-import { setPassword } from "../../services/operations/authApi";
+import { setPassword } from "./api/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/store/hooks";
 import { ClipLoader } from "react-spinners";
 import hasSequentialPattern from "./hasSequentialPattern";
-import { setMassage } from "../../app/store/slices/authSlice";
+import { setMassage } from "./store/authSlice";
 // import { ImCross } from "react-icons/im";
 import PopUpMessage from "./popUpMassage";
 

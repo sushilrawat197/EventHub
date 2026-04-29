@@ -1,19 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./slices/authSlice";
-import userReducer from "./slices/userSlice"
-import filterReduce from "./slices/filterSlice"
-import ticketReduce from "./slices/ticketInfoSlice"
-import cityReducer from "./slices/citySlice"
-import eventReducer from "./slices/eventSlice"
-import showReducer from "./slices/showSlice"
-import searchFilterReducer from "./slices/filter_Slice"
-import ticketCategoryReducer from "./slices/ticketCategory"
-import venueReducer from "./slices/venueSlice"
-import reserveTicketReducer from "./slices/reserveTicketSlice"
-import confirmBookingReducer from "./slices/confirmBookingSlice"
-import orderReducer from "./slices/orderDetails"
-import payReducer from "./slices/payTicketSlice"
-import availableReducer from "./slices/availabilitySlice"
+import authReducer from "../../features/auth/store/authSlice";
+import userReducer from "../../features/profile/store/userSlice";
+import filterReduce from "../../features/events/store/filterSlice";
+import ticketReduce from "../../features/booking/store/ticketInfoSlice";
+import cityReducer from "../../features/events/store/citySlice";
+import eventReducer from "../../features/events/store/eventSlice";
+import showReducer from "../../features/events/store/showSlice";
+import searchFilterReducer from "../../features/events/store/filter_Slice";
+import ticketCategoryReducer from "../../features/booking/store/ticketCategory";
+import venueReducer from "../../features/events/store/venueSlice";
+import reserveTicketReducer from "../../features/booking/store/reserveTicketSlice";
+import confirmBookingReducer from "../../features/booking/store/confirmBookingSlice";
+import orderReducer from "../../features/orders/store/orderDetails";
+import payReducer from "../../features/payment/store/payTicketSlice";
+import availableReducer from "../../features/payment/store/availabilitySlice";
 
 export const store = configureStore({
   

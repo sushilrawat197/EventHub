@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import { FaEnvelope } from "react-icons/fa";
 import { useAppDispatch } from "../../app/store/hooks";
 import { useNavigate } from "react-router-dom";
-import { forgot_passwordOtp } from "../../services/operations/authApi";
+import { forgot_passwordOtp } from "./api/authApi";
 import { useState } from "react";
 import { useAppSelector } from "../../app/store/hooks";
 import { ClipLoader } from "react-spinners";
-import { setMassage } from "../../app/store/slices/authSlice";
+import { setMassage } from "./store/authSlice";
 
 const ForgotPassword: React.FC = () => {
   const dispatch = useAppDispatch();

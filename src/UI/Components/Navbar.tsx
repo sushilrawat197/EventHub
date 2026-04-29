@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/store/hooks";
-import ProfileDropdown from "./dasboard/profile/ProfileDropdown";
+import ProfileDropdown from "../../features/profile/components/profile/ProfileDropdown";
 import { CiSearch } from "react-icons/ci";
 import NavHeader from "./navbar/NavHeader";
 // import { MdMenu } from "react-icons/md";
 // import { RxCross1 } from "react-icons/rx";
 import { RiMenuFold4Fill } from "react-icons/ri";
 import { RiMenuFold3Fill } from "react-icons/ri";
-import { listCitiesByRegion } from "../../services/operations/location/cityApi";
+import { listCitiesByRegion } from "../../features/events/api/location/cityApi";
 
-import { listEventsBySearch } from "../../services/operations/eventsApi";
-import { setSelectedCity } from "../../app/store/slices/citySlice";
-import { setFilter } from "../../app/store/slices/filter_Slice";
-// import { setFilter } from "../../app/store/slices/filter_Slice";
+import { listEventsBySearch } from "../../features/events/api/eventsApi";
+import { setSelectedCity } from "../../features/events/store/citySlice";
+import { setFilter } from "../../features/events/store/filter_Slice";
+// import { setFilter } from "../../features/events/store/filter_Slice";
 
 const Navbar: React.FC = () => {
 

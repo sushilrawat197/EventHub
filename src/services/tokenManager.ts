@@ -1,9 +1,9 @@
 import axios from "axios";
 import type { AppDispatch } from "../app/store/store";
-import { clearUser } from "../app/store/slices/userSlice";
+import { clearUser } from "../features/profile/store/userSlice";
 import { initAuthRuntime, refreshAccessTokenSingleFlight } from "../auth/refreshCoordinator";
 import { clearProactiveRefreshTimer, clearTokens } from "../auth/tokenManager";
-import { getCurrentUser } from "./operations/userApi";
+import { getCurrentUser } from "../features/profile/api/userApi";
 import { onSessionExpired } from "../auth/authEvents";
 
 let initialized = false;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/store/hooks";
-import { setMassage } from "../../app/store/slices/authSlice";
+import { setMassage } from "./store/authSlice";
 import { ImCross } from "react-icons/im";
 
 export default function PopUpMessage() {

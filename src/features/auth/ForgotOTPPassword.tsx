@@ -1,10 +1,10 @@
 import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../../app/store/hooks";
-import { forgotp_password_resend_OTP} from "../../services/operations/authApi";
+import { forgotp_password_resend_OTP} from "./api/authApi";
 // import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/store/hooks";
-// import { varifySignInOTP } from "../../services/operations/authApi";
+// import { varifySignInOTP } from "./api/authApi";
 import OtpInput from "react-otp-input";
 
 

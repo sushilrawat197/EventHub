@@ -1,9 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../../app/store/hooks";
-import { forgotp_password_resend_OTP, varifyFogotOtp} from "../../services/operations/authApi";
+import { forgotp_password_resend_OTP, varifyFogotOtp} from "./api/authApi";
 import { useAppSelector } from "../../app/store/hooks";
-// import { varifySignInOTP } from "../../services/operations/authApi";
+// import { varifySignInOTP } from "./api/authApi";
 import OtpInput from "react-otp-input";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
