@@ -23,10 +23,14 @@ export interface MarathonRegistrationPayload {
 interface MarathonRegistrationResponse {
   statusCode: number;
   message?: string;
+  data?: {
+    registrationId?: number;
+  } | null;
 }
 
 export interface MarathonRegistrationDetails {
   registrationId?: number;
+  bookingStatus?: string;
   userId: number;
   name: string;
   surname: string;
@@ -40,7 +44,9 @@ export interface MarathonRegistrationDetails {
   emergencyNumber: string;
   shirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   tShirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+  tshirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   disclaimerAccepted: boolean;
+  createdAt?: string;
 }
 
 interface MarathonRegistrationGetResponse {
@@ -51,7 +57,7 @@ interface MarathonRegistrationGetResponse {
 
 export async function submitMarathonRegistration(
   payload: MarathonRegistrationPayload
-): Promise<{ success: boolean; message: string }> {
+): Promise<{ success: boolean; message: string; registrationId?: number }> {
   try {
     const response = await apiConnector<MarathonRegistrationResponse>({
       method: "POST",
@@ -67,6 +73,7 @@ export async function submitMarathonRegistration(
       return {
         success: true,
         message: response.data.message || "Registration submitted successfully.",
+        registrationId: response.data.data?.registrationId,
       };
     }
 

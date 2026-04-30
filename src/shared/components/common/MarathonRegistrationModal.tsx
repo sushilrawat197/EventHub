@@ -31,7 +31,7 @@ interface MarathonRegistrationModalProps {
   isRegistrationLoading?: boolean;
   readOnlyWhenExisting?: boolean;
   onClose: () => void;
-  onSuccess?: () => void;
+  onSuccess?: (registrationId?: number) => void;
 }
 
 const INITIAL_FORM: ParticipantFormData = {
@@ -87,7 +87,11 @@ export default function MarathonRegistrationModal({
       district: registrationData.district || "",
       emergencyContactName: registrationData.emergencyContactName || "",
       emergencyNumber: registrationData.emergencyNumber || "",
-      shirtSize: registrationData.shirtSize || registrationData.tShirtSize || "",
+      shirtSize:
+        registrationData.shirtSize ||
+        registrationData.tShirtSize ||
+        registrationData.tshirtSize ||
+        "",
       disclaimerAccepted: !!registrationData.disclaimerAccepted,
     });
   }, [isOpen, registrationData]);
@@ -220,7 +224,7 @@ export default function MarathonRegistrationModal({
     toast.success(result.message || "Registration submitted successfully.");
     setParticipantForm(INITIAL_FORM);
     setParticipantErrors({});
-    onSuccess?.();
+    onSuccess?.(result.registrationId);
     onClose();
   };
 
@@ -229,7 +233,7 @@ export default function MarathonRegistrationModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-20">
           <h2 className="text-lg font-bold text-gray-900">Participant Information</h2>
           <button
             type="button"

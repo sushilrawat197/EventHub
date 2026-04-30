@@ -121,10 +121,10 @@ const TicketSelection = () => {
         userId={Number(userId)}
         readOnlyWhenExisting={false}
         onClose={() => setShowRegistrationForm(false)}
-        onSuccess={async () => {
+        onSuccess={async (registrationId?: number) => {
           setShowRegistrationForm(false);
           setLoading(true);
-          const res = await dispatch(reserveTicket(categories));
+          const res = await dispatch(reserveTicket(categories, registrationId));
           setLoading(false);
           if (!res?.success) return;
           navigate(`/events/${contentName}/${eventId}/booking/reviewandpay`, {
