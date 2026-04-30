@@ -1,3 +1,4 @@
+// TODO: TEMP EVENT-39 FLOW - remove this API module after marathon registration flow is retired.
 import axios from "axios";
 import { apiConnector } from "../../../services/apiConnector";
 
@@ -25,6 +26,7 @@ interface MarathonRegistrationResponse {
 }
 
 export interface MarathonRegistrationDetails {
+  registrationId?: number;
   userId: number;
   name: string;
   surname: string;
@@ -95,7 +97,7 @@ export async function getMarathonRegistrationByUserId(
   try {
     const response = await apiConnector<MarathonRegistrationGetResponse>({
       method: "GET",
-      url: `${BASE_URL}/ticketcore-api/api/v1/marathon-registrations/user/${userId}`,
+      url: `${BASE_URL}/ticketcore-api/api/v1/marathon-registrations/booking/${userId}`,
       withCredentials: true,
       headers: {
         "X-Client-Source": "WEB",

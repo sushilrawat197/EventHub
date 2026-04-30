@@ -15,6 +15,8 @@ import { setTicketInfo } from "../../../booking/store/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useMemo } from "react";
 import EventsErrorPage from "../EventErrorsd";
+// TODO: TEMP EVENT-39 FLOW - remove this import and gate check later.
+import { LOGIN_REQUIRED_EVENT_ID } from "../../constants/eventGates";
 
 export interface EventDetailsCardProps {
   date?: string;
@@ -65,6 +67,9 @@ function EventDetailsCard({
   const [loading, setLoading] = useState(false);
 
   const shows = useAppSelector((state) => state.shows.data);
+  const isLoggedIn = useAppSelector(
+    (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
+  );
 
   // ------------------ MEMOIZED UNIQUE SHOWS ------------------
   const uniqueShows = useMemo(() => {
@@ -77,6 +82,11 @@ function EventDetailsCard({
 
   async function bookHandler() {
     if (loading) return; // ⛔ prevent double click
+    // TODO: TEMP EVENT-39 FLOW - remove login gate for special event later.
+    if (Number(eventId) === LOGIN_REQUIRED_EVENT_ID && !isLoggedIn) {
+      navigate("/login", { state: { from: location.pathname } });
+      return;
+    }
 
     try {
       setLoading(true);
@@ -236,6 +246,48 @@ function EventDetailsCard({
               </>
             )}
           </button>
+          
+          {/* <button
+            onClick={bookHandler}
+            disabled={loading}
+            className={`py-3 px-6 rounded-lg font-bold text-sm shadow-lg transition-all duration-300
+                        flex items-center justify-center gap-2
+                        ${
+                          loading
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
+                        }`}
+          >
+            {loading ? (
+              <>
+                <svg
+                  className="w-4 h-4 animate-spin text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  />
+                </svg>
+                Processing…
+              </>
+            ) : (
+              <>
+                <LuTickets className="text-sm" />
+                Book Now
+              </>
+            )}
+          </button> */}
         </div>
       </div>
     </div>

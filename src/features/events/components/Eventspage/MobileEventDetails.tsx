@@ -13,6 +13,7 @@ import { checkEventAvailability } from "../../api/eventsApi";
 import { setTicketInfo } from "../../../booking/store/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useEffect, useState } from "react";
+import { LOGIN_REQUIRED_EVENT_ID } from "../../constants/eventGates";
 
 interface EventDetailsCardProps {
   date?: string;
@@ -47,6 +48,9 @@ export default function MobileEventDetailsCard({
   const { eventId } = useParams();
 
   const shows = useAppSelector((state) => state.shows.data);
+  const isLoggedIn = useAppSelector(
+    (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
+  );
 
   // ============================================
   // ✅ Show card only when real data is available
@@ -97,6 +101,10 @@ export default function MobileEventDetailsCard({
   // ============================================
   const bookHandler = async () => {
     if (loading) return; // ⛔ prevent double click
+    if (Number(eventId) === LOGIN_REQUIRED_EVENT_ID && !isLoggedIn) {
+      navigate("/login", { state: { from: location.pathname } });
+      return;
+    }
     try {
       setLoading(true);
       if (eventId) {

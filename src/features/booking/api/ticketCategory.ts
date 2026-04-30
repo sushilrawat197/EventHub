@@ -2,7 +2,12 @@ import axios from "axios";
 import { api } from "../../../api/axios";
 import type { OtherApiResponse } from "../../../interfaces/country";
 import type { AppDispatch } from "../../../app/store/store";
-import { setTicketCategories, type TicketCategory } from "../store/ticketCategory";
+import {
+  setTicketCategories,
+  setTicketCategoriesError,
+  setTicketCategoriesLoading,
+  type TicketCategory,
+} from "../store/ticketCategory";
 import { apiConnector } from "../../../services/apiConnector";
 import { setBooking } from "../store/reserveTicketSlice";
 import type { BookingData } from "../types/reserveTicketInterface";
@@ -20,6 +25,8 @@ const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 export function listAllTicketCategoriesByShowId(showId: number) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
+      dispatch(setTicketCategoriesLoading(true));
+      dispatch(setTicketCategoriesError(null));
       const response = await apiConnector<OtherApiResponse<TicketCategory[]>>({
         method: "GET",
         url: `${BASE_URL}/ticketcore-api/api/v1/shows/${showId}/ticketcategories`,
@@ -37,11 +44,18 @@ export function listAllTicketCategoriesByShowId(showId: number) {
       return { success: false };
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        dispatch(
+          setTicketCategoriesError({
+            description: error.response?.data?.message || "Failed to fetch tickets",
+          })
+        );
         console.error("Axios error:", error.response);
       } else {
         console.error("Unknown error:", error);
       }
       return { success: false };
+    } finally {
+      dispatch(setTicketCategoriesLoading(false));
     }
   };
 }
@@ -54,14 +68,25 @@ export interface CategorySelection {
   count: number;
 }
 
+interface ReserveTicketPayload {
+  categories: CategorySelection[];
+  registrationId?: number;
+}
 
-export function reserveTicket(categories: CategorySelection[]) {
+export function reserveTicket(
+  categories: CategorySelection[],
+  registrationId?: number
+) {
   return async (dispatch: AppDispatch,): Promise<{ success: boolean }> => {
     try {
+      const payload: ReserveTicketPayload = registrationId
+        ? { categories, registrationId }
+        : { categories };
+
       const response = await apiConnector<OtherApiResponse<BookingData>>({
         method: "POST",
         url: `${BASE_URL}/ticketcore-api/api/v1/bookings/reserve`,
-        bodyData: { categories },
+        bodyData: payload,
         headers: { "X-Client-Source": "WEB" },
         withCredentials: true,
       });

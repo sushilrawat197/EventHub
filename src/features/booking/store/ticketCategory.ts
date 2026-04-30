@@ -55,6 +55,11 @@ const ticketCategorySlice = createSlice({
     clearTicketCategoriesError: (state) => {
       state.error = null;
     },
+    clearTicketCategories: (state) => {
+      state.data = null;
+      state.loading = false;
+      state.error = null;
+    },
   },
 });
 
@@ -64,6 +69,7 @@ export const {
   setTicketCategoriesLoading,
   setTicketCategoriesError,
   clearTicketCategoriesError,
+  clearTicketCategories,
 } = ticketCategorySlice.actions;
 
 // Export reducer

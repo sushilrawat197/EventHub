@@ -7,16 +7,22 @@ import {
   listAllTicketCategoriesByShowId,
   reserveTicket,
 } from "../../../api/ticketCategory";
+import { clearTicketCategories } from "../../../store/ticketCategory";
 import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 import { setEventsErrorMsg } from "../../../../events/store/eventSlice";
 import EventsErrorPage from "../../../../events/components/EventErrorsd";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
+import MarathonRegistrationModal from "../../../../../shared/components/common/MarathonRegistrationModal";
+import { LOGIN_REQUIRED_EVENT_ID } from "../../../../events/constants/eventGates";
 
 const TicketSelection = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const ticketCategory = useAppSelector(
     (state) => state.ticketCategory.data || []
+  );
+  const ticketCategoryLoading = useAppSelector(
+    (state) => state.ticketCategory.loading
   );
 
   const showId = useAppSelector((state) => state.ticket.showId);
@@ -25,6 +31,9 @@ const TicketSelection = () => {
   const { contentName, eventId } = useParams();
 
   const userId = useAppSelector((state) => state.user.user?.userId);
+
+
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [selectedTickets, setSelectedTickets] = useState<{
@@ -52,6 +61,7 @@ const TicketSelection = () => {
       count: cnt,
     }));
 
+    
   async function clickHandler() {
     if (loading) return;
     if (!userId) {
@@ -60,21 +70,22 @@ const TicketSelection = () => {
           "You need to login to proceed. Do you want to login now?"
         )
       );
-    } else if (!categories) {
-      //  dispatch(setEventsErrorMsg("You need to login to proceed. Do you want to login now?"))
+    } else if (!categories.length) {
       window.alert("Add at least one ticket!");
     } else {
       try {
-         setLoading(true);
-        const res = await dispatch(reserveTicket(categories));
+        if (Number(eventId) === LOGIN_REQUIRED_EVENT_ID) {
+          setShowRegistrationForm(true);
+          return;
+        }
 
-        //("Reserve ticket details ", categories);
+        setLoading(true);
+        const res = await dispatch(reserveTicket(categories));
 
         if (res?.success) {
           navigate(`/events/${contentName}/${eventId}/booking/reviewandpay`, {
             replace: true,
           });
-          // dispatch(setTicketInfo({ bookingId:reserveTicket}));
         } else {
           console.log(res);
         }
@@ -91,16 +102,36 @@ const TicketSelection = () => {
   //("PRINTING DIRECTNAVIGATE VALUE: ",singleD_T);
 
   useEffect(() => {
-    // console.count("TicketSelection rendered");
     if (!showId) {
       navigate(`/events/${contentName}/${eventId}`, { replace: true });
     } else {
       dispatch(listAllTicketCategoriesByShowId(Number(showId)));
     }
+
+    return () => {
+      dispatch(clearTicketCategories());
+    };
   }, [dispatch, showId, contentName, eventId, navigate]);
+
 
   return (
     <div className="min-h-[calc(100vh-200px)] bg-gradient-to-br from-gray-50 to-blue-50">
+      <MarathonRegistrationModal
+        isOpen={showRegistrationForm}
+        userId={Number(userId)}
+        readOnlyWhenExisting={false}
+        onClose={() => setShowRegistrationForm(false)}
+        onSuccess={async () => {
+          setShowRegistrationForm(false);
+          setLoading(true);
+          const res = await dispatch(reserveTicket(categories));
+          setLoading(false);
+          if (!res?.success) return;
+          navigate(`/events/${contentName}/${eventId}/booking/reviewandpay`, {
+            replace: true,
+          });
+        }}
+      />
       <ScrollToTop />
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <EventsErrorPage />
@@ -151,7 +182,31 @@ const TicketSelection = () => {
 
         {/* Ticket Categories */}
         <div className="space-y-4 mb-8">
-          {ticketCategory.map((ticket) => (
+          {ticketCategoryLoading ? (
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 flex items-center justify-center gap-3 text-gray-600">
+              <svg
+                className="w-5 h-5 animate-spin text-blue-600"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                />
+              </svg>
+              <span className="font-medium">Loading ticket categories...</span>
+            </div>
+          ) : (
+            ticketCategory.map((ticket) => (
             <div
               key={ticket.categoryId}
               className={`group bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 hover:shadow-xl ${
@@ -256,7 +311,8 @@ const TicketSelection = () => {
                 </div>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Proceed Button */}
@@ -325,6 +381,71 @@ const TicketSelection = () => {
                 </>
               )}
             </button>
+            
+            {/* <button
+              onClick={clickHandler}
+              disabled={loading || (!!userId && categories.length === 0)}
+              className={`group px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300
+      flex items-center gap-3
+      ${
+        loading
+          ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+          : !userId
+          ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+          : categories.length === 0
+          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+          : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+      }`}
+            >
+              {loading ? (
+                <>
+                  <svg
+                    className="w-5 h-5 animate-spin"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    />
+                  </svg>
+                  Processing…
+                </>
+              ) : (
+                <>
+                  <span>
+                    {!userId
+                      ? "Login to Proceed"
+                      : categories.length === 0
+                      ? "Select Tickets"
+                      : "Review & Pay"}
+                  </span>
+                  <svg
+                    className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </>
+              )}
+            </button> */}
+
           </div>
         </div>
       </div>
