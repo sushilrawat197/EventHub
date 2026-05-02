@@ -136,7 +136,7 @@ export default function Layouteventspage() {
             <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
               <EventHeroCard
                 title=""
-                image={singleEvent?.thumbnailUrl ?? null}
+                image={singleEvent?.posterUrl ?? null}
                 tags={singleEvent?.genre ?? ""}
               />
             </div>
