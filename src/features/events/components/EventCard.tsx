@@ -27,7 +27,7 @@ export default function EventCard({ event }: EventCardProps) {
           alt={event.eventName}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
-          className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${
+          className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-110 ${
             imgLoaded ? "opacity-100" : "opacity-0"
           }`}
         />

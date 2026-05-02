@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-
-import "swiper/css";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-
-import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { FaTicketAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
@@ -110,18 +110,37 @@ import { listEventsBySearch } from "../../events/api/eventsApi";
 //   },
 // ];
 
-const UpcomingEvents: React.FC = () => {
+const MD_BREAKPOINT = "(min-width: 768px)";
+
+const UpcomingEvents = () => {
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
   const events = useAppSelector(
     (state) => state.events.allEventsBySearch?.content || []
   );
-  //(events);
+
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia(MD_BREAKPOINT).matches
+      : false
+  );
 
   useEffect(() => {
     dispatch(listEventsBySearch());
   }, [dispatch]);
+
+  useEffect(() => {
+    const mq = window.matchMedia(MD_BREAKPOINT);
+    const onChange = () => setIsDesktop(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  const showCarouselNav = isDesktop
+    ? events.length > 3
+    : events.length > 1;
 
   return (
     <div className="py-24 bg-gradient-to-br from-gray-50 to-white">
@@ -144,42 +163,35 @@ const UpcomingEvents: React.FC = () => {
 
         {/* Events Slider */}
         <div className="relative">
-          <Swiper
-            modules={[Navigation]}
-            navigation={{
-              nextEl: ".swiper-button-next-custom",
-              prevEl: ".swiper-button-prev-custom",
-            }}
-            spaceBetween={24}
-            slidesPerView={1}
-            breakpoints={{
-              640: { slidesPerView: 2 },
-              768: { slidesPerView: 3 },
-              1024: { slidesPerView: 4 },
-              1280: { slidesPerView: 5 },
-            }}
-            className="pb-12"
+          <Carousel
+            opts={{ align: "start" }}
+            className="w-full pb-12"
           >
-            {events.map((event, index) => (
-              <SwiperSlide key={index}>
-                <div
-                  onClick={() =>
-                    navigate(
-                      `/events/${event.eventName.replace(/\s+/g, "-")}/${
-                        event.eventId
-                      }`,{
-                        state:event
-                      }
-                    )
-                  }
-                  className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 h-full flex flex-col"
+            <CarouselContent>
+              {events.map((event, index) => (
+                <CarouselItem
+                  key={index}
+                  className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
                 >
+                  <div className="p-1">
+                    <Card
+                      className="group h-full cursor-pointer gap-0 overflow-hidden rounded-3xl border-0 bg-white py-0 text-gray-900 shadow-lg ring-0 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
+                      onClick={() =>
+                        navigate(
+                          `/events/${event.eventName.replace(/\s+/g, "-")}/${
+                            event.eventId
+                          }`,
+                          { state: event }
+                        )
+                      }
+                    >
+                      <CardContent className="flex h-full flex-col p-0">
                   {/* Image Container */}
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative w-full aspect-[3/4] overflow-hidden flex-shrink-0">
                     <img
-                      src={event.posterUrl}
+                      src={event.thumbnailUrl}
                       alt={event.eventName}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
                     />
 
                     <div
@@ -255,13 +267,15 @@ const UpcomingEvents: React.FC = () => {
 
                     <div className="mt-auto">
                       <button
-                        onClick={() =>
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
                           navigate(
                             `/events/${event.eventName.replace(/\s+/g, "-")}/${
                               event.eventId
                             }`
-                          )
-                        }
+                          );
+                        }}
                         className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 
                        
                           bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-lg transform hover:scale-105"
@@ -271,42 +285,25 @@ const UpcomingEvents: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-
-          {/* Custom Navigation Buttons */}
-          <button className="swiper-button-prev-custom absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors z-10">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-          <button className="swiper-button-next-custom absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-colors z-10">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            {showCarouselNav && (
+              <>
+                <CarouselPrevious
+                  variant="outline"
+                  className="z-10 size-12 border-0 bg-white text-blue-600 shadow-lg hover:bg-blue-50 left-0 -translate-x-4 top-1/2 -translate-y-1/2 rounded-full [&_svg]:size-6"
+                />
+                <CarouselNext
+                  variant="outline"
+                  className="z-10 size-12 border-0 bg-white text-blue-600 shadow-lg hover:bg-blue-50 right-0 translate-x-4 top-1/2 -translate-y-1/2 rounded-full [&_svg]:size-6"
+                />
+              </>
+            )}
+          </Carousel>
         </div>
 
         {/* View All Button */}

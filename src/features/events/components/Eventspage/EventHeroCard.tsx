@@ -14,13 +14,13 @@ interface EventHeroCardDetails {
 export default function EventHeroCard({ image, tags }: EventHeroCardDetails) {
   return (
     <div className="relative">
-      {/* Hero Image - Increased Height */}
-      <div className="relative h-96 lg:h-[28rem] overflow-hidden">
+      {/* Hero: fixed banner ratio; object-contain shows full poster (letterboxing if needed) */}
+      <div className="relative w-full aspect-[16/9] bg-neutral-950 overflow-hidden">
         {image && (
           <img
             src={image}
             alt="Event Poster"
-            className="w-full h-full object-cover"
+            className="absolute inset-0 size-full object-contain object-center"
           />
         )}
 
