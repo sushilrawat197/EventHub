@@ -1,11 +1,11 @@
+import { LOGIN_REQUIRED_EVENT_ID } from "@/constants/eventGates";
 import { NavLink } from "react-router-dom";
 
 export default function NavHeader() {
-
   const navItems = [
     { label: "Home", path: "/" },
     { label: "Browse Events", path: "/events" },
-    { label: "Marathon Event", path: "/events/marathon-event/39" }, 
+    { label: "Marathon Event", path: `/events/marathon-event/${LOGIN_REQUIRED_EVENT_ID} ` }
   ];
 
   return (
@@ -18,8 +18,8 @@ export default function NavHeader() {
                 to={item.path}
                 className={({ isActive }) =>
                   `text-sm font-medium transition-all duration-200 px-3 py-1 rounded-xl ${
-                    isActive 
-                      ? "text-blue-600 bg-blue-50 shadow-sm" 
+                    isActive
+                      ? "text-blue-600 bg-blue-50 shadow-sm"
                       : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
                   }`
                 }
@@ -33,3 +33,4 @@ export default function NavHeader() {
     </div>
   );
 }
+

@@ -1,22 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/store/hooks";
-import ProfileDropdown from "../../features/profile/components/profile/ProfileDropdown";
+import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
+import ProfileDropdown from "../../../features/profile/components/profile/ProfileDropdown";
 import { CiSearch } from "react-icons/ci";
 import NavHeader from "./navbar/NavHeader";
 // import { MdMenu } from "react-icons/md";
 // import { RxCross1 } from "react-icons/rx";
 import { RiMenuFold4Fill } from "react-icons/ri";
 import { RiMenuFold3Fill } from "react-icons/ri";
-import { listCitiesByRegion } from "../../features/events/api/location/cityApi";
+import { listCitiesByRegion } from "../../../features/events/api/location/cityApi";
 
-import { listEventsBySearch } from "../../features/events/api/eventsApi";
-import { setSelectedCity } from "../../features/events/store/citySlice";
-import { setFilter } from "../../features/events/store/filter_Slice";
-// import { setFilter } from "../../features/events/store/filter_Slice";
+import { listEventsBySearch } from "../../../features/events/api/eventsApi";
+import { setSelectedCity } from "../../../features/events/store/citySlice";
+import { setFilter } from "../../../features/events/store/filter_Slice";
+// import { setFilter } from "../../../features/events/store/filter_Slice";
 
 const Navbar: React.FC = () => {
-
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -29,11 +28,9 @@ const Navbar: React.FC = () => {
 
   const cities = useAppSelector((state) => state?.cities.data || []);
 
-
   const [selectedCity, setSelectedCityNav] = useState("Maseru");
 
   // //(cities)
-
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -50,8 +47,6 @@ const Navbar: React.FC = () => {
 
   const user = useAppSelector((state) => state.user.user);
 
-
-
   const handleCitySelect = (city: { id: number; label: string }) => {
     setSelectedCityNav(city.label);
     dispatch(setSelectedCity(city.id));
@@ -61,27 +56,21 @@ const Navbar: React.FC = () => {
     dispatch(listEventsBySearch());
   };
 
-  
   function handleSearch() {
     dispatch(setFilter({ key: "eventName", value: searchData }));
     dispatch(listEventsBySearch());
     navigate("/events");
   }
 
-
-
   useEffect(() => {
     dispatch(listCitiesByRegion());
-    dispatch(setFilter({ key: "cityId", value: 11 }))
+    dispatch(setFilter({ key: "cityId", value: 11 }));
   }, [dispatch]);
 
-
-
   useEffect(() => {
-     setSearchData("");
-     dispatch(setFilter({ key: "eventName", value: "" }));
-  }, [navigate,dispatch]);
-
+    setSearchData("");
+    dispatch(setFilter({ key: "eventName", value: "" }));
+  }, [navigate, dispatch]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -97,7 +86,6 @@ const Navbar: React.FC = () => {
       <nav className="bg-gradient-to-r from-blue-600 via-blue-900 to-blue-600 fixed top-0 left-0 w-full z-50 shadow-lg backdrop-blur-sm">
         <div className="flex flex-col mx-auto">
           <div className="container mx-auto flex items-center justify-between px-2 py-2">
-
             <div className="flex items-center gap-2 lg:gap-6">
               {/* Mobile Menu Toggle */}
               <div className="flex items-center lg:hidden">
@@ -151,18 +139,18 @@ const Navbar: React.FC = () => {
                   value={searchData}
                   onChange={(e) => {
                     setSearchData(e.target.value);
-                    
+
                     // Clear existing timeout
                     if (searchTimeout) {
                       clearTimeout(searchTimeout);
                     }
-                    
+
                     // Set new timeout for debounced search
                     const newTimeout = setTimeout(() => {
                       dispatch(setFilter({ key: "eventName", value: e.target.value }));
                       dispatch(listEventsBySearch());
                     }, 300); // 300ms delay
-                    
+
                     setSearchTimeout(newTimeout);
                   }}
                   type="text"
@@ -185,7 +173,7 @@ const Navbar: React.FC = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     {selectedCity}
-                    <svg className={`w-4 h-4 transition-transform duration-200 ${cityDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className={`w-4 h-4 transition-transform duration-200 ${cityDropdownOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
@@ -241,18 +229,18 @@ const Navbar: React.FC = () => {
                   value={searchData}
                   onChange={(e) => {
                     setSearchData(e.target.value);
-                    
+
                     // Clear existing timeout
                     if (searchTimeout) {
                       clearTimeout(searchTimeout);
                     }
-                    
+
                     // Set new timeout for debounced search
                     const newTimeout = setTimeout(() => {
                       dispatch(setFilter({ key: "eventName", value: e.target.value }));
                       dispatch(listEventsBySearch());
                     }, 300); // 300ms delay
-                    
+
                     setSearchTimeout(newTimeout);
                   }}
                   type="text"
@@ -312,3 +300,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+

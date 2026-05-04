@@ -17,7 +17,7 @@ import {
   getMarathonRegistrationByUserId,
   type MarathonRegistrationDetails,
 } from "../../../features/booking/api/marathonRegistration";
-import { LOGIN_REQUIRED_EVENT_ID } from "../../../features/events/constants/eventGates";
+import { LOGIN_REQUIRED_EVENT_ID } from "../../../constants/eventGates";
 // TODO: TEMP EVENT-39 FLOW - remove shared marathon registration modal usage later.
 import MarathonRegistrationModal from "./MarathonRegistrationModal";
 import SpinnerLoading from "./SpinnerLoading";

@@ -13,7 +13,7 @@ import { setEventsErrorMsg } from "../../../../events/store/eventSlice";
 import EventsErrorPage from "../../../../events/components/EventErrorsd";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 import MarathonRegistrationModal from "../../../../../shared/components/common/MarathonRegistrationModal";
-import { LOGIN_REQUIRED_EVENT_ID } from "../../../../events/constants/eventGates";
+import { LOGIN_REQUIRED_EVENT_ID } from "@/constants/eventGates";
 
 const TicketSelection = () => {
   const dispatch = useAppDispatch();

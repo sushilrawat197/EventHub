@@ -1,5 +1,5 @@
 import ScrollToTop from "../components/common/ScrollToTop";
-import Navbar from "../../UI/Components/Navbar";
+import Navbar from "../components/common/Navbar";
 import { Outlet } from "react-router-dom";
 
 
