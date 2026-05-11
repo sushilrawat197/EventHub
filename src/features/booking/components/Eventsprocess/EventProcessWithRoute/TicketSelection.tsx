@@ -206,7 +206,7 @@ const TicketSelection = () => {
                 Registration Successful
               </h3>
               <p className="relative z-10 text-sm text-slate-700 mb-6">
-                You have successfully registred for the {readableEventName}.
+                You have successfully registred for the {readableEventName}.The participant ticket will be issued by the HR department once your registration is approved.
               </p>
 
               <button
