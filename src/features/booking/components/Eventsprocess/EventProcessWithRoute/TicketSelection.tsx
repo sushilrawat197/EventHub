@@ -217,7 +217,7 @@ const TicketSelection = () => {
                 }}
                 className="relative z-10 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
               >
-                Awesome
+                OK
               </button>
             </motion.div>
           </motion.div>
