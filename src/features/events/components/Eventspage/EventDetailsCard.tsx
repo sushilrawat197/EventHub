@@ -16,7 +16,7 @@ import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useMemo } from "react";
 import EventsErrorPage from "../EventErrorsd";
 // TODO: TEMP EVENT-39 FLOW - remove this import and gate check later.
-import { LOGIN_REQUIRED_EVENT_ID } from "@/constants/eventGates";
+import { SPECIAL_EVENT_ID } from "@/constants/eventGates";
 
 export interface EventDetailsCardProps {
   date?: string;
@@ -83,7 +83,7 @@ function EventDetailsCard({
   async function bookHandler() {
     if (loading) return; // ⛔ prevent double click
     // TODO: TEMP EVENT-39 FLOW - remove login gate for special event later.
-    if (Number(eventId) === LOGIN_REQUIRED_EVENT_ID && !isLoggedIn) {
+    if (Number(eventId) === SPECIAL_EVENT_ID && !isLoggedIn) {
       navigate("/login", { state: { from: location.pathname } });
       return;
     }

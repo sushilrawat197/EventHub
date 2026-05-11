@@ -13,7 +13,7 @@ import { checkEventAvailability } from "../../api/eventsApi";
 import { setTicketInfo } from "../../../booking/store/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useEffect, useState } from "react";
-import { LOGIN_REQUIRED_EVENT_ID } from "@/constants/eventGates";
+import { SPECIAL_EVENT_ID } from "@/constants/eventGates";
 
 interface EventDetailsCardProps {
   date?: string;
@@ -101,7 +101,7 @@ export default function MobileEventDetailsCard({
   // ============================================
   const bookHandler = async () => {
     if (loading) return; // ⛔ prevent double click
-    if (Number(eventId) === LOGIN_REQUIRED_EVENT_ID && !isLoggedIn) {
+    if (Number(eventId) === SPECIAL_EVENT_ID && !isLoggedIn) {
       navigate("/login", { state: { from: location.pathname } });
       return;
     }

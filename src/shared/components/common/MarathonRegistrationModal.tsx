@@ -3,12 +3,16 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useLockBodyScroll } from "../../../hooks/useLockBodyScroll";
 import {
+  getActiveCorporates,
   submitMarathonRegistration,
+  type ActiveCorporate,
   type MarathonRegistrationDetails,
   type MarathonRegistrationPayload,
 } from "../../../features/booking/api/marathonRegistration";
 
 interface ParticipantFormData {
+  participantType: "CORPORATE" | "INDIVIDUAL";
+  corporateId: number | null;
   name: string;
   surname: string;
   identityType: "id" | "passport";
@@ -27,14 +31,22 @@ type ParticipantFormErrors = Partial<Record<keyof ParticipantFormData, string>>;
 interface MarathonRegistrationModalProps {
   isOpen: boolean;
   userId?: number | null;
+  eventId?: number | null;
+  ticketCategoryId?: number | null;
+  noOfTicket?: number | null;
   registrationData?: MarathonRegistrationDetails | null;
   isRegistrationLoading?: boolean;
   readOnlyWhenExisting?: boolean;
   onClose: () => void;
-  onSuccess?: (registrationId?: number) => void;
+  onSuccess?: (result: {
+    registrationId?: number;
+    participantType: "CORPORATE" | "INDIVIDUAL";
+  }) => void;
 }
 
 const INITIAL_FORM: ParticipantFormData = {
+  participantType: "INDIVIDUAL",
+  corporateId: null,
   name: "",
   surname: "",
   identityType: "id",
@@ -51,6 +63,9 @@ const INITIAL_FORM: ParticipantFormData = {
 export default function MarathonRegistrationModal({
   isOpen,
   userId,
+  eventId,
+  ticketCategoryId,
+  noOfTicket,
   registrationData = null,
   isRegistrationLoading = false,
   readOnlyWhenExisting = true,
@@ -62,6 +77,8 @@ export default function MarathonRegistrationModal({
   const [participantErrors, setParticipantErrors] =
     useState<ParticipantFormErrors>({});
   const [submittingParticipant, setSubmittingParticipant] = useState(false);
+  const [activeCorporates, setActiveCorporates] = useState<ActiveCorporate[]>([]);
+  const [loadingCorporates, setLoadingCorporates] = useState(false);
   const isExistingRegistration = registrationData !== null;
 
   useLockBodyScroll(isOpen);
@@ -74,6 +91,8 @@ export default function MarathonRegistrationModal({
       return;
     }
     setParticipantForm({
+      participantType: registrationData.participantType || "INDIVIDUAL",
+      corporateId: registrationData.corporateId ?? null,
       name: registrationData.name || "",
       surname: registrationData.surname || "",
       identityType:
@@ -96,9 +115,34 @@ export default function MarathonRegistrationModal({
     });
   }, [isOpen, registrationData]);
 
+  useEffect(() => {
+    if (!isOpen || participantForm.participantType !== "CORPORATE") return;
+    let isMounted = true;
+
+    const fetchCorporates = async () => {
+      setLoadingCorporates(true);
+      const response = await getActiveCorporates();
+      if (isMounted) {
+        setLoadingCorporates(false);
+        if (!response.success) {
+          toast.error(response.message);
+          setActiveCorporates([]);
+          return;
+        }
+        setActiveCorporates(response.data);
+      }
+    };
+
+    fetchCorporates();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen, participantForm.participantType]);
+
   const handleParticipantChange = (
     key: keyof ParticipantFormData,
-    value: string | boolean
+    value: string | boolean | number | null
   ) => {
     setParticipantForm((prev) => ({
       ...prev,
@@ -124,6 +168,9 @@ export default function MarathonRegistrationModal({
     if (!data.surname.trim()) errors.surname = "Surname is required.";
     else if (!nameRegex.test(data.surname.trim()))
       errors.surname = "Enter a valid surname.";
+    if (data.participantType === "CORPORATE" && !data.corporateId) {
+      errors.corporateId = "Please select a corporate.";
+    }
 
     if (!data.identityValue.trim()) {
       errors.identityValue =
@@ -175,6 +222,10 @@ export default function MarathonRegistrationModal({
     setParticipantErrors(errors);
     if (Object.keys(errors).length > 0) return;
     if (!userId) return;
+    if (!eventId || !ticketCategoryId || !noOfTicket) {
+      toast.error("Missing event ticket details. Please reselect your tickets.");
+      return;
+    }
 
     const normalizePhoneNumber = (value: string) => {
       const digits = value.replace(/\D/g, "");
@@ -185,6 +236,14 @@ export default function MarathonRegistrationModal({
 
     const registrationPayload: MarathonRegistrationPayload = {
       userId: Number(userId),
+      participantType: participantForm.participantType,
+      corporateId:
+        participantForm.participantType === "CORPORATE"
+          ? participantForm.corporateId
+          : null,
+      ticketCategoryId: Number(ticketCategoryId),
+      noOfTicket: Number(noOfTicket),
+      eventId: Number(eventId),
       name: participantForm.name.trim(),
       surname: participantForm.surname.trim(),
       identityType:
@@ -221,10 +280,16 @@ export default function MarathonRegistrationModal({
       return;
     }
 
-    toast.success(result.message || "Registration submitted successfully.");
     setParticipantForm(INITIAL_FORM);
     setParticipantErrors({});
-    onSuccess?.(result.registrationId);
+    if (onSuccess) {
+      onSuccess({
+        registrationId: result.registrationId,
+        participantType: participantForm.participantType,
+      });
+    } else {
+      toast.success(result.message || "Registration submitted successfully.");
+    }
     onClose();
   };
 
@@ -261,6 +326,70 @@ export default function MarathonRegistrationModal({
                 isExistingRegistration && readOnlyWhenExisting ? "opacity-80" : ""
               }
             >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Participant Type
+                  </label>
+                  <select
+                    value={participantForm.participantType}
+                    onChange={(e) => {
+                      const nextType = e.target.value as
+                        | "CORPORATE"
+                        | "INDIVIDUAL";
+                      handleParticipantChange("participantType", nextType);
+                      if (nextType === "INDIVIDUAL") {
+                        handleParticipantChange("corporateId", null);
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="INDIVIDUAL">Individual</option>
+                    <option value="CORPORATE">Corporate</option>
+                  </select>
+                </div>
+                {participantForm.participantType === "CORPORATE" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Corporate
+                    </label>
+                    <select
+                      value={participantForm.corporateId ?? ""}
+                      onChange={(e) =>
+                        handleParticipantChange(
+                          "corporateId",
+                          e.target.value ? Number(e.target.value) : null
+                        )
+                      }
+                      disabled={loadingCorporates}
+                      className={`w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 ${
+                        participantErrors.corporateId
+                          ? "border-red-500 focus:ring-red-400"
+                          : "border-gray-300 focus:ring-blue-500"
+                      }`}
+                    >
+                      <option value="">
+                        {loadingCorporates
+                          ? "Loading corporates..."
+                          : "Select corporate"}
+                      </option>
+                      {activeCorporates.map((corporate) => (
+                        <option
+                          key={corporate.corporateId}
+                          value={corporate.corporateId}
+                        >
+                          {corporate.corporateName}
+                        </option>
+                      ))}
+                    </select>
+                    {participantErrors.corporateId && (
+                      <p className="mt-1 text-xs text-red-600">
+                        {participantErrors.corporateId}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>

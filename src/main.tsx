@@ -28,7 +28,7 @@ createRoot(document.getElementById("root")!).render(
 
           <ToastContainer
             position="bottom-right"
-            autoClose={1000}
+            autoClose={3000}
             closeOnClick={false}
             theme="light"
             className={"px-2"}

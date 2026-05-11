@@ -1,11 +1,11 @@
-import { LOGIN_REQUIRED_EVENT_ID } from "@/constants/eventGates";
+import { SPECIAL_EVENT_ID } from "@/constants/eventGates";
 import { NavLink } from "react-router-dom";
 
 export default function NavHeader() {
   const navItems = [
     { label: "Home", path: "/" },
     { label: "Browse Events", path: "/events" },
-    { label: "Marathon Event", path: `/events/marathon-event/${LOGIN_REQUIRED_EVENT_ID} ` }
+    { label: "Marathon Event", path: `/events/marathon-event/${SPECIAL_EVENT_ID} ` }
   ];
 
   return (

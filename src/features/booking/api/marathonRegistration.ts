@@ -6,6 +6,11 @@ const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 export interface MarathonRegistrationPayload {
   userId: number;
+  participantType: "CORPORATE" | "INDIVIDUAL";
+  corporateId: number | null;
+  ticketCategoryId: number;
+  noOfTicket: number;
+  eventId: number;
   name: string;
   surname: string;
   identityType: "LS_CITIZEN" | "FOREIGN_NATIONAL";
@@ -32,6 +37,11 @@ export interface MarathonRegistrationDetails {
   registrationId?: number;
   bookingStatus?: string;
   userId: number;
+  participantType?: "CORPORATE" | "INDIVIDUAL";
+  corporateId?: number | null;
+  ticketCategoryId?: number;
+  noOfTicket?: number;
+  eventId?: number;
   name: string;
   surname: string;
   identityType: "LS_CITIZEN" | "FOREIGN_NATIONAL";
@@ -53,6 +63,17 @@ interface MarathonRegistrationGetResponse {
   statusCode: number;
   message?: string;
   data?: MarathonRegistrationDetails | MarathonRegistrationDetails[] | null;
+}
+
+export interface ActiveCorporate {
+  corporateId: number;
+  corporateName: string;
+}
+
+interface ActiveCorporatesResponse {
+  statusCode: number;
+  message?: string;
+  data?: ActiveCorporate[] | null;
 }
 
 export async function submitMarathonRegistration(
@@ -90,6 +111,51 @@ export async function submitMarathonRegistration(
     }
 
     return { success: false, message: "Something went wrong. Please try again." };
+  }
+}
+
+export async function getActiveCorporates(): Promise<{
+  success: boolean;
+  message: string;
+  data: ActiveCorporate[];
+}> {
+  try {
+    const response = await apiConnector<ActiveCorporatesResponse>({
+      method: "GET",
+      url: `${BASE_URL}/ticketcore-api/api/v1/corporates/active`,
+      withCredentials: true,
+      headers: {
+        "X-Client-Source": "WEB",
+      },
+    });
+
+    if (response.data.statusCode === 200) {
+      return {
+        success: true,
+        message:
+          response.data.message || "Active corporate list fetched successfully.",
+        data: response.data.data ?? [],
+      };
+    }
+
+    return {
+      success: false,
+      message: response.data.message || "Failed to fetch active corporates.",
+      data: [],
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const apiMessage =
+        (error.response?.data as { message?: string } | undefined)?.message ||
+        "Failed to fetch active corporates.";
+      return { success: false, message: apiMessage, data: [] };
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong. Please try again.",
+      data: [],
+    };
   }
 }
 

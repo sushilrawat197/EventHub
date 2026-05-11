@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { GrFormSubtract } from "react-icons/gr";
 import { IoMdAdd } from "react-icons/io";
+import { AnimatePresence, motion } from "framer-motion";
 // import PrimaryButton from "../PrimaryButton";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -13,7 +14,7 @@ import { setEventsErrorMsg } from "../../../../events/store/eventSlice";
 import EventsErrorPage from "../../../../events/components/EventErrorsd";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 import MarathonRegistrationModal from "../../../../../shared/components/common/MarathonRegistrationModal";
-import { LOGIN_REQUIRED_EVENT_ID } from "@/constants/eventGates";
+import { SPECIAL_EVENT_ID } from "@/constants/eventGates";
 
 const TicketSelection = () => {
   const dispatch = useAppDispatch();
@@ -29,11 +30,13 @@ const TicketSelection = () => {
   //("SHOW ID", showId);
 
   const { contentName, eventId } = useParams();
+  const isSpecialEvent = Number(eventId) === SPECIAL_EVENT_ID;
 
   const userId = useAppSelector((state) => state.user.user?.userId);
 
 
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [showCorporateSuccessPopup, setShowCorporateSuccessPopup] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [selectedTickets, setSelectedTickets] = useState<{
@@ -41,10 +44,26 @@ const TicketSelection = () => {
   }>({});
 
   const handleAdd = (id: number) => {
-    setSelectedTickets((prev) => ({
-      ...prev,
-      [id]: Math.min((prev[id] || 0) + 1, 10), // max 10 tickets
-    }));
+    setSelectedTickets((prev) => {
+      if (isSpecialEvent) {
+        const selectedCount = Object.values(prev).reduce(
+          (total, count) => total + count,
+          0
+        );
+
+        if (selectedCount >= 1) return prev;
+
+        return {
+          ...prev,
+          [id]: 1,
+        };
+      }
+
+      return {
+        ...prev,
+        [id]: Math.min((prev[id] || 0) + 1, 10), // max 10 tickets
+      };
+    });
   };
 
   const handleRemove = (id: number) => {
@@ -60,6 +79,11 @@ const TicketSelection = () => {
       categoryId: Number(id),
       count: cnt,
     }));
+  const primaryCategoryId = categories[0]?.categoryId ?? null;
+  const totalSelectedTickets = categories.reduce(
+    (total, category) => total + category.count,
+    0
+  );
 
     
   async function clickHandler() {
@@ -74,7 +98,7 @@ const TicketSelection = () => {
       window.alert("Add at least one ticket!");
     } else {
       try {
-        if (Number(eventId) === LOGIN_REQUIRED_EVENT_ID) {
+        if (isSpecialEvent) {
           setShowRegistrationForm(true);
           return;
         }
@@ -98,6 +122,9 @@ const TicketSelection = () => {
   }
 
   const singleD_T = localStorage.getItem("dairectnavigate");
+  const readableEventName = decodeURIComponent(contentName || "event")
+    .replace(/-/g, " ")
+    .trim();
 
   //("PRINTING DIRECTNAVIGATE VALUE: ",singleD_T);
 
@@ -119,10 +146,17 @@ const TicketSelection = () => {
       <MarathonRegistrationModal
         isOpen={showRegistrationForm}
         userId={Number(userId)}
+        eventId={Number(eventId)}
+        ticketCategoryId={primaryCategoryId}
+        noOfTicket={totalSelectedTickets}
         readOnlyWhenExisting={false}
         onClose={() => setShowRegistrationForm(false)}
-        onSuccess={async (registrationId?: number) => {
+        onSuccess={async ({ registrationId, participantType }) => {
           setShowRegistrationForm(false);
+          if (participantType === "CORPORATE") {
+            setShowCorporateSuccessPopup(true);
+            return;
+          }
           setLoading(true);
           const res = await dispatch(reserveTicket(categories, registrationId));
           setLoading(false);
@@ -132,6 +166,63 @@ const TicketSelection = () => {
           });
         }}
       />
+      <AnimatePresence>
+        {showCorporateSuccessPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ y: 28, opacity: 0, scale: 0.95 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 20, opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+              className="relative overflow-hidden w-full max-w-md rounded-3xl border border-white/50 bg-white/85 shadow-[0_24px_70px_-20px_rgba(37,99,235,0.55)] p-6 text-center"
+            >
+              <div className="pointer-events-none absolute inset-0">
+                <div className="absolute -top-10 -left-8 h-28 w-28 rounded-full bg-blue-300/30 blur-2xl" />
+                <div className="absolute -bottom-12 -right-8 h-32 w-32 rounded-full bg-purple-300/30 blur-2xl" />
+                <span className="absolute left-8 top-9 h-2 w-2 rounded-full bg-blue-500/70 animate-ping" />
+                <span className="absolute right-12 top-12 h-1.5 w-1.5 rounded-full bg-violet-500/70 animate-ping [animation-delay:220ms]" />
+                <span className="absolute left-14 bottom-14 h-1.5 w-1.5 rounded-full bg-cyan-500/70 animate-ping [animation-delay:380ms]" />
+                <span className="absolute right-16 bottom-16 h-2 w-2 rounded-full bg-emerald-500/70 animate-ping [animation-delay:140ms]" />
+              </div>
+
+              <div className="relative z-10 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg">
+                <svg
+                  className="h-7 w-7 text-white"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+
+              <h3 className="relative z-10 text-xl font-bold text-slate-900 mb-2">
+                Registration Successful
+              </h3>
+              <p className="relative z-10 text-sm text-slate-700 mb-6">
+                You have successfully registred for the {readableEventName}.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCorporateSuccessPopup(false);
+                  navigate("/");
+                }}
+                className="relative z-10 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
+              >
+                Awesome
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <ScrollToTop />
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <EventsErrorPage />
@@ -301,7 +392,10 @@ const TicketSelection = () => {
 
                         <button
                           onClick={() => handleAdd(ticket.categoryId)}
-                          className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-r-xl transition-all duration-200"
+                          disabled={
+                            isSpecialEvent && totalSelectedTickets >= 1
+                          }
+                          className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-r-xl transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-600"
                         >
                           <IoMdAdd className="w-4 h-4" />
                         </button>

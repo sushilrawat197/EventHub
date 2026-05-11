@@ -17,7 +17,7 @@ import {
   getMarathonRegistrationByUserId,
   type MarathonRegistrationDetails,
 } from "../../../features/booking/api/marathonRegistration";
-import { LOGIN_REQUIRED_EVENT_ID } from "../../../constants/eventGates";
+import { SPECIAL_EVENT_ID } from "../../../constants/eventGates";
 // TODO: TEMP EVENT-39 FLOW - remove shared marathon registration modal usage later.
 import MarathonRegistrationModal from "./MarathonRegistrationModal";
 import SpinnerLoading from "./SpinnerLoading";
@@ -273,7 +273,7 @@ export default function BookingConfirmed() {
                       </button>
                       {/* TODO: TEMP EVENT-39 FLOW - remove this registration button block later. */}
                       {Number(confirmBookingDetails?.event?.eventId) ===
-                        LOGIN_REQUIRED_EVENT_ID && (
+                        SPECIAL_EVENT_ID && (
                         <button
                           type="button"
                           onClick={openParticipantForm}
@@ -470,6 +470,12 @@ export default function BookingConfirmed() {
       <MarathonRegistrationModal
         isOpen={showParticipantForm}
         userId={Number(currentUser?.userId)}
+        eventId={Number(confirmBookingDetails?.event?.eventId)}
+        ticketCategoryId={
+          (confirmBookingDetails?.tickets?.[0] as { categoryId?: number } | undefined)
+            ?.categoryId ?? null
+        }
+        noOfTicket={confirmBookingDetails?.tickets?.length ?? null}
         registrationData={registrationData}
         isRegistrationLoading={loadingParticipantRegistration}
         onClose={() => setShowParticipantForm(false)}
