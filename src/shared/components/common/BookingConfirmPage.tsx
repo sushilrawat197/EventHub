@@ -8,18 +8,12 @@ import {
 import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import {
   downloadTicket,
   getOrderDetails,
 } from "../../../features/booking/api/ticketCategory";
-import {
-  getMarathonRegistrationByUserId,
-  type MarathonRegistrationDetails,
-} from "../../../features/booking/api/marathonRegistration";
 import { SPECIAL_EVENT_ID } from "../../../constants/eventGates";
-// TODO: TEMP EVENT-39 FLOW - remove shared marathon registration modal usage later.
-import MarathonRegistrationModal from "./MarathonRegistrationModal";
 import SpinnerLoading from "./SpinnerLoading";
 
 export default function BookingConfirmed() {
@@ -28,17 +22,10 @@ export default function BookingConfirmed() {
   const navigate = useNavigate();
 
   const [downloading, setDownloading] = useState(false);
-  const [showParticipantForm, setShowParticipantForm] = useState(false);
-  const [loadingParticipantRegistration, setLoadingParticipantRegistration] =
-    useState(false);
-  const [registrationData, setRegistrationData] =
-    useState<MarathonRegistrationDetails | null>(null);
 
   const confirmBookingDetails = useAppSelector(
     (state) => state.confirmBooking.booking
   );
-  const currentUser = useAppSelector((state) => state.user.user);
-
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const loading = useAppSelector((state) => state.confirmBooking.loading);
 
@@ -72,21 +59,13 @@ export default function BookingConfirmed() {
     }
   };
 
-  const openParticipantForm = async () => {
+  const goToMarathonRegistration = () => {
     const id = Number(bookingId);
     if (!id || Number.isNaN(id)) {
       toast.error("Unable to identify booking. Please try again.");
       return;
     }
-    setLoadingParticipantRegistration(true);
-    const response = await getMarathonRegistrationByUserId(id);
-    setLoadingParticipantRegistration(false);
-    if (!response.success) {
-      toast.error(response.message);
-      return;
-    }
-    setRegistrationData(response.data);
-    setShowParticipantForm(true);
+    navigate(`/order/${id}/marathon-registration`);
   };
 
   useEffect(() => {
@@ -276,22 +255,10 @@ export default function BookingConfirmed() {
                         SPECIAL_EVENT_ID && (
                         <button
                           type="button"
-                          onClick={openParticipantForm}
-                          disabled={loadingParticipantRegistration}
-                          className={`justify-center text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2 transition-all duration-300 transform ${
-                            loadingParticipantRegistration
-                              ? "bg-red-400 cursor-not-allowed"
-                              : "bg-red-600 hover:bg-red-700 hover:shadow-xl hover:scale-105"
-                          }`}
+                          onClick={goToMarathonRegistration}
+                          className="justify-center text-white px-6 py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center gap-2 transition-all duration-300 transform bg-red-600 hover:bg-red-700 hover:shadow-xl hover:scale-105"
                         >
-                          {loadingParticipantRegistration ? (
-                            <>
-                              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                              <span>Loading...</span>
-                            </>
-                          ) : (
-                            "Registration Details"
-                          )}
+                          Registration Details
                         </button>
                       )}
                     </div>
@@ -465,21 +432,6 @@ export default function BookingConfirmed() {
           </div>
         </div>
       </div>
-
-      {/* TODO: TEMP EVENT-39 FLOW - remove modal wiring later. */}
-      <MarathonRegistrationModal
-        isOpen={showParticipantForm}
-        userId={Number(currentUser?.userId)}
-        eventId={Number(confirmBookingDetails?.event?.eventId)}
-        ticketCategoryId={
-          (confirmBookingDetails?.tickets?.[0] as { categoryId?: number } | undefined)
-            ?.categoryId ?? null
-        }
-        noOfTicket={confirmBookingDetails?.tickets?.length ?? null}
-        registrationData={registrationData}
-        isRegistrationLoading={loadingParticipantRegistration}
-        onClose={() => setShowParticipantForm(false)}
-      />
     </div>
   );
 }

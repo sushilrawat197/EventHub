@@ -194,7 +194,11 @@ export function confirmBooking(bookingId: number | null, navigate: NavigateFunct
 
 
 
-export function getOrderDetails(bookingId: number | null, navigate: NavigateFunction) {
+export function getOrderDetails(
+  bookingId: number | null,
+  navigate: NavigateFunction,
+  options?: { redirectToOrder?: boolean }
+) {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       dispatch(setLoading(true));
@@ -210,7 +214,8 @@ export function getOrderDetails(bookingId: number | null, navigate: NavigateFunc
       if (response.data.statusCode === 200) {
         dispatch(setConfirmBooking(response.data.data));
         const targetPath = `/order/${bookingId}`;
-        if (window.location.pathname !== targetPath) {
+        const allowRedirect = options?.redirectToOrder !== false;
+        if (allowRedirect && window.location.pathname !== targetPath) {
           navigate(targetPath);
         }
         return { success: true };

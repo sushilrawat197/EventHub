@@ -11,7 +11,7 @@ const SignIn = lazy(() => import("./features/auth/SignIn"));
 const SignUp = lazy(() => import("./features/auth/SignUp"));
 const ProfileCard = lazy(() => import("./features/profile/components/profile/ProfileCard"));
 const HomePage = lazy(() => import("./features/home/pages/HomePage"));
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { useAppDispatch } from "./app/store/hooks";
 import { useEffect } from "react";
 const Layout = lazy(() => import("./features/events/pages/Layout"));
@@ -29,6 +29,9 @@ const TicketSelection = lazy(() => import("./features/booking/components/Eventsp
 const ReviewAndPay = lazy(() => import("./features/booking/components/Eventsprocess/EventProcessWithRoute/ReviewAndPay"));
 const PaymentPage = lazy(() => import("./features/payment/pages/PaymentPage"));
 const BookingConfirmed = lazy(() => import("./shared/components/common/BookingConfirmPage"));
+const MarathonRegistrationPage = lazy(
+  () => import("./shared/components/common/MarathonRegistrationPage")
+);
 const BookingOrder = lazy(() => import("./features/orders/pages/BookingOrder"));
 const RateAndReview = lazy(() => import("./shared/components/common/RateAndReview"));
 import { refreshAccessToken } from "./services/tokenManager";
@@ -37,6 +40,18 @@ function withSuspense(element: ReactNode) {
   return <Suspense fallback={<SpinnerLoading />}>{element}</Suspense>;
 }
 
+/** Legacy `/booking/marathon-registration` → standalone marathon URL (preserves navigation state). */
+function MarathonRegistrationFromBookingRedirect() {
+  const { contentName, eventId } = useParams<{ contentName: string; eventId: string }>();
+  const location = useLocation();
+  return (
+    <Navigate
+      to={`/events/${contentName}/${eventId}/marathon-registration`}
+      replace
+      state={location.state}
+    />
+  );
+}
 
 function App() {
   const dispatch = useAppDispatch();
@@ -181,6 +196,15 @@ function App() {
           />
 
           <Route
+            path="order/:bookingId/marathon-registration"
+            element={
+              <ProtectedRoute>
+                {withSuspense(<MarathonRegistrationPage />)}
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="order/:bookingId"
             element={
               <ProtectedRoute>
@@ -198,6 +222,16 @@ function App() {
             }
           />
         </Route>
+
+        {/* Marathon registration: full page without MainLayout / Navbar */}
+        <Route
+          path="/events/:contentName/:eventId/marathon-registration"
+          element={
+            <ProtectedRoute>
+              {withSuspense(<MarathonRegistrationPage />)}
+            </ProtectedRoute>
+          }
+        />
 
         {/* <Route
           path="/bookingconfirmed/:bookingId"
@@ -220,6 +254,7 @@ function App() {
           <Route path="datetime" element={withSuspense(<DateTimeSelection />)} />
 
           <Route path="ticket" element={withSuspense(<TicketSelection />)} />
+          <Route path="marathon-registration" element={<MarathonRegistrationFromBookingRedirect />} />
           <Route
             path="reviewandpay"
             element={

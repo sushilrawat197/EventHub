@@ -5,7 +5,6 @@ import { apiConnector } from "../../../services/apiConnector";
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 export interface MarathonRegistrationPayload {
-  userId: number;
   participantType: "CORPORATE" | "INDIVIDUAL";
   corporateId: number | null;
   ticketCategoryId: number;
@@ -19,6 +18,10 @@ export interface MarathonRegistrationPayload {
   emailAddress: string;
   cellNumber: string;
   district: string;
+  dateOfBirth: string;
+  medicalCondition: "YES" | "NO";
+  medicalConditionDetails: string | null;
+  runningClub: string;
   emergencyContactName: string;
   emergencyNumber: string;
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL";
@@ -50,6 +53,10 @@ export interface MarathonRegistrationDetails {
   emailAddress: string;
   cellNumber: string;
   district: string;
+  dateOfBirth?: string;
+  medicalCondition?: "FIT" | "UNFIT" | "YES" | "NO";
+  medicalConditionDetails?: string | null;
+  runningClub?: string;
   emergencyContactName: string;
   emergencyNumber: string;
   shirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
@@ -69,6 +76,23 @@ export interface ActiveCorporate {
   corporateId: number;
   corporateName: string;
 }
+
+/**
+ * Placeholder districts until a dedicated API is wired.
+ * Replace with fetched options when the endpoint is available.
+ */
+export const MARATHON_DISTRICT_OPTIONS = [
+  "Berea",
+  "Butha-Buthe",
+  "Leribe",
+  "Mafeteng",
+  "Maseru",
+  "Mohale's Hoek",
+  "Mokhotlong",
+  "Qacha's Nek",
+  "Quthing",
+  "Thaba-Tseka",
+] as const;
 
 interface ActiveCorporatesResponse {
   statusCode: number;

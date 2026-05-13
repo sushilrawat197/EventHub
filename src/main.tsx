@@ -5,8 +5,7 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { store } from "./app/store/store.ts";
 import { Provider } from "react-redux";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
 import AuthListener from "./auth/AuthListener";
 import GlobalPopup from "./shared/components/common/GlobalPopup.tsx";
 import NetworkStatusMonitor from "./shared/components/common/NetworkStatusMonitor.tsx";
@@ -26,12 +25,9 @@ createRoot(document.getElementById("root")!).render(
           <AuthListener />
           <App />
 
-          <ToastContainer
+          <Toaster
             position="bottom-right"
-            autoClose={3000}
-            closeOnClick={false}
-            theme="light"
-            className={"px-2"}
+            toastOptions={{ duration: 3000, className: "px-2" }}
           />
           <NetworkStatusMonitor />
           <GlobalPopup />

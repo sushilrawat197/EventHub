@@ -6,7 +6,7 @@ import TermsAndConditions from "../components/Eventspage/TermsAndConditions";
 import EventscardSlider from "../components/Eventspage/EventscardSlider";
 import MobileEventDetailsCard from "../components/Eventspage/MobileEventDetails";
 import { useLocation, useParams } from "react-router-dom";
-import type { Content } from "../types/eventInterface";
+import type { EventResponseBySearch } from "../types/evnetInterFace";
 import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import { useEffect, useMemo } from "react";
 import {
@@ -23,17 +23,40 @@ import {
 } from "../api/showsApi";
 import { clearSetShows } from "../store/showSlice";
 
+function formatPreviewDateRange(p: EventResponseBySearch): string {
+  if (p.dateDisplay?.trim()) return p.dateDisplay;
+  if (!p.startDate) return "";
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("en-US", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  const start = new Date(p.startDate);
+  const end = p.endDate ? new Date(p.endDate) : start;
+  return start.getTime() === end.getTime()
+    ? fmt(start)
+    : `${fmt(start)} - ${fmt(end)}`;
+}
+
 export default function Layouteventspage() {
   const location = useLocation();
-  const event = location.state as Content;
   const dispatch = useAppDispatch();
   const { eventId } = useParams<{ eventId: string }>();
+
+  const navPreview = useMemo((): EventResponseBySearch | undefined => {
+    const s = location.state as EventResponseBySearch | undefined;
+    if (s && String(s.eventId) === eventId) return s;
+    return undefined;
+  }, [location.state, eventId]);
+
+  const event = navPreview;
 
   const allEvents = useAppSelector(
     (state) => state.events.allEventsBySearch?.content || []
   );
   const singleEvent = useAppSelector((state) => state.events.singleEvent);
-  console.log("SINGLE EVENT....",singleEvent);
   const eventLoading = useAppSelector((state) => state.events.eventloading);
   const shows = useAppSelector((state) => state.shows.data);
 
@@ -86,22 +109,43 @@ export default function Layouteventspage() {
     );
   }, [allEvents, event?.genre, eventId]);
 
-  console.log("SLIDER Events....",sliderEvents);
-
+  const previewVenue =
+    navPreview &&
+    [navPreview.venueName, navPreview.city].filter(Boolean).join(", ");
 
   // ------------------ MEMOIZED DETAILS ------------------
   const details = useMemo(
     () => ({
-      date: formattedDates,
-      time: formattedTime,
-      duration: `${singleEvent?.durationMinutes} min`,
+      date:
+        formattedDates ||
+        (navPreview ? formatPreviewDateRange(navPreview) : ""),
+      time: formattedTime || navPreview?.timeDisplay || "",
+      duration:
+        singleEvent?.durationMinutes != null
+          ? `${singleEvent.durationMinutes} min`
+          : "",
       ageLimit: singleEvent?.ageRestriction,
-      languages: singleEvent?.languages || [],
-      category: singleEvent?.genre,
-      venue: uniqueVenues.map((v) => v.venueName).join(", "),
-      price: singleEvent?.basePrice,
+      languages:
+        singleEvent?.languages?.length
+          ? singleEvent.languages
+          : navPreview?.language
+            ? [navPreview.language]
+            : [],
+      category: singleEvent?.genre || navPreview?.genre,
+      venue:
+        uniqueVenues.map((v) => v.venueName).join(", ") ||
+        previewVenue ||
+        "",
+      price: singleEvent?.basePrice ?? navPreview?.price,
     }),
-    [formattedDates, formattedTime, singleEvent, uniqueVenues]
+    [
+      formattedDates,
+      formattedTime,
+      singleEvent,
+      uniqueVenues,
+      navPreview,
+      previewVenue,
+    ]
   );
 
   // ------------------ API CALLS ------------------
@@ -120,14 +164,18 @@ export default function Layouteventspage() {
     dispatch(listEventsBySearch());
   }, [dispatch]);
 
-  if (eventLoading) return <SpinnerLoading />;
+  const canRenderShell =
+    Boolean(navPreview) ||
+    (singleEvent && String(singleEvent.eventId) === eventId);
+
+  if (eventLoading && !canRenderShell) return <SpinnerLoading />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 lg:mt-32 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="mb-3">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
-            {singleEvent?.name ?? ""}
+            {singleEvent?.name ?? navPreview?.eventName ?? ""}
           </h1>
         </div>
 
@@ -136,8 +184,10 @@ export default function Layouteventspage() {
             <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
               <EventHeroCard
                 title=""
-                image={singleEvent?.posterUrl ?? null}
-                tags={singleEvent?.genre ?? ""}
+                image={
+                  singleEvent?.posterUrl ?? navPreview?.posterUrl ?? null
+                }
+                tags={singleEvent?.genre ?? navPreview?.genre ?? ""}
               />
             </div>
 

@@ -45,16 +45,21 @@ function EventDetailsCard({
 
   // ------------------ MEMOIZE DETAILS ARRAY ------------------
   const details = useMemo(() => {
+    const langText = languages?.filter(Boolean).join(", ");
     return [
       ...(date ? [{ icon: <FaCalendarAlt />, text: date }] : []),
       ...(time ? [{ icon: <FaClock />, text: time }] : []),
-      { icon: <LuTickets />, text: duration || "Duration not available" },
+      ...(duration
+        ? [{ icon: <LuTickets />, text: duration }]
+        : []),
       {
         icon: <FaUsers />,
         text: ageLimit ? `Age Limit - ${ageLimit}` : "All Ages",
       },
-      { icon: <MdOutlineTranslate />, text: languages?.join(", ") || "N/A" },
-      { icon: <FaUser />, text: category || "N/A" },
+      ...(langText
+        ? [{ icon: <MdOutlineTranslate />, text: langText }]
+        : []),
+      ...(category ? [{ icon: <FaUser />, text: category }] : []),
       ...(venue ? [{ icon: <FaMapMarkerAlt />, text: venue }] : []),
     ];
   }, [date, time, duration, ageLimit, languages, category, venue]);
@@ -200,7 +205,9 @@ function EventDetailsCard({
         <div className="flex items-center gap-3">
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2 border border-green-100 flex-1">
             <div className="text-center">
-              <p className="text-lg font-bold text-green-600">M{price}</p>
+              <p className="text-lg font-bold text-green-600">
+                {price != null ? `M${price}` : "—"}
+              </p>
               {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
             </div>
           </div>

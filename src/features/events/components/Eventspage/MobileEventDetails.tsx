@@ -52,18 +52,18 @@ export default function MobileEventDetailsCard({
     (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
   );
 
+  useEffect(() => {
+    setShowCard(false);
+  }, [eventId]);
+
   // ============================================
   // ✅ Show card only when real data is available
   // ============================================
   useEffect(() => {
-    const requiredDataReady =
-      date !== undefined &&
-      time !== undefined &&
-      venue !== undefined &&
-      shows !== undefined &&
-      shows.length > 0;
-
-    if (requiredDataReady) {
+    const hasListPreview =
+      Boolean((date ?? "").trim()) && Boolean((venue ?? "").trim());
+    const hasShows = Boolean(shows?.length);
+    if (hasShows || hasListPreview) {
       setShowCard(true);
     }
   }, [date, time, venue, shows]);
@@ -83,16 +83,21 @@ export default function MobileEventDetailsCard({
   // ============================================
   // Details Array (unchanged)
   // ============================================
+  const langText = languages?.filter(Boolean).join(", ");
   const details = [
     ...(date ? [{ icon: <FaCalendarAlt />, text: date }] : []),
     ...(time ? [{ icon: <FaClock />, text: time }] : []),
-    { icon: <LuTickets />, text: duration || "Duration not available" },
+    ...(duration
+      ? [{ icon: <LuTickets />, text: duration }]
+      : []),
     {
       icon: <FaUsers />,
       text: ageLimit ? `Age Limit - ${ageLimit}` : "All Ages",
     },
-    { icon: <MdOutlineTranslate />, text: languages?.join(", ") || "N/A" },
-    { icon: <FaUser />, text: category || "N/A" },
+    ...(langText
+      ? [{ icon: <MdOutlineTranslate />, text: langText }]
+      : []),
+    ...(category ? [{ icon: <FaUser />, text: category }] : []),
     ...(venue ? [{ icon: <FaMapMarkerAlt />, text: venue }] : []),
   ];
 
@@ -100,7 +105,7 @@ export default function MobileEventDetailsCard({
   // Booking Logic (unchanged)
   // ============================================
   const bookHandler = async () => {
-    if (loading) return; // ⛔ prevent double click
+    if (loading || !shows?.length) return;
     if (Number(eventId) === SPECIAL_EVENT_ID && !isLoggedIn) {
       navigate("/login", { state: { from: location.pathname } });
       return;
@@ -189,17 +194,19 @@ export default function MobileEventDetailsCard({
 
       <div className="flex justify-between items-center py-3 border-t border-gray-200 fixed bottom-0 left-0 right-0 bg-white w-full px-4 z-40 shadow-lg">
         <div className="flex flex-col">
-          <p className="text-lg font-bold text-green-600">M{price}</p>
+          <p className="text-lg font-bold text-green-600">
+            {price != null ? `M${price}` : "—"}
+          </p>
           {priceNote && <p className="text-xs text-red-500">{priceNote}</p>}
         </div>
 
         <button
           onClick={bookHandler}
-          disabled={loading}
+          disabled={loading || !shows?.length}
           className={`py-3 px-6 rounded-lg font-bold text-sm shadow-lg transition-all duration-300
                                flex items-center justify-center gap-2
                                ${
-                                 loading
+                                 loading || !shows?.length
                                    ? "bg-gray-400 cursor-not-allowed"
                                    : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
                                }`}

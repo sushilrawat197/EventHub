@@ -1,6 +1,6 @@
 import { apiConnector } from "../../../services/apiConnector";
 import { clearUser, setUser } from "../store/userSlice";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { type Dispatch } from "@reduxjs/toolkit";
 import axios from "axios";
 import { userEndpoint } from "../../../services/apis";
@@ -104,7 +104,7 @@ export function updateUserDetails(
 
       if (response.data.statusCode === 200) {
         dispatch(getCurrentUser());
-        toast.success(response.data.message);
+        toast.success(response.data.message ?? "Profile updated");
       }
 
       // console.log("UPDATED USER RESPONSE:", response);
@@ -147,7 +147,7 @@ export function updateUserProfilPicture(file: FormData) {
 
         await dispatch(getCurrentUser());
         // console.log(response)
-        toast.success(response?.data?.masssage)
+        toast.success(response?.data?.masssage ?? "Photo updated");
       }
 
       // console.log("UPDATED USER RESPONSE:", response);

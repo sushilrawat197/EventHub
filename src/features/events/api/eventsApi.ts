@@ -11,7 +11,6 @@ const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 export function listEventsBySearch(page: number = 0) {
   return async (dispatch: AppDispatch, getState: () => RootState) => {
-    dispatch(setEventsLoading(true));
     try {
       const filters = getState().searchFilter;
 
@@ -36,8 +35,6 @@ export function listEventsBySearch(page: number = 0) {
     } catch (error) {
       console.error("Error fetching events:", error);
       return { success: false };
-    } finally {
-      dispatch(setEventsLoading(false));
     }
   };
 }

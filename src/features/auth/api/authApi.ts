@@ -31,7 +31,7 @@ const {
 } = endpoints;
 
 import axios from "axios";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { clearUser } from "../../profile/store/userSlice";
 import { getCurrentUser } from "../../profile/api/userApi";
 import type { AppDispatch } from "../../../app/store/store";
@@ -130,7 +130,7 @@ export function signUp(
 
       const data = response.data;
       // console.log("SIGNUP API RESPONSE............", data);
-      toast.success(data.message, { pauseOnHover: false });
+      toast.success(data.message);
 
       if (response.data.status == "SUCCESS") {
         // localStorage.setItem("otpContext", "signupOTP");

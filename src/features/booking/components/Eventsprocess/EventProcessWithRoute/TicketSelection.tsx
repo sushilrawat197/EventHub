@@ -3,7 +3,7 @@ import { GrFormSubtract } from "react-icons/gr";
 import { IoMdAdd } from "react-icons/io";
 import { AnimatePresence, motion } from "framer-motion";
 // import PrimaryButton from "../PrimaryButton";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   listAllTicketCategoriesByShowId,
   reserveTicket,
@@ -13,12 +13,12 @@ import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 import { setEventsErrorMsg } from "../../../../events/store/eventSlice";
 import EventsErrorPage from "../../../../events/components/EventErrorsd";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
-import MarathonRegistrationModal from "../../../../../shared/components/common/MarathonRegistrationModal";
 import { SPECIAL_EVENT_ID } from "@/constants/eventGates";
 
 const TicketSelection = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const ticketCategory = useAppSelector(
     (state) => state.ticketCategory.data || []
   );
@@ -35,7 +35,6 @@ const TicketSelection = () => {
   const userId = useAppSelector((state) => state.user.user?.userId);
 
 
-  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [showCorporateSuccessPopup, setShowCorporateSuccessPopup] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -79,13 +78,11 @@ const TicketSelection = () => {
       categoryId: Number(id),
       count: cnt,
     }));
-  const primaryCategoryId = categories[0]?.categoryId ?? null;
   const totalSelectedTickets = categories.reduce(
     (total, category) => total + category.count,
     0
   );
 
-    
   async function clickHandler() {
     if (loading) return;
     if (!userId) {
@@ -99,7 +96,9 @@ const TicketSelection = () => {
     } else {
       try {
         if (isSpecialEvent) {
-          setShowRegistrationForm(true);
+          navigate(`/events/${contentName}/${eventId}/marathon-registration`, {
+            state: { categories },
+          });
           return;
         }
 
@@ -140,32 +139,16 @@ const TicketSelection = () => {
     };
   }, [dispatch, showId, contentName, eventId, navigate]);
 
+  useEffect(() => {
+    const st = location.state as { marathonCorporateSuccess?: boolean } | null;
+    if (st?.marathonCorporateSuccess) {
+      setShowCorporateSuccessPopup(true);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.pathname, location.state, navigate]);
 
   return (
     <div className="min-h-[calc(100vh-200px)] bg-gradient-to-br from-gray-50 to-blue-50">
-      <MarathonRegistrationModal
-        isOpen={showRegistrationForm}
-        userId={Number(userId)}
-        eventId={Number(eventId)}
-        ticketCategoryId={primaryCategoryId}
-        noOfTicket={totalSelectedTickets}
-        readOnlyWhenExisting={false}
-        onClose={() => setShowRegistrationForm(false)}
-        onSuccess={async ({ registrationId, participantType }) => {
-          setShowRegistrationForm(false);
-          if (participantType === "CORPORATE") {
-            setShowCorporateSuccessPopup(true);
-            return;
-          }
-          setLoading(true);
-          const res = await dispatch(reserveTicket(categories, registrationId));
-          setLoading(false);
-          if (!res?.success) return;
-          navigate(`/events/${contentName}/${eventId}/booking/reviewandpay`, {
-            replace: true,
-          });
-        }}
-      />
       <AnimatePresence>
         {showCorporateSuccessPopup && (
           <motion.div

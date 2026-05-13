@@ -13,7 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import BookingErrorPage from "../../booking/components/Eventsprocess/BookingError";
 import { ClipLoader } from "react-spinners";
 import ScrollToTop from "../../../shared/components/common/ScrollToTop";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { setPayMessage } from "../store/payTicketSlice";
 import type { PaymentMethodType } from "../components/payment-ordersummay/PaymentOptions";
 import PaymentOptions from "../components/payment-ordersummay/PaymentOptions";
