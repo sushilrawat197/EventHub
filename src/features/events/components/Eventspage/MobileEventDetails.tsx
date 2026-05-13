@@ -106,10 +106,10 @@ export default function MobileEventDetailsCard({
   // ============================================
   const bookHandler = async () => {
     if (loading || !shows?.length) return;
-    if (Number(eventId) === SPECIAL_EVENT_ID && !isLoggedIn) {
-      navigate("/login", { state: { from: location.pathname } });
-      return;
-    }
+    // if (Number(eventId) === SPECIAL_EVENT_ID && !isLoggedIn) {
+    //   navigate("/login", { state: { from: location.pathname } });
+    //   return;
+    // }
     try {
       setLoading(true);
       if (eventId) {
