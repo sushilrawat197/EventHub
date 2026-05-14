@@ -45,6 +45,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarDays, ChevronDown } from "lucide-react";
+import { SPECIAL_EVENT_ID, SPECIAL_MARATHON_REGISTRATION_STASH_KEY } from "@/constants/eventGates";
 
 interface ParticipantFormData {
   participantType: "CORPORATE" | "INDIVIDUAL";
@@ -91,6 +92,7 @@ const INITIAL_FORM: ParticipantFormData = {
 type MarathonLocationState = {
   categories?: CategorySelection[];
   marathonCorporateSuccess?: boolean;
+  participantType?: "INDIVIDUAL" | "CORPORATE";
 };
 
 const SHIRT_SIZE_OPTIONS: Exclude<ParticipantFormData["shirtSize"], "">[] = [
@@ -199,10 +201,13 @@ export default function MarathonRegistrationPage() {
 
   const bookingIdParam = params.bookingId ? Number(params.bookingId) : null;
   const eventIdParam = params.eventId ? Number(params.eventId) : null;
+  const isSpecialEvent =
+    eventIdParam !== null && !Number.isNaN(eventIdParam) && eventIdParam === SPECIAL_EVENT_ID;
   const contentName = params.contentName ?? "";
 
   const locState = (location.state || {}) as MarathonLocationState;
   const categoriesFromState = locState.categories;
+  const participantTypeFromLocation = locState.participantType;
 
   const readOnlyWhenExisting = isOrderContext;
 
@@ -228,10 +233,76 @@ export default function MarathonRegistrationPage() {
     ? confirmBookingDetails?.tickets?.length ?? null
     : categoriesFromState?.reduce((t, c) => t + c.count, 0) ?? null;
 
+  /**
+   * No ticket categories in router state: either restore post-login stash (special event)
+   * or send user back to ticket selection. Kept in one effect so we never clear sessionStorage
+   * and then let a second effect redirect to tickets before state is restored.
+   */
   useEffect(() => {
-    if (!isBookingContext || (categoriesFromState && categoriesFromState.length > 0)) return;
+    if (!isBookingContext) return;
+    if (categoriesFromState && categoriesFromState.length > 0) return;
+
+    if (isSpecialEvent && userId) {
+      let raw: string | null = null;
+      try {
+        raw = sessionStorage.getItem(SPECIAL_MARATHON_REGISTRATION_STASH_KEY);
+      } catch {
+        /* ignore */
+      }
+      if (raw) {
+        const expectedPath = `/events/${contentName}/${eventIdParam}/marathon-registration`;
+        let restored = false;
+        try {
+          const parsed = JSON.parse(raw) as {
+            categories?: CategorySelection[];
+            participantType?: "INDIVIDUAL" | "CORPORATE";
+            returnTo?: string;
+          };
+          if (
+            parsed.returnTo === expectedPath &&
+            Array.isArray(parsed.categories) &&
+            parsed.categories.length > 0
+          ) {
+            try {
+              sessionStorage.removeItem(SPECIAL_MARATHON_REGISTRATION_STASH_KEY);
+            } catch {
+              /* ignore */
+            }
+            navigate(location.pathname, {
+              replace: true,
+              state: {
+                categories: parsed.categories,
+                participantType: parsed.participantType ?? "INDIVIDUAL",
+              },
+            });
+            restored = true;
+          }
+        } catch {
+          /* invalid JSON */
+        }
+        if (!restored) {
+          try {
+            sessionStorage.removeItem(SPECIAL_MARATHON_REGISTRATION_STASH_KEY);
+          } catch {
+            /* ignore */
+          }
+        } else {
+          return;
+        }
+      }
+    }
+
     navigate(`/events/${contentName}/${eventIdParam}/booking/ticket`, { replace: true });
-  }, [isBookingContext, categoriesFromState, navigate, contentName, eventIdParam]);
+  }, [
+    isBookingContext,
+    categoriesFromState,
+    navigate,
+    contentName,
+    eventIdParam,
+    isSpecialEvent,
+    userId,
+    location.pathname,
+  ]);
 
   useEffect(() => {
     if (!isOrderContext || !bookingIdParam || Number.isNaN(bookingIdParam)) return;
@@ -298,6 +369,22 @@ export default function MarathonRegistrationPage() {
       disclaimerAccepted: !!registrationData.disclaimerAccepted,
     });
   }, [registrationData]);
+
+  useEffect(() => {
+    if (registrationData) return;
+    const pt = participantTypeFromLocation;
+    if (pt !== "CORPORATE" && pt !== "INDIVIDUAL") return;
+    setParticipantForm((prev) => {
+      if (prev.participantType === pt && (pt === "INDIVIDUAL" ? prev.corporateId === null : true)) {
+        return prev;
+      }
+      return {
+        ...prev,
+        participantType: pt,
+        corporateId: pt === "INDIVIDUAL" ? null : prev.corporateId,
+      };
+    });
+  }, [registrationData, participantTypeFromLocation, location.key]);
 
   useEffect(() => {
     if (participantForm.participantType !== "CORPORATE") return;
@@ -435,7 +522,10 @@ export default function MarathonRegistrationPage() {
     const errors = validateParticipantForm(participantForm);
     setParticipantErrors(errors);
     if (Object.keys(errors).length > 0) return;
-    if (!userId) return;
+    if (participantForm.participantType === "INDIVIDUAL" && !userId) {
+      toast.error("Please sign in to register as an individual.");
+      return;
+    }
     if (!resolvedEventId || !resolvedTicketCategoryId || !resolvedNoOfTicket) {
       toast.error("Missing event ticket details. Please reselect your tickets.");
       return;
@@ -515,7 +605,7 @@ export default function MarathonRegistrationPage() {
     );
   }
 
-  if (isBookingContext && !userId) {
+  if (isBookingContext && !userId && !isSpecialEvent) {
     return (
       <div className="min-h-[60vh] bg-gray-50/50 px-4 py-10 flex items-center justify-center">
         <div className="w-full max-w-sm rounded-2xl border border-amber-100 bg-white p-6 text-center shadow-lg">
@@ -535,6 +625,8 @@ export default function MarathonRegistrationPage() {
   }
 
   const formDisabled = isExistingRegistration && readOnlyWhenExisting;
+  /** Ticket flow sets participant type on ticket selection; do not allow changing it here. */
+  const participantTypeLocked = isBookingContext;
 
   return (
     <div
@@ -589,46 +681,57 @@ export default function MarathonRegistrationPage() {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <label className={baseLabelClass}><FaUser className="text-emerald-500" /> Type</label>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className={cn(
-                            baseInputClass,
-                            "!h-auto min-h-[2.5rem] justify-between gap-2 font-normal text-gray-900 shadow-sm"
-                          )}
-                        >
-                          <span>{PARTICIPANT_TYPE_LABEL[participantForm.participantType]}</span>
-                          <ChevronDown className="size-4 shrink-0 opacity-60" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
-                        align="start"
+                    {participantTypeLocked ? (
+                      <div
+                        className={cn(
+                          baseInputClass,
+                          "flex min-h-[2.5rem] cursor-default items-center text-gray-900"
+                        )}
                       >
-                        <DropdownMenuLabel className="text-xs font-semibold">
-                          Participant type
-                        </DropdownMenuLabel>
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem
-                            onSelect={() => {
-                              handleParticipantChange("participantType", "INDIVIDUAL");
-                              handleParticipantChange("corporateId", null);
-                            }}
+                        {PARTICIPANT_TYPE_LABEL[participantForm.participantType]}
+                      </div>
+                    ) : (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className={cn(
+                              baseInputClass,
+                              "!h-auto min-h-[2.5rem] justify-between gap-2 font-normal text-gray-900 shadow-sm"
+                            )}
                           >
-                            Individual
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onSelect={() =>
-                              handleParticipantChange("participantType", "CORPORATE")
-                            }
-                          >
-                            Corporate
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                            <span>{PARTICIPANT_TYPE_LABEL[participantForm.participantType]}</span>
+                            <ChevronDown className="size-4 shrink-0 opacity-60" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
+                          align="start"
+                        >
+                          <DropdownMenuLabel className="text-xs font-semibold">
+                            Participant type
+                          </DropdownMenuLabel>
+                          <DropdownMenuGroup>
+                            <DropdownMenuItem
+                              onSelect={() => {
+                                handleParticipantChange("participantType", "INDIVIDUAL");
+                                handleParticipantChange("corporateId", null);
+                              }}
+                            >
+                              Individual
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onSelect={() =>
+                                handleParticipantChange("participantType", "CORPORATE")
+                              }
+                            >
+                              Corporate
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
                   {participantForm.participantType === "CORPORATE" && (
                     <div>

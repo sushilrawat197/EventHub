@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { logout } from "../../../auth/api/authApi";
 import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
 import { Link, useNavigate } from "react-router-dom";
@@ -54,14 +55,18 @@ export default function ProfileDropdown() {
     dispatch(logout(navigate, dispatch));
   };
 
-  // Animate in
   useEffect(() => {
-    if (openMenu) {
-      // start slide-in animation slightly after mounting
-      setTimeout(() => setAnimateMenu(true), 10);
-    } else {
+    if (!openMenu) {
       setAnimateMenu(false);
+      document.body.style.overflow = "";
+      return;
     }
+    const id = requestAnimationFrame(() => setAnimateMenu(true));
+    document.body.style.overflow = "hidden";
+    return () => {
+      cancelAnimationFrame(id);
+      document.body.style.overflow = "";
+    };
   }, [openMenu]);
 
   // Close on outside click
@@ -139,24 +144,23 @@ export default function ProfileDropdown() {
       </div>
 
 
-      {/* Dropdown Menu + Overlay */}
-      {openMenu && (
-        <div className="fixed inset-0 z-40">
-          {/* Overlay with fade-in/out */}
-          <div
-            className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-              animateMenu ? "opacity-100" : "opacity-0"
-            }`}
-            onClick={handleClose}
-          ></div>
+      {/* Overlay + drawer portaled to body so backdrop-filter stacks above page content */}
+      {openMenu &&
+        createPortal(
+          <>
+            <div
+              className="fixed inset-0 z-[9998] bg-slate-950/50 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/40"
+              style={{ WebkitBackdropFilter: "blur(12px)" }}
+              onClick={handleClose}
+              aria-hidden
+            />
 
-          {/* Slide-in menu */}
-          <div
-            ref={menuRef}
-            className={`absolute right-0 top-0 h-screen w-[280px] bg-white shadow-2xl z-50 transform transition-all duration-300 border-l border-gray-100 ${
-              animateMenu ? "translate-x-0" : "translate-x-full"
-            }`}
-          >
+            <div
+              ref={menuRef}
+              className={`fixed right-0 top-0 z-[9999] flex h-dvh max-h-[100dvh] w-[min(100vw-1rem,280px)] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out border-l border-gray-100 ${
+                animateMenu ? "translate-x-0" : "translate-x-full"
+              }`}
+            >
             {/* Header */}
             <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white p-5 relative overflow-hidden">
               {/* Background Pattern */}
@@ -207,7 +211,7 @@ export default function ProfileDropdown() {
 
 
             {/* Menu Items */}
-            <div className="py-4 px-3">
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto py-4 px-3">
               {menuItems.map((item, idx) => (
                 <div
                   key={idx}
@@ -258,9 +262,10 @@ export default function ProfileDropdown() {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      )}
+            </div>
+          </>,
+          document.body
+        )}
     </div>
   );
 }
