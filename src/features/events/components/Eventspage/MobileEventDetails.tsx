@@ -13,7 +13,7 @@ import { checkEventAvailability } from "../../api/eventsApi";
 import { setTicketInfo } from "../../../booking/store/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useEffect, useState } from "react";
-import { SPECIAL_EVENT_ID } from "@/constants/eventGates";
+
 
 interface EventDetailsCardProps {
   date?: string;
@@ -48,9 +48,9 @@ export default function MobileEventDetailsCard({
   const { eventId } = useParams();
 
   const shows = useAppSelector((state) => state.shows.data);
-  const isLoggedIn = useAppSelector(
-    (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
-  );
+  // const isLoggedIn = useAppSelector(
+  //   (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
+  // );
 
   useEffect(() => {
     setShowCard(false);

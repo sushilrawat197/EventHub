@@ -16,7 +16,7 @@ import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useMemo } from "react";
 import EventsErrorPage from "../EventErrorsd";
 // TODO: TEMP EVENT-39 FLOW - remove this import and gate check later.
-import { SPECIAL_EVENT_ID } from "@/constants/eventGates";
+
 
 export interface EventDetailsCardProps {
   date?: string;
@@ -72,9 +72,9 @@ function EventDetailsCard({
   const [loading, setLoading] = useState(false);
 
   const shows = useAppSelector((state) => state.shows.data);
-  const isLoggedIn = useAppSelector(
-    (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
-  );
+  // const isLoggedIn = useAppSelector(
+  //   (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
+  // );
 
   // ------------------ MEMOIZED UNIQUE SHOWS ------------------
   const uniqueShows = useMemo(() => {
