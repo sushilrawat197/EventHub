@@ -10,6 +10,7 @@ import {
   FaMobileAlt,
   FaNotesMedical,
   FaRunning,
+  FaVenusMars,
   FaShieldAlt,
   FaTshirt,
   FaUser,
@@ -29,7 +30,6 @@ import {
 } from "../../../features/booking/api/marathonRegistration";
 import {
   getOrderDetails,
-  reserveTicket,
   type CategorySelection,
 } from "../../../features/booking/api/ticketCategory";
 import { Button } from "@/components/ui/button";
@@ -47,9 +47,21 @@ import { cn } from "@/lib/utils";
 import { CalendarDays, ChevronDown } from "lucide-react";
 import { SPECIAL_EVENT_ID, SPECIAL_MARATHON_REGISTRATION_STASH_KEY } from "@/constants/eventGates";
 
+type MarathonGender = "" | "Male" | "Female" | "Other";
+
+type MarathonRaceCategory =
+  | ""
+  | "3 KM"
+  | "5 KM"
+  | "10 KM"
+  | "Half Marathon"
+  | "Full Marathon";
+
 interface ParticipantFormData {
   participantType: "CORPORATE" | "INDIVIDUAL";
   corporateId: number | null;
+  gender: MarathonGender;
+  raceCategory: MarathonRaceCategory;
   name: string;
   surname: string;
   dateOfBirth: string;
@@ -72,6 +84,8 @@ type ParticipantFormErrors = Partial<Record<keyof ParticipantFormData, string>>;
 const INITIAL_FORM: ParticipantFormData = {
   participantType: "INDIVIDUAL",
   corporateId: null,
+  gender: "",
+  raceCategory: "",
   name: "",
   surname: "",
   dateOfBirth: "",
@@ -92,6 +106,8 @@ const INITIAL_FORM: ParticipantFormData = {
 type MarathonLocationState = {
   categories?: CategorySelection[];
   marathonCorporateSuccess?: boolean;
+  marathonRegistrationSuccess?: boolean;
+  marathonRegistrationParticipantType?: "INDIVIDUAL" | "CORPORATE";
   participantType?: "INDIVIDUAL" | "CORPORATE";
 };
 
@@ -118,6 +134,29 @@ const MEDICAL_CONDITION_LABEL: Record<Exclude<ParticipantFormData["medicalCondit
   YES: "Yes",
   NO: "No",
 };
+
+const GENDER_OPTIONS: Exclude<MarathonGender, "">[] = ["Male", "Female", "Other"];
+
+const RACE_CATEGORY_OPTIONS: Exclude<MarathonRaceCategory, "">[] = [
+  "3 KM",
+  "5 KM",
+  "10 KM",
+  "Half Marathon",
+  "Full Marathon",
+];
+
+function isMarathonRaceCategory(value: string): value is Exclude<MarathonRaceCategory, ""> {
+  return (RACE_CATEGORY_OPTIONS as string[]).includes(value);
+}
+
+/** API expects MALE | FEMALE | OTHER; form UI uses title case. */
+function marathonGenderFromApi(raw: string | undefined): MarathonGender {
+  const key = (raw ?? "").trim().toLowerCase();
+  if (key === "male") return "Male";
+  if (key === "female") return "Female";
+  if (key === "other") return "Other";
+  return "";
+}
 
 function parseIsoDateLocal(iso: string): Date | undefined {
   if (!iso.trim()) return undefined;
@@ -242,7 +281,7 @@ export default function MarathonRegistrationPage() {
     if (!isBookingContext) return;
     if (categoriesFromState && categoriesFromState.length > 0) return;
 
-    if (isSpecialEvent && userId) {
+    if (isSpecialEvent) {
       let raw: string | null = null;
       try {
         raw = sessionStorage.getItem(SPECIAL_MARATHON_REGISTRATION_STASH_KEY);
@@ -300,7 +339,6 @@ export default function MarathonRegistrationPage() {
     contentName,
     eventIdParam,
     isSpecialEvent,
-    userId,
     location.pathname,
   ]);
 
@@ -335,9 +373,12 @@ export default function MarathonRegistrationPage() {
       setParticipantForm(INITIAL_FORM);
       return;
     }
+    const apiRaceCategory = registrationData.raceCategory ?? "";
     setParticipantForm({
       participantType: registrationData.participantType || "INDIVIDUAL",
       corporateId: registrationData.corporateId ?? null,
+      gender: marathonGenderFromApi(registrationData.gender),
+      raceCategory: isMarathonRaceCategory(apiRaceCategory) ? apiRaceCategory : "",
       name: registrationData.name || "",
       surname: registrationData.surname || "",
       dateOfBirth: registrationData.dateOfBirth || "",
@@ -469,6 +510,9 @@ export default function MarathonRegistrationPage() {
       errors.corporateId = "Please select a corporate.";
     }
 
+    if (!data.gender) errors.gender = "Please select gender.";
+    if (!data.raceCategory) errors.raceCategory = "Please select a race category.";
+
     if (!data.identityValue.trim()) {
       errors.identityValue = data.identityType === "id" ? "ID number is required." : "Passport number is required.";
     } else if (data.identityType === "id" && !idRegex.test(data.identityValue.trim())) {
@@ -522,10 +566,6 @@ export default function MarathonRegistrationPage() {
     const errors = validateParticipantForm(participantForm);
     setParticipantErrors(errors);
     if (Object.keys(errors).length > 0) return;
-    if (participantForm.participantType === "INDIVIDUAL" && !userId) {
-      toast.error("Please sign in to register as an individual.");
-      return;
-    }
     if (!resolvedEventId || !resolvedTicketCategoryId || !resolvedNoOfTicket) {
       toast.error("Missing event ticket details. Please reselect your tickets.");
       return;
@@ -544,6 +584,8 @@ export default function MarathonRegistrationPage() {
       ticketCategoryId: Number(resolvedTicketCategoryId),
       noOfTicket: Number(resolvedNoOfTicket),
       eventId: Number(resolvedEventId),
+      gender: participantForm.gender.toUpperCase(),
+      raceCategory: participantForm.raceCategory,
       name: participantForm.name.trim(),
       surname: participantForm.surname.trim(),
       identityType: participantForm.identityType === "id" ? "LS_CITIZEN" : "FOREIGN_NATIONAL",
@@ -578,16 +620,13 @@ export default function MarathonRegistrationPage() {
     setParticipantErrors({});
 
     if (isBookingContext && categoriesFromState?.length) {
-      if (participantForm.participantType === "CORPORATE") {
-        navigate(`/events/${contentName}/${eventIdParam}/booking/ticket`, {
-          replace: true,
-          state: { marathonCorporateSuccess: true },
-        });
-        return;
-      }
-      const res = await dispatch(reserveTicket(categoriesFromState, result.registrationId));
-      if (!res?.success) return;
-      navigate(`/events/${contentName}/${eventIdParam}/booking/reviewandpay`, { replace: true });
+      navigate(`/events/${contentName}/${eventIdParam}/booking/ticket`, {
+        replace: true,
+        state: {
+          marathonRegistrationSuccess: true,
+          marathonRegistrationParticipantType: participantForm.participantType,
+        },
+      });
       return;
     }
 
@@ -625,8 +664,8 @@ export default function MarathonRegistrationPage() {
   }
 
   const formDisabled = isExistingRegistration && readOnlyWhenExisting;
-  /** Ticket flow sets participant type on ticket selection; do not allow changing it here. */
-  const participantTypeLocked = isBookingContext;
+  /** Standalone `/events/.../marathon-registration` lets users pick Individual vs Corporate on this form. */
+  const participantTypeLocked = isBookingContext && !isStandaloneMarathonRegistration;
 
   return (
     <div
@@ -804,6 +843,96 @@ export default function MarathonRegistrationPage() {
                       {participantErrors.corporateId && <p className="mt-1 text-[10px] text-red-600">{participantErrors.corporateId}</p>}
                     </div>
                   )}
+                  <div>
+                    <label className={baseLabelClass}>
+                      <FaVenusMars className="text-pink-500" /> Gender
+                    </label>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            baseInputClass,
+                            inputRing(participantErrors.gender),
+                            "!h-auto min-h-[2.5rem] justify-between gap-2 font-normal text-gray-900 shadow-sm"
+                          )}
+                        >
+                          <span className={participantForm.gender ? "text-gray-900" : "text-gray-500"}>
+                            {participantForm.gender || "Select gender"}
+                          </span>
+                          <ChevronDown className="size-4 shrink-0 opacity-60" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
+                        align="start"
+                      >
+                        <DropdownMenuLabel className="text-xs font-semibold">Gender</DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem onSelect={() => handleParticipantChange("gender", "")}>
+                            Select gender
+                          </DropdownMenuItem>
+                          {GENDER_OPTIONS.map((opt) => (
+                            <DropdownMenuItem
+                              key={opt}
+                              onSelect={() => handleParticipantChange("gender", opt)}
+                            >
+                              {opt}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {participantErrors.gender && (
+                      <p className="mt-1 text-[10px] text-red-600">{participantErrors.gender}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className={baseLabelClass}>
+                      <FaRunning className="text-amber-600" /> Race category
+                    </label>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            baseInputClass,
+                            inputRing(participantErrors.raceCategory),
+                            "!h-auto min-h-[2.5rem] justify-between gap-2 font-normal text-gray-900 shadow-sm"
+                          )}
+                        >
+                          <span className={participantForm.raceCategory ? "text-gray-900" : "text-gray-500"}>
+                            {participantForm.raceCategory || "Select race category"}
+                          </span>
+                          <ChevronDown className="size-4 shrink-0 opacity-60" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="min-w-[var(--radix-dropdown-menu-trigger-width)] max-h-[min(320px,70vh)] overflow-y-auto"
+                        align="start"
+                      >
+                        <DropdownMenuLabel className="text-xs font-semibold">Race category</DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem onSelect={() => handleParticipantChange("raceCategory", "")}>
+                            Select race category
+                          </DropdownMenuItem>
+                          {RACE_CATEGORY_OPTIONS.map((opt) => (
+                            <DropdownMenuItem
+                              key={opt}
+                              onSelect={() => handleParticipantChange("raceCategory", opt)}
+                            >
+                              {opt}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {participantErrors.raceCategory && (
+                      <p className="mt-1 text-[10px] text-red-600">{participantErrors.raceCategory}</p>
+                    )}
+                  </div>
                   <div className="sm:col-span-2">
                     <label className={baseLabelClass}><FaNotesMedical className="text-violet-500" /> Do you have any medical condition(s) we should be aware of?</label>
                     <DropdownMenu>

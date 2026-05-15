@@ -10,6 +10,8 @@ export interface MarathonRegistrationPayload {
   ticketCategoryId: number;
   noOfTicket: number;
   eventId: number;
+  gender: string;
+  raceCategory: string;
   name: string;
   surname: string;
   identityType: "LS_CITIZEN" | "FOREIGN_NATIONAL";
@@ -45,6 +47,8 @@ export interface MarathonRegistrationDetails {
   ticketCategoryId?: number;
   noOfTicket?: number;
   eventId?: number;
+  gender?: string;
+  raceCategory?: string;
   name: string;
   surname: string;
   identityType: "LS_CITIZEN" | "FOREIGN_NATIONAL";

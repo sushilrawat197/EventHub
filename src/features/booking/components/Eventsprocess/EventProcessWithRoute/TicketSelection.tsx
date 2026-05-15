@@ -13,20 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 import { setEventsErrorMsg } from "../../../../events/store/eventSlice";
 import EventsErrorPage from "../../../../events/components/EventErrorsd";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
-import {
-  SPECIAL_EVENT_ID,
-  SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
-} from "@/constants/eventGates";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { SPECIAL_EVENT_ID } from "@/constants/eventGates";
 
 const TicketSelection = () => {
   const dispatch = useAppDispatch();
@@ -48,12 +35,11 @@ const TicketSelection = () => {
   const userId = useAppSelector((state) => state.user.user?.userId);
 
 
-  const [showCorporateSuccessPopup, setShowCorporateSuccessPopup] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [participantDialogOpen, setParticipantDialogOpen] = useState(false);
-  const [marathonParticipantType, setMarathonParticipantType] = useState<
+  const [showMarathonSuccessPopup, setShowMarathonSuccessPopup] = useState(false);
+  const [marathonSuccessParticipantType, setMarathonSuccessParticipantType] = useState<
     "INDIVIDUAL" | "CORPORATE"
-  >("INDIVIDUAL");
+  >("CORPORATE");
+  const [loading, setLoading] = useState(false);
 
   const [selectedTickets, setSelectedTickets] = useState<{
     [key: number]: number;
@@ -102,48 +88,12 @@ const TicketSelection = () => {
 
   const marathonRegistrationPath = `/events/${contentName}/${eventId}/marathon-registration`;
 
-  function openSpecialParticipantDialog() {
+  function navigateToMarathonRegistration() {
     if (!categories.length) {
       window.alert("Add at least one ticket!");
       return;
     }
-    setMarathonParticipantType("INDIVIDUAL");
-    setParticipantDialogOpen(true);
-  }
-
-  function confirmMarathonParticipantChoice() {
-    if (!categories.length) {
-      window.alert("Add at least one ticket!");
-      return;
-    }
-    if (marathonParticipantType === "CORPORATE") {
-      navigate(marathonRegistrationPath, {
-        state: { categories, participantType: "CORPORATE" },
-      });
-      setParticipantDialogOpen(false);
-      return;
-    }
-    if (userId) {
-      navigate(marathonRegistrationPath, {
-        state: { categories, participantType: "INDIVIDUAL" },
-      });
-      setParticipantDialogOpen(false);
-      return;
-    }
-    try {
-      sessionStorage.setItem(
-        SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
-        JSON.stringify({
-          categories,
-          participantType: "INDIVIDUAL" as const,
-          returnTo: marathonRegistrationPath,
-        })
-      );
-    } catch {
-      /* ignore quota / private mode */
-    }
-    setParticipantDialogOpen(false);
-    navigate("/login", { state: { from: marathonRegistrationPath } });
+    navigate(marathonRegistrationPath, { state: { categories } });
   }
 
   async function clickHandlerReserveFlow() {
@@ -181,7 +131,7 @@ const TicketSelection = () => {
   function handlePrimaryAction() {
     if (loading) return;
     if (isSpecialEvent) {
-      openSpecialParticipantDialog();
+      navigateToMarathonRegistration();
       return;
     }
     if (!userId) {
@@ -219,9 +169,19 @@ const TicketSelection = () => {
   }, [dispatch, showId, contentName, eventId, navigate]);
 
   useEffect(() => {
-    const st = location.state as { marathonCorporateSuccess?: boolean } | null;
-    if (st?.marathonCorporateSuccess) {
-      setShowCorporateSuccessPopup(true);
+    const st = location.state as {
+      marathonRegistrationSuccess?: boolean;
+      marathonRegistrationParticipantType?: "INDIVIDUAL" | "CORPORATE";
+      marathonCorporateSuccess?: boolean;
+    } | null;
+    const legacyCorporate = st?.marathonCorporateSuccess === true;
+    const unified = st?.marathonRegistrationSuccess === true;
+    if (unified || legacyCorporate) {
+      setMarathonSuccessParticipantType(
+        st?.marathonRegistrationParticipantType ??
+          (legacyCorporate ? "CORPORATE" : "INDIVIDUAL")
+      );
+      setShowMarathonSuccessPopup(true);
       navigate(location.pathname, { replace: true, state: null });
     }
   }, [location.pathname, location.state, navigate]);
@@ -229,7 +189,7 @@ const TicketSelection = () => {
   return (
     <div className="min-h-[calc(100vh-200px)] bg-gradient-to-br from-gray-50 to-blue-50">
       <AnimatePresence>
-        {showCorporateSuccessPopup && (
+        {showMarathonSuccessPopup && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -268,13 +228,25 @@ const TicketSelection = () => {
                 Registration Successful
               </h3>
               <p className="relative z-10 text-sm text-slate-700 mb-6">
-                You have successfully registred for the {readableEventName}.The participant ticket will be issued by the HR department once your registration is approved.
+                {marathonSuccessParticipantType === "CORPORATE" ? (
+                  <>
+                    You have successfully registered for the {readableEventName}.
+                    The participant ticket will be issued by the HR department once
+                    your registration is approved.
+                  </>
+                ) : (
+                  <>
+                    You have successfully registered for the {readableEventName}. The
+                    participant ticket will be issued by the organiser once your payment
+                    is approved.
+                  </>
+                )}
               </p>
 
               <button
                 type="button"
                 onClick={() => {
-                  setShowCorporateSuccessPopup(false);
+                  setShowMarathonSuccessPopup(false);
                   navigate("/");
                 }}
                 className="relative z-10 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
@@ -524,7 +496,7 @@ const TicketSelection = () => {
                       : categories.length === 0
                       ? "Select Tickets"
                       : isSpecialEvent
-                      ? "Choose participant"
+                      ? "Proceed to Registration"
                       : "Review & Pay"}
                   </span>
                   <svg
@@ -543,120 +515,6 @@ const TicketSelection = () => {
                 </>
               )}
             </button>
-
-            {isSpecialEvent && (
-              <AlertDialog
-                open={participantDialogOpen}
-                onOpenChange={setParticipantDialogOpen}
-              >
-                <AlertDialogContent className="w-[min(100vw-2rem,22rem)] max-w-md gap-4 border-gray-200 sm:max-w-md">
-                  <AlertDialogHeader className="text-left sm:text-left">
-                    <AlertDialogTitle>Participant type</AlertDialogTitle>
-                    <AlertDialogDescription className="text-left text-gray-600">
-                      Individual registration requires a signed-in account. Corporate
-                      registration can continue as a guest.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <fieldset className="space-y-2 border-0 p-0">
-                    <legend className="sr-only">Choose participant type</legend>
-                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50">
-                      <input
-                        type="radio"
-                        name="marathon-participant-type"
-                        className="h-4 w-4 shrink-0 text-blue-600"
-                        checked={marathonParticipantType === "INDIVIDUAL"}
-                        onChange={() => setMarathonParticipantType("INDIVIDUAL")}
-                      />
-                      Individual
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50">
-                      <input
-                        type="radio"
-                        name="marathon-participant-type"
-                        className="h-4 w-4 shrink-0 text-blue-600"
-                        checked={marathonParticipantType === "CORPORATE"}
-                        onChange={() => setMarathonParticipantType("CORPORATE")}
-                      />
-                      Corporate
-                    </label>
-                  </fieldset>
-                  <AlertDialogFooter className="gap-2 sm:justify-end">
-                    <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
-                    <Button
-                      type="button"
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 font-semibold text-white hover:from-blue-700 hover:to-blue-800"
-                      onClick={() => confirmMarathonParticipantChoice()}
-                    >
-                      Continue
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-            
-            {/* <button
-              onClick={clickHandler}
-              disabled={loading || (!!userId && categories.length === 0)}
-              className={`group px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300
-      flex items-center gap-3
-      ${
-        loading
-          ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-          : !userId
-          ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-          : categories.length === 0
-          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-          : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-      }`}
-            >
-              {loading ? (
-                <>
-                  <svg
-                    className="w-5 h-5 animate-spin"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8H4z"
-                    />
-                  </svg>
-                  Processing…
-                </>
-              ) : (
-                <>
-                  <span>
-                    {!userId
-                      ? "Login to Proceed"
-                      : categories.length === 0
-                      ? "Select Tickets"
-                      : "Review & Pay"}
-                  </span>
-                  <svg
-                    className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 7l5 5m0 0l-5 5m5-5H6"
-                    />
-                  </svg>
-                </>
-              )}
-            </button> */}
 
           </div>
         </div>
