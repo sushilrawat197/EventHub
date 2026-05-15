@@ -194,6 +194,7 @@ function App() {
             path="/events/:contentName/:eventId"
             element={withSuspense(<Layouteventspage />)}
           />
+          
           <Route path="/helpandsupport" element={withSuspense(<HelpAndSupport />)} />
 
           <Route
