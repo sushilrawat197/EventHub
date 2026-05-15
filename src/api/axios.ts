@@ -63,6 +63,11 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Guests have no access token; do not attempt refresh (would force /login redirect).
+    if (!getAccessToken()) {
+      return Promise.reject(error);
+    }
+
     if (originalConfig._retry) {
       return Promise.reject(error);
     }
