@@ -1295,7 +1295,7 @@ export default function MarathonRegistrationPage() {
                     {participantErrors.shirtSize && <p className="mt-1 text-[10px] text-red-600">{participantErrors.shirtSize}</p>}
                   </div>
                   <div>
-                    <label className={baseLabelClass}><FaUserMd className="text-red-500" /> Emg. Contact</label>
+                    <label className={baseLabelClass}><FaUserMd className="text-red-500" /> Emg. Contact Name</label>
                     <input
                       type="text"
                       value={participantForm.emergencyContactName}
@@ -1305,7 +1305,7 @@ export default function MarathonRegistrationPage() {
                     {participantErrors.emergencyContactName && <p className="mt-1 text-[10px] text-red-600">{participantErrors.emergencyContactName}</p>}
                   </div>
                   <div>
-                    <label className={baseLabelClass}><FaMobileAlt className="text-red-400" /> Emg. Number</label>
+                    <label className={baseLabelClass}><FaMobileAlt className="text-red-400" /> Emg. Contact Number</label>
                     <input
                       type="tel"
                       value={participantForm.emergencyNumber}
