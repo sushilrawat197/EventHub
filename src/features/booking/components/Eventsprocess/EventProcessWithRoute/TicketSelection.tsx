@@ -237,8 +237,8 @@ const TicketSelection = () => {
                 ) : (
                   <>
                     You have successfully registered for the {readableEventName}. The
-                    participant ticket will be issued by the organiser once your payment
-                    is approved.
+                    participant ticket will be issued by organizer once your payment
+                    is confirmed.
                   </>
                 )}
               </p>
