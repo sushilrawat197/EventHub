@@ -27,6 +27,7 @@ export interface MarathonRegistrationPayload {
   emergencyContactName: string;
   emergencyNumber: string;
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+  shoeSize: string;
   disclaimerAccepted: boolean;
 }
 
@@ -66,6 +67,7 @@ export interface MarathonRegistrationDetails {
   shirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   tShirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   tshirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+  shoeSize?: string;
   disclaimerAccepted: boolean;
   createdAt?: string;
 }
@@ -79,6 +81,136 @@ interface MarathonRegistrationGetResponse {
 export interface ActiveCorporate {
   corporateId: number;
   corporateName: string;
+}
+
+export const MARATHON_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function isValidMarathonEmail(email: string): boolean {
+  return MARATHON_EMAIL_PATTERN.test(email.trim());
+}
+
+export function normalizeMarathonEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
+export function marathonEmailCheckCacheKey(eventId: number, email: string): string {
+  return `${eventId}:${normalizeMarathonEmail(email)}`;
+}
+
+export type MarathonRegistrationStatus =
+  | "PENDING_APPROVAL"
+  | "APPROVED"
+  | "REJECTED"
+  | string;
+
+export type MarathonBookingStatus = "NOT_BOOKED" | "CONFIRMED" | "PENDING" | string;
+
+export interface MarathonEmailRegistrationCheckData {
+  registered: boolean;
+  bookingDone: boolean;
+  registrationStatus: MarathonRegistrationStatus;
+  bookingStatus: MarathonBookingStatus;
+  registrationId?: number;
+  bookingId?: number;
+}
+
+export type MarathonEmailCheckOutcome =
+  | { type: "available" }
+  | { type: "confirmed_blocked"; message: string }
+  | {
+      type: "pending_payment";
+      message: string;
+      registrationId?: number;
+      bookingId?: number;
+    };
+
+interface MarathonEmailRegistrationCheckResponse {
+  statusCode: number;
+  message?: string;
+  data?: MarathonEmailRegistrationCheckData | null;
+}
+
+export function resolveMarathonEmailCheckOutcome(
+  data: MarathonEmailRegistrationCheckData
+): MarathonEmailCheckOutcome {
+  if (data.registered && data.bookingDone) {
+    return {
+      type: "confirmed_blocked",
+      message: "This email is already registered and booking is confirmed.",
+    };
+  }
+
+  if (data.registered && !data.bookingDone) {
+    return {
+      type: "pending_payment",
+      message: "Registration already exists but booking/payment is still pending.",
+      registrationId: data.registrationId,
+      bookingId: data.bookingId,
+    };
+  }
+
+  return { type: "available" };
+}
+
+export async function checkMarathonRegistrationByEmail(
+  eventId: number,
+  emailAddress: string
+): Promise<{
+  success: boolean;
+  message: string;
+  data: MarathonEmailRegistrationCheckData | null;
+}> {
+  const trimmedEmail = emailAddress.trim();
+
+  if (!isValidMarathonEmail(trimmedEmail)) {
+    return {
+      success: false,
+      message: "Enter a valid email address.",
+      data: null,
+    };
+  }
+
+  try {
+    const response = await apiConnector<MarathonEmailRegistrationCheckResponse>({
+      method: "GET",
+      url: `${BASE_URL}/ticketcore-api/api/v1/marathon-registrations/check`,
+      params: {
+        eventId,
+        emailAddress: trimmedEmail,
+      },
+      withCredentials: true,
+      headers: {
+        "X-Client-Source": "WEB",
+      },
+    });
+
+    if (response.data.statusCode === 200 && response.data.data) {
+      return {
+        success: true,
+        message: response.data.message || "Registration status checked.",
+        data: response.data.data,
+      };
+    }
+
+    return {
+      success: false,
+      message: response.data.message || "Failed to check registration status.",
+      data: null,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const apiMessage =
+        (error.response?.data as { message?: string } | undefined)?.message ||
+        "Failed to check registration status.";
+      return { success: false, message: apiMessage, data: null };
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong. Please try again.",
+      data: null,
+    };
+  }
 }
 
 /**

@@ -12,6 +12,7 @@ import {
   FaRunning,
   FaVenusMars,
   FaShieldAlt,
+  FaShoePrints,
   FaTshirt,
   FaUser,
   FaUserFriends,
@@ -28,8 +29,10 @@ import {
   type MarathonRegistrationDetails,
   type MarathonRegistrationPayload,
 } from "../../../features/booking/api/marathonRegistration";
+import { useMarathonEmailRegistrationCheck } from "../../../features/booking/hooks/useMarathonEmailRegistrationCheck";
 import {
   getOrderDetails,
+  reserveTicket,
   type CategorySelection,
 } from "../../../features/booking/api/ticketCategory";
 import { Button } from "@/components/ui/button";
@@ -46,6 +49,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { CalendarDays, ChevronDown } from "lucide-react";
 import { SPECIAL_EVENT_ID, SPECIAL_MARATHON_REGISTRATION_STASH_KEY } from "@/constants/eventGates";
+import MarathonRegistrationTermsSection, {
+  MARATHON_TERMS_ACCEPTANCE_LABEL,
+} from "./MarathonRegistrationTermsSection";
 
 type MarathonGender = "" | "Male" | "Female" | "Other";
 
@@ -76,6 +82,7 @@ interface ParticipantFormData {
   emergencyContactName: string;
   emergencyNumber: string;
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "";
+  shoeSize: string;
   disclaimerAccepted: boolean;
 }
 
@@ -100,6 +107,7 @@ const INITIAL_FORM: ParticipantFormData = {
   emergencyContactName: "",
   emergencyNumber: "",
   shirtSize: "",
+  shoeSize: "",
   disclaimerAccepted: false,
 };
 
@@ -119,6 +127,25 @@ const SHIRT_SIZE_OPTIONS: Exclude<ParticipantFormData["shirtSize"], "">[] = [
   "XL",
   "XXL",
 ];
+
+const SHOE_SIZE_OPTIONS = [
+  "EU_33",
+  "EU_34",
+  "EU_35",
+  "EU_36",
+  "EU_37",
+  "EU_38",
+  "EU_39",
+  "EU_40",
+  "EU_41",
+  "EU_42",
+  "EU_43",
+  "EU_44",
+  "EU_45",
+  "EU_46",
+  "EU_47",
+  "EU_48",
+] as const;
 
 const PARTICIPANT_TYPE_LABEL: Record<ParticipantFormData["participantType"], string> = {
   INDIVIDUAL: "Individual",
@@ -259,6 +286,7 @@ export default function MarathonRegistrationPage() {
   const [registrationData, setRegistrationData] = useState<MarathonRegistrationDetails | null>(null);
   const [loadingRegistration, setLoadingRegistration] = useState(isOrderContext);
   const [orderBootstrapped, setOrderBootstrapped] = useState(false);
+  const [retryingPayment, setRetryingPayment] = useState(false);
 
   const isExistingRegistration = registrationData !== null;
 
@@ -271,6 +299,54 @@ export default function MarathonRegistrationPage() {
   const resolvedNoOfTicket = isOrderContext
     ? confirmBookingDetails?.tickets?.length ?? null
     : categoriesFromState?.reduce((t, c) => t + c.count, 0) ?? null;
+
+  const emailCheckEnabled = !(isExistingRegistration && readOnlyWhenExisting);
+  const {
+    loading: emailCheckLoading,
+    error: emailCheckError,
+    outcome: emailCheckOutcome,
+    handleEmailBlur,
+    isRegistrationBlocked,
+  } = useMarathonEmailRegistrationCheck({
+    eventId: resolvedEventId,
+    email: participantForm.email,
+    enabled: emailCheckEnabled && resolvedEventId != null && !Number.isNaN(resolvedEventId),
+  });
+
+  const isCorporateParticipant =
+    (participantTypeFromLocation ?? participantForm.participantType) === "CORPORATE";
+
+  const canRetryPendingPayment =
+    emailCheckOutcome.type === "pending_payment" &&
+    !isCorporateParticipant &&
+    (emailCheckOutcome.bookingId != null ||
+      (isBookingContext && !!categoriesFromState?.length));
+
+  const handleRetryPayment = async () => {
+    if (emailCheckOutcome.type !== "pending_payment") return;
+
+    if (emailCheckOutcome.bookingId != null) {
+      navigate(`/order/${emailCheckOutcome.bookingId}`);
+      return;
+    }
+
+    if (!isBookingContext || !categoriesFromState?.length) {
+      toast.error("Ticket details are unavailable. Please return to ticket selection.");
+      return;
+    }
+
+    setRetryingPayment(true);
+    const res = await dispatch(
+      reserveTicket(categoriesFromState, emailCheckOutcome.registrationId)
+    );
+    setRetryingPayment(false);
+
+    if (!res?.success) return;
+
+    navigate(`/events/${contentName}/${eventIdParam}/booking/reviewandpay`, {
+      replace: true,
+    });
+  };
 
   /**
    * No ticket categories in router state: either restore post-login stash (special event)
@@ -407,6 +483,7 @@ export default function MarathonRegistrationPage() {
         registrationData.tShirtSize ||
         registrationData.tshirtSize ||
         "",
+      shoeSize: registrationData.shoeSize || "",
       disclaimerAccepted: !!registrationData.disclaimerAccepted,
     });
   }, [registrationData]);
@@ -536,19 +613,22 @@ export default function MarathonRegistrationPage() {
     if (!data.district.trim()) errors.district = "Please select a district.";
 
     if (!data.emergencyContactName.trim()) {
-      errors.emergencyContactName = "Emergency contact is required.";
+      errors.emergencyContactName = "Medical aid name is required.";
     } else if (!nameRegex.test(data.emergencyContactName.trim())) {
       errors.emergencyContactName = "Enter a valid name.";
     }
 
     if (!data.emergencyNumber.trim()) {
-      errors.emergencyNumber = "Emergency number is required.";
+      errors.emergencyNumber = "Medical aid number is required.";
     } else if (!lsPhoneRegex.test(data.emergencyNumber.trim())) {
       errors.emergencyNumber = "Must be 8 digits.";
     }
 
     if (!data.shirtSize) errors.shirtSize = "Please select a T-shirt size.";
-    if (!data.disclaimerAccepted) errors.disclaimerAccepted = "You must accept the disclaimer.";
+    if (!data.shoeSize) errors.shoeSize = "Please select a shoe size.";
+    if (!data.disclaimerAccepted) {
+      errors.disclaimerAccepted = MARATHON_TERMS_ACCEPTANCE_LABEL;
+    }
     
     return errors;
   };
@@ -566,6 +646,14 @@ export default function MarathonRegistrationPage() {
     const errors = validateParticipantForm(participantForm);
     setParticipantErrors(errors);
     if (Object.keys(errors).length > 0) return;
+    if (isRegistrationBlocked) {
+      toast.error("This email is already registered and booking is confirmed.");
+      return;
+    }
+    if (participantForm.participantType === "INDIVIDUAL" && !userId) {
+      toast.error("Please sign in to register as an individual.");
+      return;
+    }
     if (!resolvedEventId || !resolvedTicketCategoryId || !resolvedNoOfTicket) {
       toast.error("Missing event ticket details. Please reselect your tickets.");
       return;
@@ -604,6 +692,7 @@ export default function MarathonRegistrationPage() {
       emergencyContactName: participantForm.emergencyContactName.trim(),
       emergencyNumber: normalizePhoneNumber(participantForm.emergencyNumber),
       shirtSize: participantForm.shirtSize as "XS" | "S" | "M" | "L" | "XL" | "XXL",
+      shoeSize: participantForm.shoeSize.trim(),
       disclaimerAccepted: participantForm.disclaimerAccepted,
     };
 
@@ -620,12 +709,23 @@ export default function MarathonRegistrationPage() {
     setParticipantErrors({});
 
     if (isBookingContext && categoriesFromState?.length) {
-      navigate(`/events/${contentName}/${eventIdParam}/booking/ticket`, {
+      if (participantForm.participantType === "CORPORATE") {
+        navigate(`/events/${contentName}/${eventIdParam}/booking/ticket`, {
+          replace: true,
+          state: {
+            marathonRegistrationSuccess: true,
+            marathonRegistrationParticipantType: "CORPORATE",
+          },
+        });
+        return;
+      }
+
+      const res = await dispatch(
+        reserveTicket(categoriesFromState, result.registrationId)
+      );
+      if (!res?.success) return;
+      navigate(`/events/${contentName}/${eventIdParam}/booking/reviewandpay`, {
         replace: true,
-        state: {
-          marathonRegistrationSuccess: true,
-          marathonRegistrationParticipantType: participantForm.participantType,
-        },
       });
       return;
     }
@@ -663,9 +763,64 @@ export default function MarathonRegistrationPage() {
     );
   }
 
+  const marathonRegistrationPath = `/events/${contentName}/${eventIdParam}/marathon-registration`;
+  const effectiveParticipantType =
+    participantTypeFromLocation ?? participantForm.participantType;
+  const requiresIndividualLogin =
+    isSpecialEvent && effectiveParticipantType === "INDIVIDUAL" && !userId;
+
+  const handleSignInForIndividual = () => {
+    if (categoriesFromState?.length) {
+      try {
+        sessionStorage.setItem(
+          SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
+          JSON.stringify({
+            categories: categoriesFromState,
+            participantType: "INDIVIDUAL" as const,
+            returnTo: marathonRegistrationPath,
+          })
+        );
+      } catch {
+        /* ignore */
+      }
+    }
+    navigate("/login", { state: { from: marathonRegistrationPath } });
+  };
+
+  if (requiresIndividualLogin) {
+    return (
+      <div className="min-h-[60vh] bg-gray-50/50 px-4 py-10 flex items-center justify-center">
+        <div className="w-full max-w-sm rounded-2xl border border-amber-100 bg-white p-6 text-center shadow-lg">
+          <FaUser className="mx-auto mb-3 text-3xl text-amber-500" />
+          <p className="font-semibold text-gray-800">Sign in required</p>
+          <p className="mt-1 text-xs text-gray-600">
+            Individual registration requires an account. Sign in to continue on this page.
+          </p>
+          <button
+            type="button"
+            onClick={handleSignInForIndividual}
+            className="mt-5 inline-flex w-full justify-center items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            onClick={handleBack}
+            className="mt-2 inline-flex w-full justify-center items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+          >
+            <IoIosArrowBack /> Back to tickets
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const formDisabled = isExistingRegistration && readOnlyWhenExisting;
-  /** Standalone `/events/.../marathon-registration` lets users pick Individual vs Corporate on this form. */
-  const participantTypeLocked = isBookingContext && !isStandaloneMarathonRegistration;
+  /** Participant type is chosen on ticket selection; lock it when passed in navigation state. */
+  const participantTypeLocked =
+    isBookingContext &&
+    (participantTypeFromLocation === "INDIVIDUAL" ||
+      participantTypeFromLocation === "CORPORATE");
 
   return (
     <div
@@ -711,6 +866,249 @@ export default function MarathonRegistrationPage() {
           <fieldset disabled={formDisabled} className={cn("flex flex-col gap-4", formDisabled && "opacity-80")}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
+              {/* Contact Section */}
+              <SectionCard
+                title="Contact Details"
+                icon={<FaEnvelope className="text-white" />}
+                iconBgClass="bg-gradient-to-br from-rose-500 to-pink-600"
+              >
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label className={baseLabelClass}><FaEnvelope className="text-rose-500" /> Email</label>
+                    <input
+                      type="email"
+                      value={participantForm.email}
+                      onChange={(e) => handleParticipantChange("email", e.target.value)}
+                      onBlur={handleEmailBlur}
+                      className={cn(
+                        baseInputClass,
+                        inputRing(participantErrors.email || (emailCheckOutcome.type === "confirmed_blocked" ? emailCheckOutcome.message : undefined))
+                      )}
+                    />
+                    {emailCheckLoading && (
+                      <p className="mt-1 text-[10px] text-gray-500">Checking registration status…</p>
+                    )}
+                    {participantErrors.email && <p className="mt-1 text-[10px] text-red-600">{participantErrors.email}</p>}
+                    {!emailCheckLoading && emailCheckError && (
+                      <p className="mt-1 text-[10px] text-red-600">{emailCheckError}</p>
+                    )}
+                    {!emailCheckLoading && emailCheckOutcome.type === "confirmed_blocked" && (
+                      <p className="mt-1 text-[10px] text-red-600">{emailCheckOutcome.message}</p>
+                    )}
+                    {!emailCheckLoading && emailCheckOutcome.type === "pending_payment" && (
+                      <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                        <p className="text-[10px] text-amber-800">{emailCheckOutcome.message}</p>
+                        {canRetryPendingPayment && (
+                          <button
+                            type="button"
+                            onClick={() => void handleRetryPayment()}
+                            disabled={retryingPayment}
+                            className="mt-2 text-[10px] font-semibold text-amber-900 underline underline-offset-2 hover:text-amber-950 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {retryingPayment ? "Redirecting…" : "Continue to payment"}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <label className={baseLabelClass}><FaMobileAlt className="text-teal-500" /> Cell Number</label>
+                    <input
+                      type="tel"
+                      value={participantForm.cellNumber}
+                      onChange={(e) => handleParticipantChange("cellNumber", e.target.value)}
+                      className={cn(baseInputClass, inputRing(participantErrors.cellNumber))}
+                    />
+                    {participantErrors.cellNumber && <p className="mt-1 text-[10px] text-red-600">{participantErrors.cellNumber}</p>}
+                  </div>
+                  <div>
+                    <label className={baseLabelClass}><FaMapMarkedAlt className="text-amber-500" /> District</label>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            baseInputClass,
+                            inputRing(participantErrors.district),
+                            "!h-auto min-h-[2.5rem] w-full justify-between gap-2 font-normal shadow-sm"
+                          )}
+                        >
+                          <span
+                            className={participantForm.district ? "text-gray-900" : "text-gray-500"}
+                          >
+                            {participantForm.district || "Select district"}
+                          </span>
+                          <ChevronDown className="size-4 shrink-0 opacity-60" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="min-w-[var(--radix-dropdown-menu-trigger-width)] max-h-[min(280px,70vh)] overflow-y-auto"
+                        align="start"
+                      >
+                        <DropdownMenuLabel className="text-xs font-semibold">District</DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem onSelect={() => handleParticipantChange("district", "")}>
+                            Select district
+                          </DropdownMenuItem>
+                          {MARATHON_DISTRICT_OPTIONS.map((dName) => (
+                            <DropdownMenuItem
+                              key={dName}
+                              onSelect={() => handleParticipantChange("district", dName)}
+                            >
+                              {dName}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {participantErrors.district && <p className="mt-1 text-[10px] text-red-600">{participantErrors.district}</p>}
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className={baseLabelClass}>Running club</label>
+                    <input
+                      type="text"
+                      value={participantForm.runningClub}
+                      onChange={(e) => handleParticipantChange("runningClub", e.target.value)}
+                      placeholder="Optional — e.g. club name"
+                      className={cn(baseInputClass)}
+                    />
+                  </div>
+                </div>
+              </SectionCard>
+
+              {/* Identity & Name Section */}
+              <SectionCard
+                title="Identity & Name"
+                icon={<FaIdCard className="text-white" />}
+                iconBgClass="bg-gradient-to-br from-cyan-500 to-blue-600"
+              >
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={baseLabelClass}>First Name</label>
+                    <input
+                      type="text"
+                      value={participantForm.name}
+                      onChange={(e) => handleParticipantChange("name", e.target.value)}
+                      className={cn(baseInputClass, inputRing(participantErrors.name))}
+                    />
+                    {participantErrors.name && <p className="mt-1 text-[10px] text-red-600">{participantErrors.name}</p>}
+                  </div>
+                  <div>
+                    <label className={baseLabelClass}>Surname</label>
+                    <input
+                      type="text"
+                      value={participantForm.surname}
+                      onChange={(e) => handleParticipantChange("surname", e.target.value)}
+                      className={cn(baseInputClass, inputRing(participantErrors.surname))}
+                    />
+                    {participantErrors.surname && <p className="mt-1 text-[10px] text-red-600">{participantErrors.surname}</p>}
+                  </div>
+                  <div>
+                    <label className={baseLabelClass}><FaIdCard className="text-indigo-500" /> ID Type</label>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            baseInputClass,
+                            "!h-auto min-h-[2.5rem] justify-between gap-2 font-normal text-gray-900 shadow-sm"
+                          )}
+                        >
+                          <span>{IDENTITY_TYPE_LABEL[participantForm.identityType]}</span>
+                          <ChevronDown className="size-4 shrink-0 opacity-60" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
+                        align="start"
+                      >
+                        <DropdownMenuLabel className="text-xs font-semibold">
+                          ID type
+                        </DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem
+                            onSelect={() =>
+                              handleParticipantChange("identityType", "id")
+                            }
+                          >
+                            LS Citizen ID
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={() =>
+                              handleParticipantChange("identityType", "passport")
+                            }
+                          >
+                            Passport
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <div>
+                    <label className={baseLabelClass}>{participantForm.identityType === "id" ? "ID Number" : "Passport Number"}</label>
+                    <input
+                      type="text"
+                      value={participantForm.identityValue}
+                      onChange={(e) => handleParticipantChange("identityValue", e.target.value)}
+                      className={cn(baseInputClass, inputRing(participantErrors.identityValue))}
+                    />
+                    {participantErrors.identityValue && <p className="mt-1 text-[10px] text-red-600">{participantErrors.identityValue}</p>}
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className={baseLabelClass}>
+                      <CalendarDays className="size-3.5 text-sky-600" /> Date of birth
+                    </label>
+                    <Popover open={dobPopoverOpen} onOpenChange={setDobPopoverOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            baseInputClass,
+                            inputRing(participantErrors.dateOfBirth),
+                            "!h-auto min-h-[2.5rem] w-full justify-between gap-2 font-normal shadow-sm"
+                          )}
+                        >
+                          <span
+                            className={
+                              participantForm.dateOfBirth ? "text-gray-900" : "text-gray-500"
+                            }
+                          >
+                            {participantForm.dateOfBirth
+                              ? formatDobDisplay(participantForm.dateOfBirth)
+                              : "Pick date of birth"}
+                          </span>
+                          <CalendarDays className="size-4 shrink-0 opacity-60" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 shadow-lg" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={parseIsoDateLocal(participantForm.dateOfBirth)}
+                          onSelect={(d) => {
+                            handleParticipantChange("dateOfBirth", d ? formatIsoLocal(d) : "");
+                            setDobPopoverOpen(false);
+                          }}
+                          className="rounded-lg border"
+                          captionLayout="dropdown"
+                          disabled={(date) => date > new Date()}
+                          startMonth={new Date(1920, 0)}
+                          endMonth={new Date()}
+                          defaultMonth={
+                            parseIsoDateLocal(participantForm.dateOfBirth) ?? new Date(2000, 0)
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    {participantErrors.dateOfBirth && (
+                      <p className="mt-1 text-[10px] text-red-600">{participantErrors.dateOfBirth}</p>
+                    )}
+                  </div>
+                </div>
+              </SectionCard>
+
               {/* Participant Details Section */}
               <SectionCard
                 title="Participant Details"
@@ -1021,229 +1419,14 @@ export default function MarathonRegistrationPage() {
                 </div>
               </SectionCard>
 
-              {/* Identity & Name Section */}
+              {/* Race Kit & Emergency Contact Section */}
               <SectionCard
-                title="Identity & Name"
-                icon={<FaIdCard className="text-white" />}
-                iconBgClass="bg-gradient-to-br from-cyan-500 to-blue-600"
-              >
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className={baseLabelClass}>First Name</label>
-                    <input
-                      type="text"
-                      value={participantForm.name}
-                      onChange={(e) => handleParticipantChange("name", e.target.value)}
-                      className={cn(baseInputClass, inputRing(participantErrors.name))}
-                    />
-                    {participantErrors.name && <p className="mt-1 text-[10px] text-red-600">{participantErrors.name}</p>}
-                  </div>
-                  <div>
-                    <label className={baseLabelClass}>Surname</label>
-                    <input
-                      type="text"
-                      value={participantForm.surname}
-                      onChange={(e) => handleParticipantChange("surname", e.target.value)}
-                      className={cn(baseInputClass, inputRing(participantErrors.surname))}
-                    />
-                    {participantErrors.surname && <p className="mt-1 text-[10px] text-red-600">{participantErrors.surname}</p>}
-                  </div>
-                  <div>
-                    <label className={baseLabelClass}><FaIdCard className="text-indigo-500" /> ID Type</label>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className={cn(
-                            baseInputClass,
-                            "!h-auto min-h-[2.5rem] justify-between gap-2 font-normal text-gray-900 shadow-sm"
-                          )}
-                        >
-                          <span>{IDENTITY_TYPE_LABEL[participantForm.identityType]}</span>
-                          <ChevronDown className="size-4 shrink-0 opacity-60" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
-                        align="start"
-                      >
-                        <DropdownMenuLabel className="text-xs font-semibold">
-                          ID type
-                        </DropdownMenuLabel>
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem
-                            onSelect={() =>
-                              handleParticipantChange("identityType", "id")
-                            }
-                          >
-                            LS Citizen ID
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onSelect={() =>
-                              handleParticipantChange("identityType", "passport")
-                            }
-                          >
-                            Passport
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <div>
-                    <label className={baseLabelClass}>{participantForm.identityType === "id" ? "ID Number" : "Passport Number"}</label>
-                    <input
-                      type="text"
-                      value={participantForm.identityValue}
-                      onChange={(e) => handleParticipantChange("identityValue", e.target.value)}
-                      className={cn(baseInputClass, inputRing(participantErrors.identityValue))}
-                    />
-                    {participantErrors.identityValue && <p className="mt-1 text-[10px] text-red-600">{participantErrors.identityValue}</p>}
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className={baseLabelClass}>
-                      <CalendarDays className="size-3.5 text-sky-600" /> Date of birth
-                    </label>
-                    <Popover open={dobPopoverOpen} onOpenChange={setDobPopoverOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className={cn(
-                            baseInputClass,
-                            inputRing(participantErrors.dateOfBirth),
-                            "!h-auto min-h-[2.5rem] w-full justify-between gap-2 font-normal shadow-sm"
-                          )}
-                        >
-                          <span
-                            className={
-                              participantForm.dateOfBirth ? "text-gray-900" : "text-gray-500"
-                            }
-                          >
-                            {participantForm.dateOfBirth
-                              ? formatDobDisplay(participantForm.dateOfBirth)
-                              : "Pick date of birth"}
-                          </span>
-                          <CalendarDays className="size-4 shrink-0 opacity-60" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 shadow-lg" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={parseIsoDateLocal(participantForm.dateOfBirth)}
-                          onSelect={(d) => {
-                            handleParticipantChange("dateOfBirth", d ? formatIsoLocal(d) : "");
-                            setDobPopoverOpen(false);
-                          }}
-                          className="rounded-lg border"
-                          captionLayout="dropdown"
-                          disabled={(date) => date > new Date()}
-                          startMonth={new Date(1920, 0)}
-                          endMonth={new Date()}
-                          defaultMonth={
-                            parseIsoDateLocal(participantForm.dateOfBirth) ?? new Date(2000, 0)
-                          }
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    {participantErrors.dateOfBirth && (
-                      <p className="mt-1 text-[10px] text-red-600">{participantErrors.dateOfBirth}</p>
-                    )}
-                  </div>
-                </div>
-              </SectionCard>
-
-              {/* Contact Section */}
-              <SectionCard
-                title="Contact Details"
-                icon={<FaEnvelope className="text-white" />}
-                iconBgClass="bg-gradient-to-br from-rose-500 to-pink-600"
-              >
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <label className={baseLabelClass}><FaEnvelope className="text-rose-500" /> Email</label>
-                    <input
-                      type="email"
-                      value={participantForm.email}
-                      onChange={(e) => handleParticipantChange("email", e.target.value)}
-                      className={cn(baseInputClass, inputRing(participantErrors.email))}
-                    />
-                    {participantErrors.email && <p className="mt-1 text-[10px] text-red-600">{participantErrors.email}</p>}
-                  </div>
-                  <div>
-                    <label className={baseLabelClass}><FaMobileAlt className="text-teal-500" /> Cell Number</label>
-                    <input
-                      type="tel"
-                      value={participantForm.cellNumber}
-                      onChange={(e) => handleParticipantChange("cellNumber", e.target.value)}
-                      className={cn(baseInputClass, inputRing(participantErrors.cellNumber))}
-                    />
-                    {participantErrors.cellNumber && <p className="mt-1 text-[10px] text-red-600">{participantErrors.cellNumber}</p>}
-                  </div>
-                  <div>
-                    <label className={baseLabelClass}><FaMapMarkedAlt className="text-amber-500" /> District</label>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className={cn(
-                            baseInputClass,
-                            inputRing(participantErrors.district),
-                            "!h-auto min-h-[2.5rem] w-full justify-between gap-2 font-normal shadow-sm"
-                          )}
-                        >
-                          <span
-                            className={participantForm.district ? "text-gray-900" : "text-gray-500"}
-                          >
-                            {participantForm.district || "Select district"}
-                          </span>
-                          <ChevronDown className="size-4 shrink-0 opacity-60" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        className="min-w-[var(--radix-dropdown-menu-trigger-width)] max-h-[min(280px,70vh)] overflow-y-auto"
-                        align="start"
-                      >
-                        <DropdownMenuLabel className="text-xs font-semibold">District</DropdownMenuLabel>
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem onSelect={() => handleParticipantChange("district", "")}>
-                            Select district
-                          </DropdownMenuItem>
-                          {MARATHON_DISTRICT_OPTIONS.map((dName) => (
-                            <DropdownMenuItem
-                              key={dName}
-                              onSelect={() => handleParticipantChange("district", dName)}
-                            >
-                              {dName}
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    {participantErrors.district && <p className="mt-1 text-[10px] text-red-600">{participantErrors.district}</p>}
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className={baseLabelClass}>Running club</label>
-                    <input
-                      type="text"
-                      value={participantForm.runningClub}
-                      onChange={(e) => handleParticipantChange("runningClub", e.target.value)}
-                      placeholder="Optional — e.g. club name"
-                      className={cn(baseInputClass)}
-                    />
-                  </div>
-                </div>
-              </SectionCard>
-
-              {/* Kit & Emergency Section */}
-              <SectionCard
-                title="Kit & Emergency"
+                title="Race Kit & Emergency Contact"
                 icon={<FaTshirt className="text-white" />}
                 iconBgClass="bg-gradient-to-br from-amber-500 to-orange-500"
               >
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
+                  <div>
                     <label className={baseLabelClass}><FaTshirt className="text-fuchsia-500" /> T-shirt Size</label>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -1295,7 +1478,58 @@ export default function MarathonRegistrationPage() {
                     {participantErrors.shirtSize && <p className="mt-1 text-[10px] text-red-600">{participantErrors.shirtSize}</p>}
                   </div>
                   <div>
-                    <label className={baseLabelClass}><FaUserMd className="text-red-500" /> Emg. Contact Name</label>
+                    <label className={baseLabelClass}><FaShoePrints className="text-amber-600" /> Shoe size</label>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className={cn(
+                            baseInputClass,
+                            inputRing(participantErrors.shoeSize),
+                            "!h-auto min-h-[2.5rem] justify-between gap-2 font-normal shadow-sm"
+                          )}
+                        >
+                          <span
+                            className={
+                              participantForm.shoeSize ? "text-gray-900" : "text-gray-500"
+                            }
+                          >
+                            {participantForm.shoeSize || "Select size"}
+                          </span>
+                          <ChevronDown className="size-4 shrink-0 opacity-60" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
+                        align="start"
+                      >
+                        <DropdownMenuLabel className="text-xs font-semibold">
+                          Shoe size
+                        </DropdownMenuLabel>
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem
+                            onSelect={() => handleParticipantChange("shoeSize", "")}
+                          >
+                            Select size
+                          </DropdownMenuItem>
+                          {SHOE_SIZE_OPTIONS.map((size) => (
+                            <DropdownMenuItem
+                              key={size}
+                              onSelect={() =>
+                                handleParticipantChange("shoeSize", size)
+                              }
+                            >
+                              {size}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {participantErrors.shoeSize && <p className="mt-1 text-[10px] text-red-600">{participantErrors.shoeSize}</p>}
+                  </div>
+                  <div>
+                    <label className={baseLabelClass}><FaUserMd className="text-red-500" /> Medical Aid name</label>
                     <input
                       type="text"
                       value={participantForm.emergencyContactName}
@@ -1305,7 +1539,7 @@ export default function MarathonRegistrationPage() {
                     {participantErrors.emergencyContactName && <p className="mt-1 text-[10px] text-red-600">{participantErrors.emergencyContactName}</p>}
                   </div>
                   <div>
-                    <label className={baseLabelClass}><FaMobileAlt className="text-red-400" /> Emg. Contact Number</label>
+                    <label className={baseLabelClass}><FaMobileAlt className="text-red-400" /> Medical Aid number</label>
                     <input
                       type="tel"
                       value={participantForm.emergencyNumber}
@@ -1318,28 +1552,30 @@ export default function MarathonRegistrationPage() {
               </SectionCard>
             </div>
 
-            <div className="rounded-lg border border-red-100 bg-red-50/50 p-3">
-              <label className="flex cursor-pointer items-start gap-2">
-                <input
-                  type="checkbox"
-                  checked={participantForm.disclaimerAccepted}
-                  onChange={(e) => handleParticipantChange("disclaimerAccepted", e.target.checked)}
-                  className="mt-0.5 h-3.5 w-3.5 rounded border-gray-300 text-red-600 focus:ring-red-500"
-                />
-                <span className="text-xs text-gray-700 leading-tight">
-                  <span className="font-bold text-red-700">Fitness Warranty:</span> I warrant that I am physically fit and sufficiently trained to participate.
-                </span>
-              </label>
-              {participantErrors.disclaimerAccepted && <p className="mt-1 ml-6 text-[10px] text-red-600">{participantErrors.disclaimerAccepted}</p>}
-            </div>
+            <MarathonRegistrationTermsSection
+              accepted={participantForm.disclaimerAccepted}
+              onAcceptedChange={(accepted) =>
+                handleParticipantChange("disclaimerAccepted", accepted)
+              }
+              error={participantErrors.disclaimerAccepted}
+              disabled={formDisabled}
+            />
 
             {(!isExistingRegistration || !readOnlyWhenExisting) && (
               <button
                 type="submit"
-                disabled={!participantForm.disclaimerAccepted || submittingParticipant}
+                disabled={
+                  !participantForm.disclaimerAccepted ||
+                  submittingParticipant ||
+                  isRegistrationBlocked ||
+                  emailCheckLoading
+                }
                 className={cn(
                   "mt-2 w-full rounded-lg py-2.5 text-sm font-bold shadow-sm transition-all",
-                  participantForm.disclaimerAccepted && !submittingParticipant
+                  participantForm.disclaimerAccepted &&
+                    !submittingParticipant &&
+                    !isRegistrationBlocked &&
+                    !emailCheckLoading
                     ? "bg-blue-600 text-white hover:bg-blue-700"
                     : "cursor-not-allowed bg-gray-200 text-gray-400"
                 )}

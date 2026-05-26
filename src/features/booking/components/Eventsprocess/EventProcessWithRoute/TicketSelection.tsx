@@ -13,7 +13,20 @@ import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 import { setEventsErrorMsg } from "../../../../events/store/eventSlice";
 import EventsErrorPage from "../../../../events/components/EventErrorsd";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
-import { SPECIAL_EVENT_ID } from "@/constants/eventGates";
+import {
+  SPECIAL_EVENT_ID,
+  SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
+} from "@/constants/eventGates";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 const TicketSelection = () => {
   const dispatch = useAppDispatch();
@@ -40,6 +53,10 @@ const TicketSelection = () => {
     "INDIVIDUAL" | "CORPORATE"
   >("CORPORATE");
   const [loading, setLoading] = useState(false);
+  const [participantDialogOpen, setParticipantDialogOpen] = useState(false);
+  const [marathonParticipantType, setMarathonParticipantType] = useState<
+    "INDIVIDUAL" | "CORPORATE"
+  >("INDIVIDUAL");
 
   const [selectedTickets, setSelectedTickets] = useState<{
     [key: number]: number;
@@ -88,12 +105,48 @@ const TicketSelection = () => {
 
   const marathonRegistrationPath = `/events/${contentName}/${eventId}/marathon-registration`;
 
-  function navigateToMarathonRegistration() {
+  function openSpecialParticipantDialog() {
     if (!categories.length) {
       window.alert("Add at least one ticket!");
       return;
     }
-    navigate(marathonRegistrationPath, { state: { categories } });
+    setMarathonParticipantType("INDIVIDUAL");
+    setParticipantDialogOpen(true);
+  }
+
+  function confirmMarathonParticipantChoice() {
+    if (!categories.length) {
+      window.alert("Add at least one ticket!");
+      return;
+    }
+    if (marathonParticipantType === "CORPORATE") {
+      navigate(marathonRegistrationPath, {
+        state: { categories, participantType: "CORPORATE" },
+      });
+      setParticipantDialogOpen(false);
+      return;
+    }
+    if (userId) {
+      navigate(marathonRegistrationPath, {
+        state: { categories, participantType: "INDIVIDUAL" },
+      });
+      setParticipantDialogOpen(false);
+      return;
+    }
+    try {
+      sessionStorage.setItem(
+        SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
+        JSON.stringify({
+          categories,
+          participantType: "INDIVIDUAL" as const,
+          returnTo: marathonRegistrationPath,
+        })
+      );
+    } catch {
+      /* ignore quota / private mode */
+    }
+    setParticipantDialogOpen(false);
+    navigate("/login", { state: { from: marathonRegistrationPath } });
   }
 
   async function clickHandlerReserveFlow() {
@@ -131,7 +184,7 @@ const TicketSelection = () => {
   function handlePrimaryAction() {
     if (loading) return;
     if (isSpecialEvent) {
-      navigateToMarathonRegistration();
+      openSpecialParticipantDialog();
       return;
     }
     if (!userId) {
@@ -225,7 +278,7 @@ const TicketSelection = () => {
               </div>
 
               <h3 className="relative z-10 text-xl font-bold text-slate-900 mb-2">
-                Registration Successful
+                Your registration is pending approval from your employer
               </h3>
               <p className="relative z-10 text-sm text-slate-700 mb-6">
                 {marathonSuccessParticipantType === "CORPORATE" ? (
@@ -496,7 +549,7 @@ const TicketSelection = () => {
                       : categories.length === 0
                       ? "Select Tickets"
                       : isSpecialEvent
-                      ? "Proceed to Registration"
+                      ? "Choose participant"
                       : "Review & Pay"}
                   </span>
                   <svg
@@ -515,6 +568,56 @@ const TicketSelection = () => {
                 </>
               )}
             </button>
+
+            {isSpecialEvent && (
+              <AlertDialog
+                open={participantDialogOpen}
+                onOpenChange={setParticipantDialogOpen}
+              >
+                <AlertDialogContent className="w-[min(100vw-2rem,22rem)] max-w-md gap-4 border-gray-200 sm:max-w-md">
+                  <AlertDialogHeader className="text-left sm:text-left">
+                    <AlertDialogTitle>Participant type</AlertDialogTitle>
+                    <AlertDialogDescription className="text-left text-gray-600">
+                      Individual registration requires a signed-in account. Corporate
+                      registration can continue as a guest.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <fieldset className="space-y-2 border-0 p-0">
+                    <legend className="sr-only">Choose participant type</legend>
+                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50">
+                      <input
+                        type="radio"
+                        name="marathon-participant-type"
+                        className="h-4 w-4 shrink-0 text-blue-600"
+                        checked={marathonParticipantType === "INDIVIDUAL"}
+                        onChange={() => setMarathonParticipantType("INDIVIDUAL")}
+                      />
+                      Individual
+                    </label>
+                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50">
+                      <input
+                        type="radio"
+                        name="marathon-participant-type"
+                        className="h-4 w-4 shrink-0 text-blue-600"
+                        checked={marathonParticipantType === "CORPORATE"}
+                        onChange={() => setMarathonParticipantType("CORPORATE")}
+                      />
+                      Corporate
+                    </label>
+                  </fieldset>
+                  <AlertDialogFooter className="gap-2 sm:justify-end">
+                    <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
+                    <Button
+                      type="button"
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 font-semibold text-white hover:from-blue-700 hover:to-blue-800"
+                      onClick={() => confirmMarathonParticipantChoice()}
+                    >
+                      Continue
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
 
           </div>
         </div>
