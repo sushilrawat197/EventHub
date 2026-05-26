@@ -73,6 +73,7 @@ interface ReserveTicketPayload {
   registrationId?: number;
 }
 
+
 export function reserveTicket(
   categories: CategorySelection[],
   registrationId?: number

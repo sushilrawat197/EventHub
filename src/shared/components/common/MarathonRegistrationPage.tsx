@@ -49,6 +49,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { CalendarDays, ChevronDown } from "lucide-react";
 import { SPECIAL_EVENT_ID, SPECIAL_MARATHON_REGISTRATION_STASH_KEY } from "@/constants/eventGates";
+import {
+  formatMarathonShoeSizeLabel,
+  MARATHON_SHOE_SIZE_OPTIONS,
+} from "@/constants/marathonRegistrationPolicy";
 import MarathonRegistrationTermsSection, {
   MARATHON_TERMS_ACCEPTANCE_LABEL,
 } from "./MarathonRegistrationTermsSection";
@@ -57,11 +61,10 @@ type MarathonGender = "" | "Male" | "Female" | "Other";
 
 type MarathonRaceCategory =
   | ""
-  | "3 KM"
-  | "5 KM"
-  | "10 KM"
-  | "Half Marathon"
-  | "Full Marathon";
+  | "5km"
+  | "10km"
+  | "21km"
+  | "42km";
 
 interface ParticipantFormData {
   participantType: "CORPORATE" | "INDIVIDUAL";
@@ -79,8 +82,8 @@ interface ParticipantFormData {
   medicalConditionDetails: string;
   district: string;
   runningClub: string;
-  emergencyContactName: string;
-  emergencyNumber: string;
+  medicalAidName: string;
+  medicalAidNumber: string;
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "";
   shoeSize: string;
   disclaimerAccepted: boolean;
@@ -104,8 +107,8 @@ const INITIAL_FORM: ParticipantFormData = {
   medicalConditionDetails: "",
   district: "",
   runningClub: "",
-  emergencyContactName: "",
-  emergencyNumber: "",
+  medicalAidName: "",
+  medicalAidNumber: "",
   shirtSize: "",
   shoeSize: "",
   disclaimerAccepted: false,
@@ -128,25 +131,6 @@ const SHIRT_SIZE_OPTIONS: Exclude<ParticipantFormData["shirtSize"], "">[] = [
   "XXL",
 ];
 
-const SHOE_SIZE_OPTIONS = [
-  "EU_33",
-  "EU_34",
-  "EU_35",
-  "EU_36",
-  "EU_37",
-  "EU_38",
-  "EU_39",
-  "EU_40",
-  "EU_41",
-  "EU_42",
-  "EU_43",
-  "EU_44",
-  "EU_45",
-  "EU_46",
-  "EU_47",
-  "EU_48",
-] as const;
-
 const PARTICIPANT_TYPE_LABEL: Record<ParticipantFormData["participantType"], string> = {
   INDIVIDUAL: "Individual",
   CORPORATE: "Corporate",
@@ -165,11 +149,10 @@ const MEDICAL_CONDITION_LABEL: Record<Exclude<ParticipantFormData["medicalCondit
 const GENDER_OPTIONS: Exclude<MarathonGender, "">[] = ["Male", "Female", "Other"];
 
 const RACE_CATEGORY_OPTIONS: Exclude<MarathonRaceCategory, "">[] = [
-  "3 KM",
-  "5 KM",
-  "10 KM",
-  "Half Marathon",
-  "Full Marathon",
+  "5km",
+  "10km",
+  "21km",
+  "42km",
 ];
 
 function isMarathonRaceCategory(value: string): value is Exclude<MarathonRaceCategory, ""> {
@@ -476,8 +459,8 @@ export default function MarathonRegistrationPage() {
       medicalConditionDetails: registrationData.medicalConditionDetails || "",
       district: registrationData.district || "",
       runningClub: registrationData.runningClub || "",
-      emergencyContactName: registrationData.emergencyContactName || "",
-      emergencyNumber: registrationData.emergencyNumber || "",
+      medicalAidName: registrationData.medicalAidName || "",
+      medicalAidNumber: registrationData.medicalAidNumber || "",
       shirtSize:
         registrationData.shirtSize ||
         registrationData.tShirtSize ||
@@ -612,16 +595,12 @@ export default function MarathonRegistrationPage() {
     
     if (!data.district.trim()) errors.district = "Please select a district.";
 
-    if (!data.emergencyContactName.trim()) {
-      errors.emergencyContactName = "Medical aid name is required.";
-    } else if (!nameRegex.test(data.emergencyContactName.trim())) {
-      errors.emergencyContactName = "Enter a valid name.";
+    if (data.medicalAidName.trim() && !nameRegex.test(data.medicalAidName.trim())) {
+      errors.medicalAidName = "Enter a valid name.";
     }
 
-    if (!data.emergencyNumber.trim()) {
-      errors.emergencyNumber = "Medical aid number is required.";
-    } else if (!lsPhoneRegex.test(data.emergencyNumber.trim())) {
-      errors.emergencyNumber = "Must be 8 digits.";
+    if (data.medicalAidNumber.trim() && !lsPhoneRegex.test(data.medicalAidNumber.trim())) {
+      errors.medicalAidNumber = "Must be 8 digits.";
     }
 
     if (!data.shirtSize) errors.shirtSize = "Please select a T-shirt size.";
@@ -689,8 +668,10 @@ export default function MarathonRegistrationPage() {
           ? participantForm.medicalConditionDetails.trim()
           : null,
       runningClub: participantForm.runningClub.trim(),
-      emergencyContactName: participantForm.emergencyContactName.trim(),
-      emergencyNumber: normalizePhoneNumber(participantForm.emergencyNumber),
+      medicalAidName: participantForm.medicalAidName.trim(),
+      medicalAidNumber: participantForm.medicalAidNumber.trim()
+        ? normalizePhoneNumber(participantForm.medicalAidNumber)
+        : "",
       shirtSize: participantForm.shirtSize as "XS" | "S" | "M" | "L" | "XL" | "XXL",
       shoeSize: participantForm.shoeSize.trim(),
       disclaimerAccepted: participantForm.disclaimerAccepted,
@@ -1500,7 +1481,9 @@ export default function MarathonRegistrationPage() {
                               participantForm.shoeSize ? "text-gray-900" : "text-gray-500"
                             }
                           >
-                            {participantForm.shoeSize || "Select size"}
+                            {participantForm.shoeSize
+                              ? formatMarathonShoeSizeLabel(participantForm.shoeSize)
+                              : "Select size"}
                           </span>
                           <ChevronDown className="size-4 shrink-0 opacity-60" />
                         </Button>
@@ -1518,14 +1501,14 @@ export default function MarathonRegistrationPage() {
                           >
                             Select size
                           </DropdownMenuItem>
-                          {SHOE_SIZE_OPTIONS.map((size) => (
+                          {MARATHON_SHOE_SIZE_OPTIONS.map((size) => (
                             <DropdownMenuItem
                               key={size}
                               onSelect={() =>
                                 handleParticipantChange("shoeSize", size)
                               }
                             >
-                              {size}
+                              {formatMarathonShoeSizeLabel(size)}
                             </DropdownMenuItem>
                           ))}
                         </DropdownMenuGroup>
@@ -1537,21 +1520,23 @@ export default function MarathonRegistrationPage() {
                     <label className={baseLabelClass}><FaUserMd className="text-red-500" /> Medical Aid name</label>
                     <input
                       type="text"
-                      value={participantForm.emergencyContactName}
-                      onChange={(e) => handleParticipantChange("emergencyContactName", e.target.value)}
-                      className={cn(baseInputClass, inputRing(participantErrors.emergencyContactName))}
+                      value={participantForm.medicalAidName}
+                      onChange={(e) => handleParticipantChange("medicalAidName", e.target.value)}
+                      placeholder="Optional"
+                      className={cn(baseInputClass, inputRing(participantErrors.medicalAidName))}
                     />
-                    {participantErrors.emergencyContactName && <p className="mt-1 text-[10px] text-red-600">{participantErrors.emergencyContactName}</p>}
+                    {participantErrors.medicalAidName && <p className="mt-1 text-[10px] text-red-600">{participantErrors.medicalAidName}</p>}
                   </div>
                   <div>
                     <label className={baseLabelClass}><FaMobileAlt className="text-red-400" /> Medical Aid number</label>
                     <input
                       type="tel"
-                      value={participantForm.emergencyNumber}
-                      onChange={(e) => handleParticipantChange("emergencyNumber", e.target.value)}
-                      className={cn(baseInputClass, inputRing(participantErrors.emergencyNumber))}
+                      value={participantForm.medicalAidNumber}
+                      onChange={(e) => handleParticipantChange("medicalAidNumber", e.target.value)}
+                      placeholder="Optional"
+                      className={cn(baseInputClass, inputRing(participantErrors.medicalAidNumber))}
                     />
-                    {participantErrors.emergencyNumber && <p className="mt-1 text-[10px] text-red-600">{participantErrors.emergencyNumber}</p>}
+                    {participantErrors.medicalAidNumber && <p className="mt-1 text-[10px] text-red-600">{participantErrors.medicalAidNumber}</p>}
                   </div>
                 </div>
               </SectionCard>

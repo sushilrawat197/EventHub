@@ -24,8 +24,8 @@ export interface MarathonRegistrationPayload {
   medicalCondition: "YES" | "NO";
   medicalConditionDetails: string | null;
   runningClub: string;
-  emergencyContactName: string;
-  emergencyNumber: string;
+  medicalAidName: string;
+  medicalAidNumber: string;
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   shoeSize: string;
   disclaimerAccepted: boolean;
@@ -62,8 +62,8 @@ export interface MarathonRegistrationDetails {
   medicalCondition?: "FIT" | "UNFIT" | "YES" | "NO";
   medicalConditionDetails?: string | null;
   runningClub?: string;
-  emergencyContactName: string;
-  emergencyNumber: string;
+  medicalAidName?: string;
+  medicalAidNumber?: string;
   shirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   tShirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   tshirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";

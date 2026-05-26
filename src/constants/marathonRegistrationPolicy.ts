@@ -135,3 +135,28 @@ export const MARATHON_FITNESS_WARRANTY_MODAL: MarathonPolicyModalContent = {
     },
   ],
 };
+
+export const MARATHON_SHOE_SIZE_OPTIONS = [
+  "UK_1",
+  "UK_2",
+  "UK_3",
+  "UK_4",
+  "UK_5",
+  "UK_6",
+  "UK_7",
+  "UK_8",
+  "UK_9",
+  "UK_10",
+  "UK_11",
+  "UK_12",
+  "UK_13",
+  "UK_14",
+  "UK_15",
+] as const;
+
+export type MarathonShoeSize = (typeof MARATHON_SHOE_SIZE_OPTIONS)[number];
+
+/** Display shoe size without underscores, e.g. UK_10 -> UK 10 */
+export function formatMarathonShoeSizeLabel(size: string): string {
+  return size.replace(/_/g, " ");
+}
