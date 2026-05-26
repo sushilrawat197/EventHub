@@ -895,6 +895,11 @@ export default function MarathonRegistrationPage() {
                     {!emailCheckLoading && emailCheckOutcome.type === "confirmed_blocked" && (
                       <p className="mt-1 text-[10px] text-red-600">{emailCheckOutcome.message}</p>
                     )}
+                    {!emailCheckLoading && emailCheckOutcome.type === "already_registered" && (
+                      <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                        <p className="text-[10px] text-amber-800">{emailCheckOutcome.message}</p>
+                      </div>
+                    )}
                     {!emailCheckLoading && emailCheckOutcome.type === "pending_payment" && (
                       <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
                         <p className="text-[10px] text-amber-800">{emailCheckOutcome.message}</p>

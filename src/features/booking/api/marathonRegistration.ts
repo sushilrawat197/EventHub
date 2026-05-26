@@ -114,6 +114,12 @@ export interface MarathonEmailRegistrationCheckData {
   bookingId?: number;
 }
 
+interface MarathonEmailRegistrationCheckResponse {
+  statusCode: number;
+  message?: string;
+  data?: MarathonEmailRegistrationCheckData | null;
+}
+
 export type MarathonEmailCheckOutcome =
   | { type: "available" }
   | { type: "confirmed_blocked"; message: string }
@@ -122,25 +128,46 @@ export type MarathonEmailCheckOutcome =
       message: string;
       registrationId?: number;
       bookingId?: number;
-    };
+    }
+  | { type: "already_registered"; message: string };
 
-interface MarathonEmailRegistrationCheckResponse {
-  statusCode: number;
-  message?: string;
-  data?: MarathonEmailRegistrationCheckData | null;
+function normalizeMarathonStatus(value: string | undefined): string {
+  return (value ?? "").trim().toUpperCase();
 }
 
 export function resolveMarathonEmailCheckOutcome(
   data: MarathonEmailRegistrationCheckData
 ): MarathonEmailCheckOutcome {
-  if (data.registered && data.bookingDone) {
+  const registrationStatus = normalizeMarathonStatus(data.registrationStatus);
+  const bookingStatus = normalizeMarathonStatus(data.bookingStatus);
+  const isApproved = registrationStatus === "APPROVED";
+  const isRegistered = data.registered || isApproved;
+  const isBookingConfirmed = data.bookingDone || bookingStatus === "CONFIRMED";
+
+  if (isRegistered && isBookingConfirmed) {
     return {
       type: "confirmed_blocked",
       message: "This email is already registered and booking is confirmed.",
     };
   }
 
-  if (data.registered && !data.bookingDone) {
+  if (isApproved) {
+    if (bookingStatus === "PENDING" || (isRegistered && !isBookingConfirmed && data.bookingDone === false)) {
+      return {
+        type: "pending_payment",
+        message: "Registration already exists but booking/payment is still pending.",
+        registrationId: data.registrationId,
+        bookingId: data.bookingId,
+      };
+    }
+
+    return {
+      type: "already_registered",
+      message: "Registration already exists for this email.",
+    };
+  }
+
+  if (isRegistered && !isBookingConfirmed) {
     return {
       type: "pending_payment",
       message: "Registration already exists but booking/payment is still pending.",
