@@ -4,35 +4,15 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   MARATHON_FITNESS_WARRANTY_MODAL,
-  MARATHON_FITNESS_WARRANTY_TEXT,
+  MARATHON_FITNESS_WARRANTY_CHECKBOX_TEXT,
   MARATHON_TERMS_ACCEPTANCE_LABEL,
+  MARATHON_TERMS_SECTION_TITLE,
+  MARATHON_TERMS_VIEW_LABEL,
   type MarathonPolicyModalContent,
 } from "@/constants/marathonRegistrationPolicy";
 
 const policyLinkClass =
   "font-semibold text-blue-600 underline underline-offset-2 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 rounded-sm";
-
-function PolicyLinkButton({
-  children,
-  onClick,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={(event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        onClick();
-      }}
-      className={policyLinkClass}
-    >
-      {children}
-    </button>
-  );
-}
 
 function PolicyModal({
   content,
@@ -147,26 +127,29 @@ export default function MarathonRegistrationTermsSection({
           error ? "border-red-200" : "border-gray-200"
         )}
       >
-        <label
-          className={cn(
-            "flex items-start gap-2",
-            disabled ? "cursor-default opacity-90" : "cursor-pointer"
-          )}
-        >
+        <div className="flex items-start gap-2">
           <input
+            id="marathon-fitness-warranty-accepted"
             type="checkbox"
             checked={accepted}
             disabled={disabled}
             onChange={(event) => onAcceptedChange(event.target.checked)}
             className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
-          <span className="text-xs leading-relaxed text-gray-700">
-            <PolicyLinkButton onClick={() => setModalOpen(true)}>
-              Fitness Warranty
-            </PolicyLinkButton>
-            : {MARATHON_FITNESS_WARRANTY_TEXT}
-          </span>
-        </label>
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => setModalOpen(true)}
+            className={cn(
+              "min-w-0 flex-1 text-left text-xs leading-relaxed text-gray-700",
+              disabled ? "cursor-default opacity-90" : "cursor-pointer hover:text-gray-900"
+            )}
+          >
+            <span className="font-semibold text-gray-800">{MARATHON_TERMS_SECTION_TITLE}:</span>{" "}
+            {MARATHON_FITNESS_WARRANTY_CHECKBOX_TEXT}{" "}
+            <span className={policyLinkClass}>{MARATHON_TERMS_VIEW_LABEL}</span>
+          </button>
+        </div>
 
         {error && <p className="mt-2 ml-5 text-[10px] text-red-600">{error}</p>}
       </div>

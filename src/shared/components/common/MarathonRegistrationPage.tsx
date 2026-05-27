@@ -84,6 +84,8 @@ interface ParticipantFormData {
   runningClub: string;
   medicalAidName: string;
   medicalAidNumber: string;
+  emergencyContactName: string;
+  emergencyNumber: string;
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "";
   shoeSize: string;
   disclaimerAccepted: boolean;
@@ -109,6 +111,8 @@ const INITIAL_FORM: ParticipantFormData = {
   runningClub: "",
   medicalAidName: "",
   medicalAidNumber: "",
+  emergencyContactName: "",
+  emergencyNumber: "",
   shirtSize: "",
   shoeSize: "",
   disclaimerAccepted: false,
@@ -461,6 +465,8 @@ export default function MarathonRegistrationPage() {
       runningClub: registrationData.runningClub || "",
       medicalAidName: registrationData.medicalAidName || "",
       medicalAidNumber: registrationData.medicalAidNumber || "",
+      emergencyContactName: registrationData.emergencyContactName || "",
+      emergencyNumber: registrationData.emergencyNumber || "",
       shirtSize:
         registrationData.shirtSize ||
         registrationData.tShirtSize ||
@@ -534,7 +540,7 @@ export default function MarathonRegistrationPage() {
   const validateParticipantForm = (data: ParticipantFormData) => {
     const errors: ParticipantFormErrors = {};
     const nameRegex = /^[A-Za-z\s'-]{2,}$/;
-    const lsPhoneRegex = /^\d{8}$/;
+    const lsPhoneRegex = /^\d{8,10}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const idRegex = /^\d{6,20}$/;
     const passportRegex = /^[A-Za-z0-9]{6,20}$/;
@@ -585,7 +591,7 @@ export default function MarathonRegistrationPage() {
     else if (!emailRegex.test(data.email.trim())) errors.email = "Enter a valid email address.";
     
     if (!data.cellNumber.trim()) errors.cellNumber = "Cell number is required.";
-    else if (!lsPhoneRegex.test(data.cellNumber.trim())) errors.cellNumber = "Cell number must be 8 digits.";
+    else if (!lsPhoneRegex.test(data.cellNumber.trim())) errors.cellNumber = "Cell number must be 8-10 digits.";
 
     if (!data.medicalCondition) {
       errors.medicalCondition = "Please select Yes or No.";
@@ -600,7 +606,19 @@ export default function MarathonRegistrationPage() {
     }
 
     if (data.medicalAidNumber.trim() && !lsPhoneRegex.test(data.medicalAidNumber.trim())) {
-      errors.medicalAidNumber = "Must be 8 digits.";
+      errors.medicalAidNumber = "Must be 8-10 digits.";
+    }
+
+    if (!data.emergencyContactName.trim()) {
+      errors.emergencyContactName = "Emergency contact name is required.";
+    } else if (!nameRegex.test(data.emergencyContactName.trim())) {
+      errors.emergencyContactName = "Enter a valid name.";
+    }
+
+    if (!data.emergencyNumber.trim()) {
+      errors.emergencyNumber = "Emergency contact number is required.";
+    } else if (!lsPhoneRegex.test(data.emergencyNumber.trim())) {
+      errors.emergencyNumber = "Must be 8-10 digits.";
     }
 
     if (!data.shirtSize) errors.shirtSize = "Please select a T-shirt size.";
@@ -672,6 +690,8 @@ export default function MarathonRegistrationPage() {
       medicalAidNumber: participantForm.medicalAidNumber.trim()
         ? normalizePhoneNumber(participantForm.medicalAidNumber)
         : "",
+      emergencyContactName: participantForm.emergencyContactName.trim(),
+      emergencyNumber: normalizePhoneNumber(participantForm.emergencyNumber),
       shirtSize: participantForm.shirtSize as "XS" | "S" | "M" | "L" | "XL" | "XXL",
       shoeSize: participantForm.shoeSize.trim(),
       disclaimerAccepted: participantForm.disclaimerAccepted,
@@ -1537,6 +1557,26 @@ export default function MarathonRegistrationPage() {
                       className={cn(baseInputClass, inputRing(participantErrors.medicalAidNumber))}
                     />
                     {participantErrors.medicalAidNumber && <p className="mt-1 text-[10px] text-red-600">{participantErrors.medicalAidNumber}</p>}
+                  </div>
+                  <div>
+                    <label className={baseLabelClass}><FaUserFriends className="text-indigo-500" /> Emergency contact name</label>
+                    <input
+                      type="text"
+                      value={participantForm.emergencyContactName}
+                      onChange={(e) => handleParticipantChange("emergencyContactName", e.target.value)}
+                      className={cn(baseInputClass, inputRing(participantErrors.emergencyContactName))}
+                    />
+                    {participantErrors.emergencyContactName && <p className="mt-1 text-[10px] text-red-600">{participantErrors.emergencyContactName}</p>}
+                  </div>
+                  <div>
+                    <label className={baseLabelClass}><FaMobileAlt className="text-indigo-400" /> Emergency contact number</label>
+                    <input
+                      type="tel"
+                      value={participantForm.emergencyNumber}
+                      onChange={(e) => handleParticipantChange("emergencyNumber", e.target.value)}
+                      className={cn(baseInputClass, inputRing(participantErrors.emergencyNumber))}
+                    />
+                    {participantErrors.emergencyNumber && <p className="mt-1 text-[10px] text-red-600">{participantErrors.emergencyNumber}</p>}
                   </div>
                 </div>
               </SectionCard>

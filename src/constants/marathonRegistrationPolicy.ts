@@ -1,7 +1,15 @@
 export const MARATHON_FITNESS_WARRANTY_TEXT =
   "I warrant that I am physically fit and sufficiently trained to participate.";
 
-export const MARATHON_TERMS_ACCEPTANCE_LABEL = "You must accept the Fitness Warranty.";
+export const MARATHON_FITNESS_WARRANTY_CHECKBOX_TEXT =
+  "I warrant that I am physically fit and sufficiently trained to participate, and I have read and understood the race rules.";
+
+export const MARATHON_TERMS_SECTION_TITLE = "Fitness Warranty & Race Rules and Regulations";
+
+export const MARATHON_TERMS_VIEW_LABEL = "Click to View";
+
+export const MARATHON_TERMS_ACCEPTANCE_LABEL =
+  "You must accept the Fitness Warranty and Race Rules and Regulations.";
 
 export interface MarathonPolicyModalContent {
   title: string;
@@ -15,7 +23,7 @@ export interface MarathonPolicyModalContent {
 }
 
 export const MARATHON_FITNESS_WARRANTY_MODAL: MarathonPolicyModalContent = {
-  title: "Fitness Warranty",
+  title: MARATHON_TERMS_SECTION_TITLE,
   sections: [
     {
       heading: "Fitness Warranty",
