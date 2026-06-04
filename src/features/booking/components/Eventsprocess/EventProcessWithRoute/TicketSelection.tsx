@@ -14,7 +14,8 @@ import { setEventsErrorMsg } from "../../../../events/store/eventSlice";
 import EventsErrorPage from "../../../../events/components/EventErrorsd";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 import {
-  SPECIAL_EVENT_ID,
+  isSpecialMarathonEvent,
+  isSpecialMarathonNewFormEvent,
   SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
 } from "@/constants/eventGates";
 import {
@@ -43,7 +44,9 @@ const TicketSelection = () => {
   //("SHOW ID", showId);
 
   const { contentName, eventId } = useParams();
-  const isSpecialEvent = Number(eventId) === SPECIAL_EVENT_ID;
+  const eventIdNum = Number(eventId);
+  const isSpecialMarathon = isSpecialMarathonEvent(eventIdNum);
+  const isSpecialNewForm = isSpecialMarathonNewFormEvent(eventIdNum);
 
   const userId = useAppSelector((state) => state.user.user?.userId);
 
@@ -64,7 +67,7 @@ const TicketSelection = () => {
 
   const handleAdd = (id: number) => {
     setSelectedTickets((prev) => {
-      if (isSpecialEvent) {
+      if (isSpecialMarathon) {
         const selectedCount = Object.values(prev).reduce(
           (total, count) => total + count,
           0
@@ -114,23 +117,15 @@ const TicketSelection = () => {
     setParticipantDialogOpen(true);
   }
 
-  function confirmMarathonParticipantChoice() {
+  function proceedToIndividualMarathonRegistration() {
     if (!categories.length) {
       window.alert("Add at least one ticket!");
-      return;
-    }
-    if (marathonParticipantType === "CORPORATE") {
-      navigate(marathonRegistrationPath, {
-        state: { categories, participantType: "CORPORATE" },
-      });
-      setParticipantDialogOpen(false);
       return;
     }
     if (userId) {
       navigate(marathonRegistrationPath, {
         state: { categories, participantType: "INDIVIDUAL" },
       });
-      setParticipantDialogOpen(false);
       return;
     }
     try {
@@ -145,8 +140,23 @@ const TicketSelection = () => {
     } catch {
       /* ignore quota / private mode */
     }
-    setParticipantDialogOpen(false);
     navigate("/login", { state: { from: marathonRegistrationPath } });
+  }
+
+  function confirmMarathonParticipantChoice() {
+    if (!categories.length) {
+      window.alert("Add at least one ticket!");
+      return;
+    }
+    if (marathonParticipantType === "CORPORATE") {
+      navigate(marathonRegistrationPath, {
+        state: { categories, participantType: "CORPORATE" },
+      });
+      setParticipantDialogOpen(false);
+      return;
+    }
+    proceedToIndividualMarathonRegistration();
+    setParticipantDialogOpen(false);
   }
 
   async function clickHandlerReserveFlow() {
@@ -183,7 +193,11 @@ const TicketSelection = () => {
 
   function handlePrimaryAction() {
     if (loading) return;
-    if (isSpecialEvent) {
+    if (isSpecialNewForm) {
+      proceedToIndividualMarathonRegistration();
+      return;
+    }
+    if (isSpecialMarathon) {
       openSpecialParticipantDialog();
       return;
     }
@@ -480,7 +494,7 @@ const TicketSelection = () => {
                         <button
                           onClick={() => handleAdd(ticket.categoryId)}
                           disabled={
-                            isSpecialEvent && totalSelectedTickets >= 1
+                            isSpecialMarathon && totalSelectedTickets >= 1
                           }
                           className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-r-xl transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-600"
                         >
@@ -504,14 +518,14 @@ const TicketSelection = () => {
               onClick={handlePrimaryAction}
               disabled={
                 loading ||
-                ((!!userId || isSpecialEvent) && categories.length === 0)
+                ((!!userId || isSpecialMarathon) && categories.length === 0)
               }
               className={`group px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300
       flex items-center gap-3
       ${
         loading
           ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-          : !userId && !isSpecialEvent
+          : !userId && !isSpecialMarathon
           ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
           : categories.length === 0
           ? "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -544,11 +558,13 @@ const TicketSelection = () => {
               ) : (
                 <>
                   <span>
-                    {!userId && !isSpecialEvent
+                    {!userId && !isSpecialMarathon
                       ? "Login to Proceed"
                       : categories.length === 0
                       ? "Select Tickets"
-                      : isSpecialEvent
+                      : isSpecialNewForm
+                      ? "Continue to registration"
+                      : isSpecialMarathon
                       ? "Choose participant"
                       : "Review & Pay"}
                   </span>
@@ -569,7 +585,7 @@ const TicketSelection = () => {
               )}
             </button>
 
-            {isSpecialEvent && (
+            {isSpecialMarathon && !isSpecialNewForm && (
               <AlertDialog
                 open={participantDialogOpen}
                 onOpenChange={setParticipantDialogOpen}

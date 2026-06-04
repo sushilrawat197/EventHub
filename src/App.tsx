@@ -12,7 +12,9 @@ const SignUp = lazy(() => import("./features/auth/SignUp"));
 const ProfileCard = lazy(() => import("./features/profile/components/profile/ProfileCard"));
 const HomePage = lazy(() => import("./features/home/pages/HomePage"));
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
-import { SPECIAL_EVENT_ID } from "./constants/eventGates";
+import {
+  isSpecialMarathonEvent,
+} from "./constants/eventGates";
 import { useAppDispatch } from "./app/store/hooks";
 import { useEffect } from "react";
 const Layout = lazy(() => import("./features/events/pages/Layout"));
@@ -57,7 +59,7 @@ function MarathonRegistrationFromBookingRedirect() {
 /** Marathon URL is otherwise behind `ProtectedRoute`; special event allows guest registration. */
 function MarathonRegistrationAccess() {
   const { eventId } = useParams<{ eventId: string }>();
-  const isSpecialEvent = Number(eventId) === SPECIAL_EVENT_ID;
+  const isSpecialEvent = isSpecialMarathonEvent(Number(eventId));
   const page = withSuspense(<MarathonRegistrationPage />);
   if (isSpecialEvent) return page;
   return <ProtectedRoute>{page}</ProtectedRoute>;

@@ -141,11 +141,11 @@ export default function MarathonRegistrationTermsSection({
             disabled={disabled}
             onClick={() => setModalOpen(true)}
             className={cn(
-              "min-w-0 flex-1 text-left text-xs leading-relaxed text-gray-700",
-              disabled ? "cursor-default opacity-90" : "cursor-pointer hover:text-gray-900"
+              "min-w-0 flex-1 text-left text-xs leading-relaxed text-red-600",
+              disabled ? "cursor-default opacity-90" : "cursor-pointer hover:text-red-700"
             )}
           >
-            <span className="font-semibold text-gray-800">{MARATHON_TERMS_SECTION_TITLE}:</span>{" "}
+            <span className="font-semibold text-red-700">{MARATHON_TERMS_SECTION_TITLE}:</span>{" "}
             {MARATHON_FITNESS_WARRANTY_CHECKBOX_TEXT}{" "}
             <span className={policyLinkClass}>{MARATHON_TERMS_VIEW_LABEL}</span>
           </button>

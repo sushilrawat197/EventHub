@@ -13,7 +13,7 @@ import {
   downloadTicket,
   getOrderDetails,
 } from "../../../features/booking/api/ticketCategory";
-import { SPECIAL_EVENT_ID } from "../../../constants/eventGates";
+import { isSpecialMarathonEvent } from "../../../constants/eventGates";
 import SpinnerLoading from "./SpinnerLoading";
 
 export default function BookingConfirmed() {
@@ -251,8 +251,9 @@ export default function BookingConfirmed() {
                         )}
                       </button>
                       {/* TODO: TEMP EVENT-39 FLOW - remove this registration button block later. */}
-                      {Number(confirmBookingDetails?.event?.eventId) ===
-                        SPECIAL_EVENT_ID && (
+                      {isSpecialMarathonEvent(
+                        Number(confirmBookingDetails?.event?.eventId)
+                      ) && (
                         <button
                           type="button"
                           onClick={goToMarathonRegistration}

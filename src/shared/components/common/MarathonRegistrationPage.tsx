@@ -48,7 +48,11 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarDays, ChevronDown } from "lucide-react";
-import { SPECIAL_EVENT_ID, SPECIAL_MARATHON_REGISTRATION_STASH_KEY } from "@/constants/eventGates";
+import {
+  isSpecialMarathonEvent,
+  isSpecialMarathonNewFormEvent,
+  SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
+} from "@/constants/eventGates";
 import {
   formatMarathonShoeSizeLabel,
   MARATHON_SHOE_SIZE_OPTIONS,
@@ -64,7 +68,11 @@ type MarathonRaceCategory =
   | "5km"
   | "10km"
   | "21km"
-  | "42km";
+  | "42km"
+  | "Kids 5km"
+  | "Adults 5km"
+  | "Adults 10km"
+  | "Adults 21km";
 
 interface ParticipantFormData {
   participantType: "CORPORATE" | "INDIVIDUAL";
@@ -159,8 +167,19 @@ const RACE_CATEGORY_OPTIONS: Exclude<MarathonRaceCategory, "">[] = [
   "42km",
 ];
 
-function isMarathonRaceCategory(value: string): value is Exclude<MarathonRaceCategory, ""> {
-  return (RACE_CATEGORY_OPTIONS as string[]).includes(value);
+const RACE_CATEGORY_NEW_FORM_OPTIONS: Exclude<MarathonRaceCategory, "">[] = [
+  "Kids 5km",
+  "Adults 5km",
+  "Adults 10km",
+  "Adults 21km",
+];
+
+function isMarathonRaceCategory(
+  value: string,
+  newForm = false
+): value is Exclude<MarathonRaceCategory, ""> {
+  const options = newForm ? RACE_CATEGORY_NEW_FORM_OPTIONS : RACE_CATEGORY_OPTIONS;
+  return (options as string[]).includes(value);
 }
 
 /** API expects MALE | FEMALE | OTHER; form UI uses title case. */
@@ -254,9 +273,15 @@ export default function MarathonRegistrationPage() {
 
   const bookingIdParam = params.bookingId ? Number(params.bookingId) : null;
   const eventIdParam = params.eventId ? Number(params.eventId) : null;
-  const isSpecialEvent =
-    eventIdParam !== null && !Number.isNaN(eventIdParam) && eventIdParam === SPECIAL_EVENT_ID;
+  const isSpecialMarathon =
+    eventIdParam !== null && !Number.isNaN(eventIdParam) && isSpecialMarathonEvent(eventIdParam);
+  const isSpecialNewForm =
+    eventIdParam !== null && !Number.isNaN(eventIdParam) && isSpecialMarathonNewFormEvent(eventIdParam);
   const contentName = params.contentName ?? "";
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname, location.key]);
 
   const locState = (location.state || {}) as MarathonLocationState;
   const categoriesFromState = locState.categories;
@@ -301,6 +326,7 @@ export default function MarathonRegistrationPage() {
   });
 
   const isCorporateParticipant =
+    !isSpecialNewForm &&
     (participantTypeFromLocation ?? participantForm.participantType) === "CORPORATE";
 
   const canRetryPendingPayment =
@@ -344,7 +370,7 @@ export default function MarathonRegistrationPage() {
     if (!isBookingContext) return;
     if (categoriesFromState && categoriesFromState.length > 0) return;
 
-    if (isSpecialEvent) {
+    if (isSpecialMarathon) {
       let raw: string | null = null;
       try {
         raw = sessionStorage.getItem(SPECIAL_MARATHON_REGISTRATION_STASH_KEY);
@@ -401,7 +427,7 @@ export default function MarathonRegistrationPage() {
     navigate,
     contentName,
     eventIdParam,
-    isSpecialEvent,
+    isSpecialMarathon,
     location.pathname,
   ]);
 
@@ -441,7 +467,9 @@ export default function MarathonRegistrationPage() {
       participantType: registrationData.participantType || "INDIVIDUAL",
       corporateId: registrationData.corporateId ?? null,
       gender: marathonGenderFromApi(registrationData.gender),
-      raceCategory: isMarathonRaceCategory(apiRaceCategory) ? apiRaceCategory : "",
+      raceCategory: isMarathonRaceCategory(apiRaceCategory, isSpecialNewForm)
+        ? apiRaceCategory
+        : "",
       name: registrationData.name || "",
       surname: registrationData.surname || "",
       dateOfBirth: registrationData.dateOfBirth || "",
@@ -475,7 +503,7 @@ export default function MarathonRegistrationPage() {
       shoeSize: registrationData.shoeSize || "",
       disclaimerAccepted: !!registrationData.disclaimerAccepted,
     });
-  }, [registrationData]);
+  }, [registrationData, isSpecialNewForm]);
 
   useEffect(() => {
     if (registrationData) return;
@@ -492,6 +520,14 @@ export default function MarathonRegistrationPage() {
       };
     });
   }, [registrationData, participantTypeFromLocation, location.key]);
+
+  useEffect(() => {
+    if (!isSpecialNewForm || registrationData) return;
+    setParticipantForm((prev) => {
+      if (prev.participantType === "INDIVIDUAL" && prev.corporateId === null) return prev;
+      return { ...prev, participantType: "INDIVIDUAL", corporateId: null };
+    });
+  }, [isSpecialNewForm, registrationData, location.key]);
 
   useEffect(() => {
     if (participantForm.participantType !== "CORPORATE") return;
@@ -572,7 +608,7 @@ export default function MarathonRegistrationPage() {
       }
     }
     
-    if (data.participantType === "CORPORATE" && !data.corporateId) {
+    if (!isSpecialNewForm && data.participantType === "CORPORATE" && !data.corporateId) {
       errors.corporateId = "Please select a corporate.";
     }
 
@@ -601,11 +637,11 @@ export default function MarathonRegistrationPage() {
     
     if (!data.district.trim()) errors.district = "Please select a district.";
 
-    if (data.medicalAidName.trim() && !nameRegex.test(data.medicalAidName.trim())) {
+    if (!isSpecialNewForm && data.medicalAidName.trim() && !nameRegex.test(data.medicalAidName.trim())) {
       errors.medicalAidName = "Enter a valid name.";
     }
 
-    if (data.medicalAidNumber.trim() && !lsPhoneRegex.test(data.medicalAidNumber.trim())) {
+    if (!isSpecialNewForm && data.medicalAidNumber.trim() && !lsPhoneRegex.test(data.medicalAidNumber.trim())) {
       errors.medicalAidNumber = "Must be 8-10 digits.";
     }
 
@@ -622,7 +658,7 @@ export default function MarathonRegistrationPage() {
     }
 
     if (!data.shirtSize) errors.shirtSize = "Please select a T-shirt size.";
-    if (!data.shoeSize) errors.shoeSize = "Please select a shoe size.";
+    if (!isSpecialNewForm && !data.shoeSize) errors.shoeSize = "Please select a shoe size.";
     if (!data.disclaimerAccepted) {
       errors.disclaimerAccepted = MARATHON_TERMS_ACCEPTANCE_LABEL;
     }
@@ -647,7 +683,7 @@ export default function MarathonRegistrationPage() {
       toast.error("This email is already registered and booking is confirmed.");
       return;
     }
-    if (participantForm.participantType === "INDIVIDUAL" && !userId) {
+    if ((isSpecialNewForm || participantForm.participantType === "INDIVIDUAL") && !userId) {
       toast.error("Please sign in to register as an individual.");
       return;
     }
@@ -664,8 +700,11 @@ export default function MarathonRegistrationPage() {
     };
 
     const registrationPayload: MarathonRegistrationPayload = {
-      participantType: participantForm.participantType,
-      corporateId: participantForm.participantType === "CORPORATE" ? participantForm.corporateId : null,
+      participantType: isSpecialNewForm ? "INDIVIDUAL" : participantForm.participantType,
+      corporateId:
+        !isSpecialNewForm && participantForm.participantType === "CORPORATE"
+          ? participantForm.corporateId
+          : null,
       ticketCategoryId: Number(resolvedTicketCategoryId),
       noOfTicket: Number(resolvedNoOfTicket),
       eventId: Number(resolvedEventId),
@@ -686,14 +725,16 @@ export default function MarathonRegistrationPage() {
           ? participantForm.medicalConditionDetails.trim()
           : null,
       runningClub: participantForm.runningClub.trim(),
-      medicalAidName: participantForm.medicalAidName.trim(),
-      medicalAidNumber: participantForm.medicalAidNumber.trim()
-        ? normalizePhoneNumber(participantForm.medicalAidNumber)
-        : "",
+      medicalAidName: isSpecialNewForm ? "" : participantForm.medicalAidName.trim(),
+      medicalAidNumber: isSpecialNewForm
+        ? ""
+        : participantForm.medicalAidNumber.trim()
+          ? normalizePhoneNumber(participantForm.medicalAidNumber)
+          : "",
       emergencyContactName: participantForm.emergencyContactName.trim(),
       emergencyNumber: normalizePhoneNumber(participantForm.emergencyNumber),
       shirtSize: participantForm.shirtSize as "XS" | "S" | "M" | "L" | "XL" | "XXL",
-      shoeSize: participantForm.shoeSize.trim(),
+      ...(isSpecialNewForm ? {} : { shoeSize: participantForm.shoeSize.trim() }),
       disclaimerAccepted: participantForm.disclaimerAccepted,
     };
 
@@ -745,7 +786,7 @@ export default function MarathonRegistrationPage() {
     );
   }
 
-  if (isBookingContext && !userId && !isSpecialEvent) {
+  if (isBookingContext && !userId && !isSpecialMarathon) {
     return (
       <div className="min-h-[60vh] bg-gray-50/50 px-4 py-10 flex items-center justify-center">
         <div className="w-full max-w-sm rounded-2xl border border-amber-100 bg-white p-6 text-center shadow-lg">
@@ -768,7 +809,9 @@ export default function MarathonRegistrationPage() {
   const effectiveParticipantType =
     participantTypeFromLocation ?? participantForm.participantType;
   const requiresIndividualLogin =
-    isSpecialEvent && effectiveParticipantType === "INDIVIDUAL" && !userId;
+    isSpecialMarathon &&
+    (isSpecialNewForm || effectiveParticipantType === "INDIVIDUAL") &&
+    !userId;
 
   const handleSignInForIndividual = () => {
     if (categoriesFromState?.length) {
@@ -820,8 +863,13 @@ export default function MarathonRegistrationPage() {
   /** Participant type is chosen on ticket selection; lock it when passed in navigation state. */
   const participantTypeLocked =
     isBookingContext &&
-    (participantTypeFromLocation === "INDIVIDUAL" ||
+    (isSpecialNewForm ||
+      participantTypeFromLocation === "INDIVIDUAL" ||
       participantTypeFromLocation === "CORPORATE");
+
+  const raceCategoryOptions = isSpecialNewForm
+    ? RACE_CATEGORY_NEW_FORM_OPTIONS
+    : RACE_CATEGORY_OPTIONS;
 
   return (
     <div
@@ -1122,6 +1170,7 @@ export default function MarathonRegistrationPage() {
                 iconBgClass="bg-gradient-to-br from-violet-500 to-purple-600"
               >
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {!isSpecialNewForm && (
                   <div>
                     <label className={baseLabelClass}><FaUser className="text-emerald-500" /> Type</label>
                     {participantTypeLocked ? (
@@ -1176,7 +1225,8 @@ export default function MarathonRegistrationPage() {
                       </DropdownMenu>
                     )}
                   </div>
-                  {participantForm.participantType === "CORPORATE" && (
+                  )}
+                  {!isSpecialNewForm && participantForm.participantType === "CORPORATE" && (
                     <div>
                       <label className={baseLabelClass}><FaBuilding className="text-orange-500" /> Corporate</label>
                       <DropdownMenu>
@@ -1322,7 +1372,7 @@ export default function MarathonRegistrationPage() {
                           <DropdownMenuItem onSelect={() => handleParticipantChange("raceCategory", "")}>
                             Select race category
                           </DropdownMenuItem>
-                          {RACE_CATEGORY_OPTIONS.map((opt) => (
+                          {raceCategoryOptions.map((opt) => (
                             <DropdownMenuItem
                               key={opt}
                               onSelect={() => handleParticipantChange("raceCategory", opt)}
@@ -1483,6 +1533,7 @@ export default function MarathonRegistrationPage() {
                     </DropdownMenu>
                     {participantErrors.shirtSize && <p className="mt-1 text-[10px] text-red-600">{participantErrors.shirtSize}</p>}
                   </div>
+                  {!isSpecialNewForm && (
                   <div>
                     <label className={baseLabelClass}><FaShoePrints className="text-amber-600" /> Shoe size</label>
                     <DropdownMenu>
@@ -1536,6 +1587,9 @@ export default function MarathonRegistrationPage() {
                     </DropdownMenu>
                     {participantErrors.shoeSize && <p className="mt-1 text-[10px] text-red-600">{participantErrors.shoeSize}</p>}
                   </div>
+                  )}
+                  {!isSpecialNewForm && (
+                  <>
                   <div>
                     <label className={baseLabelClass}><FaUserMd className="text-red-500" /> Medical Aid name</label>
                     <input
@@ -1558,6 +1612,8 @@ export default function MarathonRegistrationPage() {
                     />
                     {participantErrors.medicalAidNumber && <p className="mt-1 text-[10px] text-red-600">{participantErrors.medicalAidNumber}</p>}
                   </div>
+                  </>
+                  )}
                   <div>
                     <label className={baseLabelClass}><FaUserFriends className="text-indigo-500" /> Emergency contact name</label>
                     <input

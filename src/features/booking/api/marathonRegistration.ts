@@ -29,7 +29,7 @@ export interface MarathonRegistrationPayload {
   emergencyContactName: string;
   emergencyNumber: string;
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL";
-  shoeSize: string;
+  shoeSize?: string;
   disclaimerAccepted: boolean;
 }
 
