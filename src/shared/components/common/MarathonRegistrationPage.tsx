@@ -55,6 +55,7 @@ import {
 } from "@/constants/eventGates";
 import {
   formatMarathonShoeSizeLabel,
+  MARATHON_NEW_FORM_TERMS_ACCEPTANCE_LABEL,
   MARATHON_SHOE_SIZE_OPTIONS,
 } from "@/constants/marathonRegistrationPolicy";
 import MarathonRegistrationTermsSection, {
@@ -660,7 +661,9 @@ export default function MarathonRegistrationPage() {
     if (!data.shirtSize) errors.shirtSize = "Please select a T-shirt size.";
     if (!isSpecialNewForm && !data.shoeSize) errors.shoeSize = "Please select a shoe size.";
     if (!data.disclaimerAccepted) {
-      errors.disclaimerAccepted = MARATHON_TERMS_ACCEPTANCE_LABEL;
+      errors.disclaimerAccepted = isSpecialNewForm
+        ? MARATHON_NEW_FORM_TERMS_ACCEPTANCE_LABEL
+        : MARATHON_TERMS_ACCEPTANCE_LABEL;
     }
     
     return errors;
@@ -1639,6 +1642,7 @@ export default function MarathonRegistrationPage() {
             </div>
 
             <MarathonRegistrationTermsSection
+              newForm={isSpecialNewForm}
               accepted={participantForm.disclaimerAccepted}
               onAcceptedChange={(accepted) =>
                 handleParticipantChange("disclaimerAccepted", accepted)

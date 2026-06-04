@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import {
   MARATHON_FITNESS_WARRANTY_MODAL,
   MARATHON_FITNESS_WARRANTY_CHECKBOX_TEXT,
+  MARATHON_FITNESS_WARRANTY_TEXT,
+  MARATHON_NEW_FORM_TERMS_SECTION_TITLE,
   MARATHON_TERMS_ACCEPTANCE_LABEL,
   MARATHON_TERMS_SECTION_TITLE,
   MARATHON_TERMS_VIEW_LABEL,
@@ -109,6 +111,8 @@ interface MarathonRegistrationTermsSectionProps {
   onAcceptedChange: (accepted: boolean) => void;
   error?: string;
   disabled?: boolean;
+  /** Simplified fitness warranty only (SPECIAL_EVENT_NEW_FORM_ID). */
+  newForm?: boolean;
 }
 
 export default function MarathonRegistrationTermsSection({
@@ -116,6 +120,7 @@ export default function MarathonRegistrationTermsSection({
   onAcceptedChange,
   error,
   disabled = false,
+  newForm = false,
 }: MarathonRegistrationTermsSectionProps) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -136,28 +141,45 @@ export default function MarathonRegistrationTermsSection({
             onChange={(event) => onAcceptedChange(event.target.checked)}
             className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={() => setModalOpen(true)}
-            className={cn(
-              "min-w-0 flex-1 text-left text-xs leading-relaxed text-red-600",
-              disabled ? "cursor-default opacity-90" : "cursor-pointer hover:text-red-700"
-            )}
-          >
-            <span className="font-semibold text-red-700">{MARATHON_TERMS_SECTION_TITLE}:</span>{" "}
-            {MARATHON_FITNESS_WARRANTY_CHECKBOX_TEXT}{" "}
-            <span className={policyLinkClass}>{MARATHON_TERMS_VIEW_LABEL}</span>
-          </button>
+          {newForm ? (
+            <label
+              htmlFor="marathon-fitness-warranty-accepted"
+              className={cn(
+                "min-w-0 flex-1 text-left text-xs leading-relaxed text-red-600",
+                disabled ? "cursor-default opacity-90" : "cursor-pointer hover:text-red-700"
+              )}
+            >
+              <span className="font-semibold text-red-700">
+                {MARATHON_NEW_FORM_TERMS_SECTION_TITLE}:
+              </span>{" "}
+              {MARATHON_FITNESS_WARRANTY_TEXT}
+            </label>
+          ) : (
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => setModalOpen(true)}
+              className={cn(
+                "min-w-0 flex-1 text-left text-xs leading-relaxed text-red-600",
+                disabled ? "cursor-default opacity-90" : "cursor-pointer hover:text-red-700"
+              )}
+            >
+              <span className="font-semibold text-red-700">{MARATHON_TERMS_SECTION_TITLE}:</span>{" "}
+              {MARATHON_FITNESS_WARRANTY_CHECKBOX_TEXT}{" "}
+              <span className={policyLinkClass}>{MARATHON_TERMS_VIEW_LABEL}</span>
+            </button>
+          )}
         </div>
 
         {error && <p className="mt-2 ml-5 text-[10px] text-red-600">{error}</p>}
       </div>
 
-      <PolicyModal
-        content={modalOpen ? MARATHON_FITNESS_WARRANTY_MODAL : null}
-        onClose={() => setModalOpen(false)}
-      />
+      {!newForm && (
+        <PolicyModal
+          content={modalOpen ? MARATHON_FITNESS_WARRANTY_MODAL : null}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </>
   );
 }

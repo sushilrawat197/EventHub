@@ -11,6 +11,11 @@ export const MARATHON_TERMS_VIEW_LABEL = "Click to View";
 export const MARATHON_TERMS_ACCEPTANCE_LABEL =
   "You must accept the Fitness Warranty and Race Rules and Regulations.";
 
+export const MARATHON_NEW_FORM_TERMS_SECTION_TITLE = "Fitness Warranty";
+
+export const MARATHON_NEW_FORM_TERMS_ACCEPTANCE_LABEL =
+  "You must accept the Fitness Warranty.";
+
 export interface MarathonPolicyModalContent {
   title: string;
   sections: Array<{
