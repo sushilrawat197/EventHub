@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
 
   const cities = useAppSelector((state) => state?.cities.data || []);
 
-  const [selectedCity, setSelectedCityNav] = useState("All");
+  const [selectedCity, setSelectedCityNav] = useState("All Districts");
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
   const user = useAppSelector((state) => state.user.user);
 
   const handleAllCities = () => {
-    setSelectedCityNav("All");
+    setSelectedCityNav("All Districts");
     dispatch(setSelectedCity(null));
     setCityDropdownOpen(false);
     dispatch(setFilter({ key: "cityId", value: undefined }));
@@ -182,10 +182,10 @@ const Navbar: React.FC = () => {
                       <li
                         onClick={handleAllCities}
                         className={`px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors duration-200 first:rounded-t-xl ${
-                          selectedCity === "All" ? "bg-blue-50 font-semibold text-blue-700" : ""
+                          selectedCity === "All Districts" ? "bg-blue-50 font-semibold text-blue-700" : ""
                         }`}
                       >
-                        All
+                        All Districts
                       </li>
                       {cities.map((city) => (
                         <li
