@@ -1,124 +1,136 @@
-import { useNavigate} from "react-router-dom";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-
-import type {  EventResponseBySearch } from "../../types/evnetInterFace";
-
+import { useState } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import type { EventResponseBySearch } from "../../types/evnetInterFace";
 
 interface EventscardSliderProps {
   events: EventResponseBySearch[];
 }
 
-export default function EventscardSlider({
-  events = [],
-}: EventscardSliderProps) {
-  const navigate = useNavigate();
-  // const location = useLocation();
-  // const dispatch = useAppDispatch();
+function formatGenre(genre?: string) {
+  if (!genre) return "Event";
+  return genre.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
+function eventPath(event: EventResponseBySearch) {
+  const slug = event.eventName
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, "and")
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "");
+  return `/events/${slug}/${event.eventId}`;
+}
 
-  const settings = {
-    dots: true,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 3,
-    arrows: true,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-          infinite: true,
-          dots: false,
-          arrows: false,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          initialSlide: 2,
-          arrows: false,
-        },
-      },
-      {
-        breakpoint: 300,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          arrows: false,
-        },
-      },
-    ],
-  };
-
-  //   const { eventId } = useParams<{ eventId: string }>();
-
-  //  const allEvents = useAppSelector(
-  //     (state) => state.events.allEventsBySearch?.content || []
-  //   );
-
-  //   const sliderEvents = allEvents.filter((e) => e?.eventId === Number(eventId));
-  //   console.log("SLIDER EVENT...",sliderEvents.map((e)=>e.genre)
-  //   )
-
-
-  // useEffect(() => {
-  //   dispatch(getEvents());
-  // }, []);
+function RelatedEventCard({
+  event,
+  onOpen,
+}: {
+  event: EventResponseBySearch;
+  onOpen: () => void;
+}) {
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
-    <div className="py-4">
-      <h2 className="text-xl font-bold">You May Also Like</h2>
-      <p className="text-gray-600 mb-4">Events around you, book now</p>
-
-      <div className="relative lg:ml-6 flex justify-center lg:block">
-        <div className="lg:w-3xl md:w-3xl w-80">
-          <Slider {...settings}>
-            {events.map((event, index) => {
-              const slug = event.eventName
-                .toLowerCase()
-                .trim()
-                .replace(/&/g, "and") // & ko 'and' me convert
-                .replace(/\s+/g, "-") // spaces ko '-'
-                .replace(/[^\w-]/g, ""); // special characters remove
-
-              return (
-                <div
-                  key={index}
-                  className="p-1 cursor-pointer"
-                  onClick={() =>
-                    navigate(`/events/${slug}/${event.eventId}`, {
-                      state: event,
-                       replace: true
-                    })
-                  }
-                >
-                  <div className="flex flex-col items-center bg-white rounded-lg p-2">
-                    <div className="h-40 w-24 lg:w-52 lg:h-52 mt-2">
-                      <img
-                        src={event.thumbnailUrl || ""}
-                        alt={event.eventName}
-                        className="h-full w-full object-cover rounded-md"
-                      />
-                    </div>
-                    <p className="mt-2 text-center lg:w-40 md:w-30 sm:w-20 text-sm lg:font-semibold lg:text-sm">
-                      {event.genre}
-                    </p>
-                    <p className="mt-2 text-center lg:w-40 md:w-30 sm:w-20 text-sm lg:font-semibold lg:text-lg truncate">
-                      {event.eventName}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </Slider>
-        </div>
+    <article
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+    >
+      <div className="relative aspect-[4/5] w-full shrink-0 overflow-hidden bg-gray-100">
+        {!imgLoaded && <div className="absolute inset-0 animate-pulse bg-gray-200" />}
+        <img
+          src={event.thumbnailUrl || event.posterUrl}
+          alt={event.eventName}
+          loading="lazy"
+          onLoad={() => setImgLoaded(true)}
+          className={cn(
+            "absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-300",
+            imgLoaded ? "opacity-100" : "opacity-0"
+          )}
+        />
+        <span
+          className={cn(
+            "absolute right-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm",
+            event.eventSoldOut ? "bg-red-500" : "bg-blue-600"
+          )}
+        >
+          {event.eventSoldOut ? "Sold out" : formatGenre(event.genre)}
+        </span>
       </div>
+
+      <div className="flex flex-1 flex-col p-3">
+        <p className="mb-1 text-[11px] font-medium text-gray-500">
+          {event.dateDisplay}
+        </p>
+        <h3 className="mb-2 line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-snug text-gray-900 group-hover:text-blue-700">
+          {event.eventName}
+        </h3>
+        <p className="mt-auto flex items-start gap-1 text-xs text-gray-600">
+          <MapPin className="mt-0.5 size-3 shrink-0 text-blue-500" aria-hidden />
+          <span className="line-clamp-1">{event.venueName}</span>
+        </p>
+      </div>
+    </article>
+  );
+}
+
+export default function EventscardSlider({ events = [] }: EventscardSliderProps) {
+  const navigate = useNavigate();
+
+  if (events.length === 0) return null;
+
+  const showNav = events.length > 3;
+
+  return (
+    <div className="w-full overflow-hidden">
+      <div className="mb-5">
+        <h2 className="text-xl font-bold text-gray-900">You May Also Like</h2>
+        <p className="mt-1 text-sm text-gray-600">Similar events you might enjoy</p>
+      </div>
+
+      <Carousel opts={{ align: "start", loop: false }} className="w-full">
+        <CarouselContent className="-ml-3 items-stretch">
+          {events.map((event) => (
+            <CarouselItem
+              key={event.eventId}
+              className="basis-[85%] pl-3 sm:basis-1/2 lg:basis-1/3"
+            >
+              <RelatedEventCard
+                event={event}
+                onOpen={() =>
+                  navigate(eventPath(event), {
+                    state: event,
+                    replace: true,
+                  })
+                }
+              />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+
+        {showNav && (
+          <>
+            <CarouselPrevious className="left-0 z-10 size-9 border-gray-200 bg-white text-gray-700 shadow-md hover:bg-gray-50 sm:-left-4" />
+            <CarouselNext className="right-0 z-10 size-9 border-gray-200 bg-white text-gray-700 shadow-md hover:bg-gray-50 sm:-right-4" />
+          </>
+        )}
+      </Carousel>
     </div>
   );
 }

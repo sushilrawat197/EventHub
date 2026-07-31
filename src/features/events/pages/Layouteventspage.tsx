@@ -9,19 +9,16 @@ import { useLocation, useParams } from "react-router-dom";
 import type { EventResponseBySearch } from "../types/evnetInterFace";
 import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import { useEffect, useMemo } from "react";
-import {
-  listEventsBySearch,
-  listEventById,
-  checkEventAvailability,
-} from "../api/eventsApi";
+import { checkEventAvailability } from "../api/eventsApi";
 
 import SpinnerLoading from "../../../shared/components/common/SpinnerLoading";
-import { clearSingleEvent } from "../store/eventSlice";
 import {
   fetchFilteredShows,
   listAllShowsByEvent,
 } from "../api/showsApi";
 import { clearSetShows } from "../store/showSlice";
+import { useEvent } from "../hooks/useEvent";
+import { useEventsSearch } from "../hooks/useEventsSearch";
 
 function formatPreviewDateRange(p: EventResponseBySearch): string {
   if (p.dateDisplay?.trim()) return p.dateDisplay;
@@ -44,6 +41,7 @@ export default function Layouteventspage() {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { eventId } = useParams<{ eventId: string }>();
+  const searchFilters = useAppSelector((state) => state.searchFilter);
 
   const navPreview = useMemo((): EventResponseBySearch | undefined => {
     const s = location.state as EventResponseBySearch | undefined;
@@ -53,14 +51,10 @@ export default function Layouteventspage() {
 
   const event = navPreview;
 
-  const allEvents = useAppSelector(
-    (state) => state.events.allEventsBySearch?.content || []
-  );
-  const singleEvent = useAppSelector((state) => state.events.singleEvent);
-  const eventLoading = useAppSelector((state) => state.events.eventloading);
+  const { data: singleEvent, isLoading: eventLoading } = useEvent(eventId);
+  const { data: eventsPage } = useEventsSearch(searchFilters);
   const shows = useAppSelector((state) => state.shows.data);
 
-  // ------------------ MEMOIZED FORMATTED DATES ------------------
   const formattedDates = useMemo(() => {
     const dates = shows.map((e) => new Date(e.showDate));
     if (!dates.length) return "";
@@ -83,7 +77,6 @@ export default function Layouteventspage() {
       : `${fmt(start)} - ${fmt(end)}`;
   }, [shows]);
 
-  // ------------------ MEMOIZED TIME ------------------
   const formattedTime = useMemo(() => {
     if (shows.length !== 1) return "";
     const [h, m] = shows[0].startTime.split(":");
@@ -93,27 +86,23 @@ export default function Layouteventspage() {
     return `${hour}:${m} ${ampm}`;
   }, [shows]);
 
-  
-  // ------------------ MEMOIZED VENUES ------------------
   const uniqueVenues = useMemo(() => {
     return Array.from(
       new Map(shows.map((s) => [s.venueId, s.venueName])).entries()
     ).map(([venueId, venueName]) => ({ venueId, venueName }));
   }, [shows]);
 
-
-  // ------------------ MEMOIZED RELATED EVENTS ------------------
   const sliderEvents = useMemo(() => {
-    return allEvents.filter(
+    const relatedEvents = eventsPage?.content ?? [];
+    return relatedEvents.filter(
       (e) => e?.genre === event?.genre && String(e?.eventId) !== eventId
     );
-  }, [allEvents, event?.genre, eventId]);
+  }, [eventsPage?.content, event?.genre, eventId]);
 
   const previewVenue =
     navPreview &&
     [navPreview.venueName, navPreview.city].filter(Boolean).join(", ");
 
-  // ------------------ MEMOIZED DETAILS ------------------
   const details = useMemo(
     () => ({
       date:
@@ -148,21 +137,14 @@ export default function Layouteventspage() {
     ]
   );
 
-  // ------------------ API CALLS ------------------
   useEffect(() => {
     if (eventId) {
-      dispatch(clearSingleEvent());
       dispatch(clearSetShows());
-      dispatch(listEventById(eventId));
       dispatch(listAllShowsByEvent(eventId));
       dispatch(checkEventAvailability(eventId));
       dispatch(fetchFilteredShows(eventId));
     }
   }, [eventId, dispatch]);
-
-  useEffect(() => {
-    dispatch(listEventsBySearch());
-  }, [dispatch]);
 
   const canRenderShell =
     Boolean(navPreview) ||

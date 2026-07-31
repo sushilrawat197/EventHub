@@ -14,7 +14,6 @@ import {
 import { useSearchParams } from "react-router-dom";
 
 import { setFilter } from "../store/filter_Slice";
-import { listEventsBySearch } from "../api/eventsApi";
 
 interface FilterItemProps {
   title: string;
@@ -55,13 +54,11 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
     if (filterKey === "categories") {
       dispatch(setCategories(newFilters));
       dispatch(setFilter({ key: "genres", value: newFilters }));
-      dispatch(listEventsBySearch());
     }
 
     if (filterKey === "languages") {
       dispatch(setLanguages(newFilters));
       dispatch(setFilter({ key: "languages", value: newFilters }));
-      dispatch(listEventsBySearch());
     }
 
     if (filterKey === "dates") {
@@ -71,7 +68,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
       }
       dispatch(setDates(newFilters));
       dispatch(setFilter({ key: "datePresets", value: newFilters }));
-      dispatch(listEventsBySearch());
     }
 
     if (filterKey === "prices") {
@@ -84,7 +80,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
       });
       dispatch(setPrices(newFilters));
       dispatch(setFilter({ key: "priceGroups", value: mappedFilters }));
-      dispatch(listEventsBySearch());
     }
   };
 
@@ -126,9 +121,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
       dispatch(setPrices([]));
       dispatch(setFilter({ key: "priceGroups", value: [] }));
     }
-
-    // ✅ Clear ke baad events dobara fetch karo
-    dispatch(listEventsBySearch());
   };
 
   // Calendar close on outside click
@@ -180,13 +172,6 @@ const FilterItem = ({ title, options, filterKey }: FilterItemProps) => {
     selectedDates,
     selectedPrice,
   ]);
-
-  // ✅ Yaha automatic API call jab dono date select ho jaye
-  useEffect(() => {
-    if (startDate && endDate) {
-      dispatch(listEventsBySearch());
-    }
-  }, [startDate, endDate, dispatch]);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">

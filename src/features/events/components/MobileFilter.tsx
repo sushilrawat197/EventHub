@@ -13,7 +13,6 @@ import {
   setStartDate,
 } from "../store/filterSlice";
 import { setFilter } from "../store/filter_Slice";
-import { listEventsBySearch } from "../api/eventsApi";
 
 interface MobileFiltersProps {
   onClose: () => void;
@@ -135,9 +134,6 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
       dispatch(setPrices(newFilters));
       dispatch(setFilter({ key: "priceGroups", value: mapped }));
     }
-
-    // Automatic API call except for Date Range
-    if (value !== "Date Range") dispatch(listEventsBySearch());
   };
 
   const handleClear = (sectionKey?: string) => {
@@ -162,8 +158,6 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
       dispatch(setPrices([]));
       dispatch(setFilter({ key: "priceGroups", value: [] }));
     }
-
-    dispatch(listEventsBySearch());
   };
 
   // Close calendar on outside click
@@ -180,13 +174,6 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
       document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showCalendar]);
-
-  // API call when date range selected
-  useEffect(() => {
-    if (startDate && endDate) {
-      dispatch(listEventsBySearch());
-    }
-  }, [startDate, endDate, dispatch]);
 
   const formatLocalDate = (date: Date) =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(

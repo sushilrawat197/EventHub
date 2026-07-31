@@ -10,7 +10,6 @@ import { RiMenuFold4Fill } from "react-icons/ri";
 import { RiMenuFold3Fill } from "react-icons/ri";
 import { listCitiesByRegion } from "../../../features/events/api/location/cityApi";
 
-import { listEventsBySearch } from "../../../features/events/api/eventsApi";
 import { setSelectedCity } from "../../../features/events/store/citySlice";
 import { setFilter } from "../../../features/events/store/filter_Slice";
 // import { setFilter } from "../../../features/events/store/filter_Slice";
@@ -52,13 +51,10 @@ const Navbar: React.FC = () => {
     dispatch(setSelectedCity(city.id));
     setCityDropdownOpen(false);
     dispatch(setFilter({ key: "cityId", value: city.id }));
-    //(city.id);
-    dispatch(listEventsBySearch());
   };
 
   function handleSearch() {
     dispatch(setFilter({ key: "eventName", value: searchData }));
-    dispatch(listEventsBySearch());
     navigate("/events");
   }
 
@@ -148,8 +144,7 @@ const Navbar: React.FC = () => {
                     // Set new timeout for debounced search
                     const newTimeout = setTimeout(() => {
                       dispatch(setFilter({ key: "eventName", value: e.target.value }));
-                      dispatch(listEventsBySearch());
-                    }, 300); // 300ms delay
+                    }, 300);
 
                     setSearchTimeout(newTimeout);
                   }}
@@ -238,8 +233,7 @@ const Navbar: React.FC = () => {
                     // Set new timeout for debounced search
                     const newTimeout = setTimeout(() => {
                       dispatch(setFilter({ key: "eventName", value: e.target.value }));
-                      dispatch(listEventsBySearch());
-                    }, 300); // 300ms delay
+                    }, 300);
 
                     setSearchTimeout(newTimeout);
                   }}

@@ -1,87 +1,54 @@
 import axios from "axios";
 import type { AppDispatch } from "../../../app/store/store";
 import { apiConnector } from "../../../services/apiConnector";
-import { setAllEventsBySearch, setEventsLoading, setSingleEvent } from "../store/eventSlice"; // yaha se import karo
-import type { ApiResponse, OtherApiResponse } from "../../../interfaces/country";
+import type { ApiResponse, OtherApiResponse, PageData } from "../../../interfaces/country";
 import type { EventResponse, EventResponseBySearch } from "../types/evnetInterFace";
-import type { RootState } from "../../../app/store/store"; // apna store path
+import type { EventSearchFilters } from "../store/filter_Slice";
 import { setAvailableEventShows } from "../../payment/store/availabilitySlice";
+
 const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
+export const EVENTS_PAGE_SIZE = 8;
 
-export function listEventsBySearch(page: number = 0) {
-  return async (dispatch: AppDispatch, getState: () => RootState) => {
-    try {
-      const filters = getState().searchFilter;
+export async function searchEventsApi(
+  filters: EventSearchFilters,
+  page = 0,
+  size = EVENTS_PAGE_SIZE
+): Promise<PageData<EventResponseBySearch>> {
+  const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
+    method: "POST",
+    url: `${BASE_URL}/ticketcore-api/api/v1/events/search?page=${page}&size=${size}`,
+    bodyData: filters,
+    headers: { "X-Client-Source": "WEB" },
+    withCredentials: true,
+  });
 
-      // console.log(filters);
+  if (response.data.statusCode === 200) {
+    return response.data.data;
+  }
 
-      const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
-        method: "POST",
-        url: `${BASE_URL}/ticketcore-api/api/v1/events/search?page=${page}&size=8`,
-        bodyData: filters,
-        headers: { "X-Client-Source": "WEB" },
-        withCredentials: true,
-      });
-
-      // console.log("LIST EVENT BY SEARCH RESPONSE",response)
-
-      if (response.data.statusCode === 200) {
-        dispatch(setAllEventsBySearch(response.data.data));
-        return { success: true };
-      }
-
-      return { success: false };
-    } catch (error) {
-      console.error("Error fetching events:", error);
-      return { success: false };
-    }
-  };
+  throw new Error(response.data.message || "Failed to fetch events");
 }
 
+export async function getEventByIdApi(eventId: string): Promise<EventResponse> {
+  const response = await apiConnector<OtherApiResponse<EventResponse>>({
+    method: "GET",
+    url: `${BASE_URL}/ticketcore-api/api/v1/events/search/${eventId}`,
+    headers: { "X-Client-Source": "WEB" },
+    withCredentials: true,
+  });
 
+  if (response.data.statusCode === 200) {
+    return response.data.data;
+  }
 
-
-
-export function listEventById(eventId: string) {
-  return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
-    dispatch(setEventsLoading(true));
-    try {
-      const response = await apiConnector<OtherApiResponse<EventResponse>>({
-        method: "GET",
-        url: `${BASE_URL}/ticketcore-api/api/v1/events/search/${eventId}`,
-        headers: { "X-Client-Source": "WEB" },
-        withCredentials: true,
-      });
-
-      //   console.log("LIST ALL EVENTS RESPONSE:", response.data);
-
-      if (response.data.statusCode === 200) {
-        dispatch(setSingleEvent(response.data.data));
-        return { success: true };
-      }
-
-      return { success: false };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Axios error:", error.response);
-      } else {
-        console.error("Unknown error:", error);
-      }
-      return { success: false };
-    } finally {
-      dispatch(setEventsLoading(false));
-    }
-  };
+  throw new Error(response.data.message || "Failed to fetch event");
 }
-
-
-
 
 export interface AvailableShow {
   showId: number;
-  showDate: string;   // ISO date: "YYYY-MM-DD"
-  startTime: string;  // "HH:mm:ss"
+  showDate: string;
+  startTime: string;
   venueName: string;
   soldOut: boolean;
 }
@@ -92,34 +59,33 @@ export interface EventAvailableShows {
   eventSoldOut: boolean;
 }
 
+export async function getEventAvailabilityApi(
+  eventId: string
+): Promise<EventAvailableShows> {
+  const response = await apiConnector<OtherApiResponse<EventAvailableShows>>({
+    method: "GET",
+    url: `${BASE_URL}/ticketcore-api/api/v1/events/${eventId}/availability`,
+    headers: { "X-Client-Source": "WEB" },
+    withCredentials: true,
+  });
 
+  if (response.data.statusCode === 200) {
+    return response.data.data;
+  }
+
+  throw new Error(response.data.message || "Failed to check availability");
+}
 
 export function checkEventAvailability(eventId: string) {
-  return async (dispatch: AppDispatch): Promise<{ success: boolean; soldOut: boolean; data?: EventAvailableShows }> => {
+  return async (dispatch: AppDispatch): Promise<{
+    success: boolean;
+    soldOut: boolean;
+    data?: EventAvailableShows;
+  }> => {
     try {
-      const response = await apiConnector<OtherApiResponse<EventAvailableShows>>({
-        method: "GET",
-        url: `${BASE_URL}/ticketcore-api/api/v1/events/${eventId}/availability`,
-        headers: { "X-Client-Source": "WEB" },
-        withCredentials: true,
-      });
-
-      // console.log("CHECK EVENTS AVAILABILITY RESPONSE:", response.data);
-
-      if (response.data.statusCode === 200) {
-        
-        const eventData = response.data.data;
-        dispatch(setAvailableEventShows(eventData.shows));
-
-        // if(eventData.eventSoldOut){
-        //   console.log(eventData.eventSoldOut)
-        //    dispatch(setEventsErrorMsg("All tickets are sold out for this event"));
-        // }
-
-        return { success: true, soldOut: eventData.eventSoldOut, data: eventData };
-      }
-
-      return { success: false, soldOut: false };
+      const eventData = await getEventAvailabilityApi(eventId);
+      dispatch(setAvailableEventShows(eventData.shows));
+      return { success: true, soldOut: eventData.eventSoldOut, data: eventData };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Axios error:", error.response);
@@ -130,7 +96,3 @@ export function checkEventAvailability(eventId: string) {
     }
   };
 }
-
-
-
-

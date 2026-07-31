@@ -12,10 +12,10 @@ import {
   setPrices,
   setStartDate,
   setEndDate,
-} from "../store/filterSlice"; // 👈 add setStartDate, setEndDate
-import { listEventsBySearch } from "../api/eventsApi";
+} from "../store/filterSlice";
 import { setFilter } from "../store/filter_Slice";
 import ScrollPagination from "../../../shared/components/common/ScrollPagination";
+import { useEventsSearchInfinite } from "../hooks/useEventsSearch";
 
 const categoryOptions: string[] = [
   "FOOD",
@@ -41,25 +41,24 @@ export default function EventList() {
   const selectedLanguage = useAppSelector((state) => state.filter.languages);
   const selectedDates = useAppSelector((state) => state.filter.dates);
   const selectedPrice = useAppSelector((state) => state.filter.prices);
+  const searchFilters = useAppSelector((state) => state.searchFilter);
 
-  const events = useAppSelector(
-    (state) => state.events.allEventsBySearch?.content || []
-  );
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useEventsSearchInfinite(searchFilters);
 
-  const [page, setPage] = useState(0);
-  const [loading, setLoading] = useState(false);
-
-  const totalPages = useAppSelector(
-    (state) => state.events.allEventsBySearch?.totalPages
-  );
-  const hasMore = page < (totalPages || 1) - 1;
+  const events = data?.pages.flatMap((page) => page.content) ?? [];
+  const hasMore = Boolean(hasNextPage);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [openFilter, setOpenFilter] = useState(false);
   const [showAllChips, setShowAllChips] = useState(false);
 
-  // Sync URL params with Redux state on mount
   useEffect(() => {
     const categoriesFromUrl = searchParams.get("categories");
     const languageFromUrl = searchParams.get("languages");
@@ -73,10 +72,8 @@ export default function EventList() {
     if (priceFromUrl) dispatch(setPrices(priceFromUrl.split(",")));
   }, [dispatch, searchParams]);
 
-  // Update URL when filters change
-
   useEffect(() => {
-    const params = new URLSearchParams(); // TO PREPARE QUERY STRING  "categories=comedy,music&languages=english,hindi"
+    const params = new URLSearchParams();
 
     if (selectedCategories.length > 0)
       params.set("categories", selectedCategories.join(","));
@@ -106,7 +103,6 @@ export default function EventList() {
 
         dispatch(setCategories(updated));
         dispatch(setFilter({ key: "genres", value: updated }));
-        dispatch(listEventsBySearch());
         break;
       }
 
@@ -117,7 +113,6 @@ export default function EventList() {
 
         dispatch(setLanguages(updated));
         dispatch(setFilter({ key: "languages", value: updated }));
-        dispatch(listEventsBySearch());
         break;
       }
 
@@ -126,18 +121,16 @@ export default function EventList() {
           ? selectedPrice.filter((p) => p !== value)
           : [...selectedPrice, value];
 
-        // map to PriceGroup[]
         const mapped = updated.map((f) => {
           if (f === "0 - 500") return { min: 0, max: 500 };
           if (f === "501 - 2000") return { min: 501, max: 2000 };
           if (f === "Above 2000")
             return { min: 2001, max: Number.MAX_SAFE_INTEGER };
-          return { min: 0, max: Number.MAX_SAFE_INTEGER }; // fallback
+          return { min: 0, max: Number.MAX_SAFE_INTEGER };
         });
 
         dispatch(setPrices(updated));
         dispatch(setFilter({ key: "priceGroups", value: mapped }));
-        dispatch(listEventsBySearch());
         break;
       }
 
@@ -146,7 +139,6 @@ export default function EventList() {
           ? selectedDates.filter((d) => d !== value)
           : [...selectedDates, value];
 
-        // Agar "Date Range" remove hua → start & end date bhi reset karo
         if (!updated.includes("Date Range")) {
           dispatch(setStartDate(null));
           dispatch(setEndDate(null));
@@ -156,7 +148,6 @@ export default function EventList() {
 
         dispatch(setDates(updated));
         dispatch(setFilter({ key: "datePresets", value: updated }));
-        dispatch(listEventsBySearch());
         break;
       }
     }
@@ -164,7 +155,6 @@ export default function EventList() {
 
   const getAllFilterOptions = () => {
     return Array.from(
-      // to make set object into array so that we can use .map funciton on getallfilter...
       new Set([
         ...selectedDates,
         ...selectedPrice,
@@ -185,18 +175,9 @@ export default function EventList() {
   };
 
   const handleLoadMore = async () => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-    const nextPage = page + 1;
-    setPage(nextPage);
-    await dispatch(listEventsBySearch(nextPage));
-    setLoading(false);
+    if (isFetchingNextPage || !hasMore) return;
+    await fetchNextPage();
   };
-
-  useEffect(() => {
-    dispatch(listEventsBySearch(page));
-  }, [page, dispatch]);
 
   const allFilterOptions = getAllFilterOptions();
   const visibleFilterOptions = showAllChips
@@ -206,7 +187,6 @@ export default function EventList() {
 
   return (
     <div className="space-y-4">
-      {/* Filter Tags */}
       <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div className="py-2 md:py-3">
           <div className="flex flex-wrap gap-1.5 md:gap-2">
@@ -247,10 +227,13 @@ export default function EventList() {
         </div>
       </div>
 
-      {/* Events Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 items-stretch">
-        {events.length > 0 ? (
-          events?.map((event) => {
+        {isLoading && events.length === 0 ? (
+          <div className="col-span-full text-center py-16 text-gray-500">
+            Loading events…
+          </div>
+        ) : events.length > 0 ? (
+          events.map((event) => {
             const slug = event.eventName
               .toLowerCase()
               .trim()
@@ -304,7 +287,6 @@ export default function EventList() {
 
       {openFilter && <MobileFilters onClose={() => setOpenFilter(false)} />}
 
-      {/* Mobile buttons */}
       <div className="flex justify-between items-center fixed bottom-4 left-4 right-4 md:hidden z-30">
         {!openFilter && (
           <button
@@ -322,7 +304,7 @@ export default function EventList() {
       <ScrollPagination
         onLoadMore={handleLoadMore}
         hasMore={hasMore}
-        loading={loading}
+        loading={isFetchingNextPage}
       />
     </div>
   );
