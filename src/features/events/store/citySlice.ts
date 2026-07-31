@@ -34,7 +34,7 @@ const regionSlice = createSlice({
     setCities: (state, action: PayloadAction<citiesResponse[]>) => {
       state.data = action.payload;
     },
-    setSelectedCity: (state, action: PayloadAction<number>) => {
+    setSelectedCity: (state, action: PayloadAction<number | null>) => {
       state.selectedCity = action.payload;
     },
     setCitiesLoading: (state, action: PayloadAction<boolean>) => {

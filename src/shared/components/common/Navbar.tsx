@@ -27,9 +27,7 @@ const Navbar: React.FC = () => {
 
   const cities = useAppSelector((state) => state?.cities.data || []);
 
-  const [selectedCity, setSelectedCityNav] = useState("Maseru");
-
-  // //(cities)
+  const [selectedCity, setSelectedCityNav] = useState("All");
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -46,6 +44,13 @@ const Navbar: React.FC = () => {
 
   const user = useAppSelector((state) => state.user.user);
 
+  const handleAllCities = () => {
+    setSelectedCityNav("All");
+    dispatch(setSelectedCity(null));
+    setCityDropdownOpen(false);
+    dispatch(setFilter({ key: "cityId", value: undefined }));
+  };
+
   const handleCitySelect = (city: { id: number; label: string }) => {
     setSelectedCityNav(city.label);
     dispatch(setSelectedCity(city.id));
@@ -60,7 +65,6 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     dispatch(listCitiesByRegion());
-    dispatch(setFilter({ key: "cityId", value: 11 }));
   }, [dispatch]);
 
   useEffect(() => {
@@ -175,11 +179,21 @@ const Navbar: React.FC = () => {
 
                   {cityDropdownOpen && (
                     <ul className="absolute mt-2 w-48 bg-white/95 backdrop-blur-sm border border-white/20 rounded-xl shadow-2xl z-50 transition-all duration-200">
+                      <li
+                        onClick={handleAllCities}
+                        className={`px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors duration-200 first:rounded-t-xl ${
+                          selectedCity === "All" ? "bg-blue-50 font-semibold text-blue-700" : ""
+                        }`}
+                      >
+                        All
+                      </li>
                       {cities.map((city) => (
                         <li
                           key={city.id}
                           onClick={() => handleCitySelect(city)}
-                          className="px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors duration-200 first:rounded-t-xl last:rounded-b-xl"
+                          className={`px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors duration-200 last:rounded-b-xl ${
+                            selectedCity === city.label ? "bg-blue-50 font-semibold text-blue-700" : ""
+                          }`}
                         >
                           {city.label}
                         </li>

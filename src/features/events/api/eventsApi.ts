@@ -10,6 +10,14 @@ const BASE_URL: string = import.meta.env.VITE_BASE_URL as string;
 
 export const EVENTS_PAGE_SIZE = 8;
 
+function buildSearchRequestBody(filters: EventSearchFilters): EventSearchFilters {
+  const body: EventSearchFilters = { ...filters };
+  if (body.cityId == null) {
+    delete body.cityId;
+  }
+  return body;
+}
+
 export async function searchEventsApi(
   filters: EventSearchFilters,
   page = 0,
@@ -18,7 +26,7 @@ export async function searchEventsApi(
   const response = await apiConnector<ApiResponse<EventResponseBySearch>>({
     method: "POST",
     url: `${BASE_URL}/ticketcore-api/api/v1/events/search?page=${page}&size=${size}`,
-    bodyData: filters,
+    bodyData: buildSearchRequestBody(filters),
     headers: { "X-Client-Source": "WEB" },
     withCredentials: true,
   });
