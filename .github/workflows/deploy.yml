@@ -45,6 +45,7 @@ jobs:
       - name: Create env file
         run: |
           echo 'VITE_BASE_URL=https://esyrecharge.com/ticketcore-api' > .env
+          echo 'VITE_APP_BASE=/mytag' >> .env
 
       - name: Install dependencies
         run: npm ci
