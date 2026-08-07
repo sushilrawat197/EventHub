@@ -1,39 +1,62 @@
-name: Build & Deploy MyTag 
+name: Build & Deploy MyTag
 
 on:
   push:
     branches:
       - main
+      - staging
 
 jobs:
-  build-and-deploy:
+  deploy-production:
+    if: github.ref == 'refs/heads/main'
     runs-on: self-hosted
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Create env file
+        run: |
+          echo 'VITE_BASE_URL=https://www.mytag.co.ls/ticketcore-api/api/v1' > .env
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build React App
         run: npm run build
-    
-      - name: Remove old dist folder (if exists)
-        run: |
-          if [ -d /var/www/html/mytagfrontend/dist ]; then
-            echo "Old dist folder found. Removing..."
-            rm -rf /var/www/html/mytagfrontend/dist
-          else
-            echo "No old dist folder found. Skipping removal."
-          fi
 
-      - name: Deploy new dist folder
+      - name: Remove old dist
         run: |
-          if [ -d dist ]; then
-            echo "New build found. Copying dist folder..."
-            cp -r dist /var/www/html/mytagfrontend
-          else
-            echo "Build folder 'dist' not found. Skipping deployment."
-            exit 1
-          fi
+          rm -rf /var/www/html/mytagfrontend/dist
+
+      - name: Deploy
+        run: |
+          mkdir -p /var/www/html/mytagfrontend
+          cp -r dist /var/www/html/mytagfrontend
+
+  deploy-staging:
+    if: github.ref == 'refs/heads/staging'
+    runs-on: [self-hosted, mytag]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create env file
+        run: |
+          echo 'VITE_BASE_URL=https://esyrecharge.com/ticketcore-api' > .env
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React App
+        run: npm run build
+
+      - name: Remove old dist
+        run: |
+          sudo rm -rf /var/www/html/mytag/dist
+
+      - name: Deploy
+        run: |
+          sudo mkdir -p /var/www/html/mytag
+          sudo cp -r dist /var/www/html/mytag
