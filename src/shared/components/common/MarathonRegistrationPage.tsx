@@ -1347,7 +1347,6 @@ export default function MarathonRegistrationPage() {
                       {participantErrors.corporateId && <p className="mt-1 text-[10px] text-red-600">{participantErrors.corporateId}</p>}
                     </div>
                   )}
-                  //THIS IS DROPDOWN FOR OFFLINE INDIVIDUAL ONLY
                   {isOfflineIndividual && (
                     <div>
                       <label className={baseLabelClass}>
