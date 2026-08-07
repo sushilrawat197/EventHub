@@ -54,9 +54,9 @@ jobs:
 
       - name: Remove old dist
         run: |
-          sudo rm -rf /var/www/html/mytag/dist
+           rm -rf /var/www/html/mytag/dist
 
       - name: Deploy
         run: |
-          sudo mkdir -p /var/www/html/mytag
-          sudo cp -r dist /var/www/html/mytag
+           mkdir -p /var/www/html/mytag
+           cp -r dist /var/www/html/mytag
