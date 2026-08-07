@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance } from "axios";
-import { endpoints } from "../services/apis";
+import { authEndpoints } from "@/features/auth/api/endpoints";
 import type { LoginResponse, RefreshResponse } from "./types";
 import { showGlobalPopup } from "../utils/globalPopup";
 
@@ -19,7 +19,7 @@ export async function login(payload: {
   password: string;
 }): Promise<LoginResponse> {
   try {
-    const res = await authHttp.post<LoginResponse>(endpoints.LOGIN_API, payload);
+    const res = await authHttp.post<LoginResponse>(authEndpoints.login(), payload);
     return res.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.code === "ECONNABORTED") {
@@ -34,7 +34,7 @@ export async function login(payload: {
 
 export async function refresh(): Promise<RefreshResponse> {
   try {
-    const res = await authHttp.post<RefreshResponse>(endpoints.REFRESH_ACCESS_TOKEN);
+    const res = await authHttp.post<RefreshResponse>(authEndpoints.refresh());
     return res.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.code === "ECONNABORTED") {
@@ -50,7 +50,7 @@ export async function refresh(): Promise<RefreshResponse> {
 export async function logout(): Promise<void> {
   // Best-effort. Even if it fails, frontend should still clear state.
   try {
-    await authHttp.post(endpoints.LOGOUT_API);
+    await authHttp.post(authEndpoints.logout());
   } catch (error) {
     if (axios.isAxiosError(error) && error.code === "ECONNABORTED") {
       showGlobalPopup({

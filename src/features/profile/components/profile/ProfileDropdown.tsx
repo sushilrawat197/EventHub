@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { logout } from "../../../auth/api/authApi";
+import { logout } from "@/features/auth/services/auth.service";
 import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";

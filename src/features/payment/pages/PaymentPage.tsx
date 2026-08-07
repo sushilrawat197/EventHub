@@ -7,8 +7,8 @@ import {
   getPaymentStatus,
   normalCPayInitiate,
   ticketPay,
-} from "../api/payment";
-import { cancelBooking } from "../../booking/api/ticketCategory";
+} from "../services/payment.service";
+import { cancelBooking } from "@/features/booking/services/booking.service";
 import { useNavigate, useParams } from "react-router-dom";
 import BookingErrorPage from "../../booking/components/Eventsprocess/BookingError";
 import { ClipLoader } from "react-spinners";
@@ -207,7 +207,7 @@ export default function PaymentPage() {
           clearInterval(intervalId);
           clearTimeout(timeoutId);
           setShowCardIframe(false);
-          dispatch(setPayMessage(res.data.message));
+          dispatch(setPayMessage(res.data.message ?? "Payment failed"));
           return;
         }
       } catch (error) {

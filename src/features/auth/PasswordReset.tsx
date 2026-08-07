@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { useAppDispatch } from "../../app/store/hooks";
-import { resetPassword } from "./api/authApi";
+import { resetPassword } from "./services/auth.service";
 import { useNavigate } from "react-router-dom";
 import { setMassage } from "./store/authSlice";
 import hasSequentialPattern from "./hasSequentialPattern";

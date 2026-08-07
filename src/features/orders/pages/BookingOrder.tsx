@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { listAllOrdersApi } from "../api/orderDetails";
+import { listAllOrdersApi } from "../api/orders.api";
 import { format } from "date-fns";
 import { clearConfirmBooking } from "../../booking/store/confirmBookingSlice";
-import { getOrderDetails } from "../../booking/api/ticketCategory";
+import { getOrderDetails } from "../services/orders.service";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../app/store/hooks";
 

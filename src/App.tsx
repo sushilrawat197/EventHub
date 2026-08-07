@@ -37,7 +37,7 @@ const MarathonRegistrationPage = lazy(
 );
 const BookingOrder = lazy(() => import("./features/orders/pages/BookingOrder"));
 const RateAndReview = lazy(() => import("./shared/components/common/RateAndReview"));
-import { refreshAccessToken } from "./services/tokenManager";
+import { refreshAccessToken } from "@/app/bootstrap/sessionBootstrap";
 
 function withSuspense(element: ReactNode) {
   return <Suspense fallback={<SpinnerLoading />}>{element}</Suspense>;

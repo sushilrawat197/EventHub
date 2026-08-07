@@ -8,7 +8,7 @@ import { useAppSelector } from "../../../../app/store/hooks";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useAppDispatch } from "../../../../app/store/hooks";
-import { updateUserDetails } from "../../api/userApi";
+import { updateUserDetails } from "../../services/user.service";
 import { ClipLoader } from "react-spinners";
 import EditProfileEmail from "./EditProfileEmail";
 

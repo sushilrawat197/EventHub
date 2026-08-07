@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 // import PrimaryButton from "../PrimaryButton";
 import { useEffect, useState } from "react";
-import { cancelBooking } from "../../../api/ticketCategory";
+import { cancelBooking } from "@/features/booking/services/booking.service";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 
 // Review & Payment Component

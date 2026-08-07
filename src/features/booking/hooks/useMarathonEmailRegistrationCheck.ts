@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { checkMarathonRegistrationByEmailApi } from "../api/marathon.api";
 import {
-  checkMarathonRegistrationByEmail,
   isValidMarathonEmail,
   marathonEmailCheckCacheKey,
   resolveMarathonEmailCheckOutcome,
   type MarathonEmailCheckOutcome,
-} from "../api/marathonRegistration";
+} from "../types/marathon";
 
 const DEFAULT_DEBOUNCE_MS = 500;
 
@@ -56,7 +56,7 @@ export function useMarathonEmailRegistrationCheck({
     setLoading(true);
     setError(null);
 
-    const result = await checkMarathonRegistrationByEmail(eventId, trimmedEmail);
+    const result = await checkMarathonRegistrationByEmailApi(eventId, trimmedEmail);
 
     if (requestId !== requestIdRef.current) return;
 

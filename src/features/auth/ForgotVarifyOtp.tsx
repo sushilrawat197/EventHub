@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "../../app/store/hooks";
-import { forgotp_password_resend_OTP, varifyFogotOtp} from "./api/authApi";
+import { forgotp_password_resend_OTP, varifyFogotOtp } from "./services/auth.service";
 import { useAppSelector } from "../../app/store/hooks";
 // import { varifySignInOTP } from "./api/authApi";
 import OtpInput from "react-otp-input";

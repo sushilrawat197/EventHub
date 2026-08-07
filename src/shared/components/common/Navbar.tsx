@@ -8,7 +8,7 @@ import NavHeader from "./navbar/NavHeader";
 // import { RxCross1 } from "react-icons/rx";
 import { RiMenuFold4Fill } from "react-icons/ri";
 import { RiMenuFold3Fill } from "react-icons/ri";
-import { listCitiesByRegion } from "../../../features/events/api/location/cityApi";
+import { listCitiesByRegion } from "@/features/events/services/regions.service";
 
 import { setSelectedCity } from "../../../features/events/store/citySlice";
 import { setFilter } from "../../../features/events/store/filter_Slice";
@@ -122,7 +122,7 @@ const Navbar: React.FC = () => {
                   <img
                     loading="lazy"
                     className="object-cover rounded-lg w-full h-full"
-                    src="/logo.jpeg"
+                    src={`${import.meta.env.BASE_URL}logo.jpeg`}
                     alt="logo"
                   />
                 </div>

@@ -1,5 +1,5 @@
-import { endpoints } from "../../../services/apis";
-import { apiConnector } from "../../../services/apiConnector";
+import { authEndpoints } from "../api/endpoints";
+import { apiConnector } from "@/lib/api/connector";
 import { type NavigateFunction } from "react-router-dom";
 import {
   setPwdToken,
@@ -15,32 +15,18 @@ import {
   setOtpContext,
   // setOtpContext,
 } from "../store/authSlice";
-const {
-  SIGNUP_API,
-  VARIFY_SIGNUP_OTP_API,
-  SIGNUP_RESEND_OTP,
-  SET_PASS_API,
-  VARIFY_OTP,
-  RESEND_OTP,
-  CHANGE_PASSWORD,
-  // VARIFY_LOGIN_OTP,
-  RESET_PASSWORD,
-  FORGOT_PASSWORD_OTP,
-  VARIFY_RESET_PASSWORD_OTP,
-  FORGOT_RESEND_PASSWORD_OTP_API
-} = endpoints;
 
 import axios from "axios";
 import toast from "react-hot-toast";
 import { clearUser } from "../../profile/store/userSlice";
-import { getCurrentUser } from "../../profile/api/userApi";
-import type { AppDispatch } from "../../../app/store/store";
-import { listCitiesByRegion } from "../../events/api/location/cityApi";
-import { scheduleTokenRefresh } from "../../../services/tokenManager";
-import { login as loginCall, logout as logoutCall } from "../../../auth/authService";
-import { clearTokens, scheduleProactiveRefresh, setTokens } from "../../../auth/tokenManager";
-import type { AuthTokens } from "../../../auth/types";
-import { refreshAccessTokenSingleFlight } from "../../../auth/refreshCoordinator";
+import { getCurrentUser } from "@/features/profile/services/user.service";
+import type { AppDispatch } from "@/app/store/store";
+import { listCitiesByRegion } from "../../events/services/regions.service";
+import { scheduleTokenRefresh } from "@/app/bootstrap/sessionBootstrap";
+import { login as loginCall, logout as logoutCall } from "@/auth/authService";
+import { clearTokens, scheduleProactiveRefresh, setTokens } from "@/auth/tokenManager";
+import type { AuthTokens } from "@/auth/types";
+import { refreshAccessTokenSingleFlight } from "@/auth/refreshCoordinator";
 
 
 type SendOtpApiResponse = {
@@ -67,7 +53,7 @@ export function sendOtp(
       dispatch(setLoading(true));
       const response = await apiConnector<SendOtpApiResponse>({
         method: "POST",
-        url: VARIFY_SIGNUP_OTP_API,
+        url: authEndpoints.signup.verifyOtp(),
         bodyData: { email, otp: otpString, signupToken },
         headers: {
           "X-Client-Source": "OTHER",
@@ -119,7 +105,7 @@ export function signUp(
         }
       }>({
         method: "POST",
-        url: SIGNUP_API,
+        url: authEndpoints.signup.init(),
         bodyData: { email }
         // headers: {
         //   "X-Client-Source": "OTHER",
@@ -175,7 +161,7 @@ export function resendOTP(email: string) {
         }
       }>({
         method: "POST",
-        url: SIGNUP_RESEND_OTP,
+        url: authEndpoints.signup.init(),
         bodyData: { email },
         headers: {
           "X-Client-Source": "OTHER",
@@ -233,7 +219,7 @@ export function setPassword(
         };
       }>({
         method: "POST",
-        url: SET_PASS_API,
+        url: authEndpoints.signup.complete(),
         bodyData: { email: email, otp: otp, password, signupToken },
         headers: {
           "X-Client-Source": "OTHER",
@@ -285,7 +271,7 @@ export function forgot_passwordOtp(
         };
       }>({
         method: "POST",
-        url: FORGOT_PASSWORD_OTP,
+        url: authEndpoints.forgotPassword(),
         bodyData: { email },
         headers: {
           "X-Client-Source": "OTHER",
@@ -342,7 +328,7 @@ export function varifyFogotOtp(
         };
       }>({
         method: "POST",
-        url: VARIFY_RESET_PASSWORD_OTP,
+        url: authEndpoints.verifyResetOtp(),
         bodyData: { resetToken, otp },
         headers: {
           "X-Client-Source": "OTHER",
@@ -385,7 +371,7 @@ export function forgotp_password_resend_OTP(resetToken: string) {
         status: string;
       }>({
         method: "POST",
-        url: FORGOT_RESEND_PASSWORD_OTP_API, //IT WAS RESEND OTP BEFORE
+        url: authEndpoints.resendPasswordResetOtp(),
         bodyData: { resetToken },
         headers: {
           "X-Client-Source": "OTHER",
@@ -433,7 +419,7 @@ export function resetPassword(
         };
       }>({
         method: "POST",
-        url: RESET_PASSWORD,
+        url: authEndpoints.resetPassword(),
         bodyData: {
           resetToken: token,
           otp,
@@ -491,7 +477,7 @@ export function changePassword(
         };
       }>({
         method: "POST",
-        url: CHANGE_PASSWORD,
+        url: authEndpoints.changePassword(),
         bodyData: {
           pwdChangeToken,
           oldPassword,
@@ -627,7 +613,7 @@ export function verify_2fa_otp(
         };
       }>({
         method: "POST",
-        url: VARIFY_OTP,
+        url: authEndpoints.verifyOtp(),
         bodyData: {
           tempToken,
           otp,
@@ -677,7 +663,7 @@ export function resend_2fa_otp(
         };
       }>({
         method: "POST",
-        url: RESEND_OTP,
+        url: authEndpoints.resendOtp(),
         bodyData: {
           tempToken,
         },

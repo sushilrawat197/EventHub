@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import {
   downloadTicket,
   getOrderDetails,
-} from "../../../features/booking/api/ticketCategory";
+} from "@/features/orders/services/orders.service";
 import { isSpecialMarathonEvent } from "../../../constants/eventGates";
 import SpinnerLoading from "./SpinnerLoading";
 

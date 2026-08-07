@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
-import { updateUserProfilPicture } from "../../api/userApi";
+import { updateUserProfilPicture } from "../../services/user.service";
 import { GoPersonFill } from "react-icons/go";
 import { IoClose } from "react-icons/io5";
 

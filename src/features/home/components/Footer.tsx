@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
               <div className="w-24 h-12 bg-white rounded-xl p-2 shadow-lg">
                 <img
                   className="w-full h-full object-cover rounded-lg"
-                  src="logo.jpeg"
+                  src={`${import.meta.env.BASE_URL}logo.jpeg`}
                   alt="EventHub Logo"
                 />
               </div>

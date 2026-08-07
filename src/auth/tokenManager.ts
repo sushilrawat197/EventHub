@@ -62,7 +62,7 @@ export function scheduleProactiveRefresh(
 
 /**
  * Handles background-tab throttling by "catching up" on focus/visibility/online.
- * Call once from app bootstrap (we do it from `services/tokenManager.ts`).
+ * Call once from app bootstrap (we do it from `app/bootstrap/sessionBootstrap.ts`).
  */
 export function initTokenLifecycleHandlers(maybeRefreshFn: () => void): void {
   if (lifecycleInitialized) return;

@@ -4,8 +4,9 @@ import axios, {
   type AxiosRequestConfig,
   type InternalAxiosRequestConfig,
 } from "axios";
-import { getAccessToken } from "../auth/tokenManager";
-import { refreshAccessTokenSingleFlight } from "../auth/refreshCoordinator";
+import { getAccessToken } from "@/auth/tokenManager";
+import { refreshAccessTokenSingleFlight } from "@/auth/refreshCoordinator";
+import { CLIENT_SOURCE_HEADER, DEFAULT_CLIENT_SOURCE } from "./constants";
 
 declare module "axios" {
   export interface AxiosRequestConfig {
@@ -23,7 +24,7 @@ function isAuthRoute(url?: string): boolean {
 export const api: AxiosInstance = axios.create({
   withCredentials: true,
   headers: {
-    "X-Client-Source": "WEB",
+    [CLIENT_SOURCE_HEADER]: DEFAULT_CLIENT_SOURCE,
   },
 });
 
@@ -31,10 +32,8 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   config.withCredentials = config.withCredentials ?? true;
   config.headers = config.headers ?? {};
 
-  // Enforce required header for every request
-  config.headers["X-Client-Source"] = "WEB";
+  config.headers[CLIENT_SOURCE_HEADER] = DEFAULT_CLIENT_SOURCE;
 
-  // Attach Authorization header from in-memory token store
   if (!config.skipAuth && !isAuthRoute(config.url)) {
     const token = getAccessToken();
     if (token && !("Authorization" in config.headers)) {
@@ -54,7 +53,6 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Don't attempt refresh for auth routes or opted-out requests
     if (originalConfig.skipRefresh || isAuthRoute(originalConfig.url)) {
       return Promise.reject(error);
     }
@@ -63,7 +61,6 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Guests have no access token; do not attempt refresh (would force /login redirect).
     if (!getAccessToken()) {
       return Promise.reject(error);
     }
@@ -84,4 +81,3 @@ api.interceptors.response.use(
     }
   }
 );
-

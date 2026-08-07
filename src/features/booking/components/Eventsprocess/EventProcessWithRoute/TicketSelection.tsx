@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { GrFormSubtract } from "react-icons/gr";
 import { IoMdAdd } from "react-icons/io";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,7 +7,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   listAllTicketCategoriesByShowId,
   reserveTicket,
-} from "../../../api/ticketCategory";
+} from "@/features/booking/services/booking.service";
 import { clearTicketCategories } from "../../../store/ticketCategory";
 import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 import { setEventsErrorMsg } from "../../../../events/store/eventSlice";
@@ -18,6 +18,7 @@ import {
   isSpecialMarathonNewFormEvent,
   SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
 } from "@/constants/eventGates";
+import type { MarathonRegistrationMode } from "@/features/booking/types/marathon";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -28,6 +29,59 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Building2, Check, CreditCard, Globe2, UserRound } from "lucide-react";
+
+type ChoiceCardProps = {
+  name: string;
+  checked: boolean;
+  onChange: () => void;
+  title: string;
+  icon: ReactNode;
+};
+
+function ChoiceCard({ name, checked, onChange, title, icon }: ChoiceCardProps) {
+  return (
+    <label
+      className={cn(
+        "flex cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-3 transition-all duration-200",
+        checked
+          ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500/25"
+          : "border-gray-200 bg-white hover:border-blue-200 hover:bg-blue-50/50"
+      )}
+    >
+      <input
+        type="radio"
+        name={name}
+        className="sr-only"
+        checked={checked}
+        onChange={onChange}
+      />
+      <span
+        className={cn(
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors",
+          checked ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-500"
+        )}
+      >
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1 text-left text-sm font-semibold text-gray-900">
+        {title}
+      </span>
+      <span
+        className={cn(
+          "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors",
+          checked
+            ? "border-blue-600 bg-blue-600 text-white"
+            : "border-gray-300 bg-white text-transparent"
+        )}
+        aria-hidden="true"
+      >
+        <Check className="h-3 w-3" strokeWidth={3} />
+      </span>
+    </label>
+  );
+}
 
 const TicketSelection = () => {
   const dispatch = useAppDispatch();
@@ -60,6 +114,8 @@ const TicketSelection = () => {
   const [marathonParticipantType, setMarathonParticipantType] = useState<
     "INDIVIDUAL" | "CORPORATE"
   >("INDIVIDUAL");
+  const [marathonRegistrationMode, setMarathonRegistrationMode] =
+    useState<MarathonRegistrationMode>("ONLINE");
 
   const [selectedTickets, setSelectedTickets] = useState<{
     [key: number]: number;
@@ -114,17 +170,24 @@ const TicketSelection = () => {
       return;
     }
     setMarathonParticipantType("INDIVIDUAL");
+    setMarathonRegistrationMode("ONLINE");
     setParticipantDialogOpen(true);
   }
 
-  function proceedToIndividualMarathonRegistration() {
+  function proceedToIndividualMarathonRegistration(
+    registrationMode: MarathonRegistrationMode = "ONLINE"
+  ) {
     if (!categories.length) {
       window.alert("Add at least one ticket!");
       return;
     }
     if (userId) {
       navigate(marathonRegistrationPath, {
-        state: { categories, participantType: "INDIVIDUAL" },
+        state: {
+          categories,
+          participantType: "INDIVIDUAL",
+          registrationMode,
+        },
       });
       return;
     }
@@ -134,6 +197,7 @@ const TicketSelection = () => {
         JSON.stringify({
           categories,
           participantType: "INDIVIDUAL" as const,
+          registrationMode,
           returnTo: marathonRegistrationPath,
         })
       );
@@ -155,7 +219,7 @@ const TicketSelection = () => {
       setParticipantDialogOpen(false);
       return;
     }
-    proceedToIndividualMarathonRegistration();
+    proceedToIndividualMarathonRegistration(marathonRegistrationMode);
     setParticipantDialogOpen(false);
   }
 
@@ -590,42 +654,77 @@ const TicketSelection = () => {
                 open={participantDialogOpen}
                 onOpenChange={setParticipantDialogOpen}
               >
-                <AlertDialogContent className="w-[min(100vw-2rem,22rem)] max-w-md gap-4 border-gray-200 sm:max-w-md">
-                  <AlertDialogHeader className="text-left sm:text-left">
-                    <AlertDialogTitle>Participant type</AlertDialogTitle>
-                    <AlertDialogDescription className="text-left text-gray-600">
-                      Individual registration requires a signed-in account. Corporate
-                      registration can continue as a guest.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <fieldset className="space-y-2 border-0 p-0">
-                    <legend className="sr-only">Choose participant type</legend>
-                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50">
-                      <input
-                        type="radio"
+                <AlertDialogContent className="w-[min(100vw-1.5rem,24rem)] max-w-md gap-0 overflow-hidden border-0 bg-white p-0 shadow-2xl sm:max-w-md">
+                  <div className="bg-gradient-to-br from-blue-600 to-blue-800 px-5 py-4 text-white">
+                    <AlertDialogHeader className="gap-1 text-left sm:text-left">
+                      <AlertDialogTitle className="text-lg font-bold tracking-tight text-white">
+                        How are you registering?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="text-left text-sm text-blue-100">
+                        Individual needs a signed-in account.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                  </div>
+
+                  <div className="space-y-4 px-5 py-4">
+                    <fieldset className="space-y-2 border-0 p-0">
+                      <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        Participant type
+                      </legend>
+                      <ChoiceCard
                         name="marathon-participant-type"
-                        className="h-4 w-4 shrink-0 text-blue-600"
                         checked={marathonParticipantType === "INDIVIDUAL"}
-                        onChange={() => setMarathonParticipantType("INDIVIDUAL")}
+                        onChange={() => {
+                          setMarathonParticipantType("INDIVIDUAL");
+                          setMarathonRegistrationMode("ONLINE");
+                        }}
+                        title="Individual"
+                        icon={<UserRound className="h-4 w-4" />}
                       />
-                      Individual
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 px-3 py-2.5 text-sm font-medium text-gray-800 hover:bg-gray-50">
-                      <input
-                        type="radio"
+                      <ChoiceCard
                         name="marathon-participant-type"
-                        className="h-4 w-4 shrink-0 text-blue-600"
                         checked={marathonParticipantType === "CORPORATE"}
                         onChange={() => setMarathonParticipantType("CORPORATE")}
+                        title="Corporate"
+                        icon={<Building2 className="h-4 w-4" />}
                       />
-                      Corporate
-                    </label>
-                  </fieldset>
-                  <AlertDialogFooter className="gap-2 sm:justify-end">
-                    <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
+                    </fieldset>
+
+                    {marathonParticipantType === "INDIVIDUAL" && (
+                      <fieldset className="space-y-2 border-0 p-0">
+                        <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          Payment method
+                        </legend>
+                        <div className="grid grid-cols-2 gap-2">
+                          <ChoiceCard
+                            name="marathon-registration-mode"
+                            checked={marathonRegistrationMode === "ONLINE"}
+                            onChange={() => setMarathonRegistrationMode("ONLINE")}
+                            title="Online"
+                            icon={<Globe2 className="h-4 w-4" />}
+                          />
+                          <ChoiceCard
+                            name="marathon-registration-mode"
+                            checked={marathonRegistrationMode === "OFFLINE"}
+                            onChange={() => setMarathonRegistrationMode("OFFLINE")}
+                            title="Offline"
+                            icon={<CreditCard className="h-4 w-4" />}
+                          />
+                        </div>
+                      </fieldset>
+                    )}
+                  </div>
+
+                  <AlertDialogFooter className="m-0 gap-2 rounded-none border-t border-gray-100 bg-gray-50/80 px-5 py-3.5 sm:justify-between">
+                    <AlertDialogCancel
+                      type="button"
+                      className="rounded-xl border-gray-200 bg-white font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                      Cancel
+                    </AlertDialogCancel>
                     <Button
                       type="button"
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 font-semibold text-white hover:from-blue-700 hover:to-blue-800"
+                      className="rounded-xl bg-blue-600 px-6 font-semibold text-white hover:bg-blue-700"
                       onClick={() => confirmMarathonParticipantChoice()}
                     >
                       Continue

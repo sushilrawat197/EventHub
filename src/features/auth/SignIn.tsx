@@ -3,7 +3,8 @@ import { FaLock, FaEnvelope } from "react-icons/fa";
 import { AiFillEye } from "react-icons/ai";
 import { TbEyeClosed } from "react-icons/tb";
 import { Link, useLocation } from "react-router-dom";
-import { signIn } from "./api/authApi";
+import { signIn } from "./services/auth.service";
+import { authEndpoints } from "./api/endpoints";
 import { useAppDispatch, useAppSelector } from "../../app/store/hooks";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
@@ -207,8 +208,7 @@ const SignIn: React.FC = () => {
             <button
             type="button"
               onClick={() => {
-                const baseUrl = import.meta.env.VITE_BASE_URL as string;
-                window.location.href = `${baseUrl}/ticketcore-api/oauth2/authorization/google`;
+                window.location.href = authEndpoints.googleOAuth();
               }}
                 className="w-full py-3 px-4 border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-3"
             >

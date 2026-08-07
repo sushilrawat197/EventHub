@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { FaEnvelope } from "react-icons/fa";
 import { useAppDispatch } from "../../app/store/hooks";
 import { useNavigate } from "react-router-dom";
-import { forgot_passwordOtp } from "./api/authApi";
+import { forgot_passwordOtp } from "./services/auth.service";
 import { useState } from "react";
 import { useAppSelector } from "../../app/store/hooks";
 import { ClipLoader } from "react-spinners";

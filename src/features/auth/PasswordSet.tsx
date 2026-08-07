@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { useAppDispatch } from "../../app/store/hooks";
-import { setPassword } from "./api/authApi";
+import { setPassword } from "./services/auth.service";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/store/hooks";
 import { ClipLoader } from "react-spinners";

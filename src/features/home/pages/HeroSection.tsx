@@ -55,7 +55,7 @@ const HeroSection = () => {
 
                 <div className="relative bg-white/10 backdrop-blur-sm rounded-3xl  lg:p-8 border border-white/20">
                   <img
-                    src="mainimg00.jpg"
+                    src={`${import.meta.env.BASE_URL}mainimg00.jpg`}
                     alt="Event Experience"
                     className="w-full object-cover rounded-2xl shadow-2xl"
                   />

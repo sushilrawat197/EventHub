@@ -1,10 +1,13 @@
 import axios from "axios";
-import type { AppDispatch } from "../app/store/store";
-import { clearUser } from "../features/profile/store/userSlice";
-import { initAuthRuntime, refreshAccessTokenSingleFlight } from "../auth/refreshCoordinator";
-import { clearProactiveRefreshTimer, clearTokens } from "../auth/tokenManager";
-import { getCurrentUser } from "../features/profile/api/userApi";
-import { onSessionExpired } from "../auth/authEvents";
+import type { AppDispatch } from "@/app/store/store";
+import { clearUser } from "@/features/profile/store/userSlice";
+import { getCurrentUser } from "@/features/profile/services/user.service";
+import {
+  initAuthRuntime,
+  refreshAccessTokenSingleFlight,
+} from "@/auth/refreshCoordinator";
+import { clearProactiveRefreshTimer, clearTokens } from "@/auth/tokenManager";
+import { onSessionExpired } from "@/auth/authEvents";
 
 let initialized = false;
 
@@ -20,15 +23,10 @@ function ensureInit(dispatch: AppDispatch) {
 
   onSessionExpired(() => {
     dispatch(clearUser());
-    // Navigation should be handled inside React Router to avoid hard reloads
-    // that can break base paths after OAuth redirects.
   });
 }
 
-/**
- * App bootstrap: restore session after reload.
- * Uses refresh cookie → gets new access token (in-memory) → fetch user.
- */
+/** App bootstrap: restore session after reload. */
 export function refreshAccessToken() {
   return async (dispatch: AppDispatch): Promise<boolean> => {
     ensureInit(dispatch);
@@ -37,7 +35,10 @@ export function refreshAccessToken() {
       await dispatch(getCurrentUser());
       return true;
     } catch (err) {
-      if (axios.isAxiosError(err) && (err.response?.status === 401 || err.response?.status === 403)) {
+      if (
+        axios.isAxiosError(err) &&
+        (err.response?.status === 401 || err.response?.status === 403)
+      ) {
         dispatch(clearUser());
         clearTokens("refresh_unauthorized");
       }
@@ -46,9 +47,7 @@ export function refreshAccessToken() {
   };
 }
 
-/**
- * Kept for backward compatibility; scheduling is handled centrally now.
- */
+/** Kept for backward compatibility; scheduling is handled centrally now. */
 export function scheduleTokenRefresh() {
   return (): void => {
     // no-op

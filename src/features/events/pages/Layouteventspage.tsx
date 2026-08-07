@@ -9,13 +9,12 @@ import { useLocation, useParams } from "react-router-dom";
 import type { EventResponseBySearch } from "../types/evnetInterFace";
 import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import { useEffect, useMemo } from "react";
-import { checkEventAvailability } from "../api/eventsApi";
-
+import { checkEventAvailability } from "../services/events.service";
 import SpinnerLoading from "../../../shared/components/common/SpinnerLoading";
 import {
   fetchFilteredShows,
   listAllShowsByEvent,
-} from "../api/showsApi";
+} from "../services/shows.service";
 import { clearSetShows } from "../store/showSlice";
 import { useEvent } from "../hooks/useEvent";
 import { useEventsSearch } from "../hooks/useEventsSearch";

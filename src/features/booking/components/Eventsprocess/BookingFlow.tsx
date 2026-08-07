@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
-import { cancelBooking } from "../../api/ticketCategory";
+import { cancelBooking } from "@/features/booking/services/booking.service";
 import { useEffect } from "react";
 
 export default function BookingFlow() {

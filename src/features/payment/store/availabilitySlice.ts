@@ -1,6 +1,6 @@
 // src/features/EventAvailability/EventAvailabilitySlice.ts
 import { createSlice,type PayloadAction } from "@reduxjs/toolkit";
-import type { AvailableShow } from "../../events/api/eventsApi";
+import type { AvailableShow } from "../../events/types/availability";
 
 
 

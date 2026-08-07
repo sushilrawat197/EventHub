@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch } from "../../../app/store/hooks";
-import { ratingAndReview } from "../../../features/orders/api/rateAndReview";
+import { ratingAndReview } from "@/features/orders/services/orders.service";
 import { useNavigate } from "react-router-dom";
 import { ImSad2 } from "react-icons/im";
 import { FaSmile, FaGrinStars, FaSadTear, FaHeart, FaThumbsUp, FaCheckCircle } from "react-icons/fa";

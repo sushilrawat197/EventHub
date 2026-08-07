@@ -1,9 +1,9 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 import { useEffect, useState } from "react";
-import { listAllShowsByEvent } from "../../../../events/api/showsApi";
+import { listAllShowsByEvent } from "@/features/events/services/shows.service";
 import { setTicketInfo } from "../../../store/ticketInfoSlice";
-import { getVenueByVenueId, listDetailsByCityId } from "../../../../events/api/venue";
+import { getVenueByVenueId, listDetailsByCityId } from "@/features/events/services/venues.service";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 
 const VenueSelection = () => {

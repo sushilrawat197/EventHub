@@ -6,12 +6,20 @@ import tailwindcss from "@tailwindcss/vite";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+/** Normalize so `/mytag`, `mytag`, `/mytag/` all become `/mytag/`; empty → `/`. */
+function normalizeBasePath(raw?: string): string {
+  const value = (raw ?? "").trim();
+  if (!value || value === "/") return "/";
+  const withLeading = value.startsWith("/") ? value : `/${value}`;
+  return withLeading.endsWith("/") ? withLeading : `${withLeading}/`;
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
-  // If you deploy under a subpath (e.g. /ticketing/), set VITE_APP_BASE=/ticketing/
-  const base = env.VITE_APP_BASE || "/";
+  // Serve under a subpath when set (e.g. VITE_APP_BASE=/mytag). Omit or leave empty for `/`.
+  const base = normalizeBasePath(env.VITE_APP_BASE || env.VITE_BASE_PATH);
 
   return {
     base,

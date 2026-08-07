@@ -8,6 +8,7 @@ import {
   FaIdCard,
   FaMapMarkedAlt,
   FaMobileAlt,
+  FaMoneyBillWave,
   FaNotesMedical,
   FaRunning,
   FaVenusMars,
@@ -21,20 +22,25 @@ import {
 import { IoIosArrowBack } from "react-icons/io";
 import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import {
-  getActiveCorporates,
-  getMarathonRegistrationByUserId,
-  submitMarathonRegistration,
+  getActiveCorporatesApi,
+  getMarathonRegistrationByUserIdApi,
+  submitMarathonRegistrationApi,
+} from "@/features/booking/api/marathon.api";
+import {
   MARATHON_DISTRICT_OPTIONS,
+  MARATHON_OFFLINE_PAYMENT_TYPES,
   type ActiveCorporate,
+  type MarathonOfflinePaymentTypeCode,
   type MarathonRegistrationDetails,
+  type MarathonRegistrationMode,
   type MarathonRegistrationPayload,
-} from "../../../features/booking/api/marathonRegistration";
+} from "@/features/booking/types/marathon";
 import { useMarathonEmailRegistrationCheck } from "../../../features/booking/hooks/useMarathonEmailRegistrationCheck";
 import {
-  getOrderDetails,
   reserveTicket,
   type CategorySelection,
-} from "../../../features/booking/api/ticketCategory";
+} from "@/features/booking/services/booking.service";
+import { getOrderDetails } from "@/features/orders/services/orders.service";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -98,6 +104,8 @@ interface ParticipantFormData {
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "";
   shoeSize: string;
   disclaimerAccepted: boolean;
+  /** Offline individual only — Vodacom / Eco Cash code. */
+  paymentType: MarathonOfflinePaymentTypeCode | "";
 }
 
 type ParticipantFormErrors = Partial<Record<keyof ParticipantFormData, string>>;
@@ -125,6 +133,7 @@ const INITIAL_FORM: ParticipantFormData = {
   shirtSize: "",
   shoeSize: "",
   disclaimerAccepted: false,
+  paymentType: "",
 };
 
 type MarathonLocationState = {
@@ -133,6 +142,7 @@ type MarathonLocationState = {
   marathonRegistrationSuccess?: boolean;
   marathonRegistrationParticipantType?: "INDIVIDUAL" | "CORPORATE";
   participantType?: "INDIVIDUAL" | "CORPORATE";
+  registrationMode?: MarathonRegistrationMode;
 };
 
 const SHIRT_SIZE_OPTIONS: Exclude<ParticipantFormData["shirtSize"], "">[] = [
@@ -287,6 +297,11 @@ export default function MarathonRegistrationPage() {
   const locState = (location.state || {}) as MarathonLocationState;
   const categoriesFromState = locState.categories;
   const participantTypeFromLocation = locState.participantType;
+  const registrationModeFromLocation = locState.registrationMode;
+  const isOfflineIndividual =
+    !isSpecialNewForm &&
+    (participantTypeFromLocation ?? "INDIVIDUAL") === "INDIVIDUAL" &&
+    registrationModeFromLocation === "OFFLINE";
 
   const readOnlyWhenExisting = isOrderContext;
 
@@ -385,6 +400,7 @@ export default function MarathonRegistrationPage() {
           const parsed = JSON.parse(raw) as {
             categories?: CategorySelection[];
             participantType?: "INDIVIDUAL" | "CORPORATE";
+            registrationMode?: MarathonRegistrationMode;
             returnTo?: string;
           };
           if (
@@ -402,6 +418,11 @@ export default function MarathonRegistrationPage() {
               state: {
                 categories: parsed.categories,
                 participantType: parsed.participantType ?? "INDIVIDUAL",
+                ...(parsed.participantType !== "CORPORATE" && parsed.registrationMode
+                  ? { registrationMode: parsed.registrationMode }
+                  : parsed.participantType !== "CORPORATE"
+                    ? { registrationMode: "ONLINE" as const }
+                    : {}),
               },
             });
             restored = true;
@@ -440,7 +461,7 @@ export default function MarathonRegistrationPage() {
       await dispatch(getOrderDetails(bookingIdParam, navigate, { redirectToOrder: false }));
       if (!mounted) return;
       setLoadingRegistration(true);
-      const response = await getMarathonRegistrationByUserId(bookingIdParam);
+      const response = await getMarathonRegistrationByUserIdApi(bookingIdParam);
       if (!mounted) return;
       setLoadingRegistration(false);
       setOrderBootstrapped(true);
@@ -503,6 +524,7 @@ export default function MarathonRegistrationPage() {
         "",
       shoeSize: registrationData.shoeSize || "",
       disclaimerAccepted: !!registrationData.disclaimerAccepted,
+      paymentType: "",
     });
   }, [registrationData, isSpecialNewForm]);
 
@@ -536,7 +558,7 @@ export default function MarathonRegistrationPage() {
 
     const fetchCorporates = async () => {
       setLoadingCorporates(true);
-      const response = await getActiveCorporates();
+      const response = await getActiveCorporatesApi();
       if (isMounted) {
         setLoadingCorporates(false);
         if (!response.success) {
@@ -611,6 +633,10 @@ export default function MarathonRegistrationPage() {
     
     if (!isSpecialNewForm && data.participantType === "CORPORATE" && !data.corporateId) {
       errors.corporateId = "Please select a corporate.";
+    }
+
+    if (isOfflineIndividual && !data.paymentType) {
+      errors.paymentType = "Please select a payment type.";
     }
 
     if (!data.gender) errors.gender = "Please select gender.";
@@ -739,10 +765,13 @@ export default function MarathonRegistrationPage() {
       shirtSize: participantForm.shirtSize as "XS" | "S" | "M" | "L" | "XL" | "XXL",
       ...(isSpecialNewForm ? {} : { shoeSize: participantForm.shoeSize.trim() }),
       disclaimerAccepted: participantForm.disclaimerAccepted,
+      ...(isOfflineIndividual && participantForm.paymentType
+        ? { paymentType: participantForm.paymentType }
+        : {}),
     };
 
     setSubmittingParticipant(true);
-    const result = await submitMarathonRegistration(registrationPayload);
+    const result = await submitMarathonRegistrationApi(registrationPayload);
     setSubmittingParticipant(false);
 
     if (!result.success) {
@@ -754,12 +783,13 @@ export default function MarathonRegistrationPage() {
     setParticipantErrors({});
 
     if (isBookingContext && categoriesFromState?.length) {
-      if (participantForm.participantType === "CORPORATE") {
+      // Corporate + offline individual skip online checkout (payment handled elsewhere).
+      if (participantForm.participantType === "CORPORATE" || isOfflineIndividual) {
         navigate(`/events/${contentName}/${eventIdParam}/booking/ticket`, {
           replace: true,
           state: {
             marathonRegistrationSuccess: true,
-            marathonRegistrationParticipantType: "CORPORATE",
+            marathonRegistrationParticipantType: participantForm.participantType,
           },
         });
         return;
@@ -824,6 +854,7 @@ export default function MarathonRegistrationPage() {
           JSON.stringify({
             categories: categoriesFromState,
             participantType: "INDIVIDUAL" as const,
+            registrationMode: registrationModeFromLocation ?? "ONLINE",
             returnTo: marathonRegistrationPath,
           })
         );
@@ -1184,6 +1215,12 @@ export default function MarathonRegistrationPage() {
                         )}
                       >
                         {PARTICIPANT_TYPE_LABEL[participantForm.participantType]}
+                        {participantForm.participantType === "INDIVIDUAL" &&
+                          registrationModeFromLocation && (
+                            <span className="ml-1.5 text-xs font-medium text-gray-500">
+                              · {registrationModeFromLocation === "OFFLINE" ? "Offline" : "Online"}
+                            </span>
+                          )}
                       </div>
                     ) : (
                       <DropdownMenu>
@@ -1298,6 +1335,65 @@ export default function MarathonRegistrationPage() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                       {participantErrors.corporateId && <p className="mt-1 text-[10px] text-red-600">{participantErrors.corporateId}</p>}
+                    </div>
+                  )}
+                  {isOfflineIndividual && (
+                    <div>
+                      <label className={baseLabelClass}>
+                        <FaMoneyBillWave className="text-blue-500" /> Payment type
+                      </label>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            disabled={formDisabled}
+                            className={cn(
+                              baseInputClass,
+                              inputRing(participantErrors.paymentType),
+                              "!h-auto min-h-[2.5rem] justify-between gap-2 font-normal shadow-sm"
+                            )}
+                          >
+                            <span
+                              className={
+                                participantForm.paymentType ? "text-gray-900" : "text-gray-500"
+                              }
+                            >
+                              {participantForm.paymentType
+                                ? MARATHON_OFFLINE_PAYMENT_TYPES.find(
+                                    (p) => p.code === participantForm.paymentType
+                                  )?.label ?? "Select payment type"
+                                : "Select payment type"}
+                            </span>
+                            <ChevronDown className="size-4 shrink-0 opacity-60" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          className="min-w-[var(--radix-dropdown-menu-trigger-width)]"
+                          align="start"
+                        >
+                          <DropdownMenuLabel className="text-xs font-semibold">
+                            Payment type
+                          </DropdownMenuLabel>
+                          <DropdownMenuGroup>
+                            {MARATHON_OFFLINE_PAYMENT_TYPES.map((option) => (
+                              <DropdownMenuItem
+                                key={option.code}
+                                onSelect={() =>
+                                  handleParticipantChange("paymentType", option.code)
+                                }
+                              >
+                                {option.label}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      {participantErrors.paymentType && (
+                        <p className="mt-1 text-[10px] text-red-600">
+                          {participantErrors.paymentType}
+                        </p>
+                      )}
                     </div>
                   )}
                   <div>

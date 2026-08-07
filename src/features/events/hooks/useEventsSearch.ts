@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { searchEventsApi } from "../api/eventsApi";
+import { searchEventsApi } from "../api/events.api";
 import type { EventSearchFilters } from "../store/filter_Slice";
 import { eventsQueryKeys } from "./eventsQueryKeys";
 

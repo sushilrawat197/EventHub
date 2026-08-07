@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaEnvelope } from "react-icons/fa";
-import { signUp } from "./api/authApi";
+import { signUp } from "./services/auth.service";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/store/hooks";
 import { ClipLoader } from "react-spinners";

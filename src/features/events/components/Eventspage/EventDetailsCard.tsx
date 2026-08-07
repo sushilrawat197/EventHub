@@ -10,7 +10,7 @@ import { MdOutlineTranslate } from "react-icons/md";
 import { LuTickets } from "react-icons/lu";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
-import { checkEventAvailability } from "../../api/eventsApi";
+import { checkEventAvailability } from "../../services/events.service";
 import { setTicketInfo } from "../../../booking/store/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useMemo } from "react";
