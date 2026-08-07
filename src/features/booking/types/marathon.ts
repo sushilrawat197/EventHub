@@ -12,8 +12,10 @@ export const MARATHON_OFFLINE_PAYMENT_TYPES = [
 export type MarathonOfflinePaymentTypeCode =
   (typeof MARATHON_OFFLINE_PAYMENT_TYPES)[number]["code"];
 
+export type MarathonParticipantType = "CORPORATE" | "INDIVIDUAL" | "INDIVIDUAL_OFFLINE";
+
 export interface MarathonRegistrationPayload {
-  participantType: "CORPORATE" | "INDIVIDUAL";
+  participantType: MarathonParticipantType;
   corporateId: number | null;
   ticketCategoryId: number;
   noOfTicket: number;
@@ -47,7 +49,7 @@ export interface MarathonRegistrationDetails {
   registrationId?: number;
   bookingStatus?: string;
   userId: number;
-  participantType?: "CORPORATE" | "INDIVIDUAL";
+  participantType?: MarathonParticipantType;
   corporateId?: number | null;
   ticketCategoryId?: number;
   noOfTicket?: number;

@@ -486,7 +486,7 @@ export default function MarathonRegistrationPage() {
     }
     const apiRaceCategory = registrationData.raceCategory ?? "";
     setParticipantForm({
-      participantType: registrationData.participantType || "INDIVIDUAL",
+      participantType: registrationData.participantType === "CORPORATE" ? "CORPORATE" : "INDIVIDUAL",
       corporateId: registrationData.corporateId ?? null,
       gender: marathonGenderFromApi(registrationData.gender),
       raceCategory: isMarathonRaceCategory(apiRaceCategory, isSpecialNewForm)
@@ -728,8 +728,15 @@ export default function MarathonRegistrationPage() {
       return value.trim();
     };
 
+    const resolvedParticipantType: MarathonRegistrationPayload["participantType"] =
+      isSpecialNewForm
+        ? "INDIVIDUAL"
+        : isOfflineIndividual
+          ? "INDIVIDUAL_OFFLINE"
+          : participantForm.participantType;
+
     const registrationPayload: MarathonRegistrationPayload = {
-      participantType: isSpecialNewForm ? "INDIVIDUAL" : participantForm.participantType,
+      participantType: resolvedParticipantType,
       corporateId:
         !isSpecialNewForm && participantForm.participantType === "CORPORATE"
           ? participantForm.corporateId
@@ -789,7 +796,9 @@ export default function MarathonRegistrationPage() {
           replace: true,
           state: {
             marathonRegistrationSuccess: true,
-            marathonRegistrationParticipantType: participantForm.participantType,
+            marathonRegistrationParticipantType: isOfflineIndividual
+              ? "INDIVIDUAL"
+              : participantForm.participantType,
           },
         });
         return;
