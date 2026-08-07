@@ -15,10 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create env file
-        run: |
-          echo 'VITE_BASE_URL=https://www.mytag.co.ls/ticketcore-api/api/v1' > .env
-
       - name: Install dependencies
         run: npm ci
 
