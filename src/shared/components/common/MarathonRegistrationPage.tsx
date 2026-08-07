@@ -1352,6 +1352,7 @@ export default function MarathonRegistrationPage() {
                       <label className={baseLabelClass}>
                         <FaMoneyBillWave className="text-blue-500" /> Payment type
                       </label>
+                      {/*add checkbox to accept payment type*/}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
