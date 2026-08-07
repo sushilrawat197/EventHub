@@ -5,8 +5,8 @@ export type MarathonRegistrationMode = "ONLINE" | "OFFLINE";
 
 /** Offline mobile-money options (code → label). */
 export const MARATHON_OFFLINE_PAYMENT_TYPES = [
-  { code: "19773", key: "VODACOM", label: "Vodacom" },
-  { code: "92236", key: "ECO_CASH", label: "Eco Cash" },
+  { code: "19773", key: "VODACOM", label: "M-Pesa (Merchant #19773)" },
+  { code: "92236", key: "ECO_CASH", label: "Ecocash (Merchant #92236)" },
 ] as const;
 
 export type MarathonOfflinePaymentTypeCode =
@@ -41,7 +41,7 @@ export interface MarathonRegistrationPayload {
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   shoeSize?: string;
   disclaimerAccepted: boolean;
-  /** Required for individual OFFLINE registration (Vodacom / Eco Cash code). */
+  /** Required for individual OFFLINE registration (M-Pesa / Ecocash merchant code). */
   paymentType?: MarathonOfflinePaymentTypeCode;
 }
 

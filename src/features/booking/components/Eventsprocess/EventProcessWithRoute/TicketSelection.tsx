@@ -107,7 +107,7 @@ const TicketSelection = () => {
 
   const [showMarathonSuccessPopup, setShowMarathonSuccessPopup] = useState(false);
   const [marathonSuccessParticipantType, setMarathonSuccessParticipantType] = useState<
-    "INDIVIDUAL" | "CORPORATE"
+    "INDIVIDUAL" | "CORPORATE" | "INDIVIDUAL_OFFLINE"
   >("CORPORATE");
   const [loading, setLoading] = useState(false);
   const [participantDialogOpen, setParticipantDialogOpen] = useState(false);
@@ -302,7 +302,10 @@ const TicketSelection = () => {
   useEffect(() => {
     const st = location.state as {
       marathonRegistrationSuccess?: boolean;
-      marathonRegistrationParticipantType?: "INDIVIDUAL" | "CORPORATE";
+      marathonRegistrationParticipantType?:
+        | "INDIVIDUAL"
+        | "CORPORATE"
+        | "INDIVIDUAL_OFFLINE";
       marathonCorporateSuccess?: boolean;
     } | null;
     const legacyCorporate = st?.marathonCorporateSuccess === true;
@@ -356,7 +359,11 @@ const TicketSelection = () => {
               </div>
 
               <h3 className="relative z-10 text-xl font-bold text-slate-900 mb-2">
-                Your registration is pending approval from your employer
+                {marathonSuccessParticipantType === "CORPORATE"
+                  ? "Your registration is pending approval from your employer"
+                  : marathonSuccessParticipantType === "INDIVIDUAL_OFFLINE"
+                    ? "After registering, send your Proof of Payment to Minet to complete registration."
+                    : "Your registration is pending payment confirmation"}
               </h3>
               <p className="relative z-10 text-sm text-slate-700 mb-6">
                 {marathonSuccessParticipantType === "CORPORATE" ? (

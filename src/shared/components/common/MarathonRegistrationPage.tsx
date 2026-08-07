@@ -104,7 +104,7 @@ interface ParticipantFormData {
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL" | "";
   shoeSize: string;
   disclaimerAccepted: boolean;
-  /** Offline individual only — Vodacom / Eco Cash code. */
+  /** Offline individual only — M-Pesa / Ecocash merchant code. */
   paymentType: MarathonOfflinePaymentTypeCode | "";
 }
 
@@ -797,7 +797,7 @@ export default function MarathonRegistrationPage() {
           state: {
             marathonRegistrationSuccess: true,
             marathonRegistrationParticipantType: isOfflineIndividual
-              ? "INDIVIDUAL"
+              ? "INDIVIDUAL_OFFLINE"
               : participantForm.participantType,
           },
         });
