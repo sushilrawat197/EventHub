@@ -17,12 +17,15 @@ jobs:
 
       - name: Create env file
         run: |
-          echo 'VITE_BASE_URL=https://www.mytag.co.ls' > .env
+          printf '%s\n' 'VITE_BASE_URL=https://www.mytag.co.ls' > .env
 
       - name: Install dependencies
         run: npm ci
 
+      # env: wins over any VITE_* already set on the self-hosted runner
       - name: Build React App
+        env:
+          VITE_BASE_URL: https://www.mytag.co.ls
         run: npm run build
 
       - name: Remove old dist
@@ -44,13 +47,16 @@ jobs:
 
       - name: Create env file
         run: |
-          echo 'VITE_BASE_URL=https://esyrecharge.com' > .env
-          echo 'VITE_APP_BASE=/mytag' >> .env
+          printf '%s\n' 'VITE_BASE_URL=https://esyrecharge.com' > .env
+          printf '%s\n' 'VITE_APP_BASE=/mytag' >> .env
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build React App
+        env:
+          VITE_BASE_URL: https://esyrecharge.com
+          VITE_APP_BASE: /mytag
         run: npm run build
 
       - name: Remove old dist
