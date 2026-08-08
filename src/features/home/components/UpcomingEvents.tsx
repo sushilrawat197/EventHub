@@ -6,7 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { CalendarDays, MapPin, Sparkles, Ticket } from "lucide-react";
+import { CalendarDays, MapPin, Ticket } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useEventsSearch } from "../../events/hooks/useEventsSearch";
