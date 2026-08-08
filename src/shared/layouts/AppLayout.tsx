@@ -2,14 +2,16 @@ import ScrollToTop from "../components/common/ScrollToTop";
 import Navbar from "../components/common/Navbar";
 import { Outlet } from "react-router-dom";
 
-
 // MainLayout.tsx
 export default function MainLayout() {
   return (
     <>
-    <ScrollToTop /> 
+      <ScrollToTop />
       <Navbar />
-      <div className="lg:mt-24 mt-10 md:mt-20"><Outlet/></div>
+      {/* Must clear fixed top bar (all sizes) + NavHeader (lg+) */}
+      <div className="mt-16 lg:mt-28">
+        <Outlet />
+      </div>
     </>
   );
 }
