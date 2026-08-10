@@ -410,42 +410,55 @@ export default function FilterPanel() {
         </div>
 
         {/* Featured Section */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="font-semibold text-gray-900 mb-3">Featured</h3>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+          <div className="mb-4 flex items-center justify-between">
+            <h3
+              className="text-base font-semibold tracking-tight text-slate-900"
+              style={{ fontFamily: "var(--font-outfit), 'Plus Jakarta Sans', sans-serif" }}
+            >
+              Featured
+            </h3>
+            <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700">
+              Quick picks
+            </span>
+          </div>
+
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/80 p-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-orange-400 text-white shadow-sm">
                 <svg
-                  className="w-5 h-5 text-red-600"
+                  className="h-5 w-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M15 17h5l-5 5v-5z"
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
                   />
                 </svg>
               </div>
-              <div>
-                <div className="font-medium text-gray-900 text-sm">
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold text-slate-900">
                   Trending Events
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-slate-500">
                   Most popular this week
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+            <div className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/80 p-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 text-white shadow-sm">
                 <svg
-                  className="w-5 h-5 text-green-600"
+                  className="h-5 w-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden
                 >
                   <path
                     strokeLinecap="round"
@@ -455,11 +468,11 @@ export default function FilterPanel() {
                   />
                 </svg>
               </div>
-              <div>
-                <div className="font-medium text-gray-900 text-sm">
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold text-slate-900">
                   Last Minute
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-slate-500">
                   Events starting soon
                 </div>
               </div>

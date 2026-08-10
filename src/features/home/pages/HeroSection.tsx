@@ -39,9 +39,18 @@ const HERO_BANNERS = [
   },
 ];
 
+function shouldLoadImage(index: number, current: number, total: number) {
+  // Current + neighbors only (handles loop edges)
+  const prev = (current - 1 + total) % total;
+  const next = (current + 1) % total;
+  return index === current || index === prev || index === next;
+}
+
 const HeroSection = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [loaded, setLoaded] = useState<Record<number, boolean>>({ 0: false });
+  const [ready, setReady] = useState(false);
 
   const onSelect = useCallback((carouselApi: CarouselApi) => {
     if (!carouselApi) return;
@@ -59,13 +68,50 @@ const HeroSection = () => {
     };
   }, [api, onSelect]);
 
+  // Preload first hero image ASAP
   useEffect(() => {
-    if (!api) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = HERO_BANNERS[0].src;
+    document.head.appendChild(link);
+    return () => {
+      link.remove();
+    };
+  }, []);
+
+  // Preload current + neighbor images into browser cache
+  useEffect(() => {
+    const total = HERO_BANNERS.length;
+    const indexes = [
+      current,
+      (current + 1) % total,
+      (current - 1 + total) % total,
+    ];
+
+    indexes.forEach((index) => {
+      const src = HERO_BANNERS[index]?.src;
+      if (!src) return;
+      const img = new Image();
+      img.decoding = "async";
+      img.src = src;
+    });
+  }, [current]);
+
+  // Start autoplay only after first image is ready (reduces jank)
+  useEffect(() => {
+    if (!api || !ready) return;
     const id = window.setInterval(() => {
       api.scrollNext();
     }, 4500);
     return () => window.clearInterval(id);
-  }, [api]);
+  }, [api, ready]);
+
+  // Fallback: don't block autoplay forever if image load event is missed
+  useEffect(() => {
+    const id = window.setTimeout(() => setReady(true), 2500);
+    return () => window.clearTimeout(id);
+  }, []);
 
   return (
     <section
@@ -78,86 +124,108 @@ const HeroSection = () => {
         className="w-full"
       >
         <CarouselContent className="-ml-3 sm:-ml-4 lg:-ml-5">
-          {HERO_BANNERS.map((banner, index) => (
-            <CarouselItem
-              key={banner.src}
-              className="basis-[88%] pl-3 sm:basis-[72%] sm:pl-4 lg:basis-[58%] lg:pl-5 xl:basis-[52%]"
-            >
-              <div
-                className={cn(
-                  "relative overflow-hidden rounded-2xl bg-slate-900 transition-all duration-500 sm:rounded-3xl",
-                  current === index ? "scale-100" : "scale-[0.96]",
-                )}
+          {HERO_BANNERS.map((banner, index) => {
+            const isActive = current === index;
+            const load = shouldLoadImage(index, current, HERO_BANNERS.length);
+            const isFirst = index === 0;
+
+            return (
+              <CarouselItem
+                key={banner.src}
+                className="basis-[88%] pl-3 sm:basis-[72%] sm:pl-4 lg:basis-[58%] lg:pl-5 xl:basis-[52%]"
               >
-                <div className="relative aspect-[16/9] w-full sm:aspect-[2/1] lg:aspect-[2.2/1]">
-                  <img
-                    src={banner.src}
-                    alt={banner.title}
-                    className="h-full w-full object-cover"
-                    draggable={false}
-                  />
-
-                  {/* Bottom black overlay (all cards) */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
-
-                  {/* Stronger black overlay on side (inactive) cards */}
-                  <div
-                    className={cn(
-                      "absolute inset-0 bg-black transition-opacity duration-500",
-                      current === index ? "opacity-0" : "opacity-55",
+                <div
+                  className={cn(
+                    "relative overflow-hidden rounded-2xl bg-slate-900 will-change-transform sm:rounded-3xl",
+                    "transition-transform duration-300 ease-out",
+                    isActive ? "scale-100" : "scale-[0.96]",
+                  )}
+                >
+                  <div className="relative aspect-[16/9] w-full bg-slate-800 sm:aspect-[2/1] lg:aspect-[2.2/1]">
+                    {load ? (
+                      <img
+                        src={banner.src}
+                        alt={banner.title}
+                        width={1200}
+                        height={545}
+                        decoding="async"
+                        loading={isFirst ? "eager" : "lazy"}
+                        fetchPriority={isFirst ? "high" : "low"}
+                        draggable={false}
+                        onLoad={() => {
+                          setLoaded((prev) => ({ ...prev, [index]: true }));
+                          if (isFirst) setReady(true);
+                        }}
+                        className={cn(
+                          "absolute inset-0 h-full w-full object-cover transition-opacity duration-300",
+                          loaded[index] ? "opacity-100" : "opacity-0",
+                        )}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 animate-pulse bg-slate-800" />
                     )}
-                    aria-hidden
-                  />
 
-                  {/* Caption on overlay */}
-                  <div
-                    className={cn(
-                      "absolute inset-x-0 bottom-0 z-10 px-4 pb-4 transition-opacity duration-500 sm:px-6 sm:pb-5 lg:px-8 lg:pb-6",
-                      current === index ? "opacity-100" : "opacity-80",
-                    )}
-                  >
-                    <div className="mb-1.5 flex items-center gap-2">
-                      <span className="inline-block h-1 w-5 rounded-full bg-sky-300" />
-                      <span
-                        className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60 sm:text-[11px]"
+                    {/* Bottom black overlay (all cards) */}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
+
+                    {/* Stronger black overlay on side (inactive) cards */}
+                    <div
+                      className={cn(
+                        "pointer-events-none absolute inset-0 bg-black transition-opacity duration-300",
+                        isActive ? "opacity-0" : "opacity-55",
+                      )}
+                      aria-hidden
+                    />
+
+                    {/* Caption on overlay */}
+                    <div
+                      className={cn(
+                        "absolute inset-x-0 bottom-0 z-10 px-4 pb-4 transition-opacity duration-300 sm:px-6 sm:pb-5 lg:px-8 lg:pb-6",
+                        isActive ? "opacity-100" : "opacity-80",
+                      )}
+                    >
+                      <div className="mb-1.5 flex items-center gap-2">
+                        <span className="inline-block h-1 w-5 rounded-full bg-sky-300" />
+                        <span
+                          className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60 sm:text-[11px]"
+                          style={{
+                            fontFamily:
+                              "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
+                          }}
+                        >
+                          Featured
+                        </span>
+                      </div>
+                      <p
+                        className="truncate text-lg font-semibold tracking-tight text-white sm:text-xl lg:text-2xl"
+                        style={{
+                          fontFamily:
+                            "var(--font-outfit), 'Plus Jakarta Sans', sans-serif",
+                        }}
+                      >
+                        {banner.title}
+                      </p>
+                      <p
+                        className="mt-0.5 truncate text-xs text-white/70 sm:text-sm"
                         style={{
                           fontFamily:
                             "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
                         }}
                       >
-                        Featured
-                      </span>
+                        {banner.subtitle}
+                      </p>
                     </div>
-                    <p
-                      className="truncate text-lg font-semibold tracking-tight text-white sm:text-xl lg:text-2xl"
-                      style={{
-                        fontFamily:
-                          "var(--font-outfit), 'Plus Jakarta Sans', sans-serif",
-                      }}
-                    >
-                      {banner.title}
-                    </p>
-                    <p
-                      className="mt-0.5 truncate text-xs text-white/70 sm:text-sm"
-                      style={{
-                        fontFamily:
-                          "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif",
-                      }}
-                    >
-                      {banner.subtitle}
-                    </p>
                   </div>
                 </div>
-              </div>
-            </CarouselItem>
-          ))}
+              </CarouselItem>
+            );
+          })}
         </CarouselContent>
 
         <CarouselPrevious className="left-2 z-10 hidden size-10 border border-gray-200 bg-white/95 text-gray-800 shadow-md hover:bg-white sm:left-4 sm:flex lg:left-8" />
         <CarouselNext className="right-2 z-10 hidden size-10 border border-gray-200 bg-white/95 text-gray-800 shadow-md hover:bg-white sm:right-4 sm:flex lg:right-8" />
       </Carousel>
 
-      {/* Modern bar indicators — like reference, cleaner */}
       <div className="mt-4 flex items-center justify-center gap-2 sm:mt-5">
         {HERO_BANNERS.map((_, index) => (
           <button

@@ -1,70 +1,112 @@
-import React from "react";
 import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
 
-const ContactPage: React.FC = () => {
+const contactInfo = [
+  {
+    icon: FaEnvelope,
+    title: "Email Us",
+    details: "mytagtankiso@gmail.com",
+    description: "We'll respond within 24 hours",
+    href: "mailto:mytagtankiso@gmail.com",
+  },
+  {
+    icon: FaPhone,
+    title: "Call Us",
+    details: "+266 63820303, +266 5787 5950",
+    description: "Mon–Fri from 8AM to 6PM",
+    href: "tel:+26663820303",
+  },
+  {
+    icon: FaMapMarkerAlt,
+    title: "Visit Us",
+    details: "Thetsane West, Maseru",
+    description: "Come say hello at our office",
+    href: "https://maps.google.com/?q=Thetsane+West,+Maseru",
+  },
+];
 
-
-
-  const contactInfo = [
-    {
-      icon: FaEnvelope,
-      title: "Email Us",
-      details: "mytagtankiso@gmail.com",
-      description: "We'll respond within 24 hours"
-    },
-    {
-      icon: FaPhone,
-      title: "Call Us",
-      details: "+266 63820303, +266 5787 5950",
-      description: "Mon-Fri from 8AM to 6PM"
-    },
-    {
-      icon: FaMapMarkerAlt,
-      title: "Visit Us",
-      details: "Thetsane West, Maseru",
-      description: "Come say hello at our office"
-    }
-  ];
-
+const ContactPage = () => {
   return (
-    <section className="py-3 bg-gradient-to-br from-gray-50 to-white pb-9">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-         <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Get in <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Touch</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Have a question or need help? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+    <section className="relative overflow-hidden py-10 sm:py-14">
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-slate-50"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -left-20 top-10 h-56 w-56 rounded-full bg-blue-200/40 blur-3xl"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-sky-200/30 blur-3xl"
+        aria-hidden
+      />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-8 max-w-2xl text-center sm:mb-10">
+          <p
+            className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-blue-600/80 sm:text-[11px]"
+            style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+          >
+            We&apos;re here to help
           </p>
-        </div> 
+          <h2
+            className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl"
+            style={{ fontFamily: "var(--font-outfit), 'Plus Jakarta Sans', sans-serif" }}
+          >
+            Get in{" "}
+            <span className="bg-gradient-to-r from-blue-700 via-blue-600 to-sky-500 bg-clip-text text-transparent">
+              Touch
+            </span>
+          </h2>
+          <p
+            className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base"
+            style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+          >
+            Have a question or need help? Reach out and we&apos;ll get back to
+            you as soon as possible.
+          </p>
+        </div>
 
-        <div className="max-w-4xl mx-auto bg-gray-50 rounded-3xl p-5 md:p-8 border border-gray-200">
-          {/* Contact Information */}
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h3>
-              <p className="text-gray-600 mb-8">
-                We're here to help you create amazing events. Reach out to us through any of the channels below.
-              </p>
-            </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
+          {contactInfo.map((info) => {
+            const Icon = info.icon;
+            const isExternal = info.href.startsWith("http");
 
-            <div className="space-y-6">
-              {contactInfo.map((info, index) => (
-                <div key={index} className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <info.icon className="text-blue-500 text-xl" />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-1">{info.title}</h4>
-                    <p className="text-gray-900 font-medium mb-1">{info.details}</p>
-                    <p className="text-gray-600 text-sm">{info.description}</p>
-                  </div>
+            return (
+              <a
+                key={info.title}
+                href={info.href}
+                {...(isExternal
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
+                className="group flex items-start gap-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-[0_14px_32px_rgba(37,99,235,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 sm:p-5"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 text-white shadow-sm transition group-hover:scale-105 sm:h-12 sm:w-12">
+                  <Icon className="text-lg sm:text-xl" aria-hidden />
                 </div>
-              ))}
-            </div>
-          </div>
-        </div> 
+                <div className="min-w-0 flex-1">
+                  <h3
+                    className="text-base font-semibold text-slate-900 sm:text-lg"
+                    style={{ fontFamily: "var(--font-outfit), 'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    {info.title}
+                  </h3>
+                  <p
+                    className="mt-1 break-words text-sm font-medium text-slate-800 sm:text-[15px]"
+                    style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    {info.details}
+                  </p>
+                  <p
+                    className="mt-1 text-xs text-slate-500 sm:text-sm"
+                    style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    {info.description}
+                  </p>
+                </div>
+              </a>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
