@@ -9,6 +9,8 @@ export const MARATHON_OFFLINE_PAYMENT_TYPES = [
   { code: "92236", key: "ECO_CASH", label: "Ecocash (Merchant #92236)" },
 ] as const;
 
+//updated code no 
+
 export type MarathonOfflinePaymentTypeCode =
   (typeof MARATHON_OFFLINE_PAYMENT_TYPES)[number]["key"];
 
