@@ -5,10 +5,11 @@ export type MarathonRegistrationMode = "ONLINE" | "OFFLINE";
 
 /** Offline mobile-money options. `key` is sent to API; `code` is UI-only till/merchant number. */
 export const MARATHON_OFFLINE_PAYMENT_TYPES = [
-  { code: "9773", key: "VODACOM", label: "M-Pesa (Till Number #9773)" },
+  { code: "9773", key: "VODACOM", label: "M-Pesa (Merchant #9773)" },
   { code: "92236", key: "ECO_CASH", label: "Ecocash (Merchant #92236)" },
 ] as const;
 
+//21:28 10/08/2026 in main branch
 //updated code no 
 
 export type MarathonOfflinePaymentTypeCode =
