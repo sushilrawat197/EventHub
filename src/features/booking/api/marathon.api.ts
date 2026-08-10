@@ -1,7 +1,7 @@
 import axios from "axios";
 import { apiConnector } from "@/lib/api/connector";
 import { client } from "@/lib/api/client";
-import { getApiErrorMessage } from "@/lib/api/errors";
+import { extractApiFailureMessage, getApiErrorMessage } from "@/lib/api/errors";
 import { marathonEndpoints } from "./endpoints";
 import type {
   ActiveCorporate,
@@ -77,9 +77,16 @@ export async function submitMarathonRegistrationApi(
       registrationId: data?.registrationId,
     };
   } catch (error) {
+    const message = axios.isAxiosError(error)
+      ? extractApiFailureMessage(
+          error.response?.data,
+          "Failed to submit registration."
+        )
+      : getApiErrorMessage(error, "Failed to submit registration.");
+
     return {
       success: false,
-      message: getApiErrorMessage(error, "Failed to submit registration."),
+      message,
     };
   }
 }
