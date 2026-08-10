@@ -3,14 +3,14 @@
 /** Individual registration channel chosen on ticket selection. */
 export type MarathonRegistrationMode = "ONLINE" | "OFFLINE";
 
-/** Offline mobile-money options (code → label). */
+/** Offline mobile-money options. `key` is sent to API; `code` is UI-only till/merchant number. */
 export const MARATHON_OFFLINE_PAYMENT_TYPES = [
-  { code: "119773", key: "VODACOM", label: "M-Pesa (Merchant #119773)" },
+  { code: "9773", key: "VODACOM", label: "M-Pesa (Till Number #9773)" },
   { code: "92236", key: "ECO_CASH", label: "Ecocash (Merchant #92236)" },
 ] as const;
 
 export type MarathonOfflinePaymentTypeCode =
-  (typeof MARATHON_OFFLINE_PAYMENT_TYPES)[number]["code"];
+  (typeof MARATHON_OFFLINE_PAYMENT_TYPES)[number]["key"];
 
 export type MarathonParticipantType = "CORPORATE" | "INDIVIDUAL" | "INDIVIDUAL_OFFLINE";
 
@@ -41,7 +41,7 @@ export interface MarathonRegistrationPayload {
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   shoeSize?: string;
   disclaimerAccepted: boolean;
-  /** Required for individual OFFLINE registration (M-Pesa / Ecocash merchant code). */
+  /** Required for individual OFFLINE registration (VODACOM / ECO_CASH). */
   paymentType?: MarathonOfflinePaymentTypeCode;
 }
 

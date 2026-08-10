@@ -1372,7 +1372,7 @@ export default function MarathonRegistrationPage() {
                             >
                               {participantForm.paymentType
                                 ? MARATHON_OFFLINE_PAYMENT_TYPES.find(
-                                    (p) => p.code === participantForm.paymentType
+                                    (p) => p.key === participantForm.paymentType
                                   )?.label ?? "Select payment type"
                                 : "Select payment type"}
                             </span>
@@ -1389,9 +1389,9 @@ export default function MarathonRegistrationPage() {
                           <DropdownMenuGroup>
                             {MARATHON_OFFLINE_PAYMENT_TYPES.map((option) => (
                               <DropdownMenuItem
-                                key={option.code}
+                                key={option.key}
                                 onSelect={() =>
-                                  handleParticipantChange("paymentType", option.code)
+                                  handleParticipantChange("paymentType", option.key)
                                 }
                               >
                                 {option.label}
