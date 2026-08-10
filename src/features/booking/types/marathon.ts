@@ -8,7 +8,7 @@ export const MARATHON_OFFLINE_PAYMENT_TYPES = [
   { code: "9773", key: "VODACOM", label: "M-Pesa (Merchant #9773)" },
   { code: "92236", key: "ECO_CASH", label: "Ecocash (Merchant #92236)" },
 ] as const;
-
+//stagig branch added second code no 92236
 export type MarathonOfflinePaymentTypeCode =
   (typeof MARATHON_OFFLINE_PAYMENT_TYPES)[number]["key"];
 
