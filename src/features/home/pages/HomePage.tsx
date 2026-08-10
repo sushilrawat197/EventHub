@@ -7,15 +7,15 @@ import Footer from "../components/Footer";
 // import SellWithEase from "../../../UI/Components/SellWithEase";
 import ThreeImgComponent from "../components/ThreeImageComponent";
 import ContactPage from "../components/ContactUs";
-import WhatsApppop from "../components/Whatsapppop";
+import ChatPopup from "../components/ChatPopup";
 
 export default function HomePage() {
 
 
   return (
     <>
-      <div className="px-3">
-        <HeroSection />
+      <HeroSection />
+      <div className="px-3 ">
         <UpcomingEvents />
         {/* <WhyChoose />
         <PosterRanking />  */}
@@ -24,7 +24,7 @@ export default function HomePage() {
         {/* <TicketPlans />  */}
         <ContactPage />
 
-        <WhatsApppop /> 
+        <ChatPopup /> 
       </div>
       <Footer />
     </>
