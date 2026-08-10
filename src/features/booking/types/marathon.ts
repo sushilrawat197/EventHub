@@ -41,7 +41,7 @@ export interface MarathonRegistrationPayload {
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   shoeSize?: string;
   disclaimerAccepted: boolean;
-  /** Required for individual OFFLINE registration (VODACOM / ECO_CASH). */
+  /** Required for individual OFFLINE registration (VODACOM / ECO_CASH).  UPDATED*/
   paymentType?: MarathonOfflinePaymentTypeCode;
 }
 
