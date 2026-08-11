@@ -172,30 +172,17 @@ const UpcomingEvents = () => {
   };
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-800 via-indigo-800 to-purple-900 py-5 sm:py-6">
-      <div
-        className="pointer-events-none absolute -left-24 top-0 h-64 w-64 rounded-full bg-blue-600/40 blur-3xl"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-purple-700/40 blur-3xl"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-40 w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-700/35 blur-3xl"
-        aria-hidden
-      />
-
-      <div className="relative mx-auto container rounded-2xl px-4 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden rounded-3xl bg-blue-100/50 py-5 sm:py-6">
+      <div className="relative mx-auto container px-4 sm:px-6 lg:px-8">
         <div className="mb-5 text-center sm:mb-6">
           <p
-            className="mb-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-blue-200/80 sm:text-[11px]"
+            className="mb-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-blue-700/70 sm:text-[11px]"
             style={{ fontFamily: "var(--font-jakarta), 'Plus Jakarta Sans', sans-serif" }}
           >
             Don&apos;t miss out
           </p>
           <h2
-            className="inline-flex items-baseline gap-2 bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-4xl tracking-[0.04em] text-transparent sm:gap-2.5 sm:text-5xl"
+            className="inline-flex items-baseline gap-2 text-4xl tracking-[0.04em] text-blue-900 sm:gap-2.5 sm:text-5xl"
             style={{ fontFamily: "var(--font-bebas), 'Bebas Neue', sans-serif" }}
           >
             <span>Upcoming</span>
@@ -243,7 +230,7 @@ const UpcomingEvents = () => {
           <div className="mt-10 text-center sm:mt-12">
             <Link
               to="/events"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-blue-900 shadow-md transition-all hover:bg-blue-50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
             >
               View all events
               <span aria-hidden>→</span>
