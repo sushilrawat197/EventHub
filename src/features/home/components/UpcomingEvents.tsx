@@ -172,7 +172,7 @@ const UpcomingEvents = () => {
   };
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-blue-100/50 py-5 sm:py-6">
+    <section className="relative overflow-hidden rounded-3xl bg-blue-50/50 py-5 sm:py-6">
       <div className="relative mx-auto container px-4 sm:px-6 lg:px-8">
         <div className="mb-5 text-center sm:mb-6">
           <p
