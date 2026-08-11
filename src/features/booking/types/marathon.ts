@@ -9,6 +9,11 @@ export const MARATHON_OFFLINE_PAYMENT_TYPES = [
   { code: "92236", key: "ECO_CASH", label: "Ecocash (Merchant #92236)" },
 ] as const;
 //stagig branch added second code no 92236
+
+//21:28 10/08/2026 in main branch
+//21:28 10/08/2026 in main branch aaded second
+//updated code no 
+
 export type MarathonOfflinePaymentTypeCode =
   (typeof MARATHON_OFFLINE_PAYMENT_TYPES)[number]["key"];
 
@@ -41,7 +46,7 @@ export interface MarathonRegistrationPayload {
   shirtSize: "XS" | "S" | "M" | "L" | "XL" | "XXL";
   shoeSize?: string;
   disclaimerAccepted: boolean;
-  /** Required for individual OFFLINE registration (VODACOM / ECO_CASH). */
+  /** Required for individual OFFLINE registration (VODACOM / ECO_CASH).  UPDATED*/
   paymentType?: MarathonOfflinePaymentTypeCode;
 }
 
