@@ -9,7 +9,7 @@ on:
 jobs:
   deploy-production:
     if: github.ref == 'refs/heads/main'
-    runs-on: self-hosted
+    runs-on: [self-hosted, mytagprod]
 
     steps:
       - name: Checkout code
