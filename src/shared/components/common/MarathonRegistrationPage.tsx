@@ -1340,7 +1340,6 @@ export default function MarathonRegistrationPage() {
                                 </DropdownMenuItem>
                               ))
                             )}
-                            //
                           </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>

@@ -98,10 +98,14 @@ export async function getActiveCorporatesApi(): Promise<{
 }> {
   try {
     const data = await client.get<ActiveCorporate[]>(marathonEndpoints.activeCorporates());
+    const corporates = (data ?? []).filter((c) => {
+      const name = c.corporateName?.trim() ?? "";
+      return name.length > 0 && name !== "//";
+    });
     return {
       success: true,
       message: "Active corporate list fetched successfully.",
-      data: data ?? [],
+      data: corporates,
     };
   } catch (error) {
     return {
