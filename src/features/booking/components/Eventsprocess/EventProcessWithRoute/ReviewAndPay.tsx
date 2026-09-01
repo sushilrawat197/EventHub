@@ -4,6 +4,16 @@ import { useAppDispatch, useAppSelector } from "../../../../../app/store/hooks";
 import { useEffect, useState } from "react";
 import { cancelBooking } from "@/features/booking/services/booking.service";
 import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 // Review & Payment Component
 const ReviewAndPay = () => {
@@ -316,46 +326,53 @@ const ReviewAndPay = () => {
         </div>
       </div>
 
-      {/* Popup Modal */}
-      {showPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-100">
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center">
-                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+      {/* Cancel confirmation */}
+      <AlertDialog open={showPopup} onOpenChange={setShowPopup}>
+        <AlertDialogContent className="w-[min(100vw-1.5rem,26rem)] max-w-md gap-0 overflow-hidden border-0 bg-white p-0 shadow-2xl sm:max-w-md">
+          <div className="border-b border-gray-100 px-5 py-4">
+            <AlertDialogHeader className="gap-2 text-left sm:text-left">
+              <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 ring-1 ring-amber-100">
+                <svg
+                  className="h-5 w-5 text-amber-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
                 </svg>
               </div>
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Cancel Transaction
-            </h1>
-            <p className="text-gray-600 mb-8">
-              Are you sure you want to cancel your transaction? This action cannot be undone.
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={() => setShowPopup(false)}
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <span>No, Keep Booking</span>
-              </button>
-              <button
-                onClick={handleCancelConfirm}
-                className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <span>Yes, Cancel</span>
-              </button>
-            </div>
+              <AlertDialogTitle className="text-lg font-semibold tracking-tight text-gray-900">
+                Cancel this booking?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-left text-sm leading-relaxed text-gray-600">
+                Going back will release your reserved tickets. You may need to select them again.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
           </div>
-        </div>
-      )}
+
+          <AlertDialogFooter className="m-0 flex-row gap-2 rounded-none border-t border-gray-100 bg-gray-50/80 px-5 py-3.5 sm:justify-end">
+            <AlertDialogCancel
+              type="button"
+              className="rounded-lg border-gray-200 bg-white px-4 font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Keep booking
+            </AlertDialogCancel>
+            <Button
+              type="button"
+              className="rounded-lg bg-red-600 px-4 font-semibold text-white hover:bg-red-700"
+              onClick={handleCancelConfirm}
+            >
+              Yes, cancel
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

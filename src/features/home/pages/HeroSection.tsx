@@ -115,7 +115,7 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative z-0 mx-auto mt-4 mb-8 w-full sm:mt-6 sm:mb-10 lg:mt-42"
+      className="relative z-0 mx-auto mb-8 w-full overflow-hidden px-3 pt-6 sm:mb-10 sm:px-4 sm:pt-6 lg:mb-10 lg:px-6 lg:pt-0 lg:mt-42"
       aria-label="MyTag hero"
     >
       <Carousel
@@ -132,7 +132,7 @@ const HeroSection = () => {
             return (
               <CarouselItem
                 key={banner.src}
-                className="basis-[88%] pl-3 sm:basis-[72%] sm:pl-4 lg:basis-[58%] lg:pl-5 xl:basis-[52%]"
+                className="basis-[84%] pl-3 sm:basis-[72%] sm:pl-4 lg:basis-[58%] lg:pl-5 xl:basis-[52%]"
               >
                 <div
                   className={cn(

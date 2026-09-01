@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Building2, Check, CreditCard, Globe2, UserRound } from "lucide-react";
+import { Building2, Check, CreditCard, UserRound } from "lucide-react";
 
 type ChoiceCardProps = {
   name: string;
@@ -115,7 +115,7 @@ const TicketSelection = () => {
     "INDIVIDUAL" | "CORPORATE"
   >("INDIVIDUAL");
   const [marathonRegistrationMode, setMarathonRegistrationMode] =
-    useState<MarathonRegistrationMode>("ONLINE");
+    useState<MarathonRegistrationMode>("OFFLINE");
 
   const [selectedTickets, setSelectedTickets] = useState<{
     [key: number]: number;
@@ -170,12 +170,12 @@ const TicketSelection = () => {
       return;
     }
     setMarathonParticipantType("INDIVIDUAL");
-    setMarathonRegistrationMode("ONLINE");
+    setMarathonRegistrationMode("OFFLINE");
     setParticipantDialogOpen(true);
   }
 
   function proceedToIndividualMarathonRegistration(
-    registrationMode: MarathonRegistrationMode = "ONLINE"
+    registrationMode: MarathonRegistrationMode = "OFFLINE"
   ) {
     if (!categories.length) {
       window.alert("Add at least one ticket!");
@@ -683,7 +683,7 @@ const TicketSelection = () => {
                         checked={marathonParticipantType === "INDIVIDUAL"}
                         onChange={() => {
                           setMarathonParticipantType("INDIVIDUAL");
-                          setMarathonRegistrationMode("ONLINE");
+                          setMarathonRegistrationMode("OFFLINE");
                         }}
                         title="Individual"
                         icon={<UserRound className="h-4 w-4" />}
@@ -702,7 +702,8 @@ const TicketSelection = () => {
                         <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
                           Payment method
                         </legend>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 gap-2">
+                          {/* Online payment is temporarily disabled; Offline is the default.
                           <ChoiceCard
                             name="marathon-registration-mode"
                             checked={marathonRegistrationMode === "ONLINE"}
@@ -710,6 +711,7 @@ const TicketSelection = () => {
                             title="Online"
                             icon={<Globe2 className="h-4 w-4" />}
                           />
+                          */}
                           <ChoiceCard
                             name="marathon-registration-mode"
                             checked={marathonRegistrationMode === "OFFLINE"}
