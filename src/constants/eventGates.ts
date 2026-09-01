@@ -1,6 +1,5 @@
 // TODO: TEMP SPECIAL EVENT FLOW - remove this file after marathon flow is retired.
-export const SPECIAL_EVENT_ID = 53;
-
+export const SPECIAL_EVENT_ID = 48;
 export const SPECIAL_EVENT_NEW_FORM_ID = 49;
 
 export const SPECIAL_MARATHON_EVENT_IDS = [
