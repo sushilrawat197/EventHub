@@ -342,7 +342,6 @@ export default function MarathonRegistrationPage() {
   });
 
   const isCorporateParticipant =
-    !isSpecialNewForm &&
     (participantTypeFromLocation ?? participantForm.participantType) === "CORPORATE";
 
   const canRetryPendingPayment =
@@ -545,14 +544,6 @@ export default function MarathonRegistrationPage() {
   }, [registrationData, participantTypeFromLocation, location.key]);
 
   useEffect(() => {
-    if (!isSpecialNewForm || registrationData) return;
-    setParticipantForm((prev) => {
-      if (prev.participantType === "INDIVIDUAL" && prev.corporateId === null) return prev;
-      return { ...prev, participantType: "INDIVIDUAL", corporateId: null };
-    });
-  }, [isSpecialNewForm, registrationData, location.key]);
-
-  useEffect(() => {
     if (participantForm.participantType !== "CORPORATE") return;
     let isMounted = true;
 
@@ -631,7 +622,7 @@ export default function MarathonRegistrationPage() {
       }
     }
     
-    if (!isSpecialNewForm && data.participantType === "CORPORATE" && !data.corporateId) {
+    if (data.participantType === "CORPORATE" && !data.corporateId) {
       errors.corporateId = "Please select a corporate.";
     }
 
@@ -712,7 +703,7 @@ export default function MarathonRegistrationPage() {
       toast.error("This email is already registered and booking is confirmed.");
       return;
     }
-    if ((isSpecialNewForm || participantForm.participantType === "INDIVIDUAL") && !userId) {
+    if (participantForm.participantType === "INDIVIDUAL" && !userId) {
       toast.error("Please sign in to register as an individual.");
       return;
     }
@@ -730,7 +721,7 @@ export default function MarathonRegistrationPage() {
 
     const resolvedParticipantType: MarathonRegistrationPayload["participantType"] =
       isSpecialNewForm
-        ? "INDIVIDUAL"
+        ? participantForm.participantType
         : isOfflineIndividual
           ? "INDIVIDUAL_OFFLINE"
           : participantForm.participantType;
@@ -738,7 +729,7 @@ export default function MarathonRegistrationPage() {
     const registrationPayload: MarathonRegistrationPayload = {
       participantType: resolvedParticipantType,
       corporateId:
-        !isSpecialNewForm && participantForm.participantType === "CORPORATE"
+        participantForm.participantType === "CORPORATE"
           ? participantForm.corporateId
           : null,
       ticketCategoryId: Number(resolvedTicketCategoryId),
@@ -852,7 +843,7 @@ export default function MarathonRegistrationPage() {
     participantTypeFromLocation ?? participantForm.participantType;
   const requiresIndividualLogin =
     isSpecialMarathon &&
-    (isSpecialNewForm || effectiveParticipantType === "INDIVIDUAL") &&
+    effectiveParticipantType === "INDIVIDUAL" &&
     !userId;
 
   const handleSignInForIndividual = () => {
@@ -1275,7 +1266,7 @@ export default function MarathonRegistrationPage() {
                     )}
                   </div>
                   )}
-                  {!isSpecialNewForm && participantForm.participantType === "CORPORATE" && (
+                  {participantForm.participantType === "CORPORATE" && (
                     <div>
                       <label className={baseLabelClass}><FaBuilding className="text-orange-500" /> Corporate</label>
                       <DropdownMenu>

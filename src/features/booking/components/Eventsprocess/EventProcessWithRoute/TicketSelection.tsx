@@ -257,10 +257,6 @@ const TicketSelection = () => {
 
   function handlePrimaryAction() {
     if (loading) return;
-    if (isSpecialNewForm) {
-      proceedToIndividualMarathonRegistration();
-      return;
-    }
     if (isSpecialMarathon) {
       openSpecialParticipantDialog();
       return;
@@ -633,8 +629,6 @@ const TicketSelection = () => {
                       ? "Login to Proceed"
                       : categories.length === 0
                       ? "Select Tickets"
-                      : isSpecialNewForm
-                      ? "Continue to registration"
                       : isSpecialMarathon
                       ? "Choose participant"
                       : "Review & Pay"}
@@ -656,7 +650,7 @@ const TicketSelection = () => {
               )}
             </button>
 
-            {isSpecialMarathon && !isSpecialNewForm && (
+            {isSpecialMarathon && (
               <AlertDialog
                 open={participantDialogOpen}
                 onOpenChange={setParticipantDialogOpen}
@@ -697,7 +691,7 @@ const TicketSelection = () => {
                       />
                     </fieldset>
 
-                    {marathonParticipantType === "INDIVIDUAL" && (
+                    {marathonParticipantType === "INDIVIDUAL" && !isSpecialNewForm && (
                       <fieldset className="space-y-2 border-0 p-0">
                         <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
                           Payment method
