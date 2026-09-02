@@ -57,7 +57,11 @@ import { CalendarDays, ChevronDown } from "lucide-react";
 import {
   isSpecialMarathonEvent,
   isSpecialMarathonNewFormEvent,
+  isOfflineMarathonIndividual,
+  MARATHON_ONLINE_PAYMENT_ENABLED,
+  normalizeMarathonRegistrationMode,
   SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
+  SPECIAL_NEW_FORM_CORPORATE,
 } from "@/constants/eventGates";
 import {
   formatMarathonShoeSizeLabel,
@@ -297,11 +301,14 @@ export default function MarathonRegistrationPage() {
   const locState = (location.state || {}) as MarathonLocationState;
   const categoriesFromState = locState.categories;
   const participantTypeFromLocation = locState.participantType;
-  const registrationModeFromLocation = locState.registrationMode;
-  const isOfflineIndividual =
-    !isSpecialNewForm &&
-    (participantTypeFromLocation ?? "INDIVIDUAL") === "INDIVIDUAL" &&
-    registrationModeFromLocation === "OFFLINE";
+  const registrationModeFromLocation = normalizeMarathonRegistrationMode(
+    locState.registrationMode
+  );
+  const isOfflineIndividual = isOfflineMarathonIndividual(
+    participantTypeFromLocation,
+    registrationModeFromLocation,
+    isSpecialNewForm
+  );
 
   const readOnlyWhenExisting = isOrderContext;
 
@@ -345,6 +352,8 @@ export default function MarathonRegistrationPage() {
     (participantTypeFromLocation ?? participantForm.participantType) === "CORPORATE";
 
   const canRetryPendingPayment =
+    MARATHON_ONLINE_PAYMENT_ENABLED &&
+    !isOfflineIndividual &&
     emailCheckOutcome.type === "pending_payment" &&
     !isCorporateParticipant &&
     (emailCheckOutcome.bookingId != null ||
@@ -352,6 +361,10 @@ export default function MarathonRegistrationPage() {
 
   const handleRetryPayment = async () => {
     if (emailCheckOutcome.type !== "pending_payment") return;
+    if (isOfflineIndividual || !MARATHON_ONLINE_PAYMENT_ENABLED) {
+      toast.error("Online payment is not available for offline registration.");
+      return;
+    }
 
     if (emailCheckOutcome.bookingId != null) {
       navigate(`/order/${emailCheckOutcome.bookingId}`);
@@ -417,11 +430,13 @@ export default function MarathonRegistrationPage() {
               state: {
                 categories: parsed.categories,
                 participantType: parsed.participantType ?? "INDIVIDUAL",
-                ...(parsed.participantType !== "CORPORATE" && parsed.registrationMode
-                  ? { registrationMode: parsed.registrationMode }
-                  : parsed.participantType !== "CORPORATE"
-                    ? { registrationMode: "ONLINE" as const }
-                    : {}),
+                ...(parsed.participantType !== "CORPORATE"
+                  ? {
+                      registrationMode: normalizeMarathonRegistrationMode(
+                        parsed.registrationMode
+                      ),
+                    }
+                  : {}),
               },
             });
             restored = true;
@@ -450,6 +465,34 @@ export default function MarathonRegistrationPage() {
     eventIdParam,
     isSpecialMarathon,
     location.pathname,
+  ]);
+
+  /** Persist OFFLINE in router state when online payment is disabled. */
+  useEffect(() => {
+    if (!isBookingContext || isSpecialNewForm || MARATHON_ONLINE_PAYMENT_ENABLED) return;
+    if (!categoriesFromState?.length) return;
+    if ((participantTypeFromLocation ?? "INDIVIDUAL") !== "INDIVIDUAL") return;
+
+    const rawMode = locState.registrationMode;
+    const normalizedMode = normalizeMarathonRegistrationMode(rawMode);
+    if (rawMode === normalizedMode) return;
+
+    navigate(location.pathname, {
+      replace: true,
+      state: {
+        categories: categoriesFromState,
+        participantType: participantTypeFromLocation ?? "INDIVIDUAL",
+        registrationMode: normalizedMode,
+      },
+    });
+  }, [
+    isBookingContext,
+    isSpecialNewForm,
+    categoriesFromState,
+    participantTypeFromLocation,
+    locState.registrationMode,
+    location.pathname,
+    navigate,
   ]);
 
   useEffect(() => {
@@ -532,19 +575,40 @@ export default function MarathonRegistrationPage() {
     const pt = participantTypeFromLocation;
     if (pt !== "CORPORATE" && pt !== "INDIVIDUAL") return;
     setParticipantForm((prev) => {
-      if (prev.participantType === pt && (pt === "INDIVIDUAL" ? prev.corporateId === null : true)) {
+      const expectedCorporateId =
+        pt === "CORPORATE" && isSpecialNewForm
+          ? SPECIAL_NEW_FORM_CORPORATE.corporateId
+          : pt === "INDIVIDUAL"
+            ? null
+            : prev.corporateId;
+      if (
+        prev.participantType === pt &&
+        prev.corporateId === expectedCorporateId
+      ) {
         return prev;
       }
       return {
         ...prev,
         participantType: pt,
-        corporateId: pt === "INDIVIDUAL" ? null : prev.corporateId,
+        corporateId: expectedCorporateId,
       };
     });
-  }, [registrationData, participantTypeFromLocation, location.key]);
+  }, [registrationData, participantTypeFromLocation, location.key, isSpecialNewForm]);
 
   useEffect(() => {
     if (participantForm.participantType !== "CORPORATE") return;
+
+    if (isSpecialNewForm) {
+      setLoadingCorporates(false);
+      setActiveCorporates([SPECIAL_NEW_FORM_CORPORATE]);
+      setParticipantForm((prev) =>
+        prev.corporateId === SPECIAL_NEW_FORM_CORPORATE.corporateId
+          ? prev
+          : { ...prev, corporateId: SPECIAL_NEW_FORM_CORPORATE.corporateId }
+      );
+      return;
+    }
+
     let isMounted = true;
 
     const fetchCorporates = async () => {
@@ -566,7 +630,7 @@ export default function MarathonRegistrationPage() {
     return () => {
       isMounted = false;
     };
-  }, [participantForm.participantType]);
+  }, [participantForm.participantType, isSpecialNewForm]);
 
   const handleBack = () => {
     if (isOrderContext && bookingIdParam) {
@@ -719,10 +783,16 @@ export default function MarathonRegistrationPage() {
       return value.trim();
     };
 
+    const treatsAsOfflineIndividual =
+      isOfflineIndividual ||
+      (!MARATHON_ONLINE_PAYMENT_ENABLED &&
+        !isSpecialNewForm &&
+        participantForm.participantType === "INDIVIDUAL");
+
     const resolvedParticipantType: MarathonRegistrationPayload["participantType"] =
       isSpecialNewForm
         ? participantForm.participantType
-        : isOfflineIndividual
+        : treatsAsOfflineIndividual
           ? "INDIVIDUAL_OFFLINE"
           : participantForm.participantType;
 
@@ -763,7 +833,7 @@ export default function MarathonRegistrationPage() {
       shirtSize: participantForm.shirtSize as "XS" | "S" | "M" | "L" | "XL" | "XXL",
       ...(isSpecialNewForm ? {} : { shoeSize: participantForm.shoeSize.trim() }),
       disclaimerAccepted: participantForm.disclaimerAccepted,
-      ...(isOfflineIndividual && participantForm.paymentType
+      ...(treatsAsOfflineIndividual && participantForm.paymentType
         ? { paymentType: participantForm.paymentType }
         : {}),
     };
@@ -781,17 +851,25 @@ export default function MarathonRegistrationPage() {
     setParticipantErrors({});
 
     if (isBookingContext && categoriesFromState?.length) {
+      const skipOnlineCheckout =
+        participantForm.participantType === "CORPORATE" || treatsAsOfflineIndividual;
+
       // Corporate + offline individual skip online checkout (payment handled elsewhere).
-      if (participantForm.participantType === "CORPORATE" || isOfflineIndividual) {
+      if (skipOnlineCheckout) {
         navigate(`/events/${contentName}/${eventIdParam}/booking/ticket`, {
           replace: true,
           state: {
             marathonRegistrationSuccess: true,
-            marathonRegistrationParticipantType: isOfflineIndividual
+            marathonRegistrationParticipantType: treatsAsOfflineIndividual
               ? "INDIVIDUAL_OFFLINE"
               : participantForm.participantType,
           },
         });
+        return;
+      }
+
+      if (!MARATHON_ONLINE_PAYMENT_ENABLED) {
+        toast.error("Online payment is currently unavailable. Please use offline registration.");
         return;
       }
 
@@ -854,7 +932,7 @@ export default function MarathonRegistrationPage() {
           JSON.stringify({
             categories: categoriesFromState,
             participantType: "INDIVIDUAL" as const,
-            registrationMode: registrationModeFromLocation ?? "ONLINE",
+            registrationMode: registrationModeFromLocation,
             returnTo: marathonRegistrationPath,
           })
         );
@@ -1269,6 +1347,17 @@ export default function MarathonRegistrationPage() {
                   {participantForm.participantType === "CORPORATE" && (
                     <div>
                       <label className={baseLabelClass}><FaBuilding className="text-orange-500" /> Corporate</label>
+                      {isSpecialNewForm ? (
+                        <div
+                          className={cn(
+                            baseInputClass,
+                            "flex min-h-[2.5rem] cursor-default items-center truncate text-gray-900"
+                          )}
+                          title={SPECIAL_NEW_FORM_CORPORATE.corporateName}
+                        >
+                          {SPECIAL_NEW_FORM_CORPORATE.corporateName}
+                        </div>
+                      ) : (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -1278,15 +1367,23 @@ export default function MarathonRegistrationPage() {
                             className={cn(
                               baseInputClass,
                               inputRing(participantErrors.corporateId),
-                              "!h-auto min-h-[2.5rem] justify-between gap-2 font-normal shadow-sm",
+                              "!h-auto min-h-[2.5rem] w-full justify-between gap-2 overflow-hidden font-normal shadow-sm",
                               loadingCorporates && "text-gray-500"
                             )}
                           >
                             <span
-                              className={
+                              className={cn(
+                                "min-w-0 flex-1 truncate text-left",
                                 participantForm.corporateId != null && !loadingCorporates
                                   ? "text-gray-900"
                                   : "text-gray-500"
+                              )}
+                              title={
+                                participantForm.corporateId != null
+                                  ? activeCorporates.find(
+                                      (c) => c.corporateId === participantForm.corporateId
+                                    )?.corporateName
+                                  : undefined
                               }
                             >
                               {loadingCorporates
@@ -1323,6 +1420,8 @@ export default function MarathonRegistrationPage() {
                               activeCorporates.map((c) => (
                                 <DropdownMenuItem
                                   key={c.corporateId}
+                                  className="truncate"
+                                  title={c.corporateName}
                                   onSelect={() =>
                                     handleParticipantChange("corporateId", c.corporateId)
                                   }
@@ -1334,6 +1433,7 @@ export default function MarathonRegistrationPage() {
                           </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
+                      )}
                       {participantErrors.corporateId && <p className="mt-1 text-[10px] text-red-600">{participantErrors.corporateId}</p>}
                     </div>
                   )}

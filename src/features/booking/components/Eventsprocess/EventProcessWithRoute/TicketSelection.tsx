@@ -16,6 +16,9 @@ import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 import {
   isSpecialMarathonEvent,
   isSpecialMarathonNewFormEvent,
+  MARATHON_ONLINE_PAYMENT_ENABLED,
+  defaultMarathonRegistrationMode,
+  normalizeMarathonRegistrationMode,
   SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
 } from "@/constants/eventGates";
 import type { MarathonRegistrationMode } from "@/features/booking/types/marathon";
@@ -30,7 +33,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Building2, Check, CreditCard, UserRound } from "lucide-react";
+import { Building2, Check, CreditCard, Globe2, UserRound } from "lucide-react";
 
 type ChoiceCardProps = {
   name: string;
@@ -115,7 +118,7 @@ const TicketSelection = () => {
     "INDIVIDUAL" | "CORPORATE"
   >("INDIVIDUAL");
   const [marathonRegistrationMode, setMarathonRegistrationMode] =
-    useState<MarathonRegistrationMode>("OFFLINE");
+    useState<MarathonRegistrationMode>(() => defaultMarathonRegistrationMode());
 
   const [selectedTickets, setSelectedTickets] = useState<{
     [key: number]: number;
@@ -170,13 +173,14 @@ const TicketSelection = () => {
       return;
     }
     setMarathonParticipantType("INDIVIDUAL");
-    setMarathonRegistrationMode("OFFLINE");
+    setMarathonRegistrationMode(defaultMarathonRegistrationMode());
     setParticipantDialogOpen(true);
   }
 
   function proceedToIndividualMarathonRegistration(
-    registrationMode: MarathonRegistrationMode = "OFFLINE"
+    registrationMode: MarathonRegistrationMode = defaultMarathonRegistrationMode()
   ) {
+    const resolvedMode = normalizeMarathonRegistrationMode(registrationMode);
     if (!categories.length) {
       window.alert("Add at least one ticket!");
       return;
@@ -186,7 +190,7 @@ const TicketSelection = () => {
         state: {
           categories,
           participantType: "INDIVIDUAL",
-          registrationMode,
+          registrationMode: resolvedMode,
         },
       });
       return;
@@ -197,7 +201,7 @@ const TicketSelection = () => {
         JSON.stringify({
           categories,
           participantType: "INDIVIDUAL" as const,
-          registrationMode,
+          registrationMode: resolvedMode,
           returnTo: marathonRegistrationPath,
         })
       );
@@ -677,7 +681,7 @@ const TicketSelection = () => {
                         checked={marathonParticipantType === "INDIVIDUAL"}
                         onChange={() => {
                           setMarathonParticipantType("INDIVIDUAL");
-                          setMarathonRegistrationMode("OFFLINE");
+                          setMarathonRegistrationMode(defaultMarathonRegistrationMode());
                         }}
                         title="Individual"
                         icon={<UserRound className="h-4 w-4" />}
@@ -696,16 +700,21 @@ const TicketSelection = () => {
                         <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
                           Payment method
                         </legend>
-                        <div className="grid grid-cols-1 gap-2">
-                          {/* Online payment is temporarily disabled; Offline is the default.
-                          <ChoiceCard
-                            name="marathon-registration-mode"
-                            checked={marathonRegistrationMode === "ONLINE"}
-                            onChange={() => setMarathonRegistrationMode("ONLINE")}
-                            title="Online"
-                            icon={<Globe2 className="h-4 w-4" />}
-                          />
-                          */}
+                        <div
+                          className={cn(
+                            "grid gap-2",
+                            MARATHON_ONLINE_PAYMENT_ENABLED ? "grid-cols-2" : "grid-cols-1"
+                          )}
+                        >
+                          {MARATHON_ONLINE_PAYMENT_ENABLED && (
+                            <ChoiceCard
+                              name="marathon-registration-mode"
+                              checked={marathonRegistrationMode === "ONLINE"}
+                              onChange={() => setMarathonRegistrationMode("ONLINE")}
+                              title="Online"
+                              icon={<Globe2 className="h-4 w-4" />}
+                            />
+                          )}
                           <ChoiceCard
                             name="marathon-registration-mode"
                             checked={marathonRegistrationMode === "OFFLINE"}
