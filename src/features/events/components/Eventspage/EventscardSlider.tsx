@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -30,7 +30,7 @@ function eventPath(event: EventResponseBySearch) {
   return `/events/${slug}/${event.eventId}`;
 }
 
-function RelatedEventCard({
+const RelatedEventCard = memo(function RelatedEventCard({
   event,
   onOpen,
 }: {
@@ -88,9 +88,9 @@ function RelatedEventCard({
       </div>
     </article>
   );
-}
+});
 
-export default function EventscardSlider({ events = [] }: EventscardSliderProps) {
+function EventscardSlider({ events = [] }: EventscardSliderProps) {
   const navigate = useNavigate();
 
   if (events.length === 0) return null;
@@ -134,3 +134,5 @@ export default function EventscardSlider({ events = [] }: EventscardSliderProps)
     </div>
   );
 }
+
+export default memo(EventscardSlider);

@@ -1,4 +1,3 @@
-
 import EventHeroCard from "../components/Eventspage/EventHeroCard";
 import EventDetailsCard from "../components/Eventspage/EventDetailsCard";
 import EventDescriptionAndArtists from "../components/Eventspage/EventDescriptionAndArtists";
@@ -9,15 +8,11 @@ import { useLocation, useParams } from "react-router-dom";
 import type { EventResponseBySearch } from "../types/evnetInterFace";
 import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import { useEffect, useMemo } from "react";
-import { checkEventAvailability } from "../services/events.service";
 import SpinnerLoading from "../../../shared/components/common/SpinnerLoading";
-import {
-  fetchFilteredShows,
-  listAllShowsByEvent,
-} from "../services/shows.service";
+import { fetchFilteredShows } from "../services/shows.service";
 import { clearSetShows } from "../store/showSlice";
 import { useEvent } from "../hooks/useEvent";
-import { useEventsSearch } from "../hooks/useEventsSearch";
+import { useRelatedEventsByCategory } from "../hooks/useEventsSearch";
 
 function formatPreviewDateRange(p: EventResponseBySearch): string {
   if (p.dateDisplay?.trim()) return p.dateDisplay;
@@ -36,11 +31,11 @@ function formatPreviewDateRange(p: EventResponseBySearch): string {
     : `${fmt(start)} - ${fmt(end)}`;
 }
 
+
 export default function Layouteventspage() {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { eventId } = useParams<{ eventId: string }>();
-  const searchFilters = useAppSelector((state) => state.searchFilter);
 
   const navPreview = useMemo((): EventResponseBySearch | undefined => {
     const s = location.state as EventResponseBySearch | undefined;
@@ -48,16 +43,22 @@ export default function Layouteventspage() {
     return undefined;
   }, [location.state, eventId]);
 
-  const event = navPreview;
-
   const { data: singleEvent, isLoading: eventLoading } = useEvent(eventId);
-  const { data: eventsPage } = useEventsSearch(searchFilters);
+
   const shows = useAppSelector((state) => state.shows.data);
 
-  const formattedDates = useMemo(() => {
-    const dates = shows.map((e) => new Date(e.showDate));
-    if (!dates.length) return "";
+  console.log("shows....", shows);
 
+  /** Wait for detail `category` only — list preview `genre` is a different field and caused a duplicate wrong search. */
+  const { data: sliderEvents = [] } = useRelatedEventsByCategory(
+    singleEvent?.category,
+    eventId
+  );
+
+  const formattedDates = useMemo(() => {
+    if (!shows.length) return "";
+
+    const dates = shows.map((e) => new Date(e.showDate));
     dates.sort((a, b) => a.getTime() - b.getTime());
 
     const start = dates[0];
@@ -91,16 +92,10 @@ export default function Layouteventspage() {
     ).map(([venueId, venueName]) => ({ venueId, venueName }));
   }, [shows]);
 
-  const sliderEvents = useMemo(() => {
-    const relatedEvents = eventsPage?.content ?? [];
-    return relatedEvents.filter(
-      (e) => e?.genre === event?.genre && String(e?.eventId) !== eventId
-    );
-  }, [eventsPage?.content, event?.genre, eventId]);
-
   const previewVenue =
     navPreview &&
     [navPreview.venueName, navPreview.city].filter(Boolean).join(", ");
+
 
   const details = useMemo(
     () => ({
@@ -137,12 +132,10 @@ export default function Layouteventspage() {
   );
 
   useEffect(() => {
-    if (eventId) {
-      dispatch(clearSetShows());
-      dispatch(listAllShowsByEvent(eventId));
-      dispatch(checkEventAvailability(eventId));
-      dispatch(fetchFilteredShows(eventId));
-    }
+    if (!eventId) return;
+    dispatch(clearSetShows());
+    // fetchFilteredShows already loads shows + availability (avoids duplicate API calls)
+    void dispatch(fetchFilteredShows(eventId));
   }, [eventId, dispatch]);
 
   const canRenderShell =

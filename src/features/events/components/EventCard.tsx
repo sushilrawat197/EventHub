@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { FaMapMarkerAlt, FaTicketAlt } from "react-icons/fa";
 import type { EventResponseBySearch } from "../types/evnetInterFace";
 import { MdEvent } from "react-icons/md";
@@ -7,7 +7,7 @@ interface EventCardProps {
   event: EventResponseBySearch;
 }
 
-export default function EventCard({ event }: EventCardProps) {
+function EventCard({ event }: EventCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
 
   const isSaleStarted = new Date(event.saleStartTime) <= new Date();
@@ -98,3 +98,5 @@ export default function EventCard({ event }: EventCardProps) {
     </div>
   );
 }
+
+export default memo(EventCard);

@@ -48,6 +48,8 @@ export default function MobileEventDetailsCard({
   const { eventId } = useParams();
 
   const shows = useAppSelector((state) => state.shows.data);
+  const showsLoading = useAppSelector((state) => state.shows.loading);
+  const isSoldOut = !showsLoading && shows.length === 0;
   // const isLoggedIn = useAppSelector(
   //   (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
   // );
@@ -105,7 +107,7 @@ export default function MobileEventDetailsCard({
   // Booking Logic (unchanged)
   // ============================================
   const bookHandler = async () => {
-    if (loading || !shows?.length) return;
+    if (loading || isSoldOut || showsLoading || !shows?.length) return;
     // if (Number(eventId) === SPECIAL_EVENT_ID && !isLoggedIn) {
     //   navigate("/login", { state: { from: location.pathname } });
     //   return;
@@ -202,16 +204,20 @@ export default function MobileEventDetailsCard({
 
         <button
           onClick={bookHandler}
-          disabled={loading || !shows?.length}
+          disabled={loading || isSoldOut || showsLoading}
           className={`py-3 px-6 rounded-lg font-bold text-sm shadow-lg transition-all duration-300
                                flex items-center justify-center gap-2
                                ${
-                                 loading || !shows?.length
-                                   ? "bg-gray-400 cursor-not-allowed"
-                                   : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
+                                 isSoldOut
+                                   ? "bg-red-500 cursor-not-allowed text-white"
+                                   : loading || showsLoading
+                                     ? "bg-gray-400 cursor-not-allowed text-white"
+                                     : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
                                }`}
         >
-          {loading ? (
+          {isSoldOut ? (
+            "Sold out"
+          ) : loading || showsLoading ? (
             <>
               <svg
                 className="w-4 h-4 animate-spin text-white"

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IoClose } from "react-icons/io5";
@@ -13,6 +13,12 @@ import {
   setStartDate,
 } from "../store/filterSlice";
 import { setFilter } from "../store/filter_Slice";
+import {
+  CATEGORY_OPTIONS,
+  formatFilterLabel,
+  formatLocalDate,
+  mapPriceLabelsToGroups,
+} from "../utils/filterOptions";
 
 interface MobileFiltersProps {
   onClose: () => void;
@@ -21,7 +27,6 @@ interface MobileFiltersProps {
 export default function MobileFilters({ onClose }: MobileFiltersProps) {
   const dispatch = useAppDispatch();
 
-  // Redux state
   const selectedCategories = useAppSelector((state) => state.filter.categories);
   const selectedLanguages = useAppSelector((state) => state.filter.languages);
   const selectedDates = useAppSelector((state) => state.filter.dates);
@@ -29,63 +34,50 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
   const startDate = useAppSelector((state) => state.filter.startDate);
   const endDate = useAppSelector((state) => state.filter.endDate);
 
-  // Local state
   const [showCalendar, setShowCalendar] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
 
-  const categoryOptions = [
-    "FOOD",
-    "KIDS_EVENT",
-    "SPORTS",
-    "GALA_DINNER",
-    "COMEDY",
-    "SEMINARS",
-    "FESTIVAL",
-    "WORKSHOP",
-    "OTHER",
-    "LIFESTYLE",
-    "OUTDOOR",
-    "INDOOR"
-  ];
-
-  const filterSections = [
-    {
-      title: "Date",
-      key: "dates",
-      items: [
-        { label: "Today" },
-        { label: "Tomorrow" },
-        { label: "Weekend" },
-        {
-          label: "Date Range",
-          right: (
-            <span className="flex items-center text-red-500 text-[10px]">
-              Select Date <MdOutlineKeyboardArrowRight size={25} />
-            </span>
-          ),
-        },
-      ],
-    },
-    {
-      title: "Languages",
-      key: "languages",
-      items: [{ label: "English" }],
-    },
-    {
-      title: "Categories",
-      key: "categories",
-      items: categoryOptions.map((cat) => ({ label: cat })),
-    },
-    {
-      title: "Price",
-      key: "prices",
-      items: [
-        { label: "0 - 500" },
-        { label: "501 - 2000" },
-        { label: "Above 2000" },
-      ],
-    },
-  ];
+  const filterSections = useMemo(
+    () => [
+      {
+        title: "Date",
+        key: "dates",
+        items: [
+          { label: "Today" },
+          { label: "Tomorrow" },
+          { label: "Weekend" },
+          {
+            label: "Date Range",
+            right: (
+              <span className="flex items-center text-red-500 text-[10px]">
+                Select Date <MdOutlineKeyboardArrowRight size={25} />
+              </span>
+            ),
+          },
+        ],
+      },
+      {
+        title: "Languages",
+        key: "languages",
+        items: [{ label: "English" }],
+      },
+      {
+        title: "Categories",
+        key: "categories",
+        items: CATEGORY_OPTIONS.map((cat) => ({ label: cat })),
+      },
+      {
+        title: "Price",
+        key: "prices",
+        items: [
+          { label: "0 - 500" },
+          { label: "501 - 2000" },
+          { label: "Above 2000" },
+        ],
+      },
+    ],
+    []
+  );
 
   const handleSelect = (sectionKey: string, value: string) => {
     let newFilters;
@@ -95,7 +87,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
         ? selectedCategories.filter((c) => c !== value)
         : [...selectedCategories, value];
       dispatch(setCategories(newFilters));
-      dispatch(setFilter({ key: "genres", value: newFilters }));
+      dispatch(setFilter({ key: "categories", value: newFilters }));
     }
 
     if (sectionKey === "languages") {
@@ -123,23 +115,17 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
         ? selectedPrices.filter((p) => p !== value)
         : [...selectedPrices, value];
 
-      const mapped = newFilters.map((f) => {
-        if (f === "0 - 500") return { min: 0, max: 500 };
-        if (f === "501 - 2000") return { min: 501, max: 2000 };
-        if (f === "Above 2000")
-          return { min: 2001, max: Number.MAX_SAFE_INTEGER };
-        return { min: 0, max: Number.MAX_SAFE_INTEGER };
-      });
-
       dispatch(setPrices(newFilters));
-      dispatch(setFilter({ key: "priceGroups", value: mapped }));
+      dispatch(
+        setFilter({ key: "priceGroups", value: mapPriceLabelsToGroups(newFilters) })
+      );
     }
   };
 
   const handleClear = (sectionKey?: string) => {
     if (!sectionKey || sectionKey === "categories") {
       dispatch(setCategories([]));
-      dispatch(setFilter({ key: "genres", value: [] }));
+      dispatch(setFilter({ key: "categories", value: [] }));
     }
     if (!sectionKey || sectionKey === "languages") {
       dispatch(setLanguages([]));
@@ -160,7 +146,6 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
     }
   };
 
-  // Close calendar on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -175,20 +160,14 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showCalendar]);
 
-  const formatLocalDate = (date: Date) =>
-    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")}`;
-
   return (
     <>
-      {/* Main Filter Panel */}
       <div className="fixed h-screen inset-0 bg-white z-50 flex flex-col md:hidden">
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <IoClose className="text-2xl cursor-pointer" onClick={onClose} />
           <h2 className="text-lg font-semibold">Filters</h2>
           <button
+            type="button"
             className="text-red-500 font-medium"
             onClick={() => handleClear()}
           >
@@ -197,14 +176,13 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {filterSections.map((section, idx) => (
-            <div key={idx}>
+          {filterSections.map((section) => (
+            <div key={section.key}>
               <h3 className="bg-gray-200 px-3 py-2 font-semibold text-[14px]">
                 {section.title}
-                
               </h3>
               <div>
-                {section.items.map((item, i) => {
+                {section.items.map((item) => {
                   const isSelected =
                     (section.key === "categories" &&
                       selectedCategories.includes(item.label)) ||
@@ -217,15 +195,14 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
 
                   return (
                     <div
-                      key={i}
+                      key={item.label}
                       onClick={() => handleSelect(section.key, item.label)}
                       className={`px-4 py-3 flex justify-between items-center border-b last:border-b-0 cursor-pointer ${
                         isSelected ? "bg-sky-100 text-sky-600 font-medium" : ""
                       }`}
                     >
-                      <span>{item.label?.replace(/_/g, " ")
-                .replace(/\b\w/g, (char) => char.toUpperCase())}</span>
-                      {item.right && item.right}
+                      <span>{formatFilterLabel(item.label)}</span>
+                      {"right" in item && item.right}
                     </div>
                   );
                 })}
@@ -236,6 +213,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
 
         <div className="p-2 border-t border-gray-200">
           <button
+            type="button"
             className="w-full py-2 bg-blue-600 text-white rounded-md font-extrabold"
             onClick={onClose}
           >
@@ -244,7 +222,6 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
         </div>
       </div>
 
-      {/* Fullscreen Calendar Overlay */}
       {showCalendar && (
         <div className="fixed inset-0 z-[60] flex flex-col backdrop-blur-sm">
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -254,6 +231,7 @@ export default function MobileFilters({ onClose }: MobileFiltersProps) {
             />
             <h2 className="text-lg font-semibold">Select Date Range</h2>
             <button
+              type="button"
               className="text-red-500 font-medium"
               onClick={() => setShowCalendar(false)}
             >

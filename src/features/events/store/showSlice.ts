@@ -40,7 +40,8 @@ const showsSlice = createSlice({
       state.loading = action.payload;
     },
     clearSetShows: (state) => {
-      state.data = [];   // 👈 ab yeh allowed hai
+      state.data = [];
+      state.loading = true;
     },
 
   },

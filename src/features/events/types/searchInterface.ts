@@ -5,7 +5,7 @@ interface PriceGroup {
 
 export interface EventSearchFilters {
   cityId?: number;               // optional
-  genres?: string[];             // list of genres
+  categories?: string[];         // selected browse categories (FOOD, SPORTS, …)
   languages?: string[];          // list of languages
   datePresets?: ("TODAY" | "TOMORROW" | "WEEKEND")[]; // predefined options
   venueIds?: number[];           // list of venue IDs

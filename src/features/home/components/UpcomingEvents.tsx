@@ -16,7 +16,7 @@ import type { EventResponseBySearch } from "../../events/types/evnetInterFace";
 const MD_BREAKPOINT = "(min-width: 768px)";
 
 const UPCOMING_EVENTS_FILTERS: EventSearchFilters = {
-  genres: [],
+  categories: [],
   languages: [],
   datePresets: [],
   venueIds: [],

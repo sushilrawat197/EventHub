@@ -1,5 +1,5 @@
 import type { AppDispatch } from "@/app/store/store";
-import { setShows, type ShowResponse } from "../store/showSlice";
+import { setShows, setShowsLoading, type ShowResponse } from "../store/showSlice";
 import {
   listShowsByEventApi,
   listShowsByVenueApi,
@@ -38,6 +38,7 @@ export function listAllShowsByVenue(venueId: string | null) {
 
 export function fetchFilteredShows(eventId: string) {
   return async (dispatch: AppDispatch) => {
+    dispatch(setShowsLoading(true));
     try {
       const allShows = await dispatch(listAllShowsByEvent(eventId));
       const availableRes = await dispatch(checkEventAvailability(eventId));
@@ -53,6 +54,8 @@ export function fetchFilteredShows(eventId: string) {
     } catch (err) {
       console.error("Error fetching filtered shows:", err);
       dispatch(setShows([]));
+    } finally {
+      dispatch(setShowsLoading(false));
     }
   };
 }

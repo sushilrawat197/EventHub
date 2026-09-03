@@ -2,7 +2,7 @@ import EventCard from "./EventCard";
 import { FaFilter } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import MobileFilters from "./MobileFilter";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
 import {
@@ -16,21 +16,21 @@ import {
 import { setFilter } from "../store/filter_Slice";
 import ScrollPagination from "../../../shared/components/common/ScrollPagination";
 import { useEventsSearchInfinite } from "../hooks/useEventsSearch";
+import {
+  CATEGORY_OPTIONS,
+  formatFilterLabel,
+  mapPriceLabelsToGroups,
+} from "../utils/filterOptions";
 
-const categoryOptions: string[] = [
-  "FOOD",
-  "KIDS_EVENT",
-  "SPORTS",
-  "GALA_DINNER",
-  "COMEDY",
-  "SEMINARS",
-  "FESTIVAL",
-  "WORKSHOP",
-  "LIFESTYLE",
-  "OUTDOOR",
-  "INDOOR",
-  "OTHER",
-];
+const categoryOptions = [...CATEGORY_OPTIONS];
+
+function arraysEqual(a: string[], b: string[]) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
 
 export default function EventList() {
   const DEFAULT_VISIBLE_CHIPS = 8;
@@ -51,7 +51,10 @@ export default function EventList() {
     isLoading,
   } = useEventsSearchInfinite(searchFilters);
 
-  const events = data?.pages.flatMap((page) => page.content) ?? [];
+  const events = useMemo(
+    () => data?.pages.flatMap((page) => page.content) ?? [],
+    [data]
+  );
   const hasMore = Boolean(hasNextPage);
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -59,19 +62,46 @@ export default function EventList() {
   const [openFilter, setOpenFilter] = useState(false);
   const [showAllChips, setShowAllChips] = useState(false);
 
+  // URL → UI filter store + API searchFilter (so deep links actually query)
   useEffect(() => {
     const categoriesFromUrl = searchParams.get("categories");
     const languageFromUrl = searchParams.get("languages");
     const datesFromUrl = searchParams.get("dates");
     const priceFromUrl = searchParams.get("prices");
 
-    if (categoriesFromUrl)
-      dispatch(setCategories(categoriesFromUrl.split(",")));
-    if (languageFromUrl) dispatch(setLanguages(languageFromUrl.split(",")));
-    if (datesFromUrl) dispatch(setDates(datesFromUrl.split(",")));
-    if (priceFromUrl) dispatch(setPrices(priceFromUrl.split(",")));
+    if (categoriesFromUrl) {
+      const next = categoriesFromUrl.split(",");
+      if (!arraysEqual(selectedCategories, next)) {
+        dispatch(setCategories(next));
+        dispatch(setFilter({ key: "categories", value: next }));
+      }
+    }
+    if (languageFromUrl) {
+      const next = languageFromUrl.split(",");
+      if (!arraysEqual(selectedLanguage, next)) {
+        dispatch(setLanguages(next));
+        dispatch(setFilter({ key: "languages", value: next }));
+      }
+    }
+    if (datesFromUrl) {
+      const next = datesFromUrl.split(",");
+      if (!arraysEqual(selectedDates, next)) {
+        dispatch(setDates(next));
+        dispatch(setFilter({ key: "datePresets", value: next }));
+      }
+    }
+    if (priceFromUrl) {
+      const next = priceFromUrl.split(",");
+      if (!arraysEqual(selectedPrice, next)) {
+        dispatch(setPrices(next));
+        dispatch(setFilter({ key: "priceGroups", value: mapPriceLabelsToGroups(next) }));
+      }
+    }
+    // Only react to URL changes — selected* compared inside to avoid write loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: hydrate from URL only
   }, [dispatch, searchParams]);
 
+  // UI filter store → URL (single owner; FilterPanel no longer writes URL)
   useEffect(() => {
     const params = new URLSearchParams();
 
@@ -82,104 +112,133 @@ export default function EventList() {
     if (selectedDates.length > 0) params.set("dates", selectedDates.join(","));
     if (selectedPrice.length > 0) params.set("prices", selectedPrice.join(","));
 
-    setSearchParams(params, { replace: true });
+    const next = params.toString();
+    const current = searchParams.toString();
+    if (next !== current) {
+      setSearchParams(params, { replace: true });
+    }
   }, [
     selectedCategories,
     selectedLanguage,
     selectedDates,
     selectedPrice,
+    searchParams,
     setSearchParams,
   ]);
 
-  const handleFilterToggle = (
-    filterKey: "categories" | "languages" | "prices" | "dates",
-    value: string
-  ) => {
-    switch (filterKey) {
-      case "categories": {
-        const updated = selectedCategories.includes(value)
-          ? selectedCategories.filter((c) => c !== value)
-          : [...selectedCategories, value];
+  const handleFilterToggle = useCallback(
+    (
+      filterKey: "categories" | "languages" | "prices" | "dates",
+      value: string
+    ) => {
+      switch (filterKey) {
+        case "categories": {
+          const updated = selectedCategories.includes(value)
+            ? selectedCategories.filter((c) => c !== value)
+            : [...selectedCategories, value];
 
-        dispatch(setCategories(updated));
-        dispatch(setFilter({ key: "genres", value: updated }));
-        break;
-      }
-
-      case "languages": {
-        const updated = selectedLanguage.includes(value)
-          ? selectedLanguage.filter((l) => l !== value)
-          : [...selectedLanguage, value];
-
-        dispatch(setLanguages(updated));
-        dispatch(setFilter({ key: "languages", value: updated }));
-        break;
-      }
-
-      case "prices": {
-        const updated = selectedPrice.includes(value)
-          ? selectedPrice.filter((p) => p !== value)
-          : [...selectedPrice, value];
-
-        const mapped = updated.map((f) => {
-          if (f === "0 - 500") return { min: 0, max: 500 };
-          if (f === "501 - 2000") return { min: 501, max: 2000 };
-          if (f === "Above 2000")
-            return { min: 2001, max: Number.MAX_SAFE_INTEGER };
-          return { min: 0, max: Number.MAX_SAFE_INTEGER };
-        });
-
-        dispatch(setPrices(updated));
-        dispatch(setFilter({ key: "priceGroups", value: mapped }));
-        break;
-      }
-
-      case "dates": {
-        const updated = selectedDates.includes(value)
-          ? selectedDates.filter((d) => d !== value)
-          : [...selectedDates, value];
-
-        if (!updated.includes("Date Range")) {
-          dispatch(setStartDate(null));
-          dispatch(setEndDate(null));
-          dispatch(setFilter({ key: "startDate", value: null }));
-          dispatch(setFilter({ key: "endDate", value: null }));
+          dispatch(setCategories(updated));
+          dispatch(setFilter({ key: "categories", value: updated }));
+          break;
         }
 
-        dispatch(setDates(updated));
-        dispatch(setFilter({ key: "datePresets", value: updated }));
-        break;
+        case "languages": {
+          const updated = selectedLanguage.includes(value)
+            ? selectedLanguage.filter((l) => l !== value)
+            : [...selectedLanguage, value];
+
+          dispatch(setLanguages(updated));
+          dispatch(setFilter({ key: "languages", value: updated }));
+          break;
+        }
+
+        case "prices": {
+          const updated = selectedPrice.includes(value)
+            ? selectedPrice.filter((p) => p !== value)
+            : [...selectedPrice, value];
+
+          dispatch(setPrices(updated));
+          dispatch(
+            setFilter({ key: "priceGroups", value: mapPriceLabelsToGroups(updated) })
+          );
+          break;
+        }
+
+        case "dates": {
+          const updated = selectedDates.includes(value)
+            ? selectedDates.filter((d) => d !== value)
+            : [...selectedDates, value];
+
+          if (!updated.includes("Date Range")) {
+            dispatch(setStartDate(null));
+            dispatch(setEndDate(null));
+            dispatch(setFilter({ key: "startDate", value: null }));
+            dispatch(setFilter({ key: "endDate", value: null }));
+          }
+
+          dispatch(setDates(updated));
+          dispatch(setFilter({ key: "datePresets", value: updated }));
+          break;
+        }
       }
-    }
-  };
+    },
+    [
+      dispatch,
+      selectedCategories,
+      selectedLanguage,
+      selectedPrice,
+      selectedDates,
+    ]
+  );
 
-  const getAllFilterOptions = () => {
-    return Array.from(
-      new Set([
-        ...selectedDates,
-        ...selectedPrice,
-        ...selectedLanguage,
-        ...selectedCategories,
-        ...categoryOptions,
-      ])
-    );
-  };
+  const allFilterOptions = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...selectedDates,
+          ...selectedPrice,
+          ...selectedLanguage,
+          ...selectedCategories,
+          ...categoryOptions,
+        ])
+      ),
+    [selectedDates, selectedPrice, selectedLanguage, selectedCategories]
+  );
 
-  const isFilterSelected = (tag: string): boolean => {
-    return (
-      selectedCategories.includes(tag) ||
-      selectedLanguage.includes(tag) ||
-      selectedDates.includes(tag) ||
-      selectedPrice.includes(tag)
-    );
-  };
+  const isFilterSelected = useCallback(
+    (tag: string): boolean => {
+      return (
+        selectedCategories.includes(tag) ||
+        selectedLanguage.includes(tag) ||
+        selectedDates.includes(tag) ||
+        selectedPrice.includes(tag)
+      );
+    },
+    [selectedCategories, selectedLanguage, selectedDates, selectedPrice]
+  );
 
-  const handleLoadMore = async () => {
+  const handleChipClick = useCallback(
+    (tag: string) => {
+      if (categoryOptions.includes(tag as (typeof categoryOptions)[number])) {
+        handleFilterToggle("categories", tag);
+      }
+      if (selectedLanguage.includes(tag)) handleFilterToggle("languages", tag);
+      else if (selectedPrice.includes(tag)) handleFilterToggle("prices", tag);
+      else if (selectedDates.includes(tag)) handleFilterToggle("dates", tag);
+    },
+    [
+      handleFilterToggle,
+      selectedLanguage,
+      selectedPrice,
+      selectedDates,
+    ]
+  );
+
+  const handleLoadMore = useCallback(async () => {
     if (isFetchingNextPage || !hasMore) return;
     await fetchNextPage();
-  };
+  }, [isFetchingNextPage, hasMore, fetchNextPage]);
 
-  const allFilterOptions = getAllFilterOptions();
   const visibleFilterOptions = showAllChips
     ? allFilterOptions
     : allFilterOptions.slice(0, DEFAULT_VISIBLE_CHIPS);
@@ -190,28 +249,18 @@ export default function EventList() {
       <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-gray-100">
         <div className="py-2 md:py-3">
           <div className="flex flex-wrap gap-1.5 md:gap-2">
-            {visibleFilterOptions.map((tag, i) => (
+            {visibleFilterOptions.map((tag) => (
               <button
-                key={i}
-                onClick={() => {
-                  if (categoryOptions.includes(tag))
-                    handleFilterToggle("categories", tag);
-                  if (selectedLanguage.includes(tag))
-                    handleFilterToggle("languages", tag);
-                  else if (selectedPrice.includes(tag))
-                    handleFilterToggle("prices", tag);
-                  else if (selectedDates.includes(tag))
-                    handleFilterToggle("dates", tag);
-                }}
+                key={tag}
+                type="button"
+                onClick={() => handleChipClick(tag)}
                 className={`px-3 md:px-3 py-1.5 md:py-1.5 rounded-full text-xs md:text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
                   isFilterSelected(tag)
                     ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
                     : "bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md"
                 }`}
               >
-                {tag
-                  ?.replace(/_/g, " ")
-                  .replace(/\b\w/g, (char) => char.toUpperCase())}
+                {formatFilterLabel(tag)}
               </button>
             ))}
             {hasMoreChips && (
@@ -244,6 +293,7 @@ export default function EventList() {
             return (
               <button
                 key={event.eventId}
+                type="button"
                 onClick={() =>
                   navigate(`/events/${slug}/${event.eventId}`, {
                     state: event,
@@ -290,13 +340,17 @@ export default function EventList() {
       <div className="flex justify-between items-center fixed bottom-4 left-4 right-4 md:hidden z-30">
         {!openFilter && (
           <button
+            type="button"
             onClick={() => setOpenFilter(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-2xl shadow-lg shadow-blue-200 transition-all duration-200 hover:scale-105"
           >
             <FaFilter size={20} />
           </button>
         )}
-        <button className="bg-green-600 hover:bg-green-700 text-white p-4 rounded-2xl shadow-lg shadow-green-200 transition-all duration-200 hover:scale-105">
+        <button
+          type="button"
+          className="bg-green-600 hover:bg-green-700 text-white p-4 rounded-2xl shadow-lg shadow-green-200 transition-all duration-200 hover:scale-105"
+        >
           <FaLocationDot size={20} />
         </button>
       </div>

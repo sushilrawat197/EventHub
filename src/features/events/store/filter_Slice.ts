@@ -7,7 +7,8 @@ interface PriceGroup {
 
 export interface EventSearchFilters {
   cityId?: number;
-  genres?: string[];
+  /** Selected browse categories (FOOD, SPORTS, …) — sent as `categories` in search payload */
+  categories?: string[];
   languages?: string[];
   datePresets?: ("TODAY" | "TOMORROW" | "WEEKEND")[];
   venueIds?: number[];
@@ -19,7 +20,7 @@ export interface EventSearchFilters {
 
 const initialState: EventSearchFilters = {
   cityId: undefined,
-  genres: [],
+  categories: [],
   languages: [],
   datePresets: [],
   venueIds: [],

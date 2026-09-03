@@ -72,6 +72,9 @@ function EventDetailsCard({
   const [loading, setLoading] = useState(false);
 
   const shows = useAppSelector((state) => state.shows.data);
+  const showsLoading = useAppSelector((state) => state.shows.loading);
+  const isSoldOut = !showsLoading && shows.length === 0;
+
   // const isLoggedIn = useAppSelector(
   //   (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
   // );
@@ -86,7 +89,7 @@ function EventDetailsCard({
   // ------------------ BOOK HANDLER (NO CHANGE) ------------------
 
   async function bookHandler() {
-    if (loading) return; // ⛔ prevent double click
+    if (loading || isSoldOut || showsLoading) return; // ⛔ prevent double click / empty shows
     // TODO: TEMP EVENT-39 FLOW - remove login gate for special event later.
     // if (Number(eventId) === SPECIAL_EVENT_ID && !isLoggedIn) {
     //   navigate("/login", { state: { from: location.pathname } });
@@ -137,6 +140,7 @@ function EventDetailsCard({
 
         navigate(`${location.pathname}/booking/ticket`);
       } else {
+
         const venueId = currentShow?.venueId;
         if (!venueId) {
           window.alert("Event Expired");
@@ -214,16 +218,20 @@ function EventDetailsCard({
 
           <button
             onClick={bookHandler}
-            disabled={loading}
+            disabled={loading || isSoldOut || showsLoading}
             className={`py-3 px-6 rounded-lg font-bold text-sm shadow-lg transition-all duration-300
                         flex items-center justify-center gap-2
                         ${
-                          loading
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
+                          isSoldOut
+                            ? "bg-red-500 cursor-not-allowed text-white"
+                            : loading || showsLoading
+                              ? "bg-gray-400 cursor-not-allowed text-white"
+                              : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
                         }`}
           >
-            {loading ? (
+            {isSoldOut ? (
+              "Sold out"
+            ) : loading || showsLoading ? (
               <>
                 <svg
                   className="w-4 h-4 animate-spin text-white"

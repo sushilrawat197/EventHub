@@ -6,4 +6,6 @@ export const eventsQueryKeys = {
   searchInfinite: (filters: EventSearchFilters) =>
     ["events", "search", "infinite", filters] as const,
   detail: (eventId: string) => ["events", "detail", eventId] as const,
+  /** Related “You May Also Like” — keyed by category so detail pages share cache. */
+  relatedByCategory: (category: string) => ["events", "related", category] as const,
 };

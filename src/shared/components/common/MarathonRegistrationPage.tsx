@@ -60,7 +60,7 @@ export default function MarathonRegistrationPage() {
           </div>
         </div>
 
-        <button
+         <button
           type="button"
           onClick={handleBack}
           className="group mb-4 inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700"
