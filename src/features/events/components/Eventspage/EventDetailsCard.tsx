@@ -15,6 +15,7 @@ import { setTicketInfo } from "../../../booking/store/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useMemo } from "react";
 import EventsErrorPage from "../EventErrorsd";
+// import VenueDetailsPopup from "./VenueDetailsPopup";
 // TODO: TEMP EVENT-39 FLOW - remove this import and gate check later.
 
 
@@ -41,9 +42,6 @@ function EventDetailsCard({
   price,
   priceNote,
 }: EventDetailsCardProps) {
-  // const [showCard, setShowCard] = useState(false);
-
-  // ------------------ MEMOIZE DETAILS ARRAY ------------------
   const details = useMemo(() => {
     const langText = languages?.filter(Boolean).join(", ");
     return [
@@ -60,9 +58,8 @@ function EventDetailsCard({
         ? [{ icon: <MdOutlineTranslate />, text: langText }]
         : []),
       ...(category ? [{ icon: <FaUser />, text: category }] : []),
-      ...(venue ? [{ icon: <FaMapMarkerAlt />, text: venue }] : []),
     ];
-  }, [date, time, duration, ageLimit, languages, category, venue]);
+  }, [date, time, duration, ageLimit, languages, category]);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,14 +67,11 @@ function EventDetailsCard({
   const { eventId } = useParams();
 
   const [loading, setLoading] = useState(false);
+  // const [venuePopupOpen, setVenuePopupOpen] = useState(false);
 
   const shows = useAppSelector((state) => state.shows.data);
   const showsLoading = useAppSelector((state) => state.shows.loading);
   const isSoldOut = !showsLoading && shows.length === 0;
-
-  // const isLoggedIn = useAppSelector(
-  //   (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
-  // );
 
   // ------------------ MEMOIZED UNIQUE SHOWS ------------------
   const uniqueShows = useMemo(() => {
@@ -86,15 +80,23 @@ function EventDetailsCard({
     );
   }, [shows]);
 
-  // ------------------ BOOK HANDLER (NO CHANGE) ------------------
+  // const uniqueVenues = useMemo(
+  //   () =>
+  //     Array.from(
+  //       new Map(
+  //         shows.map((s) => [
+  //           s.venueId,
+  //           { venueId: s.venueId, venueName: s.venueName },
+  //         ])
+  //       ).values()
+  //     ),
+  //   [shows]
+  // );
+
+  // const canViewVenue = uniqueVenues.length > 0;
 
   async function bookHandler() {
-    if (loading || isSoldOut || showsLoading) return; // ⛔ prevent double click / empty shows
-    // TODO: TEMP EVENT-39 FLOW - remove login gate for special event later.
-    // if (Number(eventId) === SPECIAL_EVENT_ID && !isLoggedIn) {
-    //   navigate("/login", { state: { from: location.pathname } });
-    //   return;
-    // }
+    if (loading || isSoldOut || showsLoading) return;
 
     try {
       setLoading(true);
@@ -114,7 +116,6 @@ function EventDetailsCard({
         return;
       }
 
-      // One show case
       const currentShow = uniqueShows[0];
       const showSchedules = shows.filter(
         (s) =>
@@ -140,7 +141,6 @@ function EventDetailsCard({
 
         navigate(`${location.pathname}/booking/ticket`);
       } else {
-
         const venueId = currentShow?.venueId;
         if (!venueId) {
           window.alert("Event Expired");
@@ -154,59 +154,60 @@ function EventDetailsCard({
         navigate(`${location.pathname}/booking/datetime`);
       }
     } finally {
-      // 🔓 ensure loading resets in all cases
       setLoading(false);
     }
   }
 
-  // ------------------ MEMOIZED SKELETON ------------------
-  // const skeleton = useMemo(() => {
-  //   return (
-  //     <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden animate-pulse h-96 lg:h-[28rem] flex flex-col">
-  //       <div className="p-3 space-y-2 flex-1 flex flex-col">
-  //         <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-  //         <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-  //         <div className="h-3 bg-gray-200 rounded w-1/4"></div>
-  //         <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-  //         <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-  //         <div className="h-6 bg-gray-200 rounded w-full mt-2"></div>
-  //       </div>
-  //     </div>
-  //   );
-  // }, []);
-
-  // useEffect(() => {
-  //   if (shows?.length > 0) {
-  //     setShowCard(true);
-  //   }
-  // }, [shows]);
-
-  //   if (!showCard) return skeleton;
-
   return (
-    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden h-96 lg:h-[28rem] flex flex-col">
+    <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col">
       <EventsErrorPage />
 
-      <div className="pt-2 pb-3 px-3 space-y-2 flex-1 flex flex-col">
-        <div className="space-y-1.5 flex-1">
+      <div className="pt-2 pb-3 px-3 space-y-2 flex flex-col">
+        <div className="space-y-1.5">
           {details.map((item, idx) => (
             <div
               key={idx}
               className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                 <span className="text-blue-600 text-sm">{item.icon}</span>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-900">
                   {item.text}
                 </p>
               </div>
             </div>
           ))}
+
+          {venue && (
+            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+              <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+                <span className="text-blue-600 text-sm">
+                  <FaMapMarkerAlt />
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-900 truncate">
+                  {venue}
+                </p>
+                {/* TODO: re-enable View venue details
+                {canViewVenue ? (
+                  <button
+                    type="button"
+                    onClick={() => setVenuePopupOpen(true)}
+                    className="mt-0.5 text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                  >
+                    View venue details
+                  </button>
+                ) : null}
+                */}
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0 pt-0.5">
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2 border border-green-100 flex-1">
             <div className="text-center">
               <p className="text-lg font-bold text-green-600">
@@ -261,53 +262,18 @@ function EventDetailsCard({
               </>
             )}
           </button>
-          
-          {/* <button
-            onClick={bookHandler}
-            disabled={loading}
-            className={`py-3 px-6 rounded-lg font-bold text-sm shadow-lg transition-all duration-300
-                        flex items-center justify-center gap-2
-                        ${
-                          loading
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 text-white"
-                        }`}
-          >
-            {loading ? (
-              <>
-                <svg
-                  className="w-4 h-4 animate-spin text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                  />
-                </svg>
-                Processing…
-              </>
-            ) : (
-              <>
-                <LuTickets className="text-sm" />
-                Book Now
-              </>
-            )}
-          </button> */}
         </div>
       </div>
+
+      {/* TODO: re-enable venue details popup
+      <VenueDetailsPopup
+        open={venuePopupOpen}
+        onOpenChange={setVenuePopupOpen}
+        venues={uniqueVenues}
+      />
+      */}
     </div>
   );
 }
 
-// ⭐ Performance Boost: prevents re-renders unless props change
 export default React.memo(EventDetailsCard);

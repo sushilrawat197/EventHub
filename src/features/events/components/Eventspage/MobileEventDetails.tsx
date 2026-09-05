@@ -13,6 +13,7 @@ import { checkEventAvailability } from "../../services/events.service";
 import { setTicketInfo } from "../../../booking/store/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useEffect, useState } from "react";
+// import VenueDetailsPopup from "./VenueDetailsPopup";
 
 
 interface EventDetailsCardProps {
@@ -42,6 +43,7 @@ export default function MobileEventDetailsCard({
 }: EventDetailsCardProps) {
   const [showCard, setShowCard] = useState(false);
   const [loading, setLoading] = useState(false);
+  // const [venuePopupOpen, setVenuePopupOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
@@ -50,17 +52,25 @@ export default function MobileEventDetailsCard({
   const shows = useAppSelector((state) => state.shows.data);
   const showsLoading = useAppSelector((state) => state.shows.loading);
   const isSoldOut = !showsLoading && shows.length === 0;
-  // const isLoggedIn = useAppSelector(
-  //   (state) => Boolean(state.auth.accessToken) || Boolean(state.user.user?.userId)
+
+  // const uniqueVenues = useMemo(
+  //   () =>
+  //     Array.from(
+  //       new Map(
+  //         shows.map((s) => [
+  //           s.venueId,
+  //           { venueId: s.venueId, venueName: s.venueName },
+  //         ])
+  //       ).values()
+  //     ),
+  //   [shows]
   // );
+  // const canViewVenue = uniqueVenues.length > 0;
 
   useEffect(() => {
     setShowCard(false);
   }, [eventId]);
 
-  // ============================================
-  // ✅ Show card only when real data is available
-  // ============================================
   useEffect(() => {
     const hasListPreview =
       Boolean((date ?? "").trim()) && Boolean((venue ?? "").trim());
@@ -70,7 +80,6 @@ export default function MobileEventDetailsCard({
     }
   }, [date, time, venue, shows]);
 
-  // Skeleton Loader
   if (!showCard) {
     return (
       <div className="animate-pulse bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden p-6 space-y-4">
@@ -82,9 +91,6 @@ export default function MobileEventDetailsCard({
     );
   }
 
-  // ============================================
-  // Details Array (unchanged)
-  // ============================================
   const langText = languages?.filter(Boolean).join(", ");
   const details = [
     ...(date ? [{ icon: <FaCalendarAlt />, text: date }] : []),
@@ -100,18 +106,10 @@ export default function MobileEventDetailsCard({
       ? [{ icon: <MdOutlineTranslate />, text: langText }]
       : []),
     ...(category ? [{ icon: <FaUser />, text: category }] : []),
-    ...(venue ? [{ icon: <FaMapMarkerAlt />, text: venue }] : []),
   ];
 
-  // ============================================
-  // Booking Logic (unchanged)
-  // ============================================
   const bookHandler = async () => {
     if (loading || isSoldOut || showsLoading || !shows?.length) return;
-    // if (Number(eventId) === SPECIAL_EVENT_ID && !isLoggedIn) {
-    //   navigate("/login", { state: { from: location.pathname } });
-    //   return;
-    // }
     try {
       setLoading(true);
       if (eventId) {
@@ -178,7 +176,7 @@ export default function MobileEventDetailsCard({
             key={idx}
             className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center">
+            <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
               <span className="text-blue-600 text-sm">{item.icon}</span>
             </div>
             <span className="text-sm font-semibold text-gray-900">
@@ -186,6 +184,30 @@ export default function MobileEventDetailsCard({
             </span>
           </div>
         ))}
+
+        {venue && (
+          <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+            <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+              <span className="text-blue-600 text-sm">
+                <FaMapMarkerAlt />
+              </span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-gray-900">{venue}</p>
+              {/* TODO: re-enable View venue details
+              {canViewVenue ? (
+                <button
+                  type="button"
+                  onClick={() => setVenuePopupOpen(true)}
+                  className="mt-0.5 text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                >
+                  View venue details
+                </button>
+              ) : null}
+              */}
+            </div>
+          </div>
+        )}
       </div>
 
       {bookingAlert && (
@@ -248,6 +270,14 @@ export default function MobileEventDetailsCard({
           )}
         </button>
       </div>
+
+      {/* TODO: re-enable venue details popup
+      <VenueDetailsPopup
+        open={venuePopupOpen}
+        onOpenChange={setVenuePopupOpen}
+        venues={uniqueVenues}
+      />
+      */}
     </div>
   );
 }
