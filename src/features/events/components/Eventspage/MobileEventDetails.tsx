@@ -12,8 +12,8 @@ import { useAppSelector, useAppDispatch } from "../../../../app/store/hooks";
 import { checkEventAvailability } from "../../services/events.service";
 import { setTicketInfo } from "../../../booking/store/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../store/eventSlice";
-import { useEffect, useState } from "react";
-// import VenueDetailsPopup from "./VenueDetailsPopup";
+import { useEffect, useMemo, useState } from "react";
+import VenueDetailsPopup from "./VenueDetailsPopup";
 
 
 interface EventDetailsCardProps {
@@ -43,7 +43,7 @@ export default function MobileEventDetailsCard({
 }: EventDetailsCardProps) {
   const [showCard, setShowCard] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [venuePopupOpen, setVenuePopupOpen] = useState(false);
+  const [venuePopupOpen, setVenuePopupOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
@@ -53,19 +53,19 @@ export default function MobileEventDetailsCard({
   const showsLoading = useAppSelector((state) => state.shows.loading);
   const isSoldOut = !showsLoading && shows.length === 0;
 
-  // const uniqueVenues = useMemo(
-  //   () =>
-  //     Array.from(
-  //       new Map(
-  //         shows.map((s) => [
-  //           s.venueId,
-  //           { venueId: s.venueId, venueName: s.venueName },
-  //         ])
-  //       ).values()
-  //     ),
-  //   [shows]
-  // );
-  // const canViewVenue = uniqueVenues.length > 0;
+  const uniqueVenues = useMemo(
+    () =>
+      Array.from(
+        new Map(
+          shows.map((s) => [
+            s.venueId,
+            { venueId: s.venueId, venueName: s.venueName },
+          ])
+        ).values()
+      ),
+    [shows]
+  );
+  const canViewVenue = uniqueVenues.length > 0;
 
   useEffect(() => {
     setShowCard(false);
@@ -185,7 +185,7 @@ export default function MobileEventDetailsCard({
           </div>
         ))}
 
-        {venue && (
+        {(venue || canViewVenue) && (
           <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
             <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
               <span className="text-blue-600 text-sm">
@@ -193,8 +193,9 @@ export default function MobileEventDetailsCard({
               </span>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-gray-900">{venue}</p>
-              {/* TODO: re-enable View venue details
+              {venue ? (
+                <p className="text-sm font-semibold text-gray-900">{venue}</p>
+              ) : null}
               {canViewVenue ? (
                 <button
                   type="button"
@@ -204,7 +205,6 @@ export default function MobileEventDetailsCard({
                   View venue details
                 </button>
               ) : null}
-              */}
             </div>
           </div>
         )}
@@ -271,13 +271,11 @@ export default function MobileEventDetailsCard({
         </button>
       </div>
 
-      {/* TODO: re-enable venue details popup
       <VenueDetailsPopup
         open={venuePopupOpen}
         onOpenChange={setVenuePopupOpen}
         venues={uniqueVenues}
       />
-      */}
     </div>
   );
 }

@@ -15,7 +15,7 @@ import { setTicketInfo } from "../../../booking/store/ticketInfoSlice";
 import { setEventsErrorMsg } from "../../store/eventSlice";
 import { useMemo } from "react";
 import EventsErrorPage from "../EventErrorsd";
-// import VenueDetailsPopup from "./VenueDetailsPopup";
+import VenueDetailsPopup from "./VenueDetailsPopup";
 // TODO: TEMP EVENT-39 FLOW - remove this import and gate check later.
 
 
@@ -67,7 +67,7 @@ function EventDetailsCard({
   const { eventId } = useParams();
 
   const [loading, setLoading] = useState(false);
-  // const [venuePopupOpen, setVenuePopupOpen] = useState(false);
+  const [venuePopupOpen, setVenuePopupOpen] = useState(false);
 
   const shows = useAppSelector((state) => state.shows.data);
   const showsLoading = useAppSelector((state) => state.shows.loading);
@@ -80,20 +80,20 @@ function EventDetailsCard({
     );
   }, [shows]);
 
-  // const uniqueVenues = useMemo(
-  //   () =>
-  //     Array.from(
-  //       new Map(
-  //         shows.map((s) => [
-  //           s.venueId,
-  //           { venueId: s.venueId, venueName: s.venueName },
-  //         ])
-  //       ).values()
-  //     ),
-  //   [shows]
-  // );
+  const uniqueVenues = useMemo(
+    () =>
+      Array.from(
+        new Map(
+          shows.map((s) => [
+            s.venueId,
+            { venueId: s.venueId, venueName: s.venueName },
+          ])
+        ).values()
+      ),
+    [shows]
+  );
 
-  // const canViewVenue = uniqueVenues.length > 0;
+  const canViewVenue = uniqueVenues.length > 0;
 
   async function bookHandler() {
     if (loading || isSoldOut || showsLoading) return;
@@ -180,7 +180,7 @@ function EventDetailsCard({
             </div>
           ))}
 
-          {venue && (
+          {(venue || canViewVenue) && (
             <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
               <div className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                 <span className="text-blue-600 text-sm">
@@ -188,10 +188,11 @@ function EventDetailsCard({
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">
-                  {venue}
-                </p>
-                {/* TODO: re-enable View venue details
+                {venue ? (
+                  <p className="text-sm font-semibold text-gray-900 truncate">
+                    {venue}
+                  </p>
+                ) : null}
                 {canViewVenue ? (
                   <button
                     type="button"
@@ -201,7 +202,6 @@ function EventDetailsCard({
                     View venue details
                   </button>
                 ) : null}
-                */}
               </div>
             </div>
           )}
@@ -265,13 +265,11 @@ function EventDetailsCard({
         </div>
       </div>
 
-      {/* TODO: re-enable venue details popup
       <VenueDetailsPopup
         open={venuePopupOpen}
         onOpenChange={setVenuePopupOpen}
         venues={uniqueVenues}
       />
-      */}
     </div>
   );
 }
