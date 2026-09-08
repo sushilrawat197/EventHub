@@ -90,7 +90,7 @@ const VenueSelection = () => {
           return (
             <div
               key={idx}
-                className={`group bg-white rounded-3xl shadow-xl border-2 transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
+                className={`group bg-white rounded-3xl shadow-xl border-2 transition-all duration-300 hover:shadow-2xl hover:scale-[1.01] ${
                 venue
                     ? "border-gray-200 hover:border-blue-300 cursor-pointer"
                     : "border-gray-300 bg-gray-50 opacity-60"
@@ -126,7 +126,7 @@ const VenueSelection = () => {
                       {venue ? (
                         <button
                           onClick={() => clickHandler(venue.venueId)}
-                          className="group/btn bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-2 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                          className="group/btn bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-2 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 flex items-center gap-2"
                         >
                           <span>Select Venue</span>
                           <svg className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,6 +251,42 @@ const VenueSelection = () => {
                           )}
                         </div>
                       </div>
+
+                      {details?.venueId === venue.venueId &&
+                        Number.isFinite(details.latitude) &&
+                        Number.isFinite(details.longitude) &&
+                        !(details.latitude === 0 && details.longitude === 0) && (
+                          <div className="mt-4 pt-3 border-t border-gray-200">
+                            <a
+                              href={`https://www.google.com/maps?q=${details.latitude},${details.longitude}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:from-blue-700 hover:to-blue-800 hover:shadow-lg"
+                            >
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              View on Map
+                            </a>
+                          </div>
+                        )}
                     </div>
                   </div>
                 )}
