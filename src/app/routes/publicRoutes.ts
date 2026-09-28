@@ -3,7 +3,12 @@
  * Used to avoid redirecting guests to /login after a failed token refresh.
  */
 export function isPublicAppPath(pathname: string): boolean {
-  if (pathname === "/" || pathname === "/events") return true;
+  if (pathname === "/" || pathname === "/events" || pathname === "/packages") {
+    return true;
+  }
+
+  if (/^\/packages\/[^/]+\/\d+(\/review)?\/?$/.test(pathname)) return true;
+  if (/^\/packages\/booking\/\d+\/(payment|confirmed)\/?$/.test(pathname)) return true;
 
   if (/^\/events\/[^/]+\/\d+\/?$/.test(pathname)) return true;
 

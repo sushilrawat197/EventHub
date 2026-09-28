@@ -24,6 +24,7 @@ const Navbar: React.FC = () => {
 
   const menuRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   const cities = useAppSelector((state) => state?.cities.data || []);
 
@@ -72,6 +73,19 @@ const Navbar: React.FC = () => {
     dispatch(setFilter({ key: "eventName", value: "" }));
   }, [navigate, dispatch]);
 
+  useEffect(() => {
+    const node = navRef.current;
+    if (!node) return;
+    const apply = () => {
+      const height = Math.ceil(node.getBoundingClientRect().height);
+      document.documentElement.style.setProperty("--site-header-height", `${height}px`);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(node, { box: "border-box" });
+    return () => observer.disconnect();
+  }, []);
+
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -83,7 +97,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-blue-600 via-blue-900 to-blue-600 fixed top-0 left-0 w-full z-50 shadow-lg backdrop-blur-sm">
+      <nav ref={navRef} className="bg-gradient-to-r from-blue-600 via-blue-900 to-blue-600 fixed top-0 left-0 w-full z-50 shadow-lg backdrop-blur-sm">
         <div className="flex flex-col mx-auto">
           <div className="container mx-auto flex items-center justify-between px-2 py-2">
             <div className="flex items-center gap-2 lg:gap-6">
@@ -287,6 +301,19 @@ const Navbar: React.FC = () => {
                   }
                 >
                   Browse Events
+                </NavLink>
+                <NavLink
+                  to={"/packages"}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `text-lg transition-all duration-200 px-4 py-3 rounded-xl ${
+                      isActive
+                        ? "text-blue-600 font-semibold bg-blue-50"
+                        : "text-gray-700 hover:bg-gray-50"
+                    }`
+                  }
+                >
+                  Packages
                 </NavLink>
               </div>
 

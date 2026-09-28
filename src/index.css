@@ -237,3 +237,36 @@
   scrollbar-width: thin;
   scrollbar-color: #9ca3af #e5e7eb;
 }
+
+/* Package details: print only the page itself (hides site navbar, footer, popups). */
+@media print {
+  body:has(.package-detail-page) *:not(:has(.package-detail-page)):not(.package-detail-page):not(.package-detail-page *) {
+    display: none !important;
+  }
+  body:has(.package-detail-page) :has(.package-detail-page) {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .package-detail-page {
+    background: #fff !important;
+    color: #0f172a !important;
+  }
+  .package-detail-page a[href^="#"] {
+    text-decoration: none;
+  }
+}
+
+@keyframes package-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.package-fade-in {
+  animation: package-fade-in 0.22s ease-out;
+}

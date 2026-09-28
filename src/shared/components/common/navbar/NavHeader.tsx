@@ -5,6 +5,7 @@ export default function NavHeader() {
   const navItems = [
     { label: "Home", path: "/" },
     { label: "Browse Events", path: "/events" },
+    { label: "Packages", path: "/packages" },
     { label: "Marathon Event", path: `/events/marathon-event/${SPECIAL_EVENT_ID} ` }
   ];
 

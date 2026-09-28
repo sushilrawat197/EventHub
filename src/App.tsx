@@ -18,6 +18,19 @@ import {
 import { useAppDispatch } from "./app/store/hooks";
 import { useEffect } from "react";
 const Layout = lazy(() => import("./features/events/pages/Layout"));
+const PackagesPage = lazy(() => import("./features/packages/pages/PackagesPage"));
+const PackageDetailsPage = lazy(
+  () => import("./features/packages/pages/PackageDetailsPage")
+);
+const PackageReviewPage = lazy(
+  () => import("./features/packages/pages/PackageReviewPage")
+);
+const PackagePaymentPage = lazy(
+  () => import("./features/packages/pages/PackagePaymentPage")
+);
+const PackageBookingConfirmedPage = lazy(
+  () => import("./features/packages/pages/PackageBookingConfirmedPage")
+);
 
 const Layouteventspage = lazy(() => import("./features/events/pages/Layouteventspage"));
 const HelpAndSupport = lazy(() => import("./features/profile/pages/HelpAndSupport"));
@@ -182,6 +195,23 @@ function App() {
           />
 
           <Route path="/events" element={withSuspense(<Layout />)} />
+          <Route path="/packages" element={withSuspense(<PackagesPage />)} />
+          <Route
+            path="/packages/:slug/:packageId"
+            element={withSuspense(<PackageDetailsPage />)}
+          />
+          <Route
+            path="/packages/:slug/:packageId/review"
+            element={withSuspense(<PackageReviewPage />)}
+          />
+          <Route
+            path="/packages/booking/:bookingId/payment"
+            element={withSuspense(<PackagePaymentPage />)}
+          />
+          <Route
+            path="/packages/booking/:bookingId/confirmed"
+            element={withSuspense(<PackageBookingConfirmedPage />)}
+          />
 
           <Route
             path="/my-profile/edit-profile"

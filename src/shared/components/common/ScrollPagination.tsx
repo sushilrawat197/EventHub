@@ -4,9 +4,19 @@ interface ScrollPaginationProps {
   onLoadMore: () => void;
   hasMore: boolean;
   loading: boolean;
+  endMessage?: string;
+  loadingMessage?: string;
+  idleMessage?: string;
 }
 
-export default function ScrollPagination({ onLoadMore, hasMore, loading }: ScrollPaginationProps) {
+export default function ScrollPagination({
+  onLoadMore,
+  hasMore,
+  loading,
+  endMessage = "No more events to load",
+  loadingMessage = "Loading more events...",
+  idleMessage = "Scroll down to load more events",
+}: ScrollPaginationProps) {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const observerRef = useRef<HTMLDivElement>(null);
 
@@ -44,7 +54,7 @@ export default function ScrollPagination({ onLoadMore, hasMore, loading }: Scrol
   if (!hasMore) {
     return (
       <div className="text-center py-8 text-gray-500">
-        <p>No more events to load</p>
+        <p>{endMessage}</p>
       </div>
     );
   }
@@ -54,11 +64,11 @@ export default function ScrollPagination({ onLoadMore, hasMore, loading }: Scrol
       {loading ? (
         <div className="flex justify-center items-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-2 text-gray-600">Loading more events...</span>
+          <span className="ml-2 text-gray-600">{loadingMessage}</span>
         </div>
       ) : (
         <div className="text-center text-gray-400">
-          <p>Scroll down to load more events</p>
+          <p>{idleMessage}</p>
         </div>
       )}
     </div>
