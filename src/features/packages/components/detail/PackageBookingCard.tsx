@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { PackageDetail } from "../../types/packageDetail";
 import { formatAgeRange, friendlyLabel, plural, type DepartureView } from "../../utils/packageDetailFormat";
 import { ageChoices, MAX_PER_TYPE, type TravellerOption } from "../../utils/packageReservation";
 import { Badge } from "./primitives";
@@ -35,7 +34,6 @@ export function RefundBadge({ refundability }: { refundability?: string | null }
 
 interface BookingProps {
   anchorId?: string;
-  pkg: PackageDetail;
   departures: DepartureView[];
   selectedKey?: string;
   error?: string;
@@ -75,7 +73,6 @@ function StepButton({
 
 export default function PackageBookingCard({
   anchorId,
-  pkg,
   departures,
   selectedKey,
   error,
@@ -95,18 +92,16 @@ export default function PackageBookingCard({
     .filter((option) => option.type !== "INFANT")
     .reduce((sum, option) => sum + (counts[option.type] ?? 0), 0);
   const guests = options.reduce((sum, option) => sum + (counts[option.type] ?? 0), 0);
-  const refundLabel = friendlyLabel(pkg.paymentTerms?.refundability);
 
   return (
     <aside
       id={anchorId}
-      className="scroll-mt-40 flex w-full flex-col gap-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.08)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-none print:hidden"
+      className="scroll-mt-40 flex w-full flex-col gap-6 rounded-2xl border border-blue-200 bg-white p-5 shadow-[0_12px_32px_rgba(37,99,235,0.12)] ring-1 ring-blue-600/10 dark:border-blue-500/30 dark:bg-slate-900 dark:shadow-none dark:ring-blue-400/20 print:hidden"
     >
       <header className="flex items-center justify-between gap-3 border-b border-neutral-100 pb-4 dark:border-slate-800">
         <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
           Book this package
         </span>
-        {refundLabel ? <RefundBadge refundability={pkg.paymentTerms?.refundability} /> : null}
       </header>
 
       <div className="flex flex-col gap-6">
@@ -163,12 +158,12 @@ export default function PackageBookingCard({
 
         {/* Travelers Counter Section */}
         {options.length ? (
-          <section className="space-y-4 rounded-xl border border-neutral-200/80 bg-neutral-50/70 p-4 dark:border-slate-800 dark:bg-slate-800/40">
+          <section className="space-y-4 rounded-xl border border-blue-100 bg-blue-50/80 p-4 dark:border-blue-500/20 dark:bg-blue-500/10">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-slate-300">
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-200">
                 Travelers & Guests
               </span>
-              <span className="flex items-center gap-1.5 text-xs font-semibold text-neutral-600 dark:text-slate-400">
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-300">
                 <Users className="size-3.5" /> {guests}
               </span>
             </div>
@@ -183,7 +178,7 @@ export default function PackageBookingCard({
               return (
                 <article
                   key={option.type}
-                  className={`space-y-3 ${index > 0 ? "border-t border-neutral-200/60 pt-3.5 dark:border-slate-700/60" : ""}`}
+                  className={`space-y-3 ${index > 0 ? "border-t border-blue-100 pt-3.5 dark:border-blue-500/20" : ""}`}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div>

@@ -31,11 +31,13 @@ export default function ReservationSummary({
   coverImage,
   pickupLabel,
   paid = false,
+  notice,
 }: {
   reservation: PackageReservationResponse;
   coverImage?: string;
   pickupLabel?: string;
   paid?: boolean;
+  notice?: ReactNode;
 }) {
   const { pricing, payment, departure } = reservation;
   const money = (amount: number | null | undefined) => formatMoney(amount ?? 0, pricing.currency);
@@ -44,70 +46,64 @@ export default function ReservationSummary({
   const end = formatDate(departure.returnDate);
 
   return (
-    <aside className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)] dark:border-slate-800 dark:bg-slate-900">
+    <aside className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_40px_-24px_rgba(15,23,42,0.35)] dark:border-slate-800 dark:bg-slate-900">
       <div className="flex gap-4 border-b border-slate-100 p-5 dark:border-slate-800">
-        <SafeImage
-          src={coverImage}
-          alt=""
-          className="size-16 shrink-0 rounded-2xl object-cover"
-          iconClassName="size-5"
-        />
+        <SafeImage src={coverImage} alt="" className="size-16 shrink-0 rounded-xl object-cover" iconClassName="size-5" />
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            {reservation.package.packageCode}
-          </p>
-          <h2 className="mt-0.5 line-clamp-2 text-base font-bold text-slate-900 dark:text-white">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">Your booking</p>
+          <h2 className="mt-1 line-clamp-2 text-lg font-semibold tracking-tight text-slate-950 dark:text-white">
             {reservation.package.packageName.trim()}
           </h2>
         </div>
       </div>
 
       <div className="space-y-5 p-5 text-sm">
-        <div className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-3 dark:bg-slate-800/60">
+        {notice}
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3.5 py-3 dark:bg-slate-800/70">
           <div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Booking reference</p>
-            <p className="font-mono text-base font-bold text-slate-900 dark:text-white">{reservation.bookingRef}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Booking reference</p>
+            <p className="mt-0.5 font-mono text-sm font-semibold tracking-wide text-slate-950 dark:text-white">{reservation.bookingRef}</p>
           </div>
           <Badge tone={paid ? "green" : "amber"}>{paid ? "Paid" : (friendlyLabel(reservation.status) ?? "Pending")}</Badge>
         </div>
 
-        <dl className="space-y-3">
+        <dl className="space-y-3 text-slate-600 dark:text-slate-300">
           {start ? (
-            <Row label="Departure" icon={<CalendarDays className="size-4" aria-hidden />}>
+            <Row label="Departure" icon={<CalendarDays className="size-4 text-blue-600" aria-hidden />}>
               {start}
               {end && end !== start ? ` → ${end}` : ""}
             </Row>
           ) : null}
           {pickupLabel ? (
-            <Row label="Pickup" icon={<MapPin className="size-4" aria-hidden />}>
+            <Row label="Pickup" icon={<MapPin className="size-4 text-emerald-600" aria-hidden />}>
               {pickupLabel}
             </Row>
           ) : null}
-          <Row label="Travellers" icon={<Users className="size-4" aria-hidden />}>
+          <Row label="Travellers" icon={<Users className="size-4 text-slate-400" aria-hidden />}>
             {travellersText(reservation.travellers)}
           </Row>
         </dl>
 
-        <dl className="space-y-2 border-t border-slate-100 pt-4 dark:border-slate-800">
+        <dl className="space-y-2 border-t border-slate-100 pt-4 text-slate-600 dark:border-slate-800 dark:text-slate-300">
           <Row label="Package">{money(pricing.packageAmount)}</Row>
           {pricing.activityAmount > 0 ? <Row label="Activities">{money(pricing.activityAmount)}</Row> : null}
           {pricing.taxAmount > 0 ? <Row label="Taxes">{money(pricing.taxAmount)}</Row> : null}
           {pricing.feeAmount > 0 ? <Row label="Fees">{money(pricing.feeAmount)}</Row> : null}
-          <div className="flex justify-between gap-4 pt-1">
+          <div className="flex items-baseline justify-between gap-4 pt-2">
             <dt className="font-semibold text-slate-900 dark:text-white">Total</dt>
-            <dd className="text-base font-extrabold text-slate-900 dark:text-white">{money(pricing.totalAmount)}</dd>
+            <dd className="text-base font-semibold text-slate-950 dark:text-white">{money(pricing.totalAmount)}</dd>
           </div>
         </dl>
 
-        <div className="rounded-2xl border border-blue-100 bg-blue-50/70 p-4 dark:border-blue-500/20 dark:bg-blue-500/10">
-          <div className="flex items-baseline justify-between gap-4">
-            <p className="font-semibold text-blue-900 dark:text-blue-100">
+        <div className="rounded-xl border border-blue-100 bg-blue-50/80 px-4 py-3.5 dark:border-blue-500/20 dark:bg-blue-500/10">
+          <div className="flex items-end justify-between gap-4">
+            <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
               {paid ? "Amount paid" : isDeposit ? "Deposit due now" : "Amount due now"}
             </p>
-            <p className="text-xl font-extrabold text-blue-700 dark:text-blue-300">{money(payment.amountDueNow)}</p>
+            <p className="text-2xl font-semibold tracking-tight text-blue-700 dark:text-blue-200">{money(payment.amountDueNow)}</p>
           </div>
           {isDeposit ? (
-            <p className="mt-1.5 text-xs text-blue-900/70 dark:text-blue-100/70">
+            <p className="mt-1 text-xs text-blue-800/80 dark:text-blue-100/70">
               Remaining {money(payment.balanceAmount)}
               {payment.balanceDueDate ? ` due by ${formatDate(payment.balanceDueDate)}` : ""}.
             </p>

@@ -142,7 +142,6 @@ function PackageDetailsView({ pkg }: { pkg: PackageDetail }) {
   const bookingCard = (anchorId?: string) => (
     <PackageBookingCard
       anchorId={anchorId}
-      pkg={pkg}
       departures={departures}
       selectedKey={selectedKey}
       error={departureError}

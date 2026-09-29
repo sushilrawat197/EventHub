@@ -12,7 +12,10 @@ interface PaymentPayload {
 
 export interface CardInitiateResult {
   iframeHtml: string;
-  paymentId: number;
+  /** Package card initiate returns this id. */
+  packagePaymentId?: number;
+  /** Event card initiate uses this name. Kept so either response can open the iframe. */
+  paymentId?: number;
   extTransactionId: string;
 }
 

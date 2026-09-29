@@ -1,20 +1,10 @@
 import { useState, type ReactNode } from "react";
-import { CalendarClock, ChevronDown, CircleDollarSign, FileText, Info, Receipt, Wallet } from "lucide-react";
+import { CalendarClock, ChevronDown, FileText, Info, Receipt, Wallet, type LucideIcon } from "lucide-react";
 import type { PackageCancellationPolicy, PackageCancellationRule, PackagePaymentTerms } from "../../types/packageDetail";
 import { clean, formatDate, formatMoney, friendlyLabel, plural } from "../../utils/packageDetailFormat";
 import { paymentIcon } from "../../utils/packageDetailIcons";
 import { RefundBadge } from "./PackageBookingCard";
 import { Badge, DetailSection } from "./primitives";
-
-function TermRow({ label, children }: { label: string; children?: ReactNode }) {
-  if (children == null || children === "" || children === false) return null;
-  return (
-    <div className="flex flex-col gap-1 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-      <dt className="text-sm text-slate-500 dark:text-slate-400">{label}</dt>
-      <dd className="text-sm font-semibold text-slate-900 sm:text-right dark:text-slate-100">{children}</dd>
-    </div>
-  );
-}
 
 function depositText(terms: PackagePaymentTerms): string | undefined {
   const type = terms.depositType?.toUpperCase();
@@ -31,43 +21,53 @@ function PaymentTerms({ terms }: { terms: PackagePaymentTerms }) {
   const initial = terms.initialPaymentType?.toUpperCase() === "NONE" ? undefined : friendlyLabel(terms.initialPaymentType);
   const balanceDue = formatDate(terms.balanceDueDate) ?? friendlyLabel(terms.balanceDueAt);
   const instructions = clean(terms.paymentInstructions);
+  const facts = [
+    { label: "Deposit", value: depositText(terms) },
+    { label: "Initial payment", value: initial },
+    { label: "Balance due", value: balanceDue },
+    { label: "Payment deadline", value: formatDate(terms.paymentDeadline) ?? clean(terms.paymentDeadline) },
+  ].filter((fact) => fact.value);
 
   return (
-    <div>
-      <h3 className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-        <Wallet className="size-4 text-blue-600 dark:text-blue-300" aria-hidden />
-        Payment terms
-      </h3>
-      <dl className="mt-2 divide-y divide-slate-100 dark:divide-slate-800">
-        <TermRow label="Deposit">{depositText(terms)}</TermRow>
-        <TermRow label="Initial payment">{initial}</TermRow>
-        <TermRow label="Refundability">
-          {terms.refundability ? <RefundBadge refundability={terms.refundability} /> : undefined}
-        </TermRow>
-        <TermRow label="Balance due">{balanceDue}</TermRow>
-        <TermRow label="Payment deadline">{formatDate(terms.paymentDeadline) ?? clean(terms.paymentDeadline)}</TermRow>
-        <TermRow label="Accepted methods">
-          {methods.length ? (
-            <ul className="flex flex-wrap gap-1.5 sm:justify-end">
-              {methods.map((method) => {
-                const Icon = paymentIcon(method);
-                return (
-                  <li
-                    key={method}
-                    className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                  >
-                    <Icon className="size-3.5" aria-hidden />
-                    {friendlyLabel(method)}
-                  </li>
-                );
-              })}
-            </ul>
-          ) : undefined}
-        </TermRow>
-      </dl>
+    <div className="space-y-4">
+      {facts.length ? (
+        <dl className="grid gap-2 sm:grid-cols-2">
+          {facts.map((fact) => (
+            <div key={fact.label} className="rounded-xl bg-slate-50 px-3.5 py-3 dark:bg-slate-800/70">
+              <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{fact.label}</dt>
+              <dd className="mt-1 text-sm font-semibold text-slate-950 dark:text-white">{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+      {terms.refundability ? (
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3.5 py-3 dark:bg-slate-800/70">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Refundability</span>
+          <RefundBadge refundability={terms.refundability} />
+        </div>
+      ) : null}
+      {methods.length ? (
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Accepted methods</p>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {methods.map((method) => {
+              const Icon = paymentIcon(method);
+              return (
+                <li
+                  key={method}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                >
+                  <Icon className="size-3.5 text-blue-600 dark:text-blue-300" aria-hidden />
+                  {friendlyLabel(method)}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ) : null}
       {instructions ? (
-        <p className="mt-3 flex gap-2 rounded-xl bg-slate-50 p-3 text-sm text-slate-600 dark:bg-slate-800/60 dark:text-slate-300">
-          <Receipt className="mt-0.5 size-4 shrink-0 text-slate-400" aria-hidden />
+        <p className="flex gap-2 rounded-xl border border-blue-100 bg-blue-50/70 p-3 text-sm leading-relaxed text-slate-700 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-slate-200">
+          <Receipt className="mt-0.5 size-4 shrink-0 text-blue-600 dark:text-blue-300" aria-hidden />
           {instructions}
         </p>
       ) : null}
@@ -93,34 +93,25 @@ function Cancellation({ policy }: { policy: PackageCancellationPolicy | null }) 
   const policyType = friendlyLabel(policy?.policyType);
 
   return (
-    <div>
-      <div className="flex flex-wrap items-center gap-2">
-        <h3 className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-          <CalendarClock className="size-4 text-blue-600 dark:text-blue-300" aria-hidden />
-          Cancellation policy
-        </h3>
-        {policyType ? <Badge tone="blue">{policyType}</Badge> : null}
-      </div>
+    <div className="space-y-3">
+      {policyType ? <Badge tone="blue">{policyType}</Badge> : null}
       {rules.length ? (
-        <ol className="mt-3 space-y-2">
+        <ol className="space-y-2">
           {rules.map((rule, index) => (
-            <li key={index} className="flex gap-3 rounded-xl border border-slate-200/80 p-3 dark:border-slate-800">
-              <CircleDollarSign className="mt-0.5 size-4 shrink-0 text-slate-400" aria-hidden />
-              <div className="text-sm">
-                {rule.when || rule.outcome ? (
-                  <p className="font-semibold text-slate-900 dark:text-slate-100">
-                    {[rule.when, rule.outcome].filter(Boolean).join(": ")}
-                  </p>
-                ) : null}
-                {rule.note ? <p className="text-slate-600 dark:text-slate-300">{rule.note}</p> : null}
-              </div>
+            <li key={index} className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 dark:border-slate-700 dark:bg-slate-800/70">
+              {rule.when || rule.outcome ? (
+                <p className="text-sm font-semibold text-slate-950 dark:text-white">
+                  {[rule.when, rule.outcome].filter(Boolean).join(" · ")}
+                </p>
+              ) : null}
+              {rule.note ? <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{rule.note}</p> : null}
             </li>
           ))}
         </ol>
       ) : (
-        <p className="mt-3 flex gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
+        <p className="flex gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300">
           <Info className="mt-0.5 size-4 shrink-0 text-slate-400" aria-hidden />
-          Cancellation rules not specified. Please contact the operator.
+          Cancellation rules are shared by the operator before you confirm.
         </p>
       )}
     </div>
@@ -130,37 +121,42 @@ function Cancellation({ policy }: { policy: PackageCancellationPolicy | null }) 
 function Accordion({
   open,
   onToggle,
-  icon,
+  icon: Icon,
+  tone,
   title,
   summary,
   children,
 }: {
   open: boolean;
   onToggle: () => void;
-  icon: string;
+  icon: LucideIcon;
+  tone: string;
   title: string;
   summary: string;
   children: ReactNode;
 }) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/70">
+    <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between p-4 text-left hover:bg-neutral-50 sm:p-5 dark:hover:bg-slate-800/60"
+        aria-expanded={open}
+        className="flex w-full cursor-pointer items-center justify-between gap-3 p-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
       >
-        <span className="flex items-center gap-3">
-          <span className="inline-flex size-9 items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 text-lg dark:border-slate-700 dark:bg-slate-800">
-            {icon}
+        <span className="flex min-w-0 items-center gap-3">
+          <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${tone}`}>
+            <Icon className="size-5" aria-hidden />
           </span>
-          <span>
-            <strong className="block text-sm font-semibold text-neutral-900 sm:text-base dark:text-white">{title}</strong>
-            <span className="block text-xs font-normal text-neutral-500 dark:text-slate-400">{summary}</span>
+          <span className="min-w-0">
+            <strong className="block text-sm font-semibold text-slate-950 sm:text-base dark:text-white">{title}</strong>
+            <span className="mt-0.5 block truncate text-xs font-normal text-slate-500 dark:text-slate-400">{summary}</span>
           </span>
         </span>
-        <ChevronDown className={`size-4 text-neutral-600 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden />
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-800">
+          <ChevronDown className={`size-4 transition-transform duration-300 ${open ? "rotate-180 text-blue-600" : ""}`} aria-hidden />
+        </span>
       </button>
-      {open ? <div className="package-fade-in border-t border-neutral-100 px-5 pb-6 pt-4 dark:border-slate-800">{children}</div> : null}
+      {open ? <div className="border-t border-slate-100 px-4 pb-4 pt-4 dark:border-slate-800">{children}</div> : null}
     </article>
   );
 }
@@ -188,8 +184,9 @@ export default function PackagePolicies({
         <Accordion
           open={openSection === "payment"}
           onToggle={() => setOpenSection(openSection === "payment" ? null : "payment")}
-          icon="💳"
-          title="Payment terms & accepted methods"
+          icon={Wallet}
+          tone="bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300"
+          title="Payment terms"
           summary={deposit ?? "Shared by the operator at booking"}
         >
           {paymentTerms ? (
@@ -204,7 +201,8 @@ export default function PackagePolicies({
         <Accordion
           open={openSection === "cancellation"}
           onToggle={() => setOpenSection(openSection === "cancellation" ? null : "cancellation")}
-          icon="🛡️"
+          icon={CalendarClock}
+          tone="bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-200"
           title="Cancellation & refund policy"
           summary={policyType ?? "Review the schedule before you book"}
         >

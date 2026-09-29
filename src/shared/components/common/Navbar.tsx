@@ -313,7 +313,7 @@ const Navbar: React.FC = () => {
                     }`
                   }
                 >
-                  Packages
+                  Travel Package
                 </NavLink>
               </div>
 

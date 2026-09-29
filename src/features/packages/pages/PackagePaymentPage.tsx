@@ -108,9 +108,10 @@ function PaymentScreen({ entry }: { entry: StoredPackageReservation }) {
           break;
         case "CardPayment": {
           const res = await packageCardInitiateApi(payload);
-          if (res?.iframeHtml && res?.paymentId) {
-            setCardIframeHtml(res.iframeHtml);
-            setPaymentId(res.paymentId);
+          const cardPaymentId = res?.packagePaymentId ?? res?.paymentId;
+          if (res?.iframeHtml && cardPaymentId) {
+            setCardIframeHtml(res.iframeHtml.replace(/<iframe>\s*$/i, "</iframe>"));
+            setPaymentId(cardPaymentId);
           } else {
             setErrorMessage("We couldn't start the card payment. Please try again.");
           }
@@ -196,7 +197,7 @@ function PaymentScreen({ entry }: { entry: StoredPackageReservation }) {
   }, [cardIframeHtml]);
 
   return (
-    <div className="min-h-[calc(100vh-200px)] bg-slate-50 font-jakarta dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-50 font-jakarta text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <ScrollToTop />
 
       {cardIframeHtml ? (
@@ -206,28 +207,26 @@ function PaymentScreen({ entry }: { entry: StoredPackageReservation }) {
         </div>
       ) : null}
 
-      <div className="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8 lg:px-8">
+      <div className="mx-auto max-w-[1100px] px-4 pb-16 pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pt-[calc(var(--site-header-height,8rem)-7rem+1.5rem)]">
         <Link
           to={entry.packagePath || "/packages"}
-          className="group inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white py-1.5 pl-1.5 pr-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-blue-400/40 dark:hover:bg-blue-500/10 dark:hover:text-blue-300"
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm hover:border-blue-200 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
         >
-          <span className="flex size-8 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition group-hover:bg-blue-100 group-hover:text-blue-700 dark:bg-slate-800 dark:text-slate-300 dark:group-hover:bg-blue-500/20 dark:group-hover:text-blue-200">
-            <ArrowLeft className="size-4" aria-hidden />
-          </span>
+          <ArrowLeft className="size-4" aria-hidden />
           Back to package
         </Link>
 
-        <div className="mt-6 mb-5">
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl dark:text-white">Complete your payment</h1>
-          <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-300">
-            Your spot is reserved. Pay now to confirm booking <span className="font-semibold">{reservation.bookingRef}</span>.
+        <header className="mb-6 mt-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600 dark:text-blue-300">Secure checkout</p>
+          <h1 className="mt-1.5 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl dark:text-white">Complete your payment</h1>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+            Your place is held. Pay now to confirm{" "}
+            <span className="font-semibold text-slate-900 dark:text-white">{reservation.bookingRef}</span>.
           </p>
-        </div>
+        </header>
 
-        <ExpiryBanner expiresAt={reservation.expiresAt} countdown={countdown} />
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-          <div className="lg:col-span-3">
+        <div className="grid items-start gap-6 lg:grid-cols-12">
+          <div className="min-w-0 lg:col-span-7">
             {isLoggedIn ? (
               <PaymentOptions
                 selectedMethod={selectedMethod}
@@ -243,8 +242,13 @@ function PaymentScreen({ entry }: { entry: StoredPackageReservation }) {
               <LoginRequired onLogin={goToLogin} disabled={countdown.expired} />
             )}
           </div>
-          <div className="lg:col-span-2">
-            <ReservationSummary reservation={reservation} coverImage={entry.coverImage} pickupLabel={entry.pickupLabel} />
+          <div className="lg:sticky lg:top-[calc(var(--site-header-height,8rem)+0.75rem)] lg:col-span-5">
+            <ReservationSummary
+              reservation={reservation}
+              coverImage={entry.coverImage}
+              pickupLabel={entry.pickupLabel}
+              notice={<ExpiryBanner expiresAt={reservation.expiresAt} countdown={countdown} />}
+            />
           </div>
         </div>
       </div>
@@ -343,7 +347,7 @@ function ExpiryBanner({
 
   if (countdown.expired) {
     return (
-      <div role="alert" className="mb-5 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200">
+      <div role="alert" className="flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
         <AlertTriangle className="mt-0.5 size-5 shrink-0" aria-hidden />
         <p>
           This reservation has expired. Please{" "}
@@ -357,7 +361,7 @@ function ExpiryBanner({
   }
 
   return (
-    <div className="mb-5 flex items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+    <div className="flex items-center gap-3 rounded-xl border border-amber-200/80 bg-amber-50 px-3.5 py-3 text-sm text-amber-950 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
       <Clock className="size-5 shrink-0" aria-hidden />
       <p>
         {countdown.remainingMs > DAY_MS ? (
@@ -413,7 +417,7 @@ function Dialog({
 
 function LoginRequired({ onLogin, disabled }: { onLogin: () => void; disabled: boolean }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-xl sm:p-10 dark:border-slate-800 dark:bg-slate-900">
+    <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10 dark:border-slate-800 dark:bg-slate-900">
       <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
         <LockKeyhole className="size-7" aria-hidden />
       </span>
