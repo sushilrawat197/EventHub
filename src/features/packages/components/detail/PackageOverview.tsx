@@ -103,9 +103,8 @@ export default function PackageOverview({ pkg, transport }: { pkg: PackageDetail
 
           {description ? (
             <p
-              className={`m-0 text-sm font-normal text-neutral-600 sm:text-base/relaxed dark:text-slate-300 ${
-                !expanded && longStory ? "line-clamp-4" : "whitespace-pre-line"
-              }`}
+              className={`m-0 text-sm font-normal text-neutral-600 sm:text-base/relaxed dark:text-slate-300 ${!expanded && longStory ? "line-clamp-4" : "whitespace-pre-line"
+                }`}
             >
               {description}
             </p>

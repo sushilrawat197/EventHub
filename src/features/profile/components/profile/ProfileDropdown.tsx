@@ -6,19 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiChevronRight } from "react-icons/fi";
 import { GoPersonFill } from "react-icons/go";
 import { RiEdit2Fill } from "react-icons/ri";
-import { RiNotificationBadgeLine } from "react-icons/ri";
 import { LuTickets } from "react-icons/lu";
-import { BsChatDots } from "react-icons/bs";
-import { FaGears } from "react-icons/fa6";
+import { BsChatDots, BsChatSquareQuote } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
 import { ClipLoader } from "react-spinners";
 
 const menuItems = [
-  {
-    title: "Notifications",
-    icon: <RiNotificationBadgeLine />,
-    path: "/notifications",
-  },
   {
     title: "Your Orders",
     subtitle: "Track your order details",
@@ -26,16 +19,16 @@ const menuItems = [
     path: "/orders",
   },
   {
+    title: "My Quotes",
+    subtitle: "Track your quote requests",
+    icon: <BsChatSquareQuote />,
+    path: "/quotes",
+  },
+  {
     title: "Help & Support",
     subtitle: "Contact us for any query",
     icon: <BsChatDots />,
     path: "/helpandsupport",
-  },
-  {
-    title: "Settings",
-    subtitle: "Profile settings and more",
-    icon: <FaGears />,
-    path: "/settings",
   },
 ];
 

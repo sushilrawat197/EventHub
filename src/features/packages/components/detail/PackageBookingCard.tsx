@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { AlertCircle, ChevronDown, ShieldCheck, ShieldX, Users } from "lucide-react";
+import { AlertCircle, CalendarDays, ChevronDown, MessageSquareQuote, ShieldCheck, ShieldX, Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,6 +7,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatAgeRange, friendlyLabel, plural, type DepartureView } from "../../utils/packageDetailFormat";
 import { ageChoices, MAX_PER_TYPE, type TravellerOption } from "../../utils/packageReservation";
 import { Badge } from "./primitives";
@@ -45,6 +52,8 @@ interface BookingProps {
   onCount: (type: string, value: number) => void;
   onAge: (type: string, index: number, age: number) => void;
   onBook: () => void;
+  onRequestQuote?: () => void;
+  bookLabel?: string;
 }
 
 function StepButton({
@@ -84,10 +93,13 @@ export default function PackageBookingCard({
   onCount,
   onAge,
   onBook,
+  onRequestQuote,
+  bookLabel = "Continue Booking",
 }: BookingProps) {
   const uid = useId();
   const errorId = `${uid}-departure-error`;
-  const selected = departures.find((departure) => departure.key === selectedKey);
+  const singleDeparture = departures.length === 1 ? departures[0] : null;
+  const selected = departures.find((departure) => departure.key === selectedKey) ?? singleDeparture ?? undefined;
   const seated = options
     .filter((option) => option.type !== "INFANT")
     .reduce((sum, option) => sum + (counts[option.type] ?? 0), 0);
@@ -105,12 +117,27 @@ export default function PackageBookingCard({
       </header>
 
       <div className="flex flex-col gap-6">
-        {/* Departure Select Field */}
+        {/* Departure Field */}
         <fieldset className="m-0 space-y-2 border-0 p-0" aria-describedby={error ? errorId : undefined}>
-          <label htmlFor={`${uid}-departure`} className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-slate-300">
-            Select Departure Date
+          <label
+            htmlFor={singleDeparture ? undefined : `${uid}-departure`}
+            className="block text-xs font-bold uppercase tracking-wider text-neutral-700 dark:text-slate-300"
+          >
+            {singleDeparture ? "Departure Date" : "Select Departure Date"}
           </label>
-          {departures.length ? (
+          {singleDeparture ? (
+            <div className="flex w-full items-center justify-between rounded-xl border border-neutral-300 bg-white py-2.5 pl-3.5 pr-3 text-sm font-semibold text-neutral-900 shadow-xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
+              <span className="flex items-center gap-2 truncate">
+                <CalendarDays className="size-4 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden />
+                <span>{departureLabel(singleDeparture).range}</span>
+              </span>
+              {departureLabel(singleDeparture).extra ? (
+                <span className="ml-2 shrink-0 text-xs font-normal text-neutral-500 dark:text-slate-400">
+                  {departureLabel(singleDeparture).extra}
+                </span>
+              ) : null}
+            </div>
+          ) : departures.length > 1 ? (
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger
                 id={`${uid}-departure`}
@@ -210,33 +237,33 @@ export default function PackageBookingCard({
                         const value = ages[option.type]?.[childIndex];
                         const ageError = ageErrors?.[`${option.type}-${childIndex}`];
                         return (
-                          <label key={fieldId} htmlFor={fieldId} className="block">
-                            <span className="mb-1 block text-xs font-medium text-neutral-600 dark:text-slate-300">
+                          <div key={fieldId} className="block">
+                            <span className="mb-1.5 block text-sm font-semibold text-neutral-700 dark:text-slate-200">
                               {option.label} {childIndex + 1} age
                             </span>
-                            <div className="relative">
-                              <select
+                            <Select
+                              value={value != null ? String(value) : ""}
+                              onValueChange={(selectedAge) => onAge(option.type, childIndex, Number(selectedAge))}
+                            >
+                              <SelectTrigger
                                 id={fieldId}
-                                value={value ?? ""}
                                 aria-invalid={Boolean(ageError)}
-                                onChange={(event) => onAge(option.type, childIndex, Number(event.target.value))}
-                                className={`w-full cursor-pointer appearance-none rounded-lg border bg-white py-2 pl-3 pr-8 text-xs font-semibold text-neutral-800 shadow-sm transition-all focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 dark:bg-slate-900 dark:text-slate-100 ${
+                                className={`h-11 w-full cursor-pointer rounded-xl border bg-white px-3.5 text-sm font-medium text-neutral-900 shadow-sm transition-all focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 dark:bg-slate-900 dark:text-slate-100 ${
                                   ageError ? "border-rose-500" : "border-neutral-300 dark:border-slate-700"
                                 }`}
                               >
-                                <option value="" disabled>
-                                  Age
-                                </option>
+                                <SelectValue placeholder="Age" />
+                              </SelectTrigger>
+                              <SelectContent position="popper" className="z-50 max-h-60 min-w-[8.5rem]">
                                 {choices.map((choice) => (
-                                  <option key={choice} value={choice}>
+                                  <SelectItem key={choice} value={String(choice)} className="cursor-pointer py-2 px-3 text-sm font-medium">
                                     {choice} {choice === 1 ? "year" : "years"}
-                                  </option>
+                                  </SelectItem>
                                 ))}
-                              </select>
-                              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 size-3.5 -translate-y-1/2 text-neutral-400 dark:text-slate-500" aria-hidden />
-                            </div>
+                              </SelectContent>
+                            </Select>
                             {ageError ? <span className="mt-1 block text-xs font-medium text-rose-600 dark:text-rose-400">{ageError}</span> : null}
-                          </label>
+                          </div>
                         );
                       })}
                     </div>
@@ -256,8 +283,30 @@ export default function PackageBookingCard({
           disabled={!departures.length}
           className="w-full cursor-pointer rounded-xl bg-blue-600 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/20 transition-all hover:bg-blue-700 hover:shadow-lg active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:shadow-none dark:disabled:bg-slate-800"
         >
-          Continue Booking
+          {bookLabel}
         </button>
+
+        {onRequestQuote ? (
+          <>
+            <div className="relative my-0.5 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-neutral-200 dark:border-slate-800" />
+              </div>
+              <span className="relative bg-white px-2.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:bg-slate-900 dark:text-slate-500">
+                or
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={onRequestQuote}
+              className="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-blue-600/25 bg-blue-50/70 py-2.5 text-sm font-bold text-blue-700 shadow-xs transition-all hover:border-blue-500 hover:bg-blue-100 hover:text-blue-800 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-blue-500/30 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:border-blue-500/60 dark:hover:bg-blue-900/50"
+            >
+              <MessageSquareQuote className="size-4.5 text-blue-600 transition-transform duration-200 group-hover:scale-110 dark:text-blue-400" />
+              <span>Req a Quote</span>
+            </button>
+          </>
+        ) : null}
       </nav>
 
       <p className="sr-only">{guests} travellers selected</p>
@@ -268,9 +317,13 @@ export default function PackageBookingCard({
 export function PackageMobileBookingBar({
   guestLabel,
   onBook,
+  onRequestQuote,
+  bookLabel = "Book Now",
 }: {
   guestLabel: string;
   onBook: () => void;
+  onRequestQuote?: () => void;
+  bookLabel?: string;
 }) {
   return (
     <footer className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between border-t border-neutral-200/80 bg-white/95 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md lg:hidden dark:border-slate-800 dark:bg-slate-900/95 print:hidden">
@@ -278,13 +331,23 @@ export function PackageMobileBookingBar({
         <span className="block text-[10px] font-bold uppercase tracking-wider text-neutral-500 dark:text-slate-400">Travellers</span>
         <p className="m-0 text-base font-bold text-neutral-900 dark:text-white">{guestLabel}</p>
       </div>
-      <nav className="flex items-center gap-2.5" aria-label="Mobile booking actions">
+      <nav className="flex items-center gap-2" aria-label="Mobile booking actions">
+        {onRequestQuote ? (
+          <button
+            type="button"
+            onClick={onRequestQuote}
+            className="flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50/70 px-3.5 py-2.5 text-xs font-bold text-blue-700 active:scale-95 dark:border-blue-500/30 dark:bg-blue-950/40 dark:text-blue-300"
+          >
+            <MessageSquareQuote className="size-3.5 text-blue-600 dark:text-blue-400" />
+            <span>Req a Quote</span>
+          </button>
+        ) : null}
         <button
           type="button"
           onClick={onBook}
-          className="rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-600/20 active:scale-95"
+          className="rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-600/20 active:scale-95"
         >
-          Book Now
+          {bookLabel}
         </button>
       </nav>
     </footer>

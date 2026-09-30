@@ -5,9 +5,12 @@ import { PAYMENT_INITIATE_TIMEOUT_MS } from "@/features/payment/api/endpoints";
 import type { PackagePaymentResult } from "../types/packageReservation";
 import { packagePaymentEndpoints } from "./endpoints";
 
-interface PaymentPayload {
+export type PaymentPurpose = "INITIAL" | "BALANCE";
+
+export interface PaymentPayload {
   packageBookingId: number;
   phoneNumber: string;
+  purpose?: PaymentPurpose;
 }
 
 export interface CardInitiateResult {

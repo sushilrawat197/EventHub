@@ -61,7 +61,7 @@ function DayCard({ day, open, onToggle }: { day: PackageItineraryDay; open: bool
                 ) : null}
                 {place ? (
                   <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2 py-0.5 text-xs font-medium text-neutral-700 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300">
-                    <MapPin className="size-3 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden />
+                    <MapPin className="size-3 shrink-0 text-red-500 dark:text-red-400" aria-hidden />
                     {place}
                   </span>
                 ) : null}

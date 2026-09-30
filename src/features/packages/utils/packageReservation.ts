@@ -93,9 +93,9 @@ export function decodeTravellerCounts(raw: string | null, options: TravellerOpti
 }
 
 const TYPE_ORDER = ["ADULT", "SENIOR", "CHILD", "INFANT"];
-const DEFAULT_AGE_RANGE: Record<string, [number, number]> = {
+export const DEFAULT_AGE_RANGE: Record<string, [number, number]> = {
   CHILD: [2, 17],
-  INFANT: [0, 1],
+  INFANT: [0, 2],
 };
 
 export interface TravellerOption {
@@ -114,34 +114,44 @@ export interface TravellerOption {
 export function travellerOptions(pkg: PackageDetail): TravellerOption[] {
   const currency = clean(pkg.pricing?.currency) ?? "LSL";
   const rows = (pkg.pricing?.prices ?? []).filter((row) => row.active !== false && clean(row.passengerType));
-  const seen = new Set<string>();
-  const options: TravellerOption[] = [];
-
+  const priceMap = new Map<string, (typeof rows)[0]>();
   for (const row of rows) {
     const type = row.passengerType.trim().toUpperCase();
-    if (seen.has(type)) continue;
-    seen.add(type);
-    const [fallbackMin, fallbackMax] = DEFAULT_AGE_RANGE[type] ?? [];
-    options.push({
-      type,
-      label: friendlyLabel(type) ?? type,
-      amount: Number(row.amount) || 0,
-      currency: clean(row.currency) ?? currency,
-      minAge: row.minAge ?? fallbackMin,
-      maxAge: row.maxAge ?? fallbackMax,
-      needsAge: type === "CHILD" || type === "INFANT",
-      min: type === "ADULT" ? 1 : 0,
-    });
+    if (!priceMap.has(type)) {
+      priceMap.set(type, row);
+    }
   }
 
-  if (!options.length) {
+  // Always include standard categories: ADULT, CHILD, INFANT, plus any others (e.g. SENIOR)
+  const allTypes = new Set<string>(["ADULT", "CHILD", "INFANT", ...priceMap.keys()]);
+  const options: TravellerOption[] = [];
+
+  for (const type of allTypes) {
+    const row = priceMap.get(type);
+    const isAdult = type === "ADULT";
+    const isChild = type === "CHILD";
+    const isInfant = type === "INFANT";
+
+    let amount = 0;
+    if (row && Number(row.amount) >= 0) {
+      amount = Number(row.amount);
+    } else if (isAdult && Number(pkg.pricing?.fromPrice) > 0) {
+      amount = Number(pkg?.pricing?.fromPrice);
+    }
+
+    // Child age can be input up to 17 years
+    const minAge = isChild ? (row?.minAge != null ? Math.min(row.minAge, 2) : 2) : isInfant ? 0 : row?.minAge ?? undefined;
+    const maxAge = isChild ? 17 : isInfant ? 2 : row?.maxAge ?? undefined;
+
     options.push({
-      type: "ADULT",
-      label: "Adult",
-      amount: Number(pkg.pricing?.fromPrice) || 0,
-      currency,
-      needsAge: false,
-      min: 1,
+      type,
+      label: friendlyLabel(type) ?? (isAdult ? "Adult" : isChild ? "Child" : isInfant ? "Infant" : type),
+      amount,
+      currency: clean(row?.currency) ?? currency,
+      minAge,
+      maxAge,
+      needsAge: isChild || isInfant,
+      min: isAdult ? 1 : 0,
     });
   }
 
@@ -150,8 +160,13 @@ export function travellerOptions(pkg: PackageDetail): TravellerOption[] {
 
 export function ageChoices(option: TravellerOption): number[] {
   if (!option.needsAge) return [];
+  if (option.type === "CHILD") {
+    const min = option.minAge ?? 2;
+    const max = 17; // Child age can be input up to 17
+    return Array.from({ length: max - min + 1 }, (_, index) => min + index);
+  }
   const min = option.minAge ?? 0;
-  const max = option.maxAge ?? 17;
+  const max = option.maxAge ?? (option.type === "INFANT" ? 2 : 17);
   if (max < min) return [];
   return Array.from({ length: max - min + 1 }, (_, index) => min + index);
 }
@@ -231,8 +246,18 @@ const CODE_PATTERN = /^\+\d{1,4}$/;
 
 export type GuestErrors = Partial<Record<keyof GuestForm, string>>;
 
-export function validateGuest(guest: GuestForm, primary: boolean): GuestErrors {
+export function validateGuest(guest: GuestForm, primary: boolean, type?: string): GuestErrors {
   const errors: GuestErrors = {};
+
+  // Child details are optional!
+  if (type === "CHILD") {
+    const email = guest.email.trim();
+    if (email && !EMAIL_PATTERN.test(email)) errors.email = "Enter a valid email";
+    const mobile = guest.mobileNumber.replace(/\s+/g, "");
+    if (mobile && !MOBILE_PATTERN.test(mobile)) errors.mobileNumber = "Enter 6–15 digits";
+    return errors;
+  }
+
   if (!guest.title) errors.title = "Select a title";
   if (!guest.firstName.trim()) errors.firstName = "First name is required";
   if (!guest.lastName.trim()) errors.lastName = "Last name is required";
@@ -316,10 +341,11 @@ export function buildReservationPayload(args: {
     const formCodeRaw = form.mobileCountryCode.trim();
     const ownCode = formCodeRaw ? (formCodeRaw.startsWith("+") ? formCodeRaw : `+${formCodeRaw}`) : DEFAULT_COUNTRY_CODE;
 
+    const isChild = slot.type === "CHILD";
     const guest: ReservationGuest = {
-      title: form.title,
-      firstName: form.firstName.trim(),
-      lastName: form.lastName.trim(),
+      title: form.title || (isChild ? "Master" : "Mr"),
+      firstName: form.firstName.trim() || (isChild ? `Child ${slot.label.split(" ")[1] || "1"}` : "Guest"),
+      lastName: form.lastName.trim() || leadForm?.lastName.trim() || "Guest",
       email: form.email.trim() || (useLeadContact ? leadForm.email.trim() : ""),
       mobileCountryCode: ownMobile ? ownCode : (useLeadContact ? leadCode : ownCode),
       mobileNumber: ownMobile || (useLeadContact ? leadForm.mobileNumber.replace(/\s+/g, "") : ""),

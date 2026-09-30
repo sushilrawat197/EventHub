@@ -49,6 +49,9 @@ const MarathonRegistrationPage = lazy(
   () => import("./shared/components/common/MarathonRegistrationPage")
 );
 const BookingOrder = lazy(() => import("./features/orders/pages/BookingOrder"));
+const PackageOrderPage = lazy(() => import("./features/orders/pages/PackageOrderPage"));
+const MyQuotesPage = lazy(() => import("./features/packages/pages/MyQuotesPage"));
+const QuoteDetailsPage = lazy(() => import("./features/packages/pages/QuoteDetailsPage"));
 const RateAndReview = lazy(() => import("./shared/components/common/RateAndReview"));
 import { refreshAccessToken } from "@/app/bootstrap/sessionBootstrap";
 
@@ -239,10 +242,44 @@ function App() {
           />
 
           <Route
+            path="/quotes"
+            element={
+              <ProtectedRoute>
+                {withSuspense(<MyQuotesPage />)}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quotes/:quoteRequestId"
+            element={
+              <ProtectedRoute>
+                {withSuspense(<QuoteDetailsPage />)}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-quotes"
+            element={
+              <ProtectedRoute>
+                {withSuspense(<MyQuotesPage />)}
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="order/:bookingId/marathon-registration"
             element={
               <ProtectedRoute>
                 {withSuspense(<MarathonRegistrationPage />)}
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="order/:bookingId/package"
+            element={
+              <ProtectedRoute>
+                {withSuspense(<PackageOrderPage />)}
               </ProtectedRoute>
             }
           />

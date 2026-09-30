@@ -22,6 +22,12 @@ export const packagesEndpoints = {
   reserve: () => buildApiUrl("TICKETCORE", "/package-reservations"),
 
   quoteRequest: () => buildApiUrl("TICKETCORE", "/package-quote-requests"),
+
+  myQuotes: (page = 0, size = 10) =>
+    buildApiUrl("TICKETCORE", "/package-quote-requests/my", { page, size }),
+
+  quoteDetail: (quoteRequestId: number | string) =>
+    buildApiUrl("TICKETCORE", `/package-quote-requests/${quoteRequestId}`),
 } as const;
 
 export const packagePaymentEndpoints = {

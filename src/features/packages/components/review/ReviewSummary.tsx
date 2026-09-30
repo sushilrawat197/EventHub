@@ -1,7 +1,7 @@
-import { AlertCircle, ArrowRight, CalendarDays, Loader2, MapPin, MessageCircle } from "lucide-react";
-import { formatDate, formatMoney, friendlyLabel, type DepartureView, type PickupView } from "../../utils/packageDetailFormat";
+import { AlertCircle, ArrowRight, Loader2, MessageSquareQuote } from "lucide-react";
+import { formatMoney, type DepartureView, type PickupView } from "../../utils/packageDetailFormat";
 import type { PackagePreviewPayment } from "../../types/packageReservation";
-import { SafeImage } from "../detail/primitives";
+import PaymentScheduleCard from "../payment/PaymentScheduleCard";
 
 function PriceQuote({
   payment,
@@ -18,6 +18,7 @@ function PriceQuote({
 }) {
   const money = (amount: number | null | undefined) => formatMoney(amount ?? 0, currency);
   const isDeposit = payment?.paymentType?.toUpperCase() === "DEPOSIT" && (payment.balanceAmount ?? 0) > 0;
+  const total = payment ? (payment.amountDueNow ?? 0) + (payment.balanceAmount ?? 0) : 0;
 
   return (
     <div className="mt-4 border-t border-dashed border-slate-200 pt-4 dark:border-slate-700">
@@ -32,25 +33,26 @@ function PriceQuote({
           {error}
         </p>
       ) : payment ? (
-        <>
-          <div className="flex items-baseline justify-between gap-3">
-            <span className="text-sm font-semibold text-slate-900 dark:text-white">
-              {isDeposit ? "Deposit due now" : "Amount due now"}
-            </span>
-            <span className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              {money(payment.amountDueNow)}
-            </span>
-          </div>
-          {payment.balanceAmount > 0 ? (
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              Balance {money(payment.balanceAmount)}
-              {payment.balanceDueDate ? ` due by ${formatDate(payment.balanceDueDate)}` : ""}.
-            </p>
+        <div className="space-y-3">
+          {isDeposit && (payment.balanceAmount ?? 0) > 0 ? (
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                Total Price
+              </span>
+              <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                {money(total)}
+              </span>
+            </div>
           ) : null}
-          {payment.paymentType ? (
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{friendlyLabel(payment.paymentType)}</p>
-          ) : null}
-        </>
+
+          <PaymentScheduleCard
+            amountDueNow={payment.amountDueNow}
+            balanceAmount={payment.balanceAmount}
+            balanceDueDate={payment.balanceDueDate}
+            currency={currency}
+            isDeposit={isDeposit}
+          />
+        </div>
       ) : (
         <p className="text-sm text-slate-500 dark:text-slate-400">
           {waitingMessage ?? "Select a departure and pickup to see the price."}
@@ -61,10 +63,6 @@ function PriceQuote({
 }
 
 export default function ReviewSummary({
-  packageName,
-  image,
-  departure,
-  pickup,
   travellers,
   payment,
   currency,
@@ -76,7 +74,7 @@ export default function ReviewSummary({
   onSubmit,
   onRequestQuote,
 }: {
-  packageName: string;
+  packageName?: string;
   image?: string;
   departure?: DepartureView;
   pickup?: PickupView;
@@ -93,33 +91,13 @@ export default function ReviewSummary({
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)] dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex gap-3 border-b border-slate-100 p-4 dark:border-slate-800">
-        <SafeImage src={image} alt={packageName} className="size-16 shrink-0 rounded-xl" iconClassName="size-5" />
-        <div className="min-w-0">
-          <p className="line-clamp-2 font-bold text-slate-900 dark:text-white">{packageName}</p>
-          {departure ? (
-            <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-              <CalendarDays className="size-3.5 shrink-0" aria-hidden />
-              {departure.start}
-              {departure.end && departure.end !== departure.start ? ` → ${departure.end}` : ""}
-            </p>
-          ) : null}
-          {pickup ? (
-            <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-              <MapPin className="size-3.5 shrink-0" aria-hidden />
-              <span className="truncate">
-                {pickup.name ?? pickup.address}
-                {pickup.time ? ` · ${pickup.time}` : ""}
-              </span>
-            </p>
-          ) : null}
-        </div>
+      <div className="border-b border-slate-100 p-4 dark:border-slate-800">
+        <h2 className="text-base font-bold text-slate-900 dark:text-white">Price summary</h2>
       </div>
 
       <div className="p-4">
-        <h2 className="text-sm font-semibold text-slate-900 dark:text-white">Price summary</h2>
         {travellers.length ? (
-          <ul className="mt-3 space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
+          <ul className="space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
             {travellers.map((row) => (
               <li key={row.type} className="flex justify-between gap-3">
                 <span>{row.label}</span>
@@ -150,23 +128,34 @@ export default function ReviewSummary({
           type="button"
           onClick={onSubmit}
           disabled={submitting}
-          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-70"
+          className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-blue-700 hover:shadow-md hover:shadow-blue-600/20 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-70"
         >
           {submitting ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <ArrowRight className="size-4" aria-hidden />}
           {submitting ? "Continuing…" : "Continue to payment"}
         </button>
+
+        <div className="relative my-3 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+          </div>
+          <span className="relative bg-white px-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:bg-slate-900 dark:text-slate-500">
+            or
+          </span>
+        </div>
+
         <button
           type="button"
           onClick={onRequestQuote}
           disabled={submitting}
-          className="mt-2 flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 px-4 py-3 text-left transition hover:border-blue-200 hover:bg-blue-50/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-60 dark:border-slate-700 dark:hover:bg-slate-800"
+          className="group inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-lg border-2 border-blue-600/25 bg-blue-50/60 px-4 text-sm font-semibold text-blue-700 shadow-xs transition-all duration-200 hover:border-blue-600/40 hover:bg-blue-100/70 hover:text-blue-800 hover:shadow-sm active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:border-blue-500/30 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:border-blue-500/50 dark:hover:bg-blue-900/50"
         >
-          <span>
-            <span className="block text-sm font-semibold text-slate-900 dark:text-white">Request a Quote</span>
-            <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-400">Travel agency contacts you</span>
-          </span>
-          <MessageCircle className="size-4 shrink-0 text-blue-600" aria-hidden />
+          <MessageSquareQuote className="size-4.5 text-blue-600 transition-transform duration-200 group-hover:scale-110 dark:text-blue-400" aria-hidden />
+          <span>Request a Quote</span>
         </button>
+
+        <p className="mt-2 text-center text-xs text-slate-500 dark:text-slate-400">
+          Travel agency will contact you with custom details
+        </p>
       </div>
     </div>
   );

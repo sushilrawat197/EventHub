@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
-import { AlertTriangle, ArrowLeft, Clock, Loader2, LockKeyhole, LogIn } from "lucide-react";
-import { useAppSelector } from "@/app/store/hooks";
+import { AlertTriangle, ArrowLeft, Clock, Loader2 } from "lucide-react";
 import PaymentOptions, { type PaymentMethodType } from "@/features/payment/components/payment-ordersummay/PaymentOptions";
 import { getApiErrorMessage, isTimeoutError } from "@/lib/api/errors";
 import ScrollToTop from "@/shared/components/common/ScrollToTop";
@@ -42,8 +41,6 @@ export default function PackagePaymentPage() {
 
 function PaymentScreen({ entry }: { entry: StoredPackageReservation }) {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isLoggedIn = useAppSelector((state) => state.user.user) !== null;
   const { reservation } = entry;
 
   useEffect(() => {
@@ -51,9 +48,6 @@ function PaymentScreen({ entry }: { entry: StoredPackageReservation }) {
     localStorage.removeItem("dairectnavigate");
   }, []);
 
-  function goToLogin() {
-    navigate("/login", { state: { from: location.pathname } });
-  }
   const bookingId = reservation.bookingId;
 
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethodType>("Mpesa");
@@ -83,14 +77,10 @@ function PaymentScreen({ entry }: { entry: StoredPackageReservation }) {
   }
 
   async function submitHandler() {
-    if (!isLoggedIn) {
-      goToLogin();
-      return;
-    }
     if (inFlight.current || paying || !valid) return;
     inFlight.current = true;
     setPaying(true);
-    const payload = { packageBookingId: bookingId, phoneNumber: mobile };
+    const payload = { packageBookingId: bookingId, phoneNumber: mobile, purpose: "INITIAL" as const };
     try {
       switch (selectedMethod) {
         case "Mpesa":
@@ -133,7 +123,7 @@ function PaymentScreen({ entry }: { entry: StoredPackageReservation }) {
     }
     setVerifyingOtp(true);
     try {
-      await packageCpayPayApi({ packageBookingId: bookingId, phoneNumber: mobile, otp: otp.trim() });
+      await packageCpayPayApi({ packageBookingId: bookingId, phoneNumber: mobile, otp: otp.trim(), purpose: "INITIAL" });
       setShowOtp(false);
       onPaid();
     } catch (error) {
@@ -207,47 +197,53 @@ function PaymentScreen({ entry }: { entry: StoredPackageReservation }) {
         </div>
       ) : null}
 
-      <div className="mx-auto max-w-[1100px] px-4 pb-16 pt-6 sm:px-6 sm:pt-8 lg:px-8 lg:pt-[calc(var(--site-header-height,8rem)-7rem+1.5rem)]">
-        <Link
-          to={entry.packagePath || "/packages"}
-          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm hover:border-blue-200 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-        >
-          <ArrowLeft className="size-4" aria-hidden />
-          Back to package
-        </Link>
+      <div className="mx-auto max-w-[1100px] px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8 lg:pt-[calc(var(--site-header-height,8.75rem)-7rem+2.25rem)]">
+        {/* Sleek Top Bar matching PackageReviewPage */}
+        <header className="relative mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between min-h-[44px]">
+          <div className="z-10 flex shrink-0">
+            <Link
+              to={entry.packagePath || "/packages"}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+            >
+              <ArrowLeft className="size-4" aria-hidden />
+              <span>Back to package</span>
+            </Link>
+          </div>
 
-        <header className="mb-6 mt-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600 dark:text-blue-300">Secure checkout</p>
-          <h1 className="mt-1.5 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl dark:text-white">Complete your payment</h1>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-            Your place is held. Pay now to confirm{" "}
-            <span className="font-semibold text-slate-900 dark:text-white">{reservation.bookingRef}</span>.
-          </p>
+          <div className="text-left sm:pointer-events-none sm:absolute sm:inset-x-0 sm:text-center sm:px-44">
+            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              Complete your payment
+            </h1>
+            <p className="mt-0.5 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
+              Booking Ref: <span className="font-mono font-bold text-blue-600 dark:text-blue-400">{reservation.bookingRef}</span>
+            </p>
+          </div>
+
+          <div className="hidden sm:block w-36 shrink-0 pointer-events-none" aria-hidden="true" />
         </header>
 
-        <div className="grid items-start gap-6 lg:grid-cols-12">
-          <div className="min-w-0 lg:col-span-7">
-            {isLoggedIn ? (
-              <PaymentOptions
-                selectedMethod={selectedMethod}
-                setSelectedMethod={setSelectedMethod}
-                mobile={mobile}
-                setMobile={setMobile}
-                isValid={valid}
-                paymentLoading={paying}
-                cpayLoading={false}
-                submitHandler={submitHandler}
-              />
-            ) : (
-              <LoginRequired onLogin={goToLogin} disabled={countdown.expired} />
-            )}
-          </div>
-          <div className="lg:sticky lg:top-[calc(var(--site-header-height,8rem)+0.75rem)] lg:col-span-5">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12 lg:gap-8">
+          {/* Reservation Summary: Order 1 on Mobile (shows trip details & amount due first), Sticky Right Column on Desktop */}
+          <div className="order-1 lg:order-2 lg:sticky lg:top-[calc(var(--site-header-height,8.75rem)+0.75rem)] lg:col-span-5">
             <ReservationSummary
               reservation={reservation}
               coverImage={entry.coverImage}
               pickupLabel={entry.pickupLabel}
               notice={<ExpiryBanner expiresAt={reservation.expiresAt} countdown={countdown} />}
+            />
+          </div>
+
+          {/* Payment Options: Order 2 on Mobile (directly below summary), Left Column on Desktop */}
+          <div className="order-2 min-w-0 lg:order-1 lg:col-span-7">
+            <PaymentOptions
+              selectedMethod={selectedMethod}
+              setSelectedMethod={setSelectedMethod}
+              mobile={mobile}
+              setMobile={setMobile}
+              isValid={valid}
+              paymentLoading={paying}
+              cpayLoading={false}
+              submitHandler={submitHandler}
             />
           </div>
         </div>
@@ -411,28 +407,6 @@ function Dialog({
         <h2 className="mb-2 text-center text-xl font-bold text-slate-900 dark:text-white">{title}</h2>
         {children}
       </div>
-    </div>
-  );
-}
-
-function LoginRequired({ onLogin, disabled }: { onLogin: () => void; disabled: boolean }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10 dark:border-slate-800 dark:bg-slate-900">
-      <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300">
-        <LockKeyhole className="size-7" aria-hidden />
-      </span>
-      <h2 className="mt-4 text-xl font-bold text-slate-900 dark:text-white">Log in to complete payment</h2>
-      <p className="mx-auto mt-2 max-w-sm text-sm text-slate-600 dark:text-slate-300">
-        Your reservation is saved. Log in to your account and you'll come straight back here to pay.
-      </p>
-      <button
-        type="button"
-        onClick={onLogin}
-        disabled={disabled}
-        className="mt-6 inline-flex h-11 w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white shadow-lg hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600 disabled:shadow-none"
-      >
-        <LogIn className="size-4" aria-hidden /> Log in to pay
-      </button>
     </div>
   );
 }

@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useAppSelector } from "@/app/store/hooks";
 import { getApiErrorMessage } from "@/lib/api/errors";
-import Footer from "@/features/home/components/Footer";
 import PackageDetailSkeleton from "../components/detail/PackageDetailSkeleton";
 import ActivitySelection from "../components/review/ActivitySelection";
 import GuestDetailsForm from "../components/review/GuestDetailsForm";
 import QuoteRequestDialog from "../components/review/QuoteRequestDialog";
 import ReviewSummary from "../components/review/ReviewSummary";
-import TravellersSelection from "../components/review/TravellersSelection";
 import TripSelection from "../components/review/TripSelection";
 import { usePackageDetail } from "../hooks/usePackageDetail";
 import { usePackagePreview } from "../hooks/usePackagePreview";
@@ -21,7 +19,6 @@ import { saveReservation } from "../utils/reservationStorage";
 import {
   byDisplayOrder,
   clean,
-  formatMoney,
   normalizeDepartures,
   normalizePickupPoints,
 } from "../utils/packageDetailFormat";
@@ -61,22 +58,35 @@ function ReviewForm({ pkg }: { pkg: PackageDetail }) {
   const addOns = useMemo(() => optionalActivities(pkg), [pkg]);
   const currency = clean(pkg.pricing?.currency) ?? options[0]?.currency ?? "LSL";
 
-  const initialDeparture = departures.find(
-    (departure) => departure.key === searchParams.get("departureId") && departure.bookable,
-  )?.key;
+  const initialDeparture =
+    departures.find((departure) => departure.key === searchParams.get("departureId") && departure.bookable)?.key ??
+    departures.find((d) => d.bookable)?.key ??
+    departures[0]?.key;
 
   const lockedCounts = useMemo(
     () => decodeTravellerCounts(searchParams.get("travellers"), options),
     [searchParams, options],
   );
-  const countsLocked = lockedCounts != null;
 
   const [departureKey, setDepartureKey] = useState<string | undefined>(initialDeparture);
   const [pickupKey, setPickupKey] = useState<string>();
-  const [counts, setCounts] = useState<Record<string, number>>(
+  const [counts] = useState<Record<string, number>>(
     () => lockedCounts ?? Object.fromEntries(options.map((option) => [option.type, option.min])),
   );
-  const [ages, setAges] = useState<Record<string, number[]>>(() => decodeTravellerAges(searchParams.get("travellers")));
+  const [ages] = useState<Record<string, number[]>>(() => {
+    const decoded = decodeTravellerAges(searchParams.get("travellers"));
+    for (const option of options) {
+      if (!option.needsAge) continue;
+      const count = (lockedCounts ?? {})[option.type] ?? option.min;
+      const list = decoded[option.type] ? [...decoded[option.type]] : [];
+      const defaultAge = option.type === "INFANT" ? (option.minAge ?? 1) : (option.minAge ?? 5);
+      while (list.length < count) {
+        list.push(defaultAge);
+      }
+      decoded[option.type] = list;
+    }
+    return decoded;
+  });
   const [activityQty, setActivityQty] = useState<Record<number, number>>({});
   const [guests, setGuests] = useState<Record<string, GuestForm>>({});
   const [attempted, setAttempted] = useState(false);
@@ -87,11 +97,12 @@ function ReviewForm({ pkg }: { pkg: PackageDetail }) {
     () => allPickups.filter((point) => point.departureId == null || String(point.departureId) === departureKey),
     [allPickups, departureKey],
   );
-  const pickup = pickups.find((point) => point.key === pickupKey);
+  const pickup = pickups.find((point) => point.key === pickupKey) ?? pickups[0];
 
   useEffect(() => {
-    if (pickups.length === 1) setPickupKey(pickups[0].key);
-    else if (!pickups.some((point) => point.key === pickupKey)) setPickupKey(undefined);
+    if (pickups.length > 0 && (!pickupKey || !pickups.some((point) => point.key === pickupKey))) {
+      setPickupKey(pickups[0].key);
+    }
   }, [pickups, pickupKey]);
 
   const slots = useMemo(() => guestSlots(options, counts, ages), [options, counts, ages]);
@@ -180,7 +191,7 @@ function ReviewForm({ pkg }: { pkg: PackageDetail }) {
     }
     const guestErrors: Record<string, GuestErrors> = {};
     for (const slot of slots) {
-      const slotErrors = validateGuest(resolvedGuests[slot.key], slot.primary);
+      const slotErrors = validateGuest(resolvedGuests[slot.key], slot.primary, slot.type);
       if (Object.keys(slotErrors).length) guestErrors[slot.key] = slotErrors;
     }
     const travellerError =
@@ -195,23 +206,6 @@ function ReviewForm({ pkg }: { pkg: PackageDetail }) {
   }, [departureKey, departure?.seatsLeft, pickups.length, pickupKey, options, counts, ages, slots, resolvedGuests, seatedTravellers]);
 
   const shown = attempted ? errors : { departureError: undefined, pickupError: undefined, ageErrors: {}, guestErrors: {}, travellerError: undefined };
-
-  function setCount(type: string, value: number) {
-    setCounts((previous) => ({ ...previous, [type]: value }));
-    setAges((previous) => (previous[type] ? { ...previous, [type]: previous[type].slice(0, value) } : previous));
-    const seatedAfter = seatedTravellers + (type === "INFANT" ? 0 : value - (counts[type] ?? 0));
-    setActivityQty((previous) =>
-      Object.fromEntries(Object.entries(previous).map(([id, quantity]) => [id, Math.min(quantity, Math.max(seatedAfter, 0))])),
-    );
-  }
-
-  function setAge(type: string, index: number, age: number) {
-    setAges((previous) => {
-      const next = [...(previous[type] ?? [])];
-      next[index] = age;
-      return { ...previous, [type]: next };
-    });
-  }
 
   function updateGuest(key: string, patch: Partial<GuestForm>) {
     setGuests((previous) => ({ ...previous, [key]: { ...resolvedGuests[key], ...patch } }));
@@ -316,22 +310,35 @@ function ReviewForm({ pkg }: { pkg: PackageDetail }) {
   }
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 pb-28 pt-8 sm:px-6 sm:pt-10 lg:pt-[calc(var(--site-header-height,9.5rem)-7rem+2rem)] lg:pb-12">
-      <header className="mb-8">
-        <Link
-          to={packagePath}
-          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm hover:border-blue-200 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-        >
-          <ArrowLeft className="size-4" aria-hidden />
-          Back to package
-        </Link>
-        <h1 className="mt-4 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl dark:text-white">Review your booking</h1>
-        <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-400">{pkg.packageName.trim()}</p>
+    <div className="mx-auto max-w-[1200px] px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-10 lg:pt-[calc(var(--site-header-height,9.5rem)-7rem+2rem)] lg:pb-12">
+      <header className="relative mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between min-h-[44px]">
+        <div className="z-10 flex shrink-0">
+          <Link
+            to={packagePath}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            <span>Back to package</span>
+          </Link>
+        </div>
+
+        <div className="text-left sm:pointer-events-none sm:absolute sm:inset-x-0 sm:text-center sm:px-44">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            Review your booking
+          </h1>
+          <p className="mt-0.5 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 truncate">
+            {pkg.packageName.trim()}
+          </p>
+        </div>
+
+        <div className="hidden sm:block w-36 shrink-0 pointer-events-none" aria-hidden="true" />
       </header>
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-12 lg:gap-8">
         <div className="min-w-0 space-y-6 lg:col-span-8">
           <TripSelection
+            pkg={pkg}
+            image={clean(cover)}
             departures={departures}
             departureKey={departureKey}
             onDeparture={setDepartureKey}
@@ -340,20 +347,8 @@ function ReviewForm({ pkg }: { pkg: PackageDetail }) {
             onPickup={setPickupKey}
             departureError={shown.departureError}
             pickupError={shown.pickupError}
+            travellerRows={travellerRows}
           />
-          <TravellersSelection
-            options={options}
-            counts={counts}
-            ages={ages}
-            seatsLeft={departure?.seatsLeft}
-            ageErrors={errors.ageErrors}
-            onCount={setCount}
-            onAge={setAge}
-            locked={countsLocked}
-          />
-          {shown.travellerError ? (
-            <p role="alert" className="text-sm font-medium text-rose-600">{shown.travellerError}</p>
-          ) : null}
           <ActivitySelection
             activities={addOns}
             quantities={activityQty}
@@ -387,39 +382,6 @@ function ReviewForm({ pkg }: { pkg: PackageDetail }) {
             onRequestQuote={openQuote}
           />
         </aside>
-      </div>
-
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur lg:hidden dark:border-slate-800 dark:bg-slate-900/95">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3">
-          <div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Amount due now</p>
-            <p className="text-lg font-extrabold text-slate-900 dark:text-white">
-              {preview.isFetching
-                ? "Calculating…"
-                : preview.data?.payment
-                  ? formatMoney(preview.data.payment.amountDueNow, quoteCurrency)
-                  : "—"}
-            </p>
-          </div>
-          <div className="flex flex-col items-end gap-1.5">
-            <button
-              type="button"
-              onClick={submit}
-              disabled={reserve.isPending}
-              className="inline-flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-70"
-            >
-              {reserve.isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
-              Continue to payment
-            </button>
-            <button
-              type="button"
-              onClick={openQuote}
-              className="text-xs font-semibold text-slate-600 underline-offset-2 hover:text-blue-700 hover:underline"
-            >
-              Request a Quote
-            </button>
-          </div>
-        </div>
       </div>
 
       <QuoteRequestDialog
@@ -474,7 +436,6 @@ export default function PackageReviewPage() {
   return (
     <div className="min-h-screen bg-slate-100 font-jakarta text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       {content}
-      <Footer />
     </div>
   );
 }

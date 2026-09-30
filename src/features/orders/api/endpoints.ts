@@ -9,6 +9,12 @@ export const ordersEndpoints = {
 
   download: (bookingId: number) =>
     buildApiUrl("TICKETCORE", `/orders/${bookingId}/download`),
+
+  packageDetail: (bookingId: number) =>
+    buildApiUrl("TICKETCORE", `/orders/${bookingId}/package`),
+
+  packageVoucher: (bookingId: number) =>
+    buildApiUrl("TICKETCORE", `/booking/package/${bookingId}/voucher`),
 } as const;
 
 export const feedbackEndpoints = {

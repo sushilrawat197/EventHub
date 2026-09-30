@@ -3,7 +3,9 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { PageData } from "../../../interfaces/country";
 
 export interface OrderDetails {
+  bookingType?: "EVENT" | "PACKAGE" | string;
   bookingId: number;
+  bookingRef?: string;
   orderNo: string;
   orderDateTime: string;
   eventName: string;

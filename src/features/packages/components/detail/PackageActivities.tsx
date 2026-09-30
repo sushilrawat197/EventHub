@@ -82,7 +82,7 @@ function ActivityCard({ activity, onOpen }: { activity: PackageActivity; onOpen:
         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
           {location ? (
             <span className="inline-flex items-center gap-1">
-              <MapPin className="size-3.5 shrink-0 text-emerald-600" aria-hidden />
+              <MapPin className="size-3.5 shrink-0 text-red-500" aria-hidden />
               {location}
             </span>
           ) : null}

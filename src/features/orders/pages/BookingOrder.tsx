@@ -8,6 +8,18 @@ import { getOrderDetails } from "../services/orders.service";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../app/store/hooks";
 
+function BookingType({ type }: { type?: string }) {
+  const packageBooking = type === "PACKAGE";
+  return (
+    <span
+      className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ${packageBooking ? "bg-sky-100 text-sky-800" : "bg-slate-100 text-slate-600"
+        }`}
+    >
+      {packageBooking ? "Travel package" : "Event"}
+    </span>
+  );
+}
+
 const BookingOrder: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -33,17 +45,17 @@ const BookingOrder: React.FC = () => {
   // Search filter
   const filteredOrder = searchTerm
     ? allOrders.filter((order) => {
-        const search = searchTerm.toLowerCase();
-        return (
-          (order.eventName?.toLowerCase() || "").includes(search) ||
-          (order.orderNo?.toString().toLowerCase() || "").includes(search)
-        );
-      })
+      const search = searchTerm.toLowerCase();
+      return (
+        (order.eventName?.toLowerCase() || "").includes(search) ||
+        (order.orderNo?.toString().toLowerCase() || "").includes(search)
+      );
+    })
     : allOrders;
 
   // Intersection Observer for infinite scroll
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  
+
 
 
   useEffect(() => {
@@ -61,17 +73,21 @@ const BookingOrder: React.FC = () => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
 
-  function clickHandler(bookingId: number) {
+  function clickHandler(order: (typeof allOrders)[number]) {
+    if (order.bookingType === "PACKAGE") {
+      navigate(`/order/${order.bookingId}/package`);
+      return;
+    }
     dispatch(clearConfirmBooking());
-    dispatch(getOrderDetails(Number(bookingId), navigate));
+    dispatch(getOrderDetails(Number(order.bookingId), navigate));
   }
 
-  
+
   if (status === "pending") return <p>Loading orders...</p>;
   if (status === "error") return <p>Failed to load orders.</p>;
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen mt-32">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 min-h-screen lg:mt-40">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
         {/* Header with search */}
         <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white p-6 sm:p-8">
@@ -102,12 +118,15 @@ const BookingOrder: React.FC = () => {
         </div>
 
         {/* Desktop table header */}
-        <div className="hidden sm:grid grid-cols-4 gap-6 px-6 py-4 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200">
+        <div className="hidden lg:grid lg:grid-cols-5 gap-4 px-6 py-4 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-200">
           <div className="flex items-center gap-2 text-xs font-semibold text-gray-700">
             <svg className="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-9 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 4V2a1 1 0 011-1h8a1 1 0 011 1v2" />
             </svg>
             Event Name
+          </div>
+          <div className="flex items-center justify-center gap-2 text-xs font-semibold text-gray-700">
+            Booking type
           </div>
           <div className="flex items-center justify-center gap-2 text-xs font-semibold text-gray-700">
             <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,11 +154,11 @@ const BookingOrder: React.FC = () => {
           {filteredOrder.map((transaction) => (
             <div
               key={transaction.bookingId}
-              onClick={() => clickHandler(transaction.bookingId)}
+              onClick={() => clickHandler(transaction)}
               className="group p-4 sm:px-6 sm:py-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 cursor-pointer border-l-4 border-transparent hover:border-blue-500"
             >
               {/* Mobile card layout */}
-              <div className="flex flex-col gap-3 sm:hidden">
+              <div className="flex flex-col gap-3 lg:hidden">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,20 +178,23 @@ const BookingOrder: React.FC = () => {
                   </div>
                 </div>
 
+                <div className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2">
+                  <span className="text-xs font-medium text-gray-500">Booking type</span>
+                  <BookingType type={transaction.bookingType} />
+                </div>
+
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-2 h-2 rounded-full ${
-                      transaction.status === "CONFIRMED"
-                        ? "bg-green-500"
-                        : "bg-red-500"
-                    }`}
+                    className={`w-2 h-2 rounded-full ${transaction.status === "CONFIRMED"
+                      ? "bg-green-500"
+                      : "bg-red-500"
+                      }`}
                   />
                   <span
-                    className={`text-xs font-semibold ${
-                      transaction.status === "CONFIRMED"
-                        ? "text-green-700"
-                        : "text-red-700"
-                    }`}
+                    className={`text-xs font-semibold ${transaction.status === "CONFIRMED"
+                      ? "text-green-700"
+                      : "text-red-700"
+                      }`}
                   >
                     {transaction.status === "CONFIRMED"
                       ? "Order Confirmed"
@@ -197,35 +219,35 @@ const BookingOrder: React.FC = () => {
               </div>
 
               {/* Desktop row */}
-              <div className="hidden sm:grid grid-cols-4 gap-4 items-center">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <div className="hidden lg:grid lg:grid-cols-5 gap-4 items-center">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="w-10 h-10 shrink-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-9 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 4V2a1 1 0 011-1h8a1 1 0 011 1v2" />
                     </svg>
                   </div>
-                  <div>
-                    <div className="text-sm font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
-                      {transaction.eventName}
-                    </div>
+                  <div className="min-w-0 text-sm font-bold text-gray-900 group-hover:text-blue-700 transition-colors truncate">
+                    {transaction.eventName}
                   </div>
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <BookingType type={transaction.bookingType} />
                 </div>
 
                 <div className="flex items-center justify-center">
                   <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5">
                     <div
-                      className={`w-2 h-2 rounded-full ${
-                        transaction.status === "CONFIRMED"
-                          ? "bg-green-500"
-                          : "bg-red-500"
-                      }`}
+                      className={`w-2 h-2 rounded-full ${transaction.status === "CONFIRMED"
+                        ? "bg-green-500"
+                        : "bg-red-500"
+                        }`}
                     />
                     <span
-                      className={`text-xs font-semibold ${
-                        transaction.status === "CONFIRMED"
-                          ? "text-green-700"
-                          : "text-red-700"
-                      }`}
+                      className={`text-xs font-semibold ${transaction.status === "CONFIRMED"
+                        ? "text-green-700"
+                        : "text-red-700"
+                        }`}
                     >
                       {transaction.status}
                     </span>

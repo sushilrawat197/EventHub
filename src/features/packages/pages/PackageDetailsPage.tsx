@@ -1,11 +1,12 @@
-import { useCallback, useMemo, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { PackageSearch, RefreshCw } from "lucide-react";
-import Footer from "@/features/home/components/Footer";
+import { useAppSelector } from "@/app/store/hooks";
 import { showGlobalPopup } from "@/utils/globalPopup";
 import PackageActivities, { ActivityDrawer } from "../components/detail/PackageActivities";
-import PackageBookingCard, { PackageMobileBookingBar } from "../components/detail/PackageBookingCard";
+import PackageBookingCard from "../components/detail/PackageBookingCard";
 import PackageDetailSkeleton from "../components/detail/PackageDetailSkeleton";
+import PackageQuoteModal from "../components/detail/PackageQuoteModal";
 import PackageGallery from "../components/detail/PackageGallery";
 import PackageInclusions from "../components/detail/PackageInclusions";
 import PackageItinerary from "../components/detail/PackageItinerary";
@@ -23,7 +24,7 @@ import {
   plural,
 } from "../utils/packageDetailFormat";
 import { fromPriceParts } from "../utils/packageDetailIcons";
-import { childAgesComplete, encodeTravellerCounts, travellerOptions } from "../utils/packageReservation";
+import { childAgesComplete, decodeTravellerAges, decodeTravellerCounts, encodeTravellerCounts, travellerOptions } from "../utils/packageReservation";
 
 function StateMessage({
   title,
@@ -66,23 +67,36 @@ function StateMessage({
 function PackageDetailsView({ pkg }: { pkg: PackageDetail }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const user = useAppSelector((state) => state.user.user);
   const departures = useMemo(() => normalizeDepartures(pkg.departures), [pkg.departures]);
   const transport = useMemo(() => normalizeTransport(pkg.transport), [pkg.transport]);
   const pickupPoints = useMemo(() => normalizePickupPoints(pkg.pickupPoints), [pkg.pickupPoints]);
 
   const options = useMemo(() => travellerOptions(pkg), [pkg]);
-  const [selectedKey, setSelectedKey] = useState<string>();
+  const presetTravellers = searchParams.get("travellers");
+  const [selectedKey, setSelectedKey] = useState<string | undefined>(
+    () => searchParams.get("departureId") ?? (departures.length === 1 ? departures[0].key : undefined),
+  );
   const [counts, setCounts] = useState<Record<string, number>>(() =>
+    decodeTravellerCounts(presetTravellers, options) ??
     Object.fromEntries(options.map((option) => [option.type, option.min])),
   );
-  const [ages, setAges] = useState<Record<string, number[]>>({});
+  const [ages, setAges] = useState<Record<string, number[]>>(() => decodeTravellerAges(presetTravellers));
   const [ageErrors, setAgeErrors] = useState<Record<string, string>>({});
   const [departureError, setDepartureError] = useState<string>();
   const [openActivity, setOpenActivity] = useState<PackageActivity | null>(null);
+  const [isQuoteOpen, setIsQuoteOpen] = useState(false);
   const closeActivity = useCallback(() => setOpenActivity(null), []);
 
-  const selected = departures.find((departure) => departure.key === selectedKey);
-  const guestCount = options.reduce((sum, option) => sum + (counts[option.type] ?? 0), 0);
+  useEffect(() => {
+    if (departures.length === 1 && !selectedKey) {
+      setSelectedKey(departures[0].key);
+    }
+  }, [departures, selectedKey]);
+
+  const selected = departures.find((departure) => departure.key === selectedKey) ?? (departures.length === 1 ? departures[0] : undefined);
+  const bookLabel = user ? "Continue Booking" : "Login to proceed";
 
   function selectDeparture(key: string) {
     setSelectedKey(key);
@@ -136,7 +150,12 @@ function PackageDetailsView({ pkg }: { pkg: PackageDetail }) {
       departureId: selected.key,
       travellers: encodeTravellerCounts(counts, ages),
     });
-    navigate(`${location.pathname.replace(/\/$/, "")}/review?${params.toString()}`);
+    const reviewPath = `${location.pathname.replace(/\/$/, "")}/review?${params.toString()}`;
+    if (!user) {
+      navigate("/login", { state: { from: `${location.pathname}?${params.toString()}` } });
+      return;
+    }
+    navigate(reviewPath);
   }
 
   const bookingCard = (anchorId?: string) => (
@@ -170,17 +189,18 @@ function PackageDetailsView({ pkg }: { pkg: PackageDetail }) {
         });
       }}
       onBook={book}
+      onRequestQuote={() => setIsQuoteOpen(true)}
+      bookLabel={bookLabel}
     />
   );
 
   return (
     <>
-      <div className="mx-auto max-w-[1200px] px-4 pb-28 pt-6 sm:px-6 sm:pt-8 lg:pt-[calc(var(--site-header-height,8rem)-7rem+1.5rem)] lg:pb-12">
+      <div className="mx-auto max-w-[1200px] px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:pt-[calc(var(--site-header-height,8rem)-7rem+1.5rem)] lg:pb-12">
         <PackageGallery pkg={pkg} priceLabel={fromPriceParts(pkg).price} />
 
         <div className="mt-6 grid items-start gap-6 lg:grid-cols-12 lg:gap-8">
           <main className="min-w-0 space-y-6 lg:col-span-8">
-            <div className="lg:hidden">{bookingCard("booking")}</div>
             <PackageOverview pkg={pkg} transport={transport} />
             <PackageItinerary pkg={pkg} />
             <PackageActivities pkg={pkg} onOpenActivity={setOpenActivity} />
@@ -188,6 +208,7 @@ function PackageDetailsView({ pkg }: { pkg: PackageDetail }) {
             <PackageTransportPickup transport={transport} pickupPoints={pickupPoints} departures={departures} />
             <PackageInclusions inclusions={pkg.inclusions ?? []} exclusions={pkg.exclusions ?? []} />
             <PackagePolicies paymentTerms={pkg.paymentTerms} cancellationPolicy={pkg.cancellationPolicy} />
+            <div className="lg:hidden pt-2">{bookingCard("booking")}</div>
           </main>
 
           <aside className="hidden lg:sticky lg:top-[calc(var(--site-header-height,8rem)+0.75rem)] lg:col-span-4 lg:block" aria-label="Booking">
@@ -196,8 +217,18 @@ function PackageDetailsView({ pkg }: { pkg: PackageDetail }) {
         </div>
       </div>
 
-      <PackageMobileBookingBar guestLabel={plural(guestCount, "guest")} onBook={book} />
       {openActivity ? <ActivityDrawer activity={openActivity} onClose={closeActivity} /> : null}
+
+      <PackageQuoteModal
+        open={isQuoteOpen}
+        pkg={pkg}
+        departures={departures}
+        initialDepartureKey={selectedKey}
+        initialCounts={counts}
+        initialAges={ages}
+        options={options}
+        onClose={() => setIsQuoteOpen(false)}
+      />
     </>
   );
 }
@@ -226,9 +257,6 @@ export default function PackageDetailsPage() {
   return (
     <div className="package-detail-page min-h-screen bg-slate-50 font-jakarta text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       {content}
-      <div className="print:hidden">
-        <Footer />
-      </div>
     </div>
   );
 }

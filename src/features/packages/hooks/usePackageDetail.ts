@@ -17,6 +17,7 @@ export function usePackageDetail(packageId: string | undefined) {
     queryKey: packagesQueryKeys.detail(packageId ?? ""),
     queryFn: () => fetchPackage(packageId!),
     enabled: Boolean(packageId),
-    staleTime: 60_000,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 }

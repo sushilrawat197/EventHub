@@ -15,6 +15,7 @@ function GuestCard({
   errors: GuestErrors;
   onChange: (patch: Partial<GuestForm>) => void;
 }) {
+  const isChild = slot.type === "CHILD";
   const id = (field: string) => `guest-${slot.key}-${field}`;
   const describedBy = (field: keyof GuestForm) => (errors[field] ? `${id(field)}-error` : undefined);
   const contactHint = slot.primary ? undefined : "Optional. The lead guest's contact is used if left blank.";
@@ -24,11 +25,15 @@ function GuestCard({
       <legend className="flex items-center gap-2 px-1 text-sm font-semibold text-slate-900 dark:text-white">
         {slot.label}
         {slot.age != null ? <span className="font-normal text-slate-500 dark:text-slate-400">· {slot.age} yrs</span> : null}
-        {slot.primary ? <Badge tone="blue">Lead guest</Badge> : null}
+        {slot.primary ? (
+          <Badge tone="blue">Lead guest</Badge>
+        ) : isChild ? (
+          <span className="text-xs font-normal text-slate-400">(Optional)</span>
+        ) : null}
       </legend>
 
       <div className="mt-2 grid gap-4 sm:grid-cols-[120px_1fr_1fr]">
-        <Field id={id("title")} label="Title" error={errors.title} required>
+        <Field id={id("title")} label="Title" error={errors.title} required={!isChild}>
           <select
             id={id("title")}
             value={value.title}
@@ -37,7 +42,7 @@ function GuestCard({
             onChange={(event) => onChange({ title: event.target.value })}
             className={inputClass(Boolean(errors.title))}
           >
-            <option value="" disabled>
+            <option value="" disabled={!isChild}>
               Select
             </option>
             {TITLES.map((title) => (
@@ -47,7 +52,7 @@ function GuestCard({
             ))}
           </select>
         </Field>
-        <Field id={id("firstName")} label="First name" error={errors.firstName} required>
+        <Field id={id("firstName")} label="First name" error={errors.firstName} required={!isChild}>
           <input
             id={id("firstName")}
             value={value.firstName}
@@ -56,9 +61,10 @@ function GuestCard({
             aria-describedby={describedBy("firstName")}
             onChange={(event) => onChange({ firstName: event.target.value })}
             className={inputClass(Boolean(errors.firstName))}
+            placeholder={isChild ? "Optional" : undefined}
           />
         </Field>
-        <Field id={id("lastName")} label="Last name" error={errors.lastName} required>
+        <Field id={id("lastName")} label="Last name" error={errors.lastName} required={!isChild}>
           <input
             id={id("lastName")}
             value={value.lastName}
@@ -67,6 +73,7 @@ function GuestCard({
             aria-describedby={describedBy("lastName")}
             onChange={(event) => onChange({ lastName: event.target.value })}
             className={inputClass(Boolean(errors.lastName))}
+            placeholder={isChild ? "Optional" : undefined}
           />
         </Field>
       </div>
@@ -146,7 +153,7 @@ export default function GuestDetailsForm({
   return (
     <SectionCard id="guests" title="Guest details" icon={UserRound}>
       <p className="-mt-2 mb-4 text-sm text-slate-500 dark:text-slate-400">
-        Enter adult and child names exactly as they appear on their ID.
+        Enter adult names as they appear on their ID. Child details are optional.
       </p>
       <div className="space-y-4">
         {slots.map((slot) => (

@@ -120,7 +120,7 @@ export default function PackageGallery({
   const location = [city, clean(pkg.destination?.country)].filter(Boolean).join(", ");
   const duration = formatDurationLabel(pkg.duration?.days, pkg.duration?.nights);
   const operator = clean(pkg.tourOperatorName);
-  const shortDescription = clean(pkg.shortDescription);
+  // const shortDescription = clean(pkg.shortDescription);
   const category = clean(pkg.category);
   const current = images[activeIndex];
 
@@ -143,7 +143,7 @@ export default function PackageGallery({
           <div className="relative z-10 flex items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2">
               {category ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/90 px-3 py-1 text-xs font-medium text-white shadow-sm">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white shadow-sm">
                   <span className="size-1.5 rounded-full bg-white" />
                   {category}
                 </span>
@@ -171,7 +171,7 @@ export default function PackageGallery({
             <div className="flex flex-wrap items-center gap-2 text-xs font-medium">
               {location ? (
                 <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-black/60 px-3 py-1 backdrop-blur-md">
-                  <MapPin className="size-3.5 text-emerald-300" aria-hidden />
+                  <MapPin className="size-3.5 text-red-400" aria-hidden />
                   {location}
                 </span>
               ) : null}
@@ -185,9 +185,9 @@ export default function PackageGallery({
             <h1 className="max-w-4xl text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl md:text-4xl lg:text-5xl">
               {pkg.packageName.trim()}
             </h1>
-            {shortDescription ? (
+            {/* {shortDescription ? (
               <p className="max-w-3xl text-xs font-normal leading-relaxed text-white/90 sm:text-sm md:text-base">{shortDescription}</p>
-            ) : null}
+            ) : null} */}
             <footer className="flex flex-col justify-between gap-4 border-t border-white/20 pt-3 sm:flex-row sm:items-center">
               <div>
                 <span className="block text-[11px] font-medium uppercase tracking-wider text-white/80">Starting from</span>

@@ -47,10 +47,10 @@ export default function PackageBookingConfirmedPage() {
 
         <div className="mt-8 grid gap-2 sm:grid-cols-2">
           <Link
-            to="/packages"
+            to={`/order/${bookingId}/package`}
             className="inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
           >
-            Explore more packages
+            View booking
           </Link>
           <Link
             to="/"

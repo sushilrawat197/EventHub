@@ -87,7 +87,7 @@ export default function BookingConfirmed() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col items-center p-4 sm:p-6 mt-16 lg:mt-28">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pt-8 lg:pt-16">
       {/* Header Confirmation */}
       <div className="w-full max-w-7xl bg-white shadow-xl rounded-xl p-4 sm:p-5 mb-4 flex items-center justify-center border border-gray-100">
         <div className="text-center">

@@ -9,7 +9,10 @@ export function formatPackagePrice(amount: number, currency: string): string {
 }
 
 export function formatDuration(nights: number, days: number): string {
-  return `${days}D / ${nights}N`;
+  if (nights > 0) {
+    return `${nights}N / ${days}D`;
+  }
+  return `${days}D`;
 }
 
 export function formatDeparture(date: string | undefined): string {

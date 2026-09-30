@@ -280,7 +280,7 @@ export const packageDetailMock: PackageDetail = {
     pricingBasis: "PER_PERSON",
     prices: [
       { priceId: 2, packageId: 4, passengerType: "ADULT", amount: 2000, currency: "LSL", pricingBasisCode: "PER_PERSON", pricingBasisName: "Per Person", minAge: null, maxAge: null, active: true },
-      { priceId: 3, packageId: 4, passengerType: "CHILD", amount: 500, currency: "LSL", pricingBasisCode: "PER_PERSON", pricingBasisName: "Per Person", minAge: 5, maxAge: 10, active: true },
+      { priceId: 3, packageId: 4, passengerType: "CHILD", amount: 500, currency: "LSL", pricingBasisCode: "PER_PERSON", pricingBasisName: "Per Person", minAge: 2, maxAge: 17, active: true },
       { priceId: 4, packageId: 4, passengerType: "INFANT", amount: 0, currency: "LSL", pricingBasisCode: "PER_PERSON", pricingBasisName: "Per Person", minAge: null, maxAge: null, active: true },
     ],
   },

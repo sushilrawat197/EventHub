@@ -51,7 +51,9 @@ function PackageCard({ pkg }: { pkg: TourPackage }) {
 
         <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
           <Clock className="h-3.5 w-3.5" />
-          {pkg.durationNights}N / {pkg.durationDays}D
+          {pkg.durationNights && pkg.durationNights > 0
+            ? `${pkg.durationNights}N / ${pkg.durationDays}D`
+            : `${pkg.durationDays}D`}
         </span>
 
         <div className="absolute inset-x-0 bottom-0 px-4 pb-4">

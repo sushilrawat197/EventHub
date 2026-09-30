@@ -3,6 +3,7 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import type { PackageReservationResponse } from "../../types/packageReservation";
 import { formatDate, formatMoney, friendlyLabel, plural } from "../../utils/packageDetailFormat";
 import { Badge, SafeImage } from "../detail/primitives";
+import PaymentScheduleCard from "./PaymentScheduleCard";
 
 function travellersText(t: PackageReservationResponse["travellers"]): string {
   const parts = [
@@ -46,18 +47,18 @@ export default function ReservationSummary({
   const end = formatDate(departure.returnDate);
 
   return (
-    <aside className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_40px_-24px_rgba(15,23,42,0.35)] dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex gap-4 border-b border-slate-100 p-5 dark:border-slate-800">
-        <SafeImage src={coverImage} alt="" className="size-16 shrink-0 rounded-xl object-cover" iconClassName="size-5" />
+    <aside className="overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div className="flex items-center gap-3.5 sm:gap-4 border-b border-slate-100 p-4 sm:p-5 dark:border-slate-800">
+        <SafeImage src={coverImage} alt="" className="size-14 sm:size-16 shrink-0 rounded-xl object-cover" iconClassName="size-5" />
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">Your booking</p>
-          <h2 className="mt-1 line-clamp-2 text-lg font-semibold tracking-tight text-slate-950 dark:text-white">
+          <h2 className="mt-0.5 line-clamp-2 text-base sm:text-lg font-bold tracking-tight text-slate-950 dark:text-white">
             {reservation.package.packageName.trim()}
           </h2>
         </div>
       </div>
 
-      <div className="space-y-5 p-5 text-sm">
+      <div className="space-y-4 sm:space-y-5 p-4 sm:p-5 text-sm">
         {notice}
         <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3.5 py-3 dark:bg-slate-800/70">
           <div>
@@ -95,20 +96,14 @@ export default function ReservationSummary({
           </div>
         </dl>
 
-        <div className="rounded-xl border border-blue-100 bg-blue-50/80 px-4 py-3.5 dark:border-blue-500/20 dark:bg-blue-500/10">
-          <div className="flex items-end justify-between gap-4">
-            <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-              {paid ? "Amount paid" : isDeposit ? "Deposit due now" : "Amount due now"}
-            </p>
-            <p className="text-2xl font-semibold tracking-tight text-blue-700 dark:text-blue-200">{money(payment.amountDueNow)}</p>
-          </div>
-          {isDeposit ? (
-            <p className="mt-1 text-xs text-blue-800/80 dark:text-blue-100/70">
-              Remaining {money(payment.balanceAmount)}
-              {payment.balanceDueDate ? ` due by ${formatDate(payment.balanceDueDate)}` : ""}.
-            </p>
-          ) : null}
-        </div>
+        <PaymentScheduleCard
+          amountDueNow={payment.amountDueNow}
+          balanceAmount={payment.balanceAmount}
+          balanceDueDate={payment.balanceDueDate}
+          currency={pricing.currency}
+          isDeposit={isDeposit}
+          paid={paid}
+        />
       </div>
     </aside>
   );

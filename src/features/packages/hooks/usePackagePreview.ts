@@ -19,5 +19,7 @@ export function usePackagePreview(request: PackagePreviewRequest | null) {
     ),
     queryFn: () => previewPackageApi(request!),
     enabled: request != null && request.travellers.length > 0,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 }

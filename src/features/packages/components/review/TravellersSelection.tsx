@@ -1,4 +1,11 @@
 import { Users } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatAgeRange } from "../../utils/packageDetailFormat";
 import { ageChoices, MAX_PER_TYPE, type TravellerOption } from "../../utils/packageReservation";
 import { SectionCard } from "../detail/primitives";
@@ -76,22 +83,25 @@ export default function TravellersSelection({
                     const error = ageErrors[`${option.type}-${index}`];
                     return (
                       <Field key={id} id={id} label={`${option.label} ${index + 1} age`} error={error} required>
-                        <select
-                          id={id}
-                          value={value ?? ""}
-                          aria-invalid={Boolean(error)}
-                          onChange={(event) => onAge(option.type, index, Number(event.target.value))}
-                          className={inputClass(Boolean(error))}
+                        <Select
+                          value={value != null ? String(value) : ""}
+                          onValueChange={(selectedAge) => onAge(option.type, index, Number(selectedAge))}
                         >
-                          <option value="" disabled>
-                            Age
-                          </option>
-                          {choices.map((choice) => (
-                            <option key={choice} value={choice}>
-                              {choice} {choice === 1 ? "year" : "years"}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger
+                            id={id}
+                            aria-invalid={Boolean(error)}
+                            className={inputClass(Boolean(error))}
+                          >
+                            <SelectValue placeholder="Age" />
+                          </SelectTrigger>
+                          <SelectContent position="popper" className="z-50 max-h-60 min-w-[8.5rem]">
+                            {choices.map((choice) => (
+                              <SelectItem key={choice} value={String(choice)} className="cursor-pointer py-2 px-3 text-sm font-medium">
+                                {choice} {choice === 1 ? "year" : "years"}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </Field>
                     );
                   })}
