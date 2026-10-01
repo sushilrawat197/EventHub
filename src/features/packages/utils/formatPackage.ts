@@ -1,11 +1,8 @@
 import type { TourPackage } from "../types/package";
+import { formatMoney } from "./packageDetailFormat";
 
 export function formatPackagePrice(amount: number, currency: string): string {
-  const formatted = Number(amount).toLocaleString("en-US", {
-    maximumFractionDigits: 0,
-  });
-  if (currency === "LSL") return `M${formatted}`;
-  return `${currency} ${formatted}`;
+  return formatMoney(amount, currency) ?? `${currency} ${Number(amount).toLocaleString("en-US")}`;
 }
 
 export function formatDuration(nights: number, days: number): string {

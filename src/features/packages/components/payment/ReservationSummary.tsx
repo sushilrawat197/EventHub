@@ -47,18 +47,18 @@ export default function ReservationSummary({
   const end = formatDate(departure.returnDate);
 
   return (
-    <aside className="overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex items-center gap-3.5 sm:gap-4 border-b border-slate-100 p-4 sm:p-5 dark:border-slate-800">
-        <SafeImage src={coverImage} alt="" className="size-14 sm:size-16 shrink-0 rounded-xl object-cover" iconClassName="size-5" />
+    <aside className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm sm:rounded-3xl dark:border-slate-800 dark:bg-slate-900">
+      <div className="flex items-center gap-3.5 border-b border-slate-100 p-4 sm:gap-4 sm:p-5 dark:border-slate-800">
+        <SafeImage src={coverImage} alt="" className="size-14 shrink-0 rounded-xl object-cover sm:size-16" iconClassName="size-5" />
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">Your booking</p>
-          <h2 className="mt-0.5 line-clamp-2 text-base sm:text-lg font-bold tracking-tight text-slate-950 dark:text-white">
+          <h2 className="mt-0.5 line-clamp-2 text-base font-bold tracking-tight text-slate-950 sm:text-lg dark:text-white">
             {reservation.package.packageName.trim()}
           </h2>
         </div>
       </div>
 
-      <div className="space-y-4 sm:space-y-5 p-4 sm:p-5 text-sm">
+      <div className="space-y-4 p-4 text-sm sm:space-y-5 sm:p-5">
         {notice}
         <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3.5 py-3 dark:bg-slate-800/70">
           <div>

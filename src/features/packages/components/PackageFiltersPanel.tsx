@@ -4,6 +4,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { PACKAGE_PRICE_MAX, PACKAGE_PRICE_MIN } from "../types/package";
 import { formatDeparture, formatIsoDate, parseIsoDate } from "../utils/formatPackage";
+import { formatMoney } from "../utils/packageDetailFormat";
 
 type PackageFiltersPanelProps = {
   departureDate: string;
@@ -86,7 +87,7 @@ export default function PackageFiltersPanel({
                 Min
               </p>
               <p className="text-sm font-semibold text-gray-900">
-                M{minPrice.toLocaleString()}
+                {formatMoney(minPrice, "LSL")}
               </p>
             </div>
             <div className="rounded-xl bg-gray-50 px-3 py-2 text-right">
@@ -94,7 +95,7 @@ export default function PackageFiltersPanel({
                 Max
               </p>
               <p className="text-sm font-semibold text-gray-900">
-                M{maxPrice.toLocaleString()}
+                {formatMoney(maxPrice, "LSL")}
               </p>
             </div>
           </div>

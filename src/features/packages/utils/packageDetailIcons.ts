@@ -43,7 +43,7 @@ export function statusTone(statusCode: string): BadgeTone {
   return "slate";
 }
 
-/** "LSL 2,000" and "person" for "From LSL 2,000 / person". */
+/** "M2,000" and "person" for "From M2,000 / person". */
 export function fromPriceParts(pkg: PackageDetail) {
   const pricing = pkg.pricing;
   const price = formatMoney(pricing?.fromPrice, pricing?.currency);

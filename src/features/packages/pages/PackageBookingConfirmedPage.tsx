@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { CheckCircle2 } from "lucide-react";
+import { Check } from "lucide-react";
 import ScrollToTop from "@/shared/components/common/ScrollToTop";
-import ReservationSummary from "../components/payment/ReservationSummary";
+import BookingSprinkles from "../components/payment/BookingSprinkles";
 import type { StoredPackageReservation } from "../types/packageReservation";
+import { formatMoney } from "../utils/packageDetailFormat";
 import { loadReservation } from "../utils/reservationStorage";
 
 export default function PackageBookingConfirmedPage() {
@@ -13,52 +14,75 @@ export default function PackageBookingConfirmedPage() {
   const [entry] = useState<StoredPackageReservation | null>(() =>
     fromState?.reservation?.bookingId === Number(bookingId) ? fromState : loadReservation(bookingId),
   );
+  const reservation = entry?.reservation;
+  const paidLabel = reservation ? formatMoney(reservation.payment.amountDueNow, reservation.pricing.currency) : undefined;
+  const remainingAmount = reservation?.payment.balanceAmount ?? 0;
+  const remainingLabel = reservation ? formatMoney(remainingAmount, reservation.pricing.currency) : undefined;
 
   return (
-    <div className="min-h-[calc(100vh-200px)] bg-slate-50 font-jakarta dark:bg-slate-950">
+    <div className="relative flex min-h-[calc(100dvh-4.5rem)] items-center bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.16),_transparent_46%),linear-gradient(180deg,#f8fafc_0%,#f1f5f9_100%)] px-4 py-8 font-jakarta sm:min-h-[calc(100dvh-4rem)] lg:min-h-[calc(100dvh-7rem)] dark:bg-slate-950">
       <ScrollToTop />
-      <div className="mx-auto max-w-xl px-4 py-10 sm:py-14">
-        <div className="text-center">
-          <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15">
-            <CheckCircle2 className="size-9" aria-hidden />
-          </span>
-          <h1 className="mt-4 text-2xl font-extrabold text-slate-900 dark:text-white">Payment successful</h1>
-          <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-300">
-            {entry?.leadEmail ? (
-              <>
-                Your booking is confirmed. Details will be sent to <span className="font-semibold">{entry.leadEmail}</span>.
-              </>
-            ) : (
-              "Your booking is confirmed. The operator will contact you with trip details."
-            )}
-          </p>
-        </div>
+      <BookingSprinkles />
 
-        {entry ? (
-          <div className="mt-8">
-            <ReservationSummary
-              reservation={entry.reservation}
-              coverImage={entry.coverImage}
-              pickupLabel={entry.pickupLabel}
-              paid
-            />
+      <div className="relative mx-auto w-full max-w-md">
+        <article className="overflow-hidden rounded-[1.35rem] border border-slate-200/80 bg-white shadow-[0_28px_60px_-36px_rgba(15,23,42,0.55)] dark:border-slate-800 dark:bg-slate-900">
+          <div className="h-1.5 bg-gradient-to-r from-emerald-500 via-amber-300 to-sky-400" aria-hidden />
+
+          <header className="px-5 pb-1 pt-5 text-center">
+            <span className="mx-auto flex size-11 items-center justify-center rounded-full bg-emerald-600 text-white shadow-[0_10px_24px_-10px_rgba(5,150,105,0.9)]">
+              <Check className="size-5 stroke-[2.75]" aria-hidden />
+            </span>
+            <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-300">
+              Confirmed
+            </p>
+            <h1 className="mt-1 text-xl font-semibold tracking-tight text-slate-950 dark:text-white">
+              You&apos;re booked
+            </h1>
+            <p className="mx-auto mt-1 max-w-xs text-xs leading-5 text-slate-500 dark:text-slate-400">
+              {entry?.leadEmail ? (
+                <>
+                  Details will be sent to <span className="font-semibold text-slate-700 dark:text-slate-200">{entry.leadEmail}</span>.
+                </>
+              ) : (
+                "The operator will contact you with trip details."
+              )}
+            </p>
+          </header>
+
+          {reservation && paidLabel ? (
+            <dl className="mx-5 mb-4 mt-4 space-y-2.5 border-t border-slate-100 pt-4 text-sm dark:border-slate-800">
+              <div className="flex items-baseline justify-between gap-4">
+                <dt className="text-slate-500 dark:text-slate-400">Paid</dt>
+                <dd className="text-base font-semibold tabular-nums text-slate-950 dark:text-white">{paidLabel}</dd>
+              </div>
+              {remainingAmount > 0 && remainingLabel ? (
+                <div className="flex items-baseline justify-between gap-4">
+                  <dt className="text-slate-500 dark:text-slate-400">Remaining</dt>
+                  <dd className="text-base font-semibold tabular-nums text-slate-950 dark:text-white">{remainingLabel}</dd>
+                </div>
+              ) : null}
+            </dl>
+          ) : (
+            <p className="px-5 py-4 text-center text-sm text-slate-500">
+              Booking <span className="font-mono font-semibold text-slate-800 dark:text-slate-100">{bookingId}</span> is confirmed.
+            </p>
+          )}
+
+          <div className="grid grid-cols-2 gap-2 border-t border-slate-100 px-4 py-3 dark:border-slate-800">
+            <Link
+              to={`/order/${bookingId}/package`}
+              className="inline-flex h-10 items-center justify-center rounded-full bg-slate-950 text-xs font-semibold text-white hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100"
+            >
+              View booking
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex h-10 items-center justify-center rounded-full border border-slate-200 text-xs font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              Back to home
+            </Link>
           </div>
-        ) : null}
-
-        <div className="mt-8 grid gap-2 sm:grid-cols-2">
-          <Link
-            to={`/order/${bookingId}/package`}
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-          >
-            View booking
-          </Link>
-          <Link
-            to="/"
-            className="inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-800 hover:border-blue-300 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-          >
-            Back to home
-          </Link>
-        </div>
+        </article>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import type {
   PackagePickupPoint,
   PackageTransport,
 } from "../types/packageDetail";
+import { currencySymbol } from "./currencyDisplay";
 
 const FRIENDLY_LABELS: Record<string, string> = {
   PER_PERSON: "Per person",
@@ -62,6 +63,12 @@ export function formatMoney(amount: number | null | undefined, currency: string 
   if (amount == null || Number.isNaN(Number(amount))) return undefined;
   const code = clean(currency) ?? "LSL";
   const hasCents = Number(amount) % 1 !== 0;
+  const formatted = Number(amount).toLocaleString("en-US", {
+    minimumFractionDigits: hasCents ? 2 : 0,
+    maximumFractionDigits: hasCents ? 2 : 0,
+  });
+  const symbol = currencySymbol(code);
+  if (symbol) return `${symbol}${formatted}`;
   try {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -73,7 +80,7 @@ export function formatMoney(amount: number | null | undefined, currency: string 
       .format(Number(amount))
       .replace(/\u00a0/g, " ");
   } catch {
-    return `${code} ${Number(amount).toLocaleString("en-US")}`;
+    return `${code} ${formatted}`;
   }
 }
 

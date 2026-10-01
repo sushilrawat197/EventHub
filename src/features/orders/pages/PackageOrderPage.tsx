@@ -44,7 +44,7 @@ const DEFAULT_PACKAGE_COVER = "/Events1.jpg";
 const DEFAULT_ACTIVITY_THUMB = "/activity-fallback.jpg";
 
 function money(amount: number, currency: string) {
-  return formatMoney(amount, currency) ?? `${currency} ${amount.toLocaleString()}`;
+  return formatMoney(amount, currency) ?? "";
 }
 
 function StatusBadge({ status }: { status: string }) {
