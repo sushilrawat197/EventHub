@@ -302,19 +302,6 @@ const Navbar: React.FC = () => {
                 >
                   Browse Events
                 </NavLink>
-                <NavLink
-                  to={"/packages"}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `text-lg transition-all duration-200 px-4 py-3 rounded-xl ${
-                      isActive
-                        ? "text-blue-600 font-semibold bg-blue-50"
-                        : "text-gray-700 hover:bg-gray-50"
-                    }`
-                  }
-                >
-                  Travel Package
-                </NavLink>
               </div>
 
               <div className="border border-gray-200"></div>

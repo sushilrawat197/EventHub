@@ -1,7 +1,8 @@
 // TODO: TEMP SPECIAL EVENT FLOW - remove this file after marathon flow is retired.
 import type { MarathonRegistrationMode } from "@/features/booking/types/marathon";
 
-export const SPECIAL_EVENT_ID = 48;
+/** Set to `null` to hide the Marathon Event nav tab (and related special flow). */
+export const SPECIAL_EVENT_ID: number | null = null;
 export const SPECIAL_EVENT_NEW_FORM_ID = 49;
 
 /**
@@ -15,7 +16,7 @@ export const SPECIAL_NEW_FORM_ONLINE_PAYMENT_ENABLED = true;
 export const SPECIAL_MARATHON_EVENT_IDS = [
   SPECIAL_EVENT_ID,
   SPECIAL_EVENT_NEW_FORM_ID,
-] as const;
+].filter((id): id is number => id != null);
 
 export function isSpecialMarathonEvent(eventId: number | null | undefined): boolean {
   if (eventId == null || Number.isNaN(eventId)) return false;

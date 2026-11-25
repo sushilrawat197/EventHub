@@ -12,7 +12,8 @@ export type MarathonRaceCategory =
   | "Kids 5km"
   | "Adults 5km"
   | "Adults 10km"
-  | "Adults 21km";
+  | "Adults 21km"
+  | "Adults 42km";
 
 export interface ParticipantFormData {
   participantType: "CORPORATE" | "INDIVIDUAL";
@@ -118,4 +119,5 @@ export const RACE_CATEGORY_NEW_FORM_OPTIONS: Exclude<MarathonRaceCategory, "">[]
   "Adults 5km",
   "Adults 10km",
   "Adults 21km",
+  "Adults 42km",
 ];
