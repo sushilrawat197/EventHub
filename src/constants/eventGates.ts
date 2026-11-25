@@ -9,6 +9,8 @@ export const SPECIAL_EVENT_NEW_FORM_ID = 49;
  * 48: offline-first (M-Pesa/EcoCash on the form) when false.
  * 49: no offline UI; when false, registration still succeeds without payment page.
  */
+
+//NOW BOTH SPACIAL EVENT WILL BE CONTROLLED BY DIFFERENT GATES
 export const SPECIAL_EVENT_ONLINE_PAYMENT_ENABLED = false;
 export const SPECIAL_NEW_FORM_ONLINE_PAYMENT_ENABLED = true;
 
