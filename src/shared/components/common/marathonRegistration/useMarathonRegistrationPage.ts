@@ -22,7 +22,7 @@ import {
   isSpecialMarathonEvent,
   isSpecialMarathonNewFormEvent,
   isOfflineMarathonIndividual,
-  MARATHON_ONLINE_PAYMENT_ENABLED,
+  isMarathonOnlinePaymentEnabled,
   normalizeMarathonRegistrationMode,
   SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
   SPECIAL_NEW_FORM_CORPORATE,
@@ -67,11 +67,15 @@ export function useMarathonRegistrationPage() {
   const locState = (location.state || {}) as MarathonLocationState;
   const categoriesFromState = locState.categories;
   const participantTypeFromLocation = locState.participantType;
-  const registrationModeFromLocation = normalizeMarathonRegistrationMode(locState.registrationMode);
+  const registrationModeFromLocation = normalizeMarathonRegistrationMode(
+    locState.registrationMode,
+    eventIdParam
+  );
   const isOfflineIndividual = isOfflineMarathonIndividual(
     participantTypeFromLocation,
     registrationModeFromLocation,
-    isSpecialNewForm
+    isSpecialNewForm,
+    eventIdParam
   );
 
   const readOnlyWhenExisting = isOrderContext;
@@ -94,6 +98,7 @@ export function useMarathonRegistrationPage() {
   const resolvedEventId = isOrderContext
     ? Number(confirmBookingDetails?.event?.eventId)
     : eventIdParam;
+  const onlinePaymentEnabled = isMarathonOnlinePaymentEnabled(resolvedEventId);
   const resolvedTicketCategoryId = isOrderContext
     ? (confirmBookingDetails?.tickets?.[0] as { categoryId?: number } | undefined)?.categoryId ??
       null
@@ -119,7 +124,7 @@ export function useMarathonRegistrationPage() {
     (participantTypeFromLocation ?? participantForm.participantType) === "CORPORATE";
 
   const canRetryPendingPayment =
-    MARATHON_ONLINE_PAYMENT_ENABLED &&
+    onlinePaymentEnabled &&
     !isOfflineIndividual &&
     emailCheckOutcome.type === "pending_payment" &&
     !isCorporateParticipant &&
@@ -128,7 +133,7 @@ export function useMarathonRegistrationPage() {
 
   const handleRetryPayment = async () => {
     if (emailCheckOutcome.type !== "pending_payment") return;
-    if (isOfflineIndividual || !MARATHON_ONLINE_PAYMENT_ENABLED) {
+    if (isOfflineIndividual || !onlinePaymentEnabled) {
       toast.error("Online payment is not available for offline registration.");
       return;
     }
@@ -194,7 +199,10 @@ export function useMarathonRegistrationPage() {
                 participantType: parsed.participantType ?? "INDIVIDUAL",
                 ...(parsed.participantType !== "CORPORATE"
                   ? {
-                      registrationMode: normalizeMarathonRegistrationMode(parsed.registrationMode),
+                      registrationMode: normalizeMarathonRegistrationMode(
+                        parsed.registrationMode,
+                        eventIdParam
+                      ),
                     }
                   : {}),
               },
@@ -228,12 +236,12 @@ export function useMarathonRegistrationPage() {
   ]);
 
   useEffect(() => {
-    if (!isBookingContext || isSpecialNewForm || MARATHON_ONLINE_PAYMENT_ENABLED) return;
+    if (!isBookingContext || isSpecialNewForm || onlinePaymentEnabled) return;
     if (!categoriesFromState?.length) return;
     if ((participantTypeFromLocation ?? "INDIVIDUAL") !== "INDIVIDUAL") return;
 
     const rawMode = locState.registrationMode;
-    const normalizedMode = normalizeMarathonRegistrationMode(rawMode);
+    const normalizedMode = normalizeMarathonRegistrationMode(rawMode, eventIdParam);
     if (rawMode === normalizedMode) return;
 
     navigate(location.pathname, {
@@ -247,9 +255,11 @@ export function useMarathonRegistrationPage() {
   }, [
     isBookingContext,
     isSpecialNewForm,
+    onlinePaymentEnabled,
     categoriesFromState,
     participantTypeFromLocation,
     locState.registrationMode,
+    eventIdParam,
     location.pathname,
     navigate,
   ]);
@@ -394,6 +404,7 @@ export function useMarathonRegistrationPage() {
       participantForm,
       isSpecialNewForm,
       isOfflineIndividual,
+      onlinePaymentEnabled,
       resolvedEventId,
       resolvedTicketCategoryId,
       resolvedNoOfTicket,
@@ -415,10 +426,18 @@ export function useMarathonRegistrationPage() {
       const offlineFlow = treatsAsOfflineIndividual(
         participantForm,
         isSpecialNewForm,
-        isOfflineIndividual
+        isOfflineIndividual,
+        onlinePaymentEnabled
       );
 
-      if (shouldSkipOnlineCheckout(participantForm, isSpecialNewForm, isOfflineIndividual)) {
+      if (
+        shouldSkipOnlineCheckout(
+          participantForm,
+          isSpecialNewForm,
+          isOfflineIndividual,
+          onlinePaymentEnabled
+        )
+      ) {
         navigate(`/events/${contentName}/${eventIdParam}/booking/ticket`, {
           replace: true,
           state: {
@@ -428,11 +447,6 @@ export function useMarathonRegistrationPage() {
               : participantForm.participantType,
           },
         });
-        return;
-      }
-
-      if (!MARATHON_ONLINE_PAYMENT_ENABLED) {
-        toast.error("Online payment is currently unavailable. Please use offline registration.");
         return;
       }
 

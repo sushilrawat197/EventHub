@@ -16,7 +16,7 @@ import ScrollToTop from "../../../../../shared/components/common/ScrollToTop";
 import {
   isSpecialMarathonEvent,
   isSpecialMarathonNewFormEvent,
-  MARATHON_ONLINE_PAYMENT_ENABLED,
+  isMarathonOnlinePaymentEnabled,
   defaultMarathonRegistrationMode,
   normalizeMarathonRegistrationMode,
   SPECIAL_MARATHON_REGISTRATION_STASH_KEY,
@@ -104,6 +104,7 @@ const TicketSelection = () => {
   const eventIdNum = Number(eventId);
   const isSpecialMarathon = isSpecialMarathonEvent(eventIdNum);
   const isSpecialNewForm = isSpecialMarathonNewFormEvent(eventIdNum);
+  const onlinePaymentEnabled = isMarathonOnlinePaymentEnabled(eventIdNum);
 
   const userId = useAppSelector((state) => state.user.user?.userId);
 
@@ -118,7 +119,7 @@ const TicketSelection = () => {
     "INDIVIDUAL" | "CORPORATE"
   >("INDIVIDUAL");
   const [marathonRegistrationMode, setMarathonRegistrationMode] =
-    useState<MarathonRegistrationMode>(() => defaultMarathonRegistrationMode());
+    useState<MarathonRegistrationMode>(() => defaultMarathonRegistrationMode(eventIdNum));
 
   const [selectedTickets, setSelectedTickets] = useState<{
     [key: number]: number;
@@ -173,14 +174,14 @@ const TicketSelection = () => {
       return;
     }
     setMarathonParticipantType("INDIVIDUAL");
-    setMarathonRegistrationMode(defaultMarathonRegistrationMode());
+    setMarathonRegistrationMode(defaultMarathonRegistrationMode(eventIdNum));
     setParticipantDialogOpen(true);
   }
 
   function proceedToIndividualMarathonRegistration(
-    registrationMode: MarathonRegistrationMode = defaultMarathonRegistrationMode()
+    registrationMode: MarathonRegistrationMode = defaultMarathonRegistrationMode(eventIdNum)
   ) {
-    const resolvedMode = normalizeMarathonRegistrationMode(registrationMode);
+    const resolvedMode = normalizeMarathonRegistrationMode(registrationMode, eventIdNum);
     if (!categories.length) {
       window.alert("Add at least one ticket!");
       return;
@@ -681,7 +682,7 @@ const TicketSelection = () => {
                         checked={marathonParticipantType === "INDIVIDUAL"}
                         onChange={() => {
                           setMarathonParticipantType("INDIVIDUAL");
-                          setMarathonRegistrationMode(defaultMarathonRegistrationMode());
+                          setMarathonRegistrationMode(defaultMarathonRegistrationMode(eventIdNum));
                         }}
                         title="Individual"
                         icon={<UserRound className="h-4 w-4" />}
@@ -703,10 +704,10 @@ const TicketSelection = () => {
                         <div
                           className={cn(
                             "grid gap-2",
-                            MARATHON_ONLINE_PAYMENT_ENABLED ? "grid-cols-2" : "grid-cols-1"
+                            onlinePaymentEnabled ? "grid-cols-2" : "grid-cols-1"
                           )}
                         >
-                          {MARATHON_ONLINE_PAYMENT_ENABLED && (
+                          {onlinePaymentEnabled && (
                             <ChoiceCard
                               name="marathon-registration-mode"
                               checked={marathonRegistrationMode === "ONLINE"}

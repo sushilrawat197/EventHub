@@ -1,4 +1,3 @@
-import { MARATHON_ONLINE_PAYMENT_ENABLED } from "@/constants/eventGates";
 import type { MarathonRegistrationPayload } from "@/features/booking/types/marathon";
 import { normalizePhoneNumber } from "./utils";
 import type { ParticipantFormData } from "./types";
@@ -7,29 +6,46 @@ interface BuildRegistrationPayloadOptions {
   participantForm: ParticipantFormData;
   isSpecialNewForm: boolean;
   isOfflineIndividual: boolean;
+  onlinePaymentEnabled: boolean;
   resolvedEventId: number;
   resolvedTicketCategoryId: number;
   resolvedNoOfTicket: number;
+}
+
+function resolveTreatsAsOfflineIndividual(
+  participantForm: ParticipantFormData,
+  isSpecialNewForm: boolean,
+  isOfflineIndividual: boolean,
+  onlinePaymentEnabled: boolean
+): boolean {
+  return (
+    isOfflineIndividual ||
+    (!onlinePaymentEnabled &&
+      !isSpecialNewForm &&
+      participantForm.participantType === "INDIVIDUAL")
+  );
 }
 
 export function buildRegistrationPayload({
   participantForm,
   isSpecialNewForm,
   isOfflineIndividual,
+  onlinePaymentEnabled,
   resolvedEventId,
   resolvedTicketCategoryId,
   resolvedNoOfTicket,
 }: BuildRegistrationPayloadOptions): MarathonRegistrationPayload {
-  const treatsAsOfflineIndividual =
-    isOfflineIndividual ||
-    (!MARATHON_ONLINE_PAYMENT_ENABLED &&
-      !isSpecialNewForm &&
-      participantForm.participantType === "INDIVIDUAL");
+  const offlineIndividual = resolveTreatsAsOfflineIndividual(
+    participantForm,
+    isSpecialNewForm,
+    isOfflineIndividual,
+    onlinePaymentEnabled
+  );
 
   const resolvedParticipantType: MarathonRegistrationPayload["participantType"] =
     isSpecialNewForm
       ? participantForm.participantType
-      : treatsAsOfflineIndividual
+      : offlineIndividual
         ? "INDIVIDUAL_OFFLINE"
         : participantForm.participantType;
 
@@ -69,7 +85,7 @@ export function buildRegistrationPayload({
     shirtSize: participantForm.shirtSize as "XS" | "S" | "M" | "L" | "XL" | "XXL",
     ...(isSpecialNewForm ? {} : { shoeSize: participantForm.shoeSize.trim() }),
     disclaimerAccepted: participantForm.disclaimerAccepted,
-    ...(treatsAsOfflineIndividual && participantForm.paymentType
+    ...(offlineIndividual && participantForm.paymentType
       ? { paymentType: participantForm.paymentType }
       : {}),
   };
@@ -78,26 +94,34 @@ export function buildRegistrationPayload({
 export function shouldSkipOnlineCheckout(
   participantForm: ParticipantFormData,
   isSpecialNewForm: boolean,
-  isOfflineIndividual: boolean
+  isOfflineIndividual: boolean,
+  onlinePaymentEnabled: boolean
 ): boolean {
-  const treatsAsOfflineIndividual =
-    isOfflineIndividual ||
-    (!MARATHON_ONLINE_PAYMENT_ENABLED &&
-      !isSpecialNewForm &&
-      participantForm.participantType === "INDIVIDUAL");
-
-  return participantForm.participantType === "CORPORATE" || treatsAsOfflineIndividual;
+  if (participantForm.participantType === "CORPORATE") return true;
+  if (
+    resolveTreatsAsOfflineIndividual(
+      participantForm,
+      isSpecialNewForm,
+      isOfflineIndividual,
+      onlinePaymentEnabled
+    )
+  ) {
+    return true;
+  }
+  // New-form (or any) individual when that event's online checkout is off → success, no payment page.
+  return !onlinePaymentEnabled && participantForm.participantType === "INDIVIDUAL";
 }
 
 export function treatsAsOfflineIndividual(
   participantForm: ParticipantFormData,
   isSpecialNewForm: boolean,
-  isOfflineIndividual: boolean
+  isOfflineIndividual: boolean,
+  onlinePaymentEnabled: boolean
 ): boolean {
-  return (
-    isOfflineIndividual ||
-    (!MARATHON_ONLINE_PAYMENT_ENABLED &&
-      !isSpecialNewForm &&
-      participantForm.participantType === "INDIVIDUAL")
+  return resolveTreatsAsOfflineIndividual(
+    participantForm,
+    isSpecialNewForm,
+    isOfflineIndividual,
+    onlinePaymentEnabled
   );
 }
