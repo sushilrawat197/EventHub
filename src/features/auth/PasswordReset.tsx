@@ -73,7 +73,7 @@ export default function PasswordReset() {
 
 
   return (
-    <div className="max-h-[calc(100vh-100px)] bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-start justify-center pt-16 p-4">
+    <div className="flex min-h-[calc(100dvh-4.5rem)] items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 sm:min-h-[calc(100dvh-4rem)] lg:min-h-[calc(100dvh-7rem)]">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
         <div className="flex flex-col lg:flex-row min-h-[450px]">
           {/* Left Side - Hero Section */}
